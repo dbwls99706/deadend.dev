@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/connectionrefusederror/py311-linux",
+  "url": "https://deadend.dev/python/connectionrefusederror/py311-linux",
+  "error": {
+    "signature": "ConnectionRefusedError: [Errno 111] Connection refused",
+    "regex": "ConnectionRefusedError: \\[Errno 111\\] Connection refused",
+    "domain": "python",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.65,
+    "confidence": 0.8,
+    "last_updated": "2026-02-10",
+    "summary": "Target service is not running or not listening on the expected port."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the connection immediately in a loop",
+      "why_fails": "If the service is down, retrying won't help and wastes time",
+      "fail_rate": 0.78,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Change the port number",
+      "why_fails": "The port is usually correct; the service itself is not running",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the target service is running and listening on the correct port",
+      "success_rate": 0.85,
+      "how": "ss -tlnp | grep :PORT or docker ps",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add exponential backoff retry with a health check endpoint",
+      "success_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

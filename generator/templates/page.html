@@ -13,6 +13,9 @@
   <meta name="error-regex" content="{{ error.regex }}">
   <meta name="error-domain" content="{{ error.domain }}">
   <meta name="error-resolvable" content="{{ verdict.resolvable }}">
+  <meta name="error-fix-rate" content="{{ verdict.fix_success_rate }}">
+  <meta name="error-dead-ends" content="{{ dead_ends|length }}">
+  <meta name="error-workarounds" content="{{ workarounds|default([])|length }}">
 
   <!-- Schema.org + ErrorCanon JSON-LD -->
   <script type="application/ld+json">
@@ -59,22 +62,20 @@
 </head>
 <body>
   <!-- AI-PARSEABLE STRUCTURED SUMMARY — Use /api/v1/{{ id }}.json for full data -->
-  <pre id="ai-summary" style="display:none;">ERROR_ID: {{ id }}
-SIGNATURE: {{ error.signature }}
-REGEX: {{ error.regex }}
-DOMAIN: {{ error.domain }}
-ENVIRONMENT: {{ env_summary }}
-RESOLVABLE: {{ verdict.resolvable }}
-FIX_SUCCESS_RATE: {{ verdict.fix_success_rate }}
-CONFIDENCE: {{ verdict.confidence }}
-SUMMARY: {{ verdict.summary }}
-DEAD_ENDS:{% for de in dead_ends %}
-  - {{ de.action }} | fail_rate={{ de.fail_rate }} | {{ de.why_fails }}{% endfor %}
-WORKAROUNDS:{% for wa in workarounds|default([]) %}
-  - {{ wa.action }} | success_rate={{ wa.success_rate }}{% if wa.how %} | how={{ wa.how }}{% endif %}{% endfor %}
-{% set graph = transition_graph|default({}) %}{% if graph.get("leads_to", []) %}LEADS_TO:{% for lt in graph.leads_to %}
-  - {{ lt.error_id }} (p={{ lt.probability }}){% endfor %}
-{% endif %}JSON_API: https://deadend.dev/api/v1/{{ id }}.json</pre>
+  <pre id="ai-summary" style="display:none;">ERROR_ID={{ id }}
+SIGNATURE={{ error.signature }}
+REGEX={{ error.regex }}
+DOMAIN={{ error.domain }}
+ENVIRONMENT={{ env_summary }}
+RESOLVABLE={{ verdict.resolvable }}
+FIX_SUCCESS_RATE={{ verdict.fix_success_rate }}
+CONFIDENCE={{ verdict.confidence }}
+SUMMARY={{ verdict.summary }}
+DEAD_ENDS={% for de in dead_ends %}{{ de.action }} (fail_rate={{ de.fail_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
+WORKAROUNDS={% for wa in workarounds|default([]) %}{{ wa.action }} (success_rate={{ wa.success_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
+{% set graph = transition_graph|default({}) %}{% if graph.get("leads_to", []) %}LEADS_TO={% for lt in graph.leads_to %}{{ lt.error_id }} (p={{ lt.probability }}){% if not loop.last %}; {% endif %}{% endfor %}
+{% endif %}JSON_API=https://deadend.dev/api/v1/{{ id }}.json
+MATCH_API=https://deadend.dev/api/v1/match.json</pre>
 
   <!-- HUMAN-READABLE SECTION -->
   <nav><a href="/">deadend.dev</a> / <a href="/{{ error.domain }}/">{{ error.domain }}</a></nav>
@@ -88,6 +89,16 @@ WORKAROUNDS:{% for wa in workarounds|default([]) %}
       <a href="/api/v1/{{ id }}.json">JSON API</a>
     </p>
   </header>
+
+  <!-- TL;DR — AI agents can read just this block for a quick decision -->
+  <section id="tldr" style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1rem;margin:1rem 0;">
+    <strong>TL;DR:</strong>
+    {% if verdict.resolvable == "true" %}This error is <span class="verdict-true">fixable</span> ({{ (verdict.fix_success_rate * 100)|int }}% success rate).
+    {% elif verdict.resolvable == "partial" %}This error is <span class="verdict-partial">partially fixable</span> ({{ (verdict.fix_success_rate * 100)|int }}% success rate).
+    {% else %}This error is <span class="verdict-false">not reliably fixable</span> in this environment.{% endif %}
+    Avoid: {% for de in dead_ends[:2] %}<em>{{ de.action }}</em> ({{ (de.fail_rate * 100)|int }}% fail){% if not loop.last %}, {% endif %}{% endfor %}.
+    {% if workarounds|default([]) %}Try: {% for wa in workarounds[:2] %}<em>{{ wa.action }}</em> ({{ (wa.success_rate * 100)|int }}% success){% if not loop.last %}, {% endif %}{% endfor %}.{% endif %}
+  </section>
 
   <section id="verdict">
     <h2>Verdict</h2>

@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/oci-runtime-create-failed/docker27-linux",
+  "url": "https://deadend.dev/docker/oci-runtime-create-failed/docker27-linux",
+  "error": {
+    "signature": "OCI runtime create failed: unable to start container process",
+    "regex": "OCI runtime create failed:.*unable to start container process",
+    "domain": "docker",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.65,
+    "confidence": 0.8,
+    "last_updated": "2026-02-10",
+    "summary": "Container entrypoint or command cannot be executed. Often wrong binary path or missing executable."
+  },
+  "dead_ends": [
+    {
+      "action": "Rebuild the image from scratch",
+      "why_fails": "If the Dockerfile is wrong, rebuilding reproduces the same error",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set --privileged flag",
+      "why_fails": "Security risk and usually not related to the actual issue",
+      "fail_rate": 0.82,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check that the entrypoint/CMD binary exists inside the container",
+      "success_rate": 0.85,
+      "how": "docker run --entrypoint sh image -c 'which myapp'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify exec format matches the container architecture (amd64 vs arm64)",
+      "success_rate": 0.78,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

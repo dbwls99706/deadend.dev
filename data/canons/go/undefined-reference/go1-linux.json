@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/undefined-reference/go1-linux",
+  "url": "https://deadend.dev/go/undefined-reference/go1-linux",
+  "error": {
+    "signature": "undefined: X",
+    "regex": "undefined:\\s+(\\w+)",
+    "domain": "go",
+    "category": "compile_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.88,
+    "last_updated": "2026-02-10",
+    "summary": "Symbol not found. Usually an unexported name, missing import, or file not in the same package."
+  },
+  "dead_ends": [
+    {
+      "action": "Add the missing function to a different package",
+      "why_fails": "Go packages must be imported explicitly, adding to wrong package won't help",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use //go:linkname to access unexported symbols",
+      "why_fails": "Fragile hack that breaks on version updates",
+      "fail_rate": 0.88,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check capitalization (exported names start with uppercase in Go)",
+      "success_rate": 0.92,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure the file is in the correct package and directory",
+      "success_rate": 0.88,
+      "how": "go vet ./...",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

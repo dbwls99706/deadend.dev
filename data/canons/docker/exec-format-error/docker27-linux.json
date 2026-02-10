@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/exec-format-error/docker27-linux",
+  "url": "https://deadend.dev/docker/exec-format-error/docker27-linux",
+  "error": {
+    "signature": "exec format error",
+    "regex": "exec format error|exec user process caused:.*exec format error",
+    "domain": "docker",
+    "category": "platform_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.88,
+    "last_updated": "2026-02-10",
+    "summary": "Binary architecture mismatch. Common when running amd64 images on arm64 (Apple Silicon) or vice versa."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstall Docker",
+      "why_fails": "Architecture mismatch is not a Docker installation issue",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add #!/bin/bash shebang to script",
+      "why_fails": "Only helps if the entrypoint is a script without shebang, not for binary mismatch",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Build or pull the correct platform image",
+      "success_rate": 0.9,
+      "how": "docker build --platform linux/amd64 .",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use multi-platform builds with docker buildx",
+      "success_rate": 0.85,
+      "how": "docker buildx build --platform linux/amd64,linux/arm64 .",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

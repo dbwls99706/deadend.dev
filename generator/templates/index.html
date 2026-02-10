@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8">
   <title>deadend.dev — Structured Failure Knowledge for AI Agents</title>
-  <meta name="description" content="When AI agents fail, they search the web. deadend.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next.">
+  <meta name="description" content="When AI agents fail, they search the web. deadend.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next. {{ total_errors }} errors across {{ domains | length }} domains.">
   <meta name="robots" content="index, follow, max-snippet:-1">
+  {% if google_verification %}<meta name="google-site-verification" content="{{ google_verification }}">{% endif %}
+  {% if bing_verification %}<meta name="msvalidate.01" content="{{ bing_verification }}">{% endif %}
 
   <!-- AI agent discovery -->
   <link rel="alternate" type="application/json" href="/api/v1/index.json" title="Error Index JSON API">
+  <link rel="alternate" type="application/json" href="/api/v1/match.json" title="Lightweight Error Matching">
   <link rel="describedby" href="/api/v1/openapi.json" type="application/json">
 
   <meta property="og:title" content="deadend.dev — Structured Failure Knowledge for AI Agents">
@@ -35,16 +38,17 @@
   </style>
 </head>
 <body>
-  <pre id="ai-summary" style="display:none;">SITE: deadend.dev
-PURPOSE: Structured failure knowledge for AI agents — dead ends, workarounds, error chains
-TOTAL_ERRORS: {{ total_errors }}
-DOMAINS: {{ domains | join(', ') }}
-API_INDEX: https://deadend.dev/api/v1/index.json
-API_PATTERN: https://deadend.dev/api/v1/{domain}/{slug}/{env}.json
-OPENAPI_SPEC: https://deadend.dev/api/v1/openapi.json
-LLMS_TXT: https://deadend.dev/llms.txt
-LLMS_FULL: https://deadend.dev/llms-full.txt
-USAGE: Fetch /api/v1/index.json to get all error signatures with regex patterns. Match your error against regexes. Fetch the matching error's api_url for full dead_ends and workarounds.</pre>
+  <pre id="ai-summary" style="display:none;">SITE=deadend.dev
+PURPOSE=Structured failure knowledge for AI agents — dead ends, workarounds, error chains
+TOTAL_ERRORS={{ total_errors }}
+DOMAINS={{ domains | join(', ') }}
+MATCH_ENDPOINT=https://deadend.dev/api/v1/match.json
+API_INDEX=https://deadend.dev/api/v1/index.json
+API_PATTERN=https://deadend.dev/api/v1/{domain}/{slug}/{env}.json
+OPENAPI_SPEC=https://deadend.dev/api/v1/openapi.json
+LLMS_TXT=https://deadend.dev/llms.txt
+LLMS_FULL=https://deadend.dev/llms-full.txt
+USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[].</pre>
 
   <header>
     <h1>deadend.dev</h1>

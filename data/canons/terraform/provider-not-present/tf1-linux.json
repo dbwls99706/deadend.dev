@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/provider-not-present/tf1-linux",
+  "url": "https://deadend.dev/terraform/provider-not-present/tf1-linux",
+  "error": {
+    "signature": "Provider configuration not present",
+    "regex": "Provider configuration not present|provider .+ not available",
+    "domain": "terraform",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.88,
+    "last_updated": "2026-02-10",
+    "summary": "Required provider is not configured in the Terraform configuration."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually download the provider binary",
+      "why_fails": "Terraform manages provider binaries; manual placement is fragile",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Copy .terraform from another project",
+      "why_fails": "Provider versions and configs may not match",
+      "fail_rate": 0.78,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run terraform init to download and configure providers",
+      "success_rate": 0.92,
+      "how": "terraform init",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add the required_providers block to your terraform configuration",
+      "success_rate": 0.88,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

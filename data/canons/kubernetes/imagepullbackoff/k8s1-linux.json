@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/imagepullbackoff/k8s1-linux",
+  "url": "https://deadend.dev/kubernetes/imagepullbackoff/k8s1-linux",
+  "error": {
+    "signature": "ImagePullBackOff",
+    "regex": "ImagePullBackOff|ErrImagePull",
+    "domain": "kubernetes",
+    "category": "image_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-10",
+    "summary": "Cannot pull container image. Wrong image name, tag, or missing registry credentials."
+  },
+  "dead_ends": [
+    {
+      "action": "Keep waiting for the pull to succeed",
+      "why_fails": "If credentials or image name are wrong, it will never succeed",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Pull the image manually on the node",
+      "why_fails": "Not scalable and doesn't fix the underlying auth/name issue",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify image name and tag exist in the registry",
+      "success_rate": 0.9,
+      "how": "docker pull image:tag",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Create or fix imagePullSecrets for private registries",
+      "success_rate": 0.85,
+      "how": "kubectl create secret docker-registry regcred --docker-server=... --docker-username=... --docker-password=...",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

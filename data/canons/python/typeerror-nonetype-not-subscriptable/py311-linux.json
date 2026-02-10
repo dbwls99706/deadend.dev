@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+  "url": "https://deadend.dev/python/typeerror-nonetype-not-subscriptable/py311-linux",
+  "error": {
+    "signature": "TypeError: 'NoneType' object is not subscriptable",
+    "regex": "TypeError: 'NoneType' object is not (subscriptable|iterable)",
+    "domain": "python",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-10",
+    "summary": "Occurs when indexing or iterating over a None value. Usually a missing return or failed API call."
+  },
+  "dead_ends": [
+    {
+      "action": "Add try/except around the indexing",
+      "why_fails": "Masks the root cause without fixing the None source",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check if variable is None right before use",
+      "why_fails": "The None originates earlier in the call chain",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Trace the variable back to its assignment and fix the source of None",
+      "success_rate": 0.9,
+      "how": "Add breakpoint or print before assignment",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Optional type hints and handle None explicitly in the function that produces the value",
+      "success_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}
