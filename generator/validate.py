@@ -265,11 +265,12 @@ def validate_all(
     # Validate HTML files if site_dir provided
     if site_dir and site_dir.exists():
         html_files = list(site_dir.rglob("index.html"))
-        # Exclude top-level index.html and domain listing pages
+        # Only validate env-specific error pages (depth >= 4: domain/slug/env/index.html)
+        # Excludes: top-level index, domain listings (depth 2), error summaries (depth 3)
         error_pages = [
             f
             for f in html_files
-            if f.parent != site_dir and len(f.relative_to(site_dir).parts) > 2
+            if f.parent != site_dir and len(f.relative_to(site_dir).parts) > 3
         ]
         for html_file in error_pages:
             errors = validate_html(html_file)
