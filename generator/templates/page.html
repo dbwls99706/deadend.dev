@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{ error.signature }} — {{ env_summary }} | deadend.dev</title>
-  <meta name="description" content="{{ verdict.summary }}">
+  <title>{{ error.signature }} — Dead Ends & Fixes ({{ env_summary }}) | deadend.dev</title>
+  <meta name="description" content="How to fix {{ error.signature }}. {{ dead_ends|length }} dead ends to avoid, {{ workarounds|default([])|length }} verified workarounds ({{ (verdict.fix_success_rate * 100)|int }}% fix rate). {{ env_summary }}.">
   <meta name="robots" content="index, follow, max-snippet:-1">
 
   <!-- AI agent discovery -->
@@ -19,14 +19,21 @@
 {{ json_ld | safe }}
   </script>
 
+  <!-- FAQPage schema for dead ends (Google rich snippets) -->
+  {% if faq_json_ld %}
+  <script type="application/ld+json">
+{{ faq_json_ld | safe }}
+  </script>
+  {% endif %}
+
   <!-- Open Graph -->
-  <meta property="og:title" content="{{ error.signature }} — {{ error.domain }} error fix">
-  <meta property="og:description" content="Resolvable: {{ verdict.resolvable }} ({{ (verdict.fix_success_rate * 100)|int }}%). {{ verdict.summary }}">
+  <meta property="og:title" content="{{ error.signature }} — Dead Ends & Fixes">
+  <meta property="og:description" content="{{ dead_ends|length }} dead ends to avoid, {{ workarounds|default([])|length }} verified workarounds. Fix rate: {{ (verdict.fix_success_rate * 100)|int }}%.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="{{ url }}">
   <meta property="og:site_name" content="deadend.dev — Structured Failure Knowledge">
   <meta name="twitter:card" content="summary">
-  <meta name="keywords" content="{{ error.signature }}, {{ error.domain }}, {{ error.category }}, error fix, troubleshooting, dead end, workaround, {{ env_summary }}">
+  <meta name="keywords" content="{{ error.signature }}, {{ error.domain }}, {{ error.category }}, error fix, troubleshooting, dead end, workaround, how to fix, solve, {{ env_summary }}">
 
   <link rel="canonical" href="{{ url }}">
   <style>

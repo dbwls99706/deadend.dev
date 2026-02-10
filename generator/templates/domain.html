@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{ domain }} errors | deadend.dev</title>
-  <meta name="description" content="Structured failure knowledge for {{ domain }} errors.">
-  <meta name="robots" content="index, follow">
+  <title>{{ domain }} errors — Dead Ends & Fixes ({{ total }} errors) | deadend.dev</title>
+  <meta name="description" content="All known {{ domain }} errors with dead ends and verified workarounds. {{ total }} error entries with fix success rates and what NOT to try.">
+  <meta name="robots" content="index, follow, max-snippet:-1">
+  <meta name="keywords" content="{{ domain }}, {{ domain }} error, {{ domain }} fix, troubleshooting, dead end, workaround{% for e in entries %}, {{ e.signature }}{% endfor %}">
   <link rel="canonical" href="https://deadend.dev/{{ domain }}/">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }

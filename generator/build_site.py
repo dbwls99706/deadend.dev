@@ -103,10 +103,32 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
         }
         json_ld = json.dumps(json_ld_data, indent=2, ensure_ascii=False)
 
+        # FAQPage schema — dead ends as FAQ questions for Google rich snippets
+        faq_entities = []
+        sig = canon["error"]["signature"]
+        for de in canon["dead_ends"]:
+            faq_entities.append({
+                "@type": "Question",
+                "name": f"Why doesn't '{de['action']}' fix {sig}?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": de["why_fails"],
+                },
+            })
+        faq_json_ld_data = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faq_entities,
+        }
+        faq_json_ld = json.dumps(
+            faq_json_ld_data, indent=2, ensure_ascii=False
+        )
+
         html = template.render(
             env_summary=env_summary,
             all_sources=all_sources,
             json_ld=json_ld,
+            faq_json_ld=faq_json_ld,
             known_ids=known_ids,
             **canon,
         )
@@ -201,8 +223,11 @@ def build_index_page(canons: list[dict], jinja_env: Environment) -> None:
     print("  Generated: index.html")
 
 
-def build_sitemap(canons: list[dict]) -> None:
-    """Generate sitemap.xml."""
+def build_sitemap(
+    canons: list[dict],
+    summary_urls: list[dict] | None = None,
+) -> None:
+    """Generate sitemap.xml with all page types."""
     urlset = Element("urlset")
     urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
@@ -214,6 +239,13 @@ def build_sitemap(canons: list[dict]) -> None:
     SubElement(url_elem, "lastmod").text = now
     SubElement(url_elem, "changefreq").text = "weekly"
     SubElement(url_elem, "priority").text = "1.0"
+
+    # Search page
+    url_elem = SubElement(urlset, "url")
+    SubElement(url_elem, "loc").text = f"{BASE_URL}/search/"
+    SubElement(url_elem, "lastmod").text = now
+    SubElement(url_elem, "changefreq").text = "weekly"
+    SubElement(url_elem, "priority").text = "0.9"
 
     # Domain pages
     domains_seen = set()
@@ -227,7 +259,15 @@ def build_sitemap(canons: list[dict]) -> None:
             SubElement(url_elem, "changefreq").text = "weekly"
             SubElement(url_elem, "priority").text = "0.9"
 
-    # Error pages
+    # Error summary pages (environment-agnostic)
+    for summary in summary_urls or []:
+        url_elem = SubElement(urlset, "url")
+        SubElement(url_elem, "loc").text = summary["url"]
+        SubElement(url_elem, "lastmod").text = now
+        SubElement(url_elem, "changefreq").text = "weekly"
+        SubElement(url_elem, "priority").text = "0.85"
+
+    # Error pages (environment-specific)
     for canon in canons:
         url_elem = SubElement(urlset, "url")
         SubElement(url_elem, "loc").text = canon["url"]
@@ -236,9 +276,25 @@ def build_sitemap(canons: list[dict]) -> None:
         SubElement(url_elem, "changefreq").text = "monthly"
         SubElement(url_elem, "priority").text = "0.8"
 
+    # API endpoints
+    url_elem = SubElement(urlset, "url")
+    SubElement(url_elem, "loc").text = f"{BASE_URL}/api/v1/index.json"
+    SubElement(url_elem, "lastmod").text = now
+    SubElement(url_elem, "changefreq").text = "weekly"
+    SubElement(url_elem, "priority").text = "0.7"
+
+    # llms.txt
+    url_elem = SubElement(urlset, "url")
+    SubElement(url_elem, "loc").text = f"{BASE_URL}/llms.txt"
+    SubElement(url_elem, "lastmod").text = now
+    SubElement(url_elem, "changefreq").text = "weekly"
+    SubElement(url_elem, "priority").text = "0.7"
+
     xml_declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml_body = tostring(urlset, encoding="unicode")
-    (SITE_DIR / "sitemap.xml").write_text(xml_declaration + xml_body, encoding="utf-8")
+    (SITE_DIR / "sitemap.xml").write_text(
+        xml_declaration + xml_body, encoding="utf-8"
+    )
     print("  Generated: sitemap.xml")
 
 
@@ -329,6 +385,150 @@ def build_cname() -> None:
     print("  Generated: CNAME")
 
 
+def build_error_summary_pages(
+    canons: list[dict], jinja_env: Environment
+) -> list[dict]:
+    """Generate environment-agnostic error summary pages.
+
+    For each unique error slug (domain/slug), creates a landing page
+    that aggregates all environments. Returns summary metadata for sitemap.
+    """
+    template = jinja_env.get_template("error_summary.html")
+
+    # Group canons by domain/slug (strip the env part of the id)
+    by_slug: dict[str, list[dict]] = {}
+    for canon in canons:
+        parts = canon["id"].rsplit("/", 1)
+        if len(parts) == 2:
+            slug_key = parts[0]  # e.g., "python/modulenotfounderror"
+        else:
+            continue
+        by_slug.setdefault(slug_key, []).append(canon)
+
+    summaries = []
+    for slug_key, slug_canons in by_slug.items():
+        domain, slug = slug_key.split("/", 1)
+        first = slug_canons[0]
+        signature = first["error"]["signature"]
+        regex = first["error"]["regex"]
+
+        environments = []
+        all_dead_ends = []
+        all_workarounds = []
+
+        for c in sorted(slug_canons, key=lambda x: x["id"]):
+            environments.append({
+                "id": c["id"],
+                "env_summary": build_env_summary(c),
+                "resolvable": c["verdict"]["resolvable"],
+                "fix_rate": c["verdict"]["fix_success_rate"],
+                "dead_end_count": len(c["dead_ends"]),
+                "workaround_count": len(c.get("workarounds", [])),
+            })
+            all_dead_ends.extend(c["dead_ends"])
+            all_workarounds.extend(c.get("workarounds", []))
+
+        # Deduplicate dead ends by action (keep highest fail_rate)
+        seen_de: dict[str, dict] = {}
+        for de in all_dead_ends:
+            key = de["action"]
+            if key not in seen_de or de["fail_rate"] > seen_de[key]["fail_rate"]:
+                seen_de[key] = de
+        common_dead_ends = sorted(
+            seen_de.values(), key=lambda x: x["fail_rate"], reverse=True
+        )
+
+        # Deduplicate workarounds by action (keep highest success_rate)
+        seen_wa: dict[str, dict] = {}
+        for wa in all_workarounds:
+            key = wa["action"]
+            if (
+                key not in seen_wa
+                or wa["success_rate"] > seen_wa[key]["success_rate"]
+            ):
+                seen_wa[key] = wa
+        common_workarounds = sorted(
+            seen_wa.values(),
+            key=lambda x: x["success_rate"],
+            reverse=True,
+        )
+
+        rates = [c["verdict"]["fix_success_rate"] for c in slug_canons]
+        min_rate = int(min(rates) * 100)
+        max_rate = int(max(rates) * 100)
+
+        html = template.render(
+            signature=signature,
+            regex=regex,
+            domain=domain,
+            slug=slug,
+            environments=environments,
+            common_dead_ends=common_dead_ends,
+            common_workarounds=common_workarounds,
+            total_dead_ends=len(common_dead_ends),
+            total_workarounds=len(common_workarounds),
+            min_rate=min_rate,
+            max_rate=max_rate,
+        )
+
+        # Write to /{domain}/{slug}/index.html
+        summary_dir = SITE_DIR / domain / slug
+        summary_dir.mkdir(parents=True, exist_ok=True)
+        (summary_dir / "index.html").write_text(html, encoding="utf-8")
+        print(f"  Generated: /{domain}/{slug}/")
+
+        summaries.append({
+            "slug_key": slug_key,
+            "url": f"{BASE_URL}/{domain}/{slug}/",
+        })
+
+    return summaries
+
+
+def build_search_page(
+    canons: list[dict], jinja_env: Environment
+) -> None:
+    """Generate client-side error matching search page."""
+    template = jinja_env.get_template("search.html")
+
+    # Build search data (subset of index for client-side use)
+    search_data = []
+    for canon in sorted(canons, key=lambda c: c["id"]):
+        search_data.append({
+            "id": canon["id"],
+            "signature": canon["error"]["signature"],
+            "regex": canon["error"]["regex"],
+            "domain": canon["error"]["domain"],
+            "resolvable": canon["verdict"]["resolvable"],
+            "fix_success_rate": canon["verdict"]["fix_success_rate"],
+            "dead_end_count": len(canon["dead_ends"]),
+            "workaround_count": len(canon.get("workarounds", [])),
+            "page_url": f"/{canon['id']}",
+        })
+
+    # Group by domain for the "all errors" section
+    by_domain: dict[str, list[dict]] = {}
+    for entry in search_data:
+        by_domain.setdefault(entry["domain"], []).append(entry)
+
+    domain_errors = [
+        {"name": domain, "errors": errors}
+        for domain, errors in sorted(by_domain.items())
+    ]
+
+    html = template.render(
+        total_errors=len(canons),
+        domain_count=len(by_domain),
+        domain_errors=domain_errors,
+        search_data=json.dumps(search_data, ensure_ascii=False),
+    )
+
+    search_dir = SITE_DIR / "search"
+    search_dir.mkdir(parents=True, exist_ok=True)
+    (search_dir / "index.html").write_text(html, encoding="utf-8")
+    print("  Generated: /search/")
+
+
 def build_llms_txt(canons: list[dict]) -> None:
     """Generate llms.txt and llms-full.txt for AI agent discovery."""
     # Group by domain for organized listing
@@ -368,6 +568,9 @@ def build_llms_txt(canons: list[dict]) -> None:
                 f"- [{c['error']['signature']}]"
                 f"(https://deadend.dev/{c['id']})"
                 f" — {c['verdict']['resolvable']}"
+            )
+            lines.append(
+                f"  regex: `{c['error']['regex']}`"
             )
         lines.append("")
 
@@ -655,12 +858,20 @@ def main():
     build_domain_pages(canons, jinja_env)
     print()
 
+    print("Generating error summary pages...")
+    summary_urls = build_error_summary_pages(canons, jinja_env)
+    print()
+
+    print("Generating search page...")
+    build_search_page(canons, jinja_env)
+    print()
+
     print("Generating index page...")
     build_index_page(canons, jinja_env)
     print()
 
     print("Generating sitemap.xml...")
-    build_sitemap(canons)
+    build_sitemap(canons, summary_urls)
     print()
 
     print("Generating robots.txt...")

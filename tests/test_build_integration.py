@@ -9,7 +9,9 @@ import pytest
 from generator.build_site import (
     build_domain_pages,
     build_error_pages,
+    build_error_summary_pages,
     build_index_page,
+    build_search_page,
     build_sitemap,
     load_canons,
 )
@@ -44,10 +46,16 @@ def built_site(tmp_path_factory):
 
         build_error_pages(canons, jinja_env)
         build_domain_pages(canons, jinja_env)
+        summary_urls = build_error_summary_pages(canons, jinja_env)
+        build_search_page(canons, jinja_env)
         build_index_page(canons, jinja_env)
-        build_sitemap(canons)
+        build_sitemap(canons, summary_urls)
 
-        return {"site_dir": site_dir, "canons": canons}
+        return {
+            "site_dir": site_dir,
+            "canons": canons,
+            "summary_urls": summary_urls,
+        }
     finally:
         bs.SITE_DIR = original_site_dir
 
@@ -126,6 +134,44 @@ class TestSiteBuildIntegration:
             assert 'id="ai-summary"' in content, (
                 f"Missing ai-summary in {canon['id']}"
             )
+
+    def test_html_pages_have_faq_schema(self, built_site):
+        """Every error page should have FAQPage JSON-LD."""
+        site_dir = built_site["site_dir"]
+        for canon in built_site["canons"]:
+            page_path = site_dir / canon["id"] / "index.html"
+            content = page_path.read_text()
+            assert "FAQPage" in content, (
+                f"Missing FAQPage schema in {canon['id']}"
+            )
+
+    def test_error_summary_pages_created(self, built_site):
+        """Each unique error slug should have a summary page."""
+        site_dir = built_site["site_dir"]
+        slugs = set()
+        for canon in built_site["canons"]:
+            parts = canon["id"].rsplit("/", 1)
+            if len(parts) == 2:
+                slugs.add(parts[0])
+        for slug in slugs:
+            page_path = site_dir / slug / "index.html"
+            assert page_path.exists(), f"Missing summary page for {slug}"
+
+    def test_search_page_created(self, built_site):
+        """The search page should exist and contain search data."""
+        search_path = built_site["site_dir"] / "search" / "index.html"
+        assert search_path.exists()
+        content = search_path.read_text()
+        assert "search-input" in content
+        assert "regex" in content
+
+    def test_sitemap_includes_search_and_summaries(self, built_site):
+        """Sitemap should include search page and summary pages."""
+        sitemap_path = built_site["site_dir"] / "sitemap.xml"
+        content = sitemap_path.read_text()
+        assert "/search/" in content
+        for summary in built_site["summary_urls"]:
+            assert summary["url"] in content
 
 
 class TestDataValidation:
