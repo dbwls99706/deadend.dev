@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Error Search — Find Dead Ends & Fixes | deadend.dev</title>
+  <meta name="description" content="Paste your error message to instantly find dead ends to avoid and verified workarounds. Matches against {{ total_errors }} known error patterns across {{ domain_count }} domains.">
+  <meta name="robots" content="index, follow, max-snippet:-1">
+  <meta name="keywords" content="error search, error fix, troubleshooting, dead end, workaround, python error, cuda error, node error, docker error, pip error, git error">
+  <link rel="canonical" href="https://deadend.dev/search/">
+  <meta property="og:title" content="Error Search — Find Dead Ends & Fixes | deadend.dev">
+  <meta property="og:description" content="Paste your error message to instantly find known dead ends and verified workarounds.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://deadend.dev/search/">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
+    a { color: #58a6ff; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+    .meta { color: #8b949e; font-size: 0.85rem; }
+    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
+    nav a { color: #8b949e; text-decoration: none; }
+    nav a:hover { color: #58a6ff; }
+    .verdict-false { color: #f85149; }
+    .verdict-partial { color: #d29922; }
+    .verdict-true { color: #3fb950; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+    #search-input { width: 100%; padding: 0.75rem; font-size: 1rem; font-family: monospace; background: #161b22; color: #e0e0e0; border: 1px solid #30363d; border-radius: 6px; box-sizing: border-box; }
+    #search-input:focus { border-color: #58a6ff; outline: none; }
+    #search-input::placeholder { color: #484f58; }
+    .result { border: 1px solid #30363d; border-radius: 6px; padding: 1rem; margin: 0.75rem 0; }
+    .result:hover { border-color: #58a6ff; }
+    .result h3 { margin: 0 0 0.5rem 0; font-size: 1rem; }
+    .result .dead-end-count { color: #f85149; }
+    .result .workaround-count { color: #3fb950; }
+    #no-results { display: none; color: #8b949e; padding: 2rem; text-align: center; }
+    #all-errors { margin-top: 2rem; }
+    .error-entry { padding: 0.4rem 0; border-bottom: 1px solid #161b22; }
+  </style>
+</head>
+<body>
+  <pre id="ai-summary" style="display:none;">PAGE: Error Search
+PURPOSE: Match error messages against {{ total_errors }} known patterns across {{ domain_count }} domains
+USAGE: Fetch /api/v1/index.json to get all error signatures with regex patterns. Match your error against regexes. Fetch the matching error's api_url for full dead_ends and workarounds.
+API_INDEX: https://deadend.dev/api/v1/index.json</pre>
+
+  <nav><a href="/">deadend.dev</a></nav>
+
+  <h1>Error Search</h1>
+  <p>Paste your error message below. We'll match it against {{ total_errors }} known error patterns.</p>
+
+  <div style="margin: 1.5rem 0;">
+    <textarea id="search-input" rows="3" placeholder="Paste your error message here, e.g. ModuleNotFoundError: No module named 'torch'"></textarea>
+  </div>
+
+  <div id="results"></div>
+  <div id="no-results">
+    <p>No matching errors found. Try pasting more of the error message, or <a href="https://github.com/deadend-dev/deadend.dev/issues/new">request this error</a>.</p>
+  </div>
+
+  <section id="all-errors">
+    <h2>All Known Errors ({{ total_errors }})</h2>
+    {% for domain in domain_errors %}
+    <h3>{{ domain.name }} ({{ domain.errors|length }})</h3>
+    {% for err in domain.errors %}
+    <div class="error-entry">
+      <a href="{{ err.page_url }}"><code>{{ err.signature }}</code></a>
+      <span class="verdict-{{ err.resolvable }}">[{{ err.resolvable }}]</span>
+      <span class="meta">{{ err.dead_end_count }} dead ends · {{ err.workaround_count }} workarounds</span>
+    </div>
+    {% endfor %}
+    {% endfor %}
+  </section>
+
+  <footer class="meta">
+    <p><a href="/">deadend.dev</a> · <a href="/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
+  </footer>
+
+  <script>
+    (function() {
+      var errors = {{ search_data | safe }};
+      var input = document.getElementById('search-input');
+      var resultsDiv = document.getElementById('results');
+      var noResults = document.getElementById('no-results');
+      var allErrors = document.getElementById('all-errors');
+      var debounceTimer;
+
+      // Pre-compile regexes
+      var compiled = [];
+      for (var i = 0; i < errors.length; i++) {
+        try {
+          compiled.push({
+            data: errors[i],
+            re: new RegExp(errors[i].regex, 'i')
+          });
+        } catch(e) {
+          compiled.push({ data: errors[i], re: null });
+        }
+      }
+
+      function search(query) {
+        if (!query || query.length < 3) {
+          resultsDiv.innerHTML = '';
+          noResults.style.display = 'none';
+          allErrors.style.display = 'block';
+          return;
+        }
+        allErrors.style.display = 'none';
+        var matches = [];
+        var lowerQuery = query.toLowerCase();
+        for (var i = 0; i < compiled.length; i++) {
+          var entry = compiled[i];
+          var score = 0;
+          // Regex match (highest priority)
+          if (entry.re && entry.re.test(query)) {
+            score += 100;
+          }
+          // Signature substring match
+          if (entry.data.signature.toLowerCase().indexOf(lowerQuery) !== -1) {
+            score += 50;
+          }
+          // Query contains signature words
+          var words = entry.data.signature.toLowerCase().split(/\W+/);
+          for (var w = 0; w < words.length; w++) {
+            if (words[w].length > 2 && lowerQuery.indexOf(words[w]) !== -1) {
+              score += 10;
+            }
+          }
+          if (score > 0) {
+            matches.push({ score: score, data: entry.data });
+          }
+        }
+        matches.sort(function(a, b) { return b.score - a.score; });
+
+        if (matches.length === 0) {
+          resultsDiv.innerHTML = '';
+          noResults.style.display = 'block';
+          return;
+        }
+        noResults.style.display = 'none';
+        var html = '<h2>Matches (' + matches.length + ')</h2>';
+        var limit = Math.min(matches.length, 20);
+        for (var j = 0; j < limit; j++) {
+          var d = matches[j].data;
+          var verdictClass = 'verdict-' + d.resolvable;
+          html += '<div class="result">'
+            + '<h3><a href="' + d.page_url + '"><code>'
+            + escapeHtml(d.signature) + '</code></a> '
+            + '<span class="' + verdictClass + '">[' + d.resolvable + ']</span></h3>'
+            + '<p class="meta">'
+            + '<span class="dead-end-count">' + d.dead_end_count + ' dead ends</span> · '
+            + '<span class="workaround-count">' + d.workaround_count + ' workarounds</span> · '
+            + 'Fix rate: ' + Math.round(d.fix_success_rate * 100) + '%'
+            + '</p></div>';
+        }
+        resultsDiv.innerHTML = html;
+      }
+
+      function escapeHtml(s) {
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(s));
+        return d.innerHTML;
+      }
+
+      input.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function() {
+          search(input.value.trim());
+        }, 150);
+      });
+    })();
+  </script>
+</body>
+</html>

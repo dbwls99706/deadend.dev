@@ -4,12 +4,18 @@
   <meta charset="utf-8">
   <title>deadend.dev — Structured Failure Knowledge for AI Agents</title>
   <meta name="description" content="When AI agents fail, they search the web. deadend.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next.">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-snippet:-1">
 
-  <meta property="og:title" content="deadend.dev">
-  <meta property="og:description" content="Structured failure knowledge for AI agents. Know which paths are dead ends before wasting cycles.">
+  <!-- AI agent discovery -->
+  <link rel="alternate" type="application/json" href="/api/v1/index.json" title="Error Index JSON API">
+  <link rel="describedby" href="/api/v1/openapi.json" type="application/json">
+
+  <meta property="og:title" content="deadend.dev — Structured Failure Knowledge for AI Agents">
+  <meta property="og:description" content="Know which debugging paths are dead ends before wasting cycles. {{ total_errors }} errors across {{ domains | length }} domains.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://deadend.dev">
+  <meta property="og:site_name" content="deadend.dev">
+  <meta name="twitter:card" content="summary">
 
   <link rel="canonical" href="https://deadend.dev">
   <style>
@@ -25,16 +31,20 @@
     code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
     .hero { margin: 2rem 0; }
     footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+    .api-section code { font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <pre id="ai-summary" style="display:none;">
-SITE: deadend.dev
-PURPOSE: Structured failure knowledge for AI agents
+  <pre id="ai-summary" style="display:none;">SITE: deadend.dev
+PURPOSE: Structured failure knowledge for AI agents — dead ends, workarounds, error chains
 TOTAL_ERRORS: {{ total_errors }}
 DOMAINS: {{ domains | join(', ') }}
-API: /api/v1/{error_id}.json
-  </pre>
+API_INDEX: https://deadend.dev/api/v1/index.json
+API_PATTERN: https://deadend.dev/api/v1/{domain}/{slug}/{env}.json
+OPENAPI_SPEC: https://deadend.dev/api/v1/openapi.json
+LLMS_TXT: https://deadend.dev/llms.txt
+LLMS_FULL: https://deadend.dev/llms-full.txt
+USAGE: Fetch /api/v1/index.json to get all error signatures with regex patterns. Match your error against regexes. Fetch the matching error's api_url for full dead_ends and workarounds.</pre>
 
   <header>
     <h1>deadend.dev</h1>
@@ -44,6 +54,7 @@ API: /api/v1/{error_id}.json
   <div class="hero">
     <p>When AI agents hit an error, they search the web. But search results are written by humans, for humans — unstructured, environment-unaware, and often wrong for specific conditions.</p>
     <p><strong>deadend.dev</strong> tells you what <em>NOT</em> to try, what actually works (and under which conditions), and what error comes next if you take a particular path.</p>
+    <p><strong><a href="/search/">Paste your error message here to find matches instantly.</a></strong></p>
     <p class="meta">{{ total_errors }} error entries across {{ domains | length }} domains. All data available as <a href="https://github.com/deadend-dev/error-data">open source JSON</a>.</p>
   </div>
 
@@ -59,13 +70,17 @@ API: /api/v1/{error_id}.json
     </ul>
   </section>
 
-  <section>
+  <section class="api-section">
     <h2>For AI Agents</h2>
-    <p>Every page includes:</p>
+    <p>Every page includes machine-readable data in multiple formats:</p>
     <ul>
-      <li><code>JSON-LD</code> structured data in <code>&lt;head&gt;</code></li>
-      <li>Plain-text <code>ai-summary</code> block</li>
-      <li>JSON API at <code>/api/v1/{error_id}.json</code></li>
+      <li><strong>JSON API</strong> — <code>GET /api/v1/{domain}/{slug}/{env}.json</code></li>
+      <li><strong>Error index</strong> — <code>GET <a href="/api/v1/index.json">/api/v1/index.json</a></code> — all errors with regex patterns</li>
+      <li><strong>OpenAPI spec</strong> — <code>GET <a href="/api/v1/openapi.json">/api/v1/openapi.json</a></code></li>
+      <li><strong>JSON-LD</strong> — Schema.org TechArticle + ErrorCanon in every page <code>&lt;head&gt;</code></li>
+      <li><strong>ai-summary</strong> — parseable <code>&lt;pre id="ai-summary"&gt;</code> block in every page</li>
+      <li><strong>llms.txt</strong> — <code>GET <a href="/llms.txt">/llms.txt</a></code> — error listing for LLMs</li>
+      <li><strong>Full dump</strong> — <code>GET <a href="/llms-full.txt">/llms-full.txt</a></code> — complete database</li>
     </ul>
     <p>URL pattern: <code>https://deadend.dev/{domain}/{error-slug}/{env-hash}</code></p>
   </section>
@@ -83,7 +98,7 @@ API: /api/v1/{error_id}.json
   </section>
 
   <footer class="meta">
-    <p>deadend.dev · <a href="https://github.com/deadend-dev/error-data">GitHub</a> · Data licensed under CC BY 4.0</p>
+    <p>deadend.dev · <a href="/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a> · Data licensed under CC BY 4.0</p>
   </footer>
 </body>
 </html>
