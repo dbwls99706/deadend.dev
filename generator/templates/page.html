@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ error.signature }} — {{ env_summary }} | deadend.dev</title>
+  <meta name="description" content="{{ verdict.summary }}">
+  <meta name="robots" content="index, follow">
+
+  <!-- AI parsing optimization: structured data -->
+  <script type="application/ld+json">
+{{ json_ld | safe }}
+  </script>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ error.signature }}">
+  <meta property="og:description" content="Resolvable: {{ verdict.resolvable }} | Success Rate: {{ verdict.fix_success_rate }}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="{{ url }}">
+
+  <link rel="canonical" href="{{ url }}">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
+    .verdict-false { color: #f85149; font-weight: bold; }
+    .verdict-partial { color: #d29922; font-weight: bold; }
+    .verdict-true { color: #3fb950; font-weight: bold; }
+    .dead-end { border-left: 4px solid #f85149; padding-left: 1rem; margin: 1rem 0; }
+    .workaround { border-left: 4px solid #3fb950; padding-left: 1rem; margin: 1rem 0; }
+    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
+    pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    a { color: #58a6ff; }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+    .meta { color: #8b949e; font-size: 0.85rem; }
+    .fail-rate { color: #f85149; }
+    .success-rate { color: #3fb950; }
+    nav { margin-bottom: 2rem; }
+    nav a { color: #8b949e; text-decoration: none; }
+    nav a:hover { color: #58a6ff; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+  </style>
+</head>
+<body>
+  <!-- AI-READABLE SECTION -->
+  <pre id="ai-summary" style="display:none;">
+ERROR: {{ error.signature }}
+ENV: {{ env_summary }}
+RESOLVABLE: {{ verdict.resolvable }}
+FIX_SUCCESS_RATE: {{ verdict.fix_success_rate }}
+DEAD_ENDS:{% for de in dead_ends %} [{{ de.action }} (fail_rate={{ de.fail_rate }})]{% endfor %}
+
+WORKAROUNDS:{% for wa in workarounds %} [{{ wa.action }} (success_rate={{ wa.success_rate }})]{% endfor %}
+
+{% if transition_graph and transition_graph.leads_to %}NEXT_ERRORS:{% for lt in transition_graph.leads_to %} [{{ lt.error_id }} (p={{ lt.probability }}{% if lt.condition %}, {{ lt.condition }}{% endif %})]{% endfor %}{% endif %}
+
+  </pre>
+
+  <!-- HUMAN-READABLE SECTION -->
+  <nav><a href="/">deadend.dev</a> / <a href="/{{ error.domain }}/">{{ error.domain }}</a></nav>
+
+  <header>
+    <h1><code>{{ error.signature }}</code></h1>
+    <p class="meta">
+      Environment: {{ env_summary }} ·
+      Last verified: {{ metadata.last_verification }} ·
+      Evidence: {{ metadata.evidence_count }} sources
+    </p>
+  </header>
+
+  <section id="verdict">
+    <h2>Verdict</h2>
+    <p class="verdict-{{ verdict.resolvable }}">
+      {% if verdict.resolvable == "true" %}RESOLVABLE — This error can be fixed in most cases.
+      {% elif verdict.resolvable == "partial" %}PARTIALLY RESOLVABLE — Some workarounds exist, but success depends on specific conditions.
+      {% else %}NOT RESOLVABLE — No known reliable fix exists for this environment.{% endif %}
+    </p>
+    <p>{{ verdict.summary }}</p>
+    <p class="meta">Fix success rate: {{ verdict.fix_success_rate }} · Confidence: {{ verdict.confidence }}</p>
+  </section>
+
+  <section id="dead-ends">
+    <h2>Dead Ends — Do NOT Try These</h2>
+    {% for de in dead_ends %}
+    <div class="dead-end">
+      <strong>{{ de.action }}</strong> <span class="fail-rate">(Fail rate: {{ de.fail_rate }})</span>
+      <p>{{ de.why_fails }}</p>
+      {% if de.common_misconception %}<p><em>Common misconception:</em> {{ de.common_misconception }}</p>{% endif %}
+      {% if de.condition %}<p class="meta">Condition: {{ de.condition }}</p>{% endif %}
+      {% if de.sources %}
+      <p class="meta">Sources: {% for src in de.sources %}<a href="{{ src }}">{{ src }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+
+  <section id="workarounds">
+    <h2>Workarounds — Try These Instead</h2>
+    {% if workarounds %}
+    {% for wa in workarounds %}
+    <div class="workaround">
+      <strong>{{ wa.action }}</strong> <span class="success-rate">(Success rate: {{ wa.success_rate }})</span>
+      {% if wa.how %}<p><code>{{ wa.how }}</code></p>{% endif %}
+      {% if wa.tradeoff %}<p>Tradeoff: {{ wa.tradeoff }}</p>{% endif %}
+      {% if wa.condition %}<p class="meta">Condition: {{ wa.condition }}</p>{% endif %}
+      {% if wa.sources %}
+      <p class="meta">Sources: {% for src in wa.sources %}<a href="{{ src }}">{{ src }}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No known workarounds exist for this error in this environment.</p>
+    {% endif %}
+  </section>
+
+  {% if transition_graph and (transition_graph.leads_to or transition_graph.preceded_by or transition_graph.frequently_confused_with) %}
+  <section id="error-chain">
+    <h2>Error Chain</h2>
+    {% if transition_graph.leads_to %}
+    <h3>This error may lead to:</h3>
+    <ul>
+      {% for lt in transition_graph.leads_to %}
+      <li>
+        <a href="/{{ lt.error_id }}">{{ lt.error_id }}</a>
+        (probability: {{ lt.probability }}{% if lt.condition %}, condition: {{ lt.condition }}{% endif %})
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if transition_graph.preceded_by %}
+    <h3>Often preceded by:</h3>
+    <ul>
+      {% for pb in transition_graph.preceded_by %}
+      <li>
+        <a href="/{{ pb.error_id }}">{{ pb.error_id }}</a>
+        (probability: {{ pb.probability }}{% if pb.condition %}, condition: {{ pb.condition }}{% endif %})
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if transition_graph.frequently_confused_with %}
+    <h3>Frequently confused with:</h3>
+    <ul>
+      {% for fc in transition_graph.frequently_confused_with %}
+      <li>
+        <a href="/{{ fc.error_id }}">{{ fc.error_id }}</a> — {{ fc.distinction }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <section id="sources">
+    <h2>Sources</h2>
+    <ul>
+      {% for src in all_sources %}
+      <li><a href="{{ src }}">{{ src }}</a></li>
+      {% endfor %}
+      {% if not all_sources %}
+      <li>No external sources referenced.</li>
+      {% endif %}
+    </ul>
+  </section>
+
+  <footer class="meta">
+    <p>Generated by deadend.dev · {{ metadata.generation_date }} · <a href="https://github.com/deadend-dev/error-data">Raw data on GitHub</a></p>
+  </footer>
+</body>
+</html>

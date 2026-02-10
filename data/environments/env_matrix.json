@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "environments": {
+    "python_ml": {
+      "runtimes": [
+        {"name": "pytorch", "versions": ["1.13", "2.0", "2.1", "2.2", "2.3"]},
+        {"name": "tensorflow", "versions": ["2.12", "2.13", "2.14", "2.15", "2.16"]}
+      ],
+      "hardware": [
+        {"gpu": "A100-40GB", "vram_gb": 40},
+        {"gpu": "A100-80GB", "vram_gb": 80},
+        {"gpu": "RTX-3090", "vram_gb": 24},
+        {"gpu": "RTX-4090", "vram_gb": 24},
+        {"gpu": "T4", "vram_gb": 16}
+      ],
+      "os": ["linux", "windows"],
+      "python_versions": ["3.9", "3.10", "3.11", "3.12"]
+    },
+    "node": {
+      "runtimes": [
+        {"name": "node", "versions": ["18", "20", "22"]}
+      ],
+      "os": ["linux", "macos", "windows"],
+      "architectures": ["x64", "arm64"]
+    },
+    "docker": {
+      "runtimes": [
+        {"name": "docker", "versions": ["24", "25", "26", "27"]}
+      ],
+      "os": ["linux", "macos", "windows"]
+    }
+  }
+}

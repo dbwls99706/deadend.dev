@@ -1,0 +1,30 @@
+[project]
+name = "deadend-dev"
+version = "0.1.0"
+description = "Structured failure knowledge infrastructure for AI agents"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "YuJin Hong"}
+]
+
+dependencies = [
+    "jinja2>=3.1",
+    "jsonschema>=4.20",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
