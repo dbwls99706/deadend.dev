@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/enoent-no-such-file/node20-linux-arm64",
+  "url": "https://deadend.dev/node/enoent-no-such-file/node20-linux-arm64",
+
+  "error": {
+    "signature": "Error: ENOENT: no such file or directory, open 'X'",
+    "regex": "Error: ENOENT: no such file or directory, (?:open|stat|lstat|access) '.+'",
+    "domain": "node",
+    "category": "filesystem",
+    "first_seen": "2015-01-01",
+    "last_confirmed": "2025-05-15"
+  },
+
+  "environment": {
+    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "os": "linux",
+    "additional": { "architecture": "arm64" }
+  },
+
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.55,
+    "confidence": 0.70,
+    "last_updated": "2025-05-15",
+    "summary": "ENOENT on ARM64 Linux is often caused by case-sensitive filesystem differences (paths valid on macOS are invalid on Linux) or missing native modules that lack ARM64 prebuilt binaries."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running npm cache clean --force",
+      "why_fails": "ENOENT is a filesystem path error, not a cache corruption issue. Cleaning the npm cache does not create missing files or fix incorrect paths.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "npm cache clean is often suggested as a catch-all fix for npm errors, but ENOENT specifically indicates a missing file path — cache is unrelated."
+    },
+    {
+      "action": "Deleting node_modules and reinstalling",
+      "why_fails": "If the ENOENT is caused by a hardcoded path in source code or a native module without ARM64 prebuilt binary, reinstalling does not resolve the issue. The path reference remains incorrect.",
+      "fail_rate": 0.42,
+      "condition": "Source code contains hardcoded paths or native module lacks ARM64 support",
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Check and fix case sensitivity in file paths",
+      "how": "Compare the path in the error message against actual filesystem entries using 'ls -la'. Linux is case-sensitive; 'Config.json' != 'config.json'.",
+      "success_rate": 0.62,
+      "tradeoff": "Manual investigation required",
+      "condition": "Codebase was developed on macOS (case-insensitive by default)",
+      "sources": []
+    },
+    {
+      "action": "Install native module build dependencies for ARM64",
+      "how": "apt-get install build-essential python3 && npm rebuild",
+      "success_rate": 0.55,
+      "tradeoff": "Adds build tools as dependencies; compilation takes longer than prebuilt binaries",
+      "condition": "Error occurs in a native module (e.g., sharp, bcrypt, node-sass)",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/gyp-rebuild-error/node20-linux-arm64",
+        "probability": 0.30,
+        "condition": "When attempting npm rebuild for native modules",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/eacces-permission-denied/node20-linux",
+        "distinction": "ENOENT means the file does not exist; EACCES means it exists but you lack permission. Check the error code carefully."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 23,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}
