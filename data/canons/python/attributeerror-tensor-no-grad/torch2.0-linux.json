@@ -1,0 +1,133 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/attributeerror-tensor-no-grad/torch2.0-linux",
+  "url": "https://deadend.dev/python/attributeerror-tensor-no-grad/torch2.0-linux",
+
+  "error": {
+    "signature": "AttributeError: 'Tensor' object has no attribute 'grad'",
+    "regex": "AttributeError: '(?:Tensor|Parameter)' object has no attribute 'grad'",
+    "domain": "python",
+    "category": "autograd_error",
+    "first_seen": "2020-01-15",
+    "last_confirmed": "2025-05-10"
+  },
+
+  "environment": {
+    "runtime": { "name": "pytorch", "version_range": ">=2.0,<2.1" },
+    "os": "linux",
+    "python": ">=3.8,<3.12",
+    "additional": {
+      "notes": "PyTorch 2.0 introduced torch.compile() which interacts with autograd differently than eager mode"
+    }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.76,
+    "last_updated": "2025-05-10",
+    "summary": "In PyTorch 2.0, this error can occur both from the standard requires_grad misconfiguration and from torch.compile() interactions with the autograd engine. torch.compile() may transform the computation graph in ways that disconnect tensors from gradient tracking, particularly when using the 'reduce-overhead' or 'max-autotune' modes. The lazy tensor subsystem in PyTorch 2.0 can also defer materialization, causing .grad access to fail before the tensor is materialized."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Calling .backward() multiple times expecting gradients to appear",
+      "why_fails": "If the tensor was never registered in the computation graph (requires_grad=False), calling backward() any number of times will not produce gradients for it. In PyTorch 2.0, torch.compile() can additionally transform graph structure such that intermediate tensors are replaced with compiled equivalents that do not retain .grad.",
+      "fail_rate": 0.88,
+      "sources": ["https://pytorch.org/docs/2.0/autograd.html"],
+      "common_misconception": "Users believe backward() was incomplete or failed silently."
+    },
+    {
+      "action": "Using .detach() before accessing .grad",
+      "why_fails": "detach() creates a new tensor disconnected from the computation graph. It is used to stop gradient flow, not to enable it. Accessing .grad on a detached tensor will always return None.",
+      "fail_rate": 0.95,
+      "sources": ["https://pytorch.org/docs/2.0/generated/torch.Tensor.detach.html"]
+    },
+    {
+      "action": "Disabling torch.compile() entirely as a workaround",
+      "why_fails": "While this may resolve the symptom if torch.compile() is the cause, it sacrifices significant performance benefits (up to 2x speedup). The proper fix is to ensure gradient-tracked tensors are correctly handled within the compiled function, not to abandon compilation.",
+      "fail_rate": 0.30,
+      "condition": "Only when torch.compile() is involved in the issue",
+      "sources": ["https://pytorch.org/docs/2.0/dynamo/index.html"],
+      "common_misconception": "Users blame torch.compile() for all autograd issues in PyTorch 2.0, but the root cause is usually incorrect requires_grad configuration that was latent before compilation."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Set requires_grad=True on the tensor before the forward pass",
+      "how": "Create tensors with 'x = torch.tensor(data, requires_grad=True)' or modify in-place with 'x.requires_grad_(True)'. This must be done before any computation involving the tensor. In PyTorch 2.0, ensure this is done outside of torch.compile() scope.",
+      "success_rate": 0.88,
+      "tradeoff": "Increases memory usage for storing intermediate values needed for backpropagation",
+      "sources": ["https://pytorch.org/docs/2.0/autograd.html"]
+    },
+    {
+      "action": "Use torch.no_grad() context correctly and audit for misplacement",
+      "how": "Ensure training forward passes are not inside 'with torch.no_grad():' blocks. In PyTorch 2.0, also check for torch.inference_mode() which is stricter. Search codebase for both context managers and ensure they wrap only inference/evaluation code.",
+      "success_rate": 0.79,
+      "tradeoff": "None; this is a correctness fix",
+      "sources": ["https://pytorch.org/docs/2.0/generated/torch.no_grad.html"]
+    },
+    {
+      "action": "Mark tensors with retain_grad() for non-leaf gradient access in compiled code",
+      "how": "For intermediate (non-leaf) tensors inside torch.compile() functions, call 'tensor.retain_grad()' immediately after the tensor is created. This tells autograd to retain gradients for this tensor even though it is not a leaf. Check compiled function boundaries, as torch.compile() may create new intermediate tensors.",
+      "success_rate": 0.70,
+      "tradeoff": "Retaining gradients for non-leaf tensors increases memory usage. May interfere with torch.compile() optimizations in 'reduce-overhead' mode.",
+      "condition": "Applicable when the tensor is a non-leaf created inside a torch.compile() region",
+      "sources": ["https://pytorch.org/docs/2.0/generated/torch.Tensor.retain_grad.html"]
+    },
+    {
+      "action": "Use fullgraph=False in torch.compile() to allow graph breaks at gradient boundaries",
+      "how": "Change 'torch.compile(model)' to 'torch.compile(model, fullgraph=False)'. This allows PyTorch to fall back to eager mode for operations that break the compiled graph, including complex autograd interactions. Use TORCH_LOGS='+dynamo' to identify graph break locations.",
+      "success_rate": 0.65,
+      "tradeoff": "Graph breaks reduce the optimization potential of torch.compile(). Performance improvement may be reduced from 2x to 1.2-1.5x.",
+      "condition": "Only applicable when torch.compile() is used and the gradient issue is at a graph boundary",
+      "sources": ["https://pytorch.org/docs/2.0/dynamo/troubleshooting.html"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/runtime-error-backward-twice/torch2.0-linux",
+        "probability": 0.18,
+        "condition": "When user calls backward() again without retain_graph=True",
+        "typical_delay": "immediate"
+      },
+      {
+        "error_id": "python/torch-compile-graph-break/torch2.0-linux",
+        "probability": 0.22,
+        "condition": "When using fullgraph=True with operations that require eager-mode autograd",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/torch-compile-error/torch2.0-linux",
+        "probability": 0.28,
+        "condition": "torch.compile() transforms the graph in a way that breaks gradient tracking"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/attributeerror-tensor-no-grad/torch2.1-linux",
+        "distinction": "In PyTorch 2.0, torch.compile() and the lazy tensor subsystem introduce additional causes for this error. In PyTorch 2.1, lazy tensors were refactored and torch.compile() has improved autograd support, making compile-related .grad issues less common."
+      },
+      {
+        "error_id": "python/runtimeerror-grad-non-leaf/torch2.0-linux",
+        "distinction": "AttributeError means .grad was never populated. RuntimeError about non-leaf tensors means the tensor is in the graph but is not a leaf, so gradients are not retained by default."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 29,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

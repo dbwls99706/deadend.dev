@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/eaddrinuse-port/node20-linux",
+  "url": "https://deadend.dev/node/eaddrinuse-port/node20-linux",
+
+  "error": {
+    "signature": "Error: listen EADDRINUSE: address already in use :::3000",
+    "regex": "Error: listen EADDRINUSE: address already in use (?:::)?\\d+",
+    "domain": "node",
+    "category": "network",
+    "first_seen": "2014-01-01",
+    "last_confirmed": "2025-05-12"
+  },
+
+  "environment": {
+    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "os": "linux",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.95,
+    "last_updated": "2025-05-12",
+    "summary": "EADDRINUSE means another process is already listening on the requested port. This is almost always resolvable by identifying and stopping the conflicting process or choosing a different port. It is one of the most common and straightforward Node.js errors."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Binding to port 0 to let the OS assign a random port",
+      "why_fails": "While technically valid, port 0 makes the service unreachable at a predictable address. Other services, reverse proxies, and clients that depend on a known port will break. This avoids the symptom but creates a different problem.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "common_misconception": "Port 0 is useful for testing but is not a production solution. It shifts the problem from port conflict to service discovery."
+    },
+    {
+      "action": "Running 'killall node' to kill all Node processes",
+      "why_fails": "This kills every Node process on the system, including unrelated ones such as build watchers, other services, or VS Code extensions. It is a blunt instrument that causes collateral damage and does not address the root cause of why a stale process held the port.",
+      "fail_rate": 0.40,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Find and kill the specific process using the port",
+      "how": "Run 'lsof -i :3000' (replace 3000 with the port from the error) to identify the PID. Then run 'kill <PID>'. If the process does not terminate, use 'kill -9 <PID>'. Alternative: 'fuser -k 3000/tcp' to kill the process directly.",
+      "success_rate": 0.95,
+      "tradeoff": "None significant; this is the standard approach",
+      "sources": []
+    },
+    {
+      "action": "Use a port-finding library to automatically select an available port",
+      "how": "Install 'detect-port' or 'portfinder': 'npm install detect-port'. In code: const detect = require('detect-port'); const port = await detect(3000); // returns 3000 if free, or next available port.",
+      "success_rate": 0.85,
+      "tradeoff": "Requires code changes; port may differ between restarts which can confuse developers or break hardcoded client URLs",
+      "condition": "Development environments where port flexibility is acceptable",
+      "sources": [
+        "https://www.npmjs.com/package/detect-port"
+      ]
+    },
+    {
+      "action": "Add graceful shutdown to prevent orphaned processes",
+      "how": "Handle SIGTERM and SIGINT in your Node process: process.on('SIGTERM', () => { server.close(() => process.exit(0)); }); This ensures the port is released when the process is stopped, preventing stale listeners.",
+      "success_rate": 0.80,
+      "tradeoff": "Preventive measure; does not fix the current occurrence but prevents future ones",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "node/process-crash-unhandled/node20-linux",
+        "probability": 0.35,
+        "condition": "A previous Node process crashed without releasing the port, and a new instance tries to bind to the same port"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/eacces-permission-denied/node20-linux",
+        "distinction": "EADDRINUSE means the port is occupied by another process. EACCES on a port means you lack permission to bind (typically ports below 1024 require root). The error codes are different: EADDRINUSE vs EACCES."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 52,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

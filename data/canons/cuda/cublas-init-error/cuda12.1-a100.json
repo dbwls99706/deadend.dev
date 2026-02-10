@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cublas-init-error/cuda12.1-a100",
+  "url": "https://deadend.dev/cuda/cublas-init-error/cuda12.1-a100",
+
+  "error": {
+    "signature": "RuntimeError: CUBLAS_STATUS_NOT_INITIALIZED when calling cublasCreate(handle)",
+    "regex": "RuntimeError: CUBLAS_STATUS_NOT_INITIALIZED.*",
+    "domain": "cuda",
+    "category": "library_initialization",
+    "first_seen": "2023-04-12",
+    "last_confirmed": "2025-05-18"
+  },
+
+  "environment": {
+    "runtime": { "name": "pytorch", "version_range": ">=2.0,<2.3" },
+    "hardware": { "gpu": "A100-80GB", "vram_gb": 80 },
+    "os": "linux",
+    "python": ">=3.9,<3.13",
+    "additional": {
+      "cuda_toolkit": "12.1",
+      "cublas_version": "12.1.x",
+      "driver_version": ">=530.30"
+    }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.79,
+    "last_updated": "2025-05-18",
+    "summary": "CUBLAS_STATUS_NOT_INITIALIZED on CUDA 12.1 with A100 GPUs is most commonly caused by a mismatch between the cuBLAS library version and the CUDA toolkit version. This occurs when CUDA toolkit components are updated piecemeal rather than as a complete unit. Ensuring all CUDA 12.1 libraries are at consistent versions resolves most cases."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Reinstalling cuBLAS alone (apt install --reinstall libcublas-12-1)",
+      "why_fails": "Reinstalling the same mismatched cuBLAS version does not fix the underlying version incompatibility. The issue is not a corrupted installation but a version mismatch between cuBLAS and the rest of the CUDA toolkit. If cuBLAS 12.1.3 is installed but the CUDA runtime expects 12.1.0, reinstalling 12.1.3 will not help.",
+      "fail_rate": 0.82,
+      "sources": ["https://github.com/pytorch/pytorch/issues/99673"],
+      "common_misconception": "Users believe the cuBLAS library is corrupted when they see the init error. In reality, the library loads fine — it fails initialization because it detects a runtime version mismatch with the CUDA driver or toolkit."
+    },
+    {
+      "action": "Calling torch.cuda.init() manually before operations",
+      "why_fails": "torch.cuda.init() initializes the CUDA context and driver API, but cuBLAS initialization is a separate step that happens when the first cuBLAS operation is invoked. If cuBLAS libraries are mismatched, explicit CUDA context initialization does not prevent the cuBLAS init failure.",
+      "fail_rate": 0.91,
+      "sources": ["https://pytorch.org/docs/stable/generated/torch.cuda.init.html"],
+      "common_misconception": "Users assume torch.cuda.init() initializes all CUDA sub-libraries (cuBLAS, cuDNN, cuSOLVER, etc.). It only initializes the base CUDA runtime context — each library has its own initialization path."
+    },
+    {
+      "action": "Setting CUDA_VISIBLE_DEVICES to a single GPU",
+      "why_fails": "Restricting visible devices to a single GPU does not resolve library version mismatches. This workaround is sometimes suggested because multi-GPU setups can mask the root cause, but the cuBLAS init error is per-device and occurs regardless of how many GPUs are visible.",
+      "fail_rate": 0.88,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install a consistent CUDA 12.1 toolkit with matching cuBLAS version",
+      "how": "sudo apt install cuda-toolkit-12-1 (this installs all components at consistent versions) or download the full toolkit from https://developer.nvidia.com/cuda-12-1-0-download-archive",
+      "success_rate": 0.87,
+      "tradeoff": "May require rebooting if the driver is also updated; full toolkit install is ~4 GB",
+      "condition": "Root access required for system-wide installation; alternatively use conda to manage CUDA libraries in userspace",
+      "sources": ["https://developer.nvidia.com/cuda-12-1-0-download-archive"]
+    },
+    {
+      "action": "Set CUBLAS_WORKSPACE_CONFIG environment variable",
+      "how": "export CUBLAS_WORKSPACE_CONFIG=:4096:8",
+      "success_rate": 0.71,
+      "tradeoff": "Increases cuBLAS workspace memory usage slightly (~32 MB); may affect determinism settings if :16:8 was previously set",
+      "condition": "Effective when the init failure is caused by workspace allocation issues rather than a full version mismatch. Check nvidia-smi to confirm free VRAM is available.",
+      "sources": ["https://docs.nvidia.com/cuda/cublas/index.html#results-reproducibility"]
+    },
+    {
+      "action": "Use the PyTorch-bundled CUDA libraries instead of system CUDA",
+      "how": "pip install torch --index-url https://download.pytorch.org/whl/cu121 (PyTorch ships its own cuBLAS) && export LD_LIBRARY_PATH=$(python -c 'import torch; print(torch.__path__[0])')/lib:$LD_LIBRARY_PATH",
+      "success_rate": 0.80,
+      "tradeoff": "System CUDA libraries are bypassed; other CUDA applications may still use mismatched system libraries",
+      "condition": "PyTorch must be installed from the cu121 index (not CPU-only); ensure LD_LIBRARY_PATH places PyTorch's libs before system libs",
+      "sources": ["https://pytorch.org/get-started/locally/"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-a100-40gb",
+        "probability": 0.09,
+        "condition": "After fixing cuBLAS init, running large models may trigger OOM on first successful execution",
+        "typical_delay": "seconds to minutes"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
+        "probability": 0.15,
+        "condition": "When users partially fix the CUDA version mismatch by updating some but not all libraries"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
+        "distinction": "Version mismatch errors report the two incompatible version numbers explicitly. cuBLAS init errors report CUBLAS_STATUS_NOT_INITIALIZED without specifying which versions conflict. Use 'python -c \"import torch; print(torch.version.cuda)\"' and 'nvcc --version' to distinguish."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 22,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

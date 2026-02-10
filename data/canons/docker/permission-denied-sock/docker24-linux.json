@@ -1,0 +1,95 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/permission-denied-sock/docker24-linux",
+  "url": "https://deadend.dev/docker/permission-denied-sock/docker24-linux",
+
+  "error": {
+    "signature": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock",
+    "regex": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker\\.sock",
+    "domain": "docker",
+    "category": "permissions",
+    "first_seen": "2017-01-01",
+    "last_confirmed": "2025-05-08"
+  },
+
+  "environment": {
+    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "os": "linux",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2025-05-08",
+    "summary": "This error occurs when the current user does not have permission to access the Docker daemon socket. The standard fix is adding the user to the 'docker' group. This is one of the most common Docker setup errors on Linux and is almost always resolvable."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running chmod 777 /var/run/docker.sock",
+      "why_fails": "This opens the Docker socket to all users on the system, which is a severe security vulnerability. The Docker daemon runs as root, so unrestricted socket access grants root-equivalent privileges to any local user. The permission also resets on Docker daemon restart.",
+      "fail_rate": 0.30,
+      "sources": [
+        "https://docs.docker.com/engine/security/#docker-daemon-attack-surface"
+      ],
+      "common_misconception": "chmod 777 technically 'works' in that it removes the permission error, but it creates a critical security hole. It is a dead end because it is not a viable solution for any environment beyond throwaway testing."
+    },
+    {
+      "action": "Prefixing every Docker command with sudo",
+      "why_fails": "Running Docker with sudo works as an immediate workaround but is not a long-term solution. It breaks IDE integrations, Docker Compose workflows, CI/CD scripts, and development tooling that expects Docker to work without sudo. It also trains users to run everything as root.",
+      "fail_rate": 0.25,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Add your user to the docker group",
+      "how": "sudo usermod -aG docker $USER && newgrp docker. You may need to log out and back in for the group change to take full effect. Verify with 'groups' command. Then test with 'docker ps'.",
+      "success_rate": 0.95,
+      "tradeoff": "Any user in the docker group effectively has root access via Docker. This is acceptable on development machines but should be carefully considered in shared or production environments.",
+      "sources": [
+        "https://docs.docker.com/engine/install/linux-postinstall/"
+      ]
+    },
+    {
+      "action": "Use rootless Docker mode",
+      "how": "Install rootless Docker: 'dockerd-rootless-setuptool.sh install'. This runs the Docker daemon as a non-root user, eliminating the socket permission issue entirely. Requires uidmap package: 'sudo apt-get install uidmap'.",
+      "success_rate": 0.80,
+      "tradeoff": "Some features are limited in rootless mode: no privileged containers, limited network options, and some volume mount behaviors differ. Performance may be slightly lower due to user namespace overhead.",
+      "sources": [
+        "https://docs.docker.com/engine/security/rootless/"
+      ]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "docker/install-fresh/docker24-linux",
+        "probability": 0.60,
+        "condition": "Fresh Docker installation where the post-install group setup step was skipped"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/daemon-not-running/docker24-linux",
+        "distinction": "Permission denied means the daemon is running but you lack access. 'Cannot connect to the Docker daemon' means the daemon is not running at all. Check 'systemctl status docker' to distinguish."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 67,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

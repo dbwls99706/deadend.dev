@@ -210,9 +210,18 @@ def validate_html_json_consistency(
 
 
 def validate_all(
-    data_dir: Path | None = None, site_dir: Path | None = None
+    data_dir: Path | None = None,
+    site_dir: Path | None = None,
+    skip_data_validation: bool = False,
 ) -> bool:
     """Validate canon JSON files and/or generated HTML.
+
+    Args:
+        data_dir: Path to canon JSON data. If provided, loads canons for validation
+            and/or consistency checks.
+        site_dir: Path to generated site. If provided, validates HTML pages.
+        skip_data_validation: If True, loads canon data (for consistency checks)
+            but skips JSON schema/business rule validation.
 
     Returns True if all validations pass (warnings don't cause failure).
     """
@@ -220,7 +229,7 @@ def validate_all(
     all_warnings = []
     all_canons = []
 
-    # Validate canon JSON files
+    # Load and optionally validate canon JSON files
     if data_dir:
         canon_files = list(data_dir.rglob("*.json"))
         if not canon_files:
@@ -231,24 +240,27 @@ def validate_all(
                     with open(canon_file, encoding="utf-8") as f:
                         data = json.load(f)
                     all_canons.append(data)
-                    errors, warnings = validate_canon_json(data)
-                    for error in errors:
-                        all_errors.append(f"{canon_file}: {error}")
-                        print(f"  FAIL: {canon_file}: {error}")
-                    for warning in warnings:
-                        all_warnings.append(f"{canon_file}: {warning}")
-                        print(f"  WARN: {canon_file}: {warning}")
-                    if not errors:
-                        print(f"  OK: {canon_file}")
+
+                    if not skip_data_validation:
+                        errors, warnings = validate_canon_json(data)
+                        for error in errors:
+                            all_errors.append(f"{canon_file}: {error}")
+                            print(f"  FAIL: {canon_file}: {error}")
+                        for warning in warnings:
+                            all_warnings.append(f"{canon_file}: {warning}")
+                            print(f"  WARN: {canon_file}: {warning}")
+                        if not errors:
+                            print(f"  OK: {canon_file}")
                 except json.JSONDecodeError as e:
                     all_errors.append(f"{canon_file}: Invalid JSON: {e}")
                     print(f"  FAIL: {canon_file}: Invalid JSON: {e}")
 
-            # Cross-reference validation (warnings only)
-            xref_warnings = validate_cross_references(all_canons)
-            for warning in xref_warnings:
-                all_warnings.append(warning)
-                print(f"  WARN: {warning}")
+            if not skip_data_validation:
+                # Cross-reference validation (warnings only)
+                xref_warnings = validate_cross_references(all_canons)
+                for warning in xref_warnings:
+                    all_warnings.append(warning)
+                    print(f"  WARN: {warning}")
 
     # Validate HTML files if site_dir provided
     if site_dir and site_dir.exists():
@@ -304,7 +316,8 @@ def main():
     print("Validating ErrorCanon data and site...\n")
 
     if args.site_only:
-        success = validate_all(data_dir=data_dir, site_dir=site_dir)
+        # HTML validation + JSON-HTML consistency (loads canon data for comparison)
+        success = validate_all(data_dir=data_dir, site_dir=site_dir, skip_data_validation=True)
     elif args.data_only:
         success = validate_all(data_dir=data_dir, site_dir=None)
     else:

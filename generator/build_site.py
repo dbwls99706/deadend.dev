@@ -68,9 +68,9 @@ def collect_sources(canon: dict) -> list[str]:
     return sorted(sources)
 
 
-def build_error_pages(canons: list[dict], env: Environment) -> None:
+def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
     """Generate individual error pages."""
-    template = env.get_template("page.html")
+    template = jinja_env.get_template("page.html")
     known_ids = {c["id"] for c in canons}
 
     for canon in canons:
@@ -110,9 +110,9 @@ def build_error_pages(canons: list[dict], env: Environment) -> None:
         print(f"  Generated: {error_id}")
 
 
-def build_domain_pages(canons: list[dict], env: Environment) -> None:
+def build_domain_pages(canons: list[dict], jinja_env: Environment) -> None:
     """Generate domain listing pages (e.g., /python/, /node/)."""
-    template = env.get_template("domain.html")
+    template = jinja_env.get_template("domain.html")
 
     # Group canons by domain
     by_domain: dict[str, list[dict]] = {}
@@ -144,9 +144,9 @@ def build_domain_pages(canons: list[dict], env: Environment) -> None:
         print(f"  Generated: /{domain}/")
 
 
-def build_index_page(canons: list[dict], env: Environment) -> None:
+def build_index_page(canons: list[dict], jinja_env: Environment) -> None:
     """Generate the main index page."""
-    template = env.get_template("index.html")
+    template = jinja_env.get_template("index.html")
 
     # Compute domain stats
     domain_counts: dict[str, int] = {}
@@ -284,6 +284,12 @@ def build_404_page() -> None:
     print("  Generated: 404.html")
 
 
+def build_cname() -> None:
+    """Generate CNAME file for custom domain."""
+    (SITE_DIR / "CNAME").write_text("deadend.dev\n", encoding="utf-8")
+    print("  Generated: CNAME")
+
+
 def build_llms_txt() -> None:
     """Generate llms.txt for AI agent discovery."""
     content = """# deadend.dev
@@ -341,6 +347,10 @@ def main():
 
     print("Generating 404.html...")
     build_404_page()
+    print()
+
+    print("Generating CNAME...")
+    build_cname()
     print()
 
     print("Generating llms.txt...")

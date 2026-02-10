@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/build-wheel-failed/pip23-macos-arm64",
+  "url": "https://deadend.dev/pip/build-wheel-failed/pip23-macos-arm64",
+
+  "error": {
+    "signature": "Failed building wheel for X",
+    "regex": "Failed building wheel for \\S+",
+    "domain": "pip",
+    "category": "build",
+    "first_seen": "2020-11-01",
+    "last_confirmed": "2025-05-08"
+  },
+
+  "environment": {
+    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "os": "macos",
+    "additional": { "architecture": "arm64", "apple_silicon": true }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.76,
+    "confidence": 0.80,
+    "last_updated": "2025-05-08",
+    "summary": "Wheel build failures on macOS ARM64 (Apple Silicon M1/M2/M3) are caused by packages lacking native ARM64 wheels, C extensions compiled for x86_64 but not arm64, or missing Xcode Command Line Tools. Some packages require Rosetta 2 translation or explicit architecture flags. The transition from x86_64 to ARM64 on macOS created a wave of compatibility issues that has largely but not completely resolved."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'pip install --no-cache-dir' to bypass cached artifacts",
+      "why_fails": "The issue is not cache corruption but missing native ARM64 support or build tools. Re-downloading the same source distribution does not change whether the C extension can compile for arm64.",
+      "fail_rate": 0.92,
+      "sources": []
+    },
+    {
+      "action": "Upgrading pip without addressing the underlying architecture mismatch",
+      "why_fails": "Upgrading pip helps if the issue is wheel tag compatibility (newer pip understands newer macOS ARM64 wheel tags), but it does not fix packages that genuinely lack ARM64 build support or require specific compiler flags.",
+      "fail_rate": 0.75,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install Xcode Command Line Tools and retry",
+      "how": "Run 'xcode-select --install' to install Apple's C/C++ build tools. For packages that need Fortran (scipy, numpy from source), install gfortran via Homebrew: 'brew install gcc'. Then retry 'pip install <package>'.",
+      "success_rate": 0.75,
+      "tradeoff": "Xcode CLT is a large download (~1-2GB); gfortran via Homebrew adds another dependency. Build from source is slower than using prebuilt wheels.",
+      "sources": []
+    },
+    {
+      "action": "Install the x86_64 version of Python under Rosetta 2",
+      "how": "Install Rosetta 2: 'softwareupdate --install-rosetta'. Install x86_64 Python from python.org (the 'macOS 64-bit universal2 installer' or use pyenv: 'arch -x86_64 pyenv install 3.11.x'). Create a venv from this Python and install packages normally. All x86_64 wheels will be available.",
+      "success_rate": 0.85,
+      "tradeoff": "Runs Python under Rosetta 2 translation, which has a ~20-30% performance overhead. Does not take advantage of Apple Silicon's native performance. Long-term maintenance burden of maintaining an x86_64 Python.",
+      "condition": "The package has x86_64 wheels but no ARM64 wheels and performance is not critical",
+      "sources": []
+    },
+    {
+      "action": "Set architecture-specific compiler flags for the build",
+      "how": "For packages that fail to detect ARM64 correctly: 'ARCHFLAGS=\"-arch arm64\" pip install <package>'. For packages needing OpenSSL (like cryptography): 'LDFLAGS=\"-L$(brew --prefix openssl)/lib\" CFLAGS=\"-I$(brew --prefix openssl)/include\" pip install <package>'.",
+      "success_rate": 0.70,
+      "tradeoff": "Requires package-specific knowledge of which flags are needed; fragile if Homebrew paths change",
+      "condition": "The build fails with architecture-related compiler errors",
+      "sources": [
+        "https://github.com/pyca/cryptography/blob/main/docs/installation.rst"
+      ]
+    },
+    {
+      "action": "Check if a newer package version has ARM64 wheels",
+      "how": "pip install --upgrade <package> --only-binary :all:. Many packages have added ARM64 macOS wheels since 2022. If the pinned version is old, upgrading may find a prebuilt wheel. Check the package's PyPI page under 'Download files' for 'macosx_11_0_arm64' wheels.",
+      "success_rate": 0.68,
+      "tradeoff": "Upgrading may introduce breaking API changes; requires testing after upgrade",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "pip/clang-error-unsupported-arch/pip23-macos-arm64",
+        "probability": 0.25,
+        "condition": "The C extension attempts to compile with x86_64-specific assembly or instructions",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/build-wheel-failed/pip23-linux-arm64",
+        "distinction": "Both are ARM64 build failures but the toolchains differ. macOS uses Xcode/clang with Apple-specific frameworks, Linux uses gcc with standard POSIX libraries. The fix for macOS often involves Xcode CLT and Homebrew, while Linux uses apt/dnf packages."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 37,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

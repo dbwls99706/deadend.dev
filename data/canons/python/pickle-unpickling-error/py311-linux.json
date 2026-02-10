@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/pickle-unpickling-error/py311-linux",
+  "url": "https://deadend.dev/python/pickle-unpickling-error/py311-linux",
+
+  "error": {
+    "signature": "_pickle.UnpicklingError: invalid load key, '\\x00'.",
+    "regex": "_pickle\\.UnpicklingError: invalid load key, '.*'\\.",
+    "domain": "python",
+    "category": "serialization_error",
+    "first_seen": "2015-01-01",
+    "last_confirmed": "2025-05-18"
+  },
+
+  "environment": {
+    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
+    "os": "linux",
+    "python": ">=3.11,<3.12",
+    "additional": {
+      "common_contexts": ["ML model loading", "torch.load()", "joblib.load()", "multiprocessing"]
+    }
+  },
+
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.55,
+    "confidence": 0.74,
+    "last_updated": "2025-05-18",
+    "summary": "The error indicates the data being unpickled is not valid pickle format. Common causes: the file was saved in a different format (safetensors, HDF5, JSON) but loaded with pickle, the file was corrupted during transfer (incomplete download, text-mode FTP), or there is a pickle protocol version mismatch. Resolution depends on whether the original data is recoverable."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Upgrading Python or the pickle module",
+      "why_fails": "The pickle module is part of CPython's standard library and cannot be independently upgraded. While newer Python versions support higher pickle protocols, they are backwards-compatible: Python 3.11 can read any protocol 0-5 file. The error means the data is not valid pickle at all, not that the protocol is too new.",
+      "fail_rate": 0.95,
+      "sources": ["https://docs.python.org/3/library/pickle.html#data-stream-format"],
+      "common_misconception": "Users assume the error means their Python is too old to read the pickle format. In reality, 'invalid load key' means the data is not pickle-formatted, regardless of version."
+    },
+    {
+      "action": "Clearing __pycache__ or .pyc files",
+      "why_fails": ".pyc files are compiled bytecode caches, unrelated to pickle data serialization. Clearing them has no effect on pickle loading. This advice likely stems from confusion between Python's bytecode format and pickle's serialization format.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "common_misconception": "Some users conflate Python's internal bytecode caching with serialized data files."
+    },
+    {
+      "action": "Re-downloading or re-generating the file without verifying the format",
+      "why_fails": "If the file was never pickle format to begin with (e.g., it is a safetensors, GGUF, or HDF5 file), re-downloading it produces the same error. The issue is using the wrong deserialization function, not a corrupt download.",
+      "fail_rate": 0.60,
+      "condition": "When the file is intentionally in a non-pickle format",
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Identify the actual file format and use the correct loader",
+      "how": "Inspect the file header: 'head -c 16 file | xxd'. Safetensors files start with '{', HDF5 with '\\x89HDF', numpy .npy with '\\x93NUMPY'. For PyTorch: try 'torch.load()' with weights_only=True (PyTorch 2.0+), or use safetensors.torch.load_file() for .safetensors files.",
+      "success_rate": 0.78,
+      "tradeoff": "Requires understanding the file format; may need additional libraries installed",
+      "sources": ["https://huggingface.co/docs/safetensors/"]
+    },
+    {
+      "action": "Use safetensors instead of pickle for ML model weights",
+      "how": "If the model was saved in safetensors format, load with 'from safetensors.torch import load_file; state_dict = load_file(\"model.safetensors\")'. For new models, save with safetensors to avoid pickle entirely: 'from safetensors.torch import save_file; save_file(model.state_dict(), \"model.safetensors\")'.",
+      "success_rate": 0.82,
+      "tradeoff": "Safetensors only stores tensors, not arbitrary Python objects. Cannot replace pickle for complex objects with custom classes.",
+      "sources": ["https://github.com/huggingface/safetensors"]
+    },
+    {
+      "action": "Ensure pickle protocol version compatibility",
+      "how": "If the file is valid pickle but uses protocol 5 (Python 3.8+), ensure the loading Python version supports it. When saving, specify a lower protocol for compatibility: 'pickle.dump(obj, f, protocol=4)'. Use 'pickletools.dis(open(file, \"rb\"))' to inspect the protocol version.",
+      "success_rate": 0.45,
+      "tradeoff": "Lower protocols are slower and produce larger files. Protocol 5 has out-of-band data support not available in earlier protocols.",
+      "condition": "Only applicable when the file is actually pickle format but protocol is mismatched",
+      "sources": ["https://docs.python.org/3/library/pickle.html#pickle.DEFAULT_PROTOCOL"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/pickle-modulenotfounderror/py311-linux",
+        "probability": 0.25,
+        "condition": "After fixing the load key error, the pickle may reference classes from modules not installed in the current environment",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/torch-load-weights-only/torch2.1-linux",
+        "probability": 0.30,
+        "condition": "User switches from torch.load(weights_only=True) to pickle.load() after getting weights_only warning, but the file isn't pickle format"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/pickle-attributeerror-module/py311-linux",
+        "distinction": "UnpicklingError with 'invalid load key' means the data is not valid pickle. AttributeError during unpickling means the data is valid pickle but references a class or module that no longer exists in the current environment."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 41,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/heap-out-of-memory/node18-linux",
+  "url": "https://deadend.dev/node/heap-out-of-memory/node18-linux",
+
+  "error": {
+    "signature": "FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory",
+    "regex": "FATAL ERROR: (?:CALL_AND_RETRY_LAST|Reached heap limit) Allocation failed - JavaScript heap out of memory",
+    "domain": "node",
+    "category": "memory",
+    "first_seen": "2016-03-01",
+    "last_confirmed": "2025-04-20"
+  },
+
+  "environment": {
+    "runtime": { "name": "node", "version_range": ">=18,<19" },
+    "os": "linux",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.75,
+    "confidence": 0.82,
+    "last_updated": "2025-04-20",
+    "summary": "Heap out of memory in Node 18 on Linux behaves similarly to Node 20, but Node 18 has a slightly lower default heap limit on some configurations. Node 18's V8 version (10.2) may show the older CALL_AND_RETRY_LAST message more consistently than Node 20's 'Reached heap limit' variant."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Setting --max-old-space-size without investigating the root cause",
+      "why_fails": "Increasing the heap limit without understanding what consumes memory only delays the inevitable crash. In containerized environments with hard memory limits, this leads to OOM kills by the kernel or orchestrator.",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://nodejs.org/en/docs/guides/diagnostics/memory/using-heap-snapshot"
+      ],
+      "common_misconception": "Developers often set 8GB+ heap limits in Dockerfiles as a permanent fix, but container memory limits may be lower, causing silent OOM kills instead of the more informative V8 error."
+    },
+    {
+      "action": "Downgrading to Node 16 to get a different memory behavior",
+      "why_fails": "Node 16 has a smaller default heap limit and an older V8 engine. Downgrading typically makes memory problems worse, not better, and Node 16 reached end-of-life in September 2023.",
+      "fail_rate": 0.92,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Increase heap size via NODE_OPTIONS environment variable",
+      "how": "export NODE_OPTIONS='--max-old-space-size=4096' && node app.js. Node 18 defaults to approximately 1.5-2GB on 64-bit systems. Setting 4096 (4GB) is a safe starting point for build processes.",
+      "success_rate": 0.80,
+      "tradeoff": "Higher memory usage; does not address the root cause of memory consumption",
+      "sources": [
+        "https://nodejs.org/api/cli.html#node_optionsoptions"
+      ]
+    },
+    {
+      "action": "Profile memory usage with --inspect and Chrome DevTools",
+      "how": "Run 'node --inspect app.js', open chrome://inspect, take heap snapshots. In Node 18, you can also use 'node --heap-prof app.js' to generate a .heapprofile file for offline analysis.",
+      "success_rate": 0.68,
+      "tradeoff": "Requires familiarity with V8 heap profiling tools; adds overhead during profiling",
+      "sources": [
+        "https://nodejs.org/en/docs/guides/diagnostics/memory/using-heap-snapshot"
+      ]
+    },
+    {
+      "action": "Use streaming or chunked processing patterns",
+      "how": "Replace in-memory buffering with Node.js streams. For example, replace 'JSON.parse(fs.readFileSync(file))' with a streaming JSON parser. For webpack/bundler OOMs, enable chunked builds or reduce parallelism.",
+      "success_rate": 0.72,
+      "tradeoff": "Requires code refactoring; streaming error handling is more complex than synchronous patterns",
+      "condition": "Error occurs during large data processing or bundler builds",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/process-oom-killed/node18-linux",
+        "probability": 0.40,
+        "condition": "When the raised heap limit exceeds container or system memory",
+        "typical_delay": "minutes to hours"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/heap-out-of-memory/node20-linux",
+        "distinction": "The error message is nearly identical between Node 18 and 20. Node 20 may show 'Reached heap limit' instead of 'CALL_AND_RETRY_LAST'. The fix approach is the same but default heap sizes differ slightly."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 38,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

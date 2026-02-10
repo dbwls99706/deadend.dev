@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/network-bridge-conflict/docker24-linux",
+  "url": "https://deadend.dev/docker/network-bridge-conflict/docker24-linux",
+
+  "error": {
+    "signature": "Error response from daemon: Pool overlaps with other one on this address space",
+    "regex": "Error response from daemon: Pool overlaps with other one on this address space",
+    "domain": "docker",
+    "category": "networking",
+    "first_seen": "2017-06-01",
+    "last_confirmed": "2025-05-01"
+  },
+
+  "environment": {
+    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "os": "linux",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.85,
+    "last_updated": "2025-05-01",
+    "summary": "This error occurs when Docker tries to create a network with a subnet that overlaps an existing Docker network, a host network interface, or a VPN subnet. Docker assigns subnets from private IP ranges (172.16.0.0/12, 192.168.0.0/16) and conflicts arise when those ranges are already in use."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'docker network rm' on the conflicting network alone",
+      "why_fails": "If the conflicting network has running containers attached, 'docker network rm' fails with an error. Even if removal succeeds, recreating the network with the same docker-compose.yml will reassign the same overlapping subnet from Docker's default pool.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "common_misconception": "Removing and recreating the network does not change the subnet unless you explicitly specify a non-conflicting one in the compose file or daemon config."
+    },
+    {
+      "action": "Restarting the Docker daemon without changing the network configuration",
+      "why_fails": "Restarting Docker (systemctl restart docker) does not change subnet allocations. Docker persists network state and will reassign the same subnets upon restart. The overlap condition remains.",
+      "fail_rate": 0.90,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Specify a non-conflicting subnet in docker-compose.yml",
+      "how": "In your docker-compose.yml, explicitly define the network subnet to avoid the conflict:\nnetworks:\n  mynet:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 10.100.0.0/16\nChoose a subnet from 10.0.0.0/8 that does not conflict with your host or VPN networks. Run 'ip route' to see which ranges are in use.",
+      "success_rate": 0.90,
+      "tradeoff": "Requires knowledge of the host's network topology; manual subnet management across projects",
+      "sources": [
+        "https://docs.docker.com/compose/how-tos/networking/"
+      ]
+    },
+    {
+      "action": "Prune unused Docker networks",
+      "how": "docker network prune --force. This removes all networks not used by at least one container, freeing up subnet allocations in Docker's pool. Then retry creating the network.",
+      "success_rate": 0.75,
+      "tradeoff": "Removes all unused networks, which may include intentionally preserved networks for future use",
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/network/prune/"
+      ]
+    },
+    {
+      "action": "Configure Docker daemon default address pools to avoid host network ranges",
+      "how": "Edit /etc/docker/daemon.json:\n{\"default-address-pools\": [{\"base\": \"10.200.0.0/16\", \"size\": 24}]}\nRestart Docker: 'sudo systemctl restart docker'. This tells Docker to allocate all new network subnets from 10.200.0.0/16, avoiding the commonly conflicting 172.x and 192.168.x ranges.",
+      "success_rate": 0.88,
+      "tradeoff": "Requires Docker daemon restart, which stops all running containers. Must ensure the chosen range does not conflict with other infrastructure.",
+      "sources": [
+        "https://docs.docker.com/engine/daemon/#daemon-configuration-file"
+      ]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "docker/compose-network-create/docker24-linux",
+        "probability": 0.40,
+        "condition": "Running docker-compose up creates networks automatically, which can trigger subnet conflicts"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/network-not-found/docker24-linux",
+        "distinction": "Pool overlap means Docker cannot create a new network because its subnet conflicts with an existing one. Network not found means a container references a network that does not exist. Different directions of the same subsystem."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 27,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

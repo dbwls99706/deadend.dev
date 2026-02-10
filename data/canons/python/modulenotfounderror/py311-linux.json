@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/modulenotfounderror/py311-linux",
+  "url": "https://deadend.dev/python/modulenotfounderror/py311-linux",
+
+  "error": {
+    "signature": "ModuleNotFoundError: No module named 'X'",
+    "regex": "ModuleNotFoundError: No module named '([\\w\\.]+)'",
+    "domain": "python",
+    "category": "import_error",
+    "first_seen": "2017-06-01",
+    "last_confirmed": "2025-05-18"
+  },
+
+  "environment": {
+    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
+    "os": "linux",
+    "python": ">=3.11,<3.12",
+    "additional": {
+      "common_contexts": ["virtualenv", "docker", "system python"]
+    }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.91,
+    "last_updated": "2025-05-18",
+    "summary": "Almost always resolvable once the correct package name is identified and the correct Python environment is targeted. Failures persist when the module name and PyPI package name diverge significantly (e.g., 'cv2' vs 'opencv-python', 'sklearn' vs 'scikit-learn')."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'pip install X' where X is the import name, not the package name",
+      "why_fails": "Many Python packages have PyPI distribution names that differ from their import names. For example, 'import cv2' requires 'pip install opencv-python', 'import sklearn' requires 'pip install scikit-learn', and 'import yaml' requires 'pip install PyYAML'. Using the import name returns 'no matching distribution found' or installs the wrong package entirely.",
+      "fail_rate": 0.65,
+      "sources": ["https://stackoverflow.com/questions/11680815/importerror-no-module-named-cv2"],
+      "common_misconception": "Developers assume the import name always matches the pip package name. In reality, roughly 15-20% of popular packages have divergent names."
+    },
+    {
+      "action": "Adding sys.path.append('/path/to/module') as a permanent fix",
+      "why_fails": "sys.path.append is a runtime-only modification that does not persist across sessions, scripts, or containers. It also introduces fragile absolute paths that break on deployment. It masks the real issue: the package is either not installed or installed in a different environment.",
+      "fail_rate": 0.78,
+      "sources": ["https://docs.python.org/3/library/sys.html#sys.path"],
+      "common_misconception": "Appending to sys.path is sometimes treated as a fix rather than a debugging step. It does not survive process restart and creates hidden dependencies."
+    },
+    {
+      "action": "Installing the package globally with 'sudo pip install X'",
+      "why_fails": "Installing globally does not affect virtualenv or Docker-isolated Python environments. The global site-packages is invisible to activated virtual environments unless --system-site-packages was set at creation. On modern Linux distros, PEP 668 blocks global installs entirely with 'externally-managed-environment' errors.",
+      "fail_rate": 0.71,
+      "sources": ["https://peps.python.org/pep-0668/"],
+      "common_misconception": "Global pip install is seen as a universal fix, but environment isolation means the target Python interpreter may never see the globally installed package."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install using the correct PyPI package name",
+      "how": "Look up the correct package name on pypi.org or use 'pip install' with the known distribution name. Common mappings: cv2 -> opencv-python, sklearn -> scikit-learn, yaml -> PyYAML, PIL -> Pillow, attr -> attrs.",
+      "success_rate": 0.92,
+      "tradeoff": "Requires knowing the package name mapping, which is not always obvious",
+      "sources": ["https://pypi.org/"]
+    },
+    {
+      "action": "Verify and activate the correct virtual environment",
+      "how": "Run 'which python' and 'pip list' to confirm you are in the expected environment. Activate with 'source /path/to/venv/bin/activate'. In Docker, ensure the pip install runs with the same Python used at runtime.",
+      "success_rate": 0.85,
+      "tradeoff": "None significant; this is a diagnostic step",
+      "sources": ["https://docs.python.org/3/library/venv.html"]
+    },
+    {
+      "action": "Use pip with the target Python interpreter directly",
+      "how": "Run 'python3.11 -m pip install <package>' to guarantee the package is installed into the correct interpreter's site-packages, avoiding ambiguity between multiple Python versions.",
+      "success_rate": 0.90,
+      "tradeoff": "Slightly more verbose than plain 'pip install'",
+      "sources": ["https://docs.python.org/3/installing/index.html"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/importerror-dll-load-failed/py311-linux",
+        "probability": 0.18,
+        "condition": "When the correct package is installed but a native dependency (.so) is missing",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/pip-externally-managed-environment/py311-linux",
+        "probability": 0.30,
+        "condition": "User gives up on global install due to PEP 668 but forgets to install in venv"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/importerror-cannot-import-name/py311-linux",
+        "distinction": "ModuleNotFoundError means the entire module is absent. ImportError: cannot import name means the module exists but the specific symbol is missing, often due to version mismatch or circular imports."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 128,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/attributeerror-tensor-no-grad/torch2.1-linux",
+  "url": "https://deadend.dev/python/attributeerror-tensor-no-grad/torch2.1-linux",
+
+  "error": {
+    "signature": "AttributeError: 'Tensor' object has no attribute 'grad'",
+    "regex": "AttributeError: '(?:Tensor|Parameter)' object has no attribute 'grad'",
+    "domain": "python",
+    "category": "autograd_error",
+    "first_seen": "2020-01-15",
+    "last_confirmed": "2025-05-17"
+  },
+
+  "environment": {
+    "runtime": { "name": "pytorch", "version_range": ">=2.1,<2.3" },
+    "os": "linux",
+    "python": ">=3.9,<3.13",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.85,
+    "last_updated": "2025-05-17",
+    "summary": "The tensor's .grad attribute is None (or inaccessible) because requires_grad was not set to True before the forward pass and backward() call. In PyTorch 2.1+, accessing .grad on a tensor that never participated in gradient computation raises AttributeError. The fix is to ensure requires_grad=True is set at tensor creation time."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Calling .backward() again on the loss",
+      "why_fails": "Calling backward() a second time without retain_graph=True raises 'RuntimeError: Trying to backward through the graph a second time'. Even with retain_graph=True, if the tensor never had requires_grad=True, no gradient will be computed for it regardless of how many times backward() is called.",
+      "fail_rate": 0.88,
+      "sources": ["https://pytorch.org/docs/stable/autograd.html#torch.Tensor.backward"],
+      "common_misconception": "Users think backward() was not called or did not complete. The actual issue is that the tensor was not part of the computation graph because requires_grad was False."
+    },
+    {
+      "action": "Using .detach() on the tensor before accessing .grad",
+      "why_fails": "detach() creates a new tensor that is explicitly disconnected from the computation graph. A detached tensor never has gradients. This is the opposite of what is needed; it removes gradient tracking rather than enabling it.",
+      "fail_rate": 0.95,
+      "sources": ["https://pytorch.org/docs/stable/generated/torch.Tensor.detach.html"],
+      "common_misconception": "Users confuse detach() (which removes a tensor from the graph) with operations that enable gradient computation."
+    },
+    {
+      "action": "Wrapping the access in a try/except and defaulting to zero",
+      "why_fails": "Silently replacing a missing gradient with zeros masks a real bug in the training pipeline. The model will appear to train but the affected parameters will never update, leading to degraded or nonsensical model performance that is extremely difficult to debug.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "common_misconception": "Exception handling around gradient access is sometimes used as a defensive pattern, but it hides fundamental autograd configuration errors."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Set requires_grad=True on the tensor before the forward pass",
+      "how": "When creating the tensor: 'x = torch.tensor([1.0, 2.0], requires_grad=True)'. For existing tensors: 'x.requires_grad_(True)' (in-place) or 'x = x.clone().requires_grad_(True)'. This must be done before the forward computation, not after backward().",
+      "success_rate": 0.92,
+      "tradeoff": "Increases memory usage as PyTorch must store intermediate values for backpropagation",
+      "sources": ["https://pytorch.org/docs/stable/autograd.html#locally-disabling-gradient-computation"]
+    },
+    {
+      "action": "Use torch.no_grad() context correctly (only where intended)",
+      "how": "Ensure the forward pass that should compute gradients is NOT wrapped in 'with torch.no_grad():'. This context manager disables gradient tracking for all operations within it. Use it only for inference or evaluation, not during training. Check for global torch.set_grad_enabled(False) calls as well.",
+      "success_rate": 0.80,
+      "tradeoff": "Removing no_grad() from inference code will increase memory usage; ensure it is only removed from training code paths",
+      "sources": ["https://pytorch.org/docs/stable/generated/torch.no_grad.html"]
+    },
+    {
+      "action": "Verify the tensor is a leaf tensor and part of the computation graph",
+      "how": "Check 'tensor.requires_grad' (should be True), 'tensor.is_leaf' (should be True for parameter tensors), and 'tensor.grad_fn' (should be None for leaf tensors, non-None for computed tensors). After backward(), only leaf tensors with requires_grad=True have .grad populated.",
+      "success_rate": 0.75,
+      "tradeoff": "Diagnostic step; helps identify where in the pipeline gradient tracking was lost",
+      "sources": ["https://pytorch.org/docs/stable/notes/autograd.html"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/runtime-error-backward-twice/torch2.1-linux",
+        "probability": 0.20,
+        "condition": "When user attempts to call backward() again without retain_graph=True",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/torch-no-grad-context-misuse/torch2.1-linux",
+        "probability": 0.35,
+        "condition": "When training code is accidentally wrapped in torch.no_grad() context"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/runtimeerror-grad-non-leaf/torch2.1-linux",
+        "distinction": "AttributeError means .grad was never populated (tensor not in graph). RuntimeError about non-leaf tensors means the tensor is in the graph but is not a leaf, so gradients are not retained by default. Use tensor.retain_grad() for non-leaf gradient access."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 38,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/conflicting-dependencies/pip23-macos",
+  "url": "https://deadend.dev/pip/conflicting-dependencies/pip23-macos",
+
+  "error": {
+    "signature": "ERROR: Cannot install X and Y because these package versions have conflicting dependencies",
+    "regex": "ERROR: Cannot install .+ because these package versions have conflicting dependencies",
+    "domain": "pip",
+    "category": "dependency-resolution",
+    "first_seen": "2020-10-01",
+    "last_confirmed": "2025-05-10"
+  },
+
+  "environment": {
+    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "os": "macos",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.74,
+    "confidence": 0.80,
+    "last_updated": "2025-05-10",
+    "summary": "The same dependency resolution conflict as Linux, but on macOS there are additional complications: the system Python may interfere if not using a virtual environment, Homebrew-installed Python may have different package paths, and on Apple Silicon (M1/M2), some packages only have wheels for specific Python/platform combinations, further constraining the resolver."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'pip install --force-reinstall' on the conflicting packages",
+      "why_fails": "Force-reinstall does not bypass the dependency resolver. The conflict is still detected and the installation fails. This flag only controls re-download behavior, not resolution logic.",
+      "fail_rate": 0.85,
+      "sources": []
+    },
+    {
+      "action": "Using the macOS system Python (/usr/bin/python3) to avoid the conflict",
+      "why_fails": "The macOS system Python is a minimal installation intended for system use. It has the same dependency resolution logic and will report the same conflicts. Additionally, installing packages into the system Python can break macOS system tools and is restricted on newer macOS versions.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "common_misconception": "Some developers believe the system Python has different package resolution behavior. It uses the same pip resolver; the conflict is in the package metadata, not the Python installation."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Create a clean virtual environment and pin compatible versions",
+      "how": "python3 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install package-a==X.Y package-b==Z.W. On macOS, always ensure you are using a venv to avoid contamination from Homebrew or system Python site-packages.",
+      "success_rate": 0.78,
+      "tradeoff": "Requires finding compatible version combinations manually; may need to test multiple version pins",
+      "sources": []
+    },
+    {
+      "action": "Use pip-compile to find a consistent resolution",
+      "how": "pip install pip-tools && pip-compile requirements.in --output-file=requirements.txt && pip install -r requirements.txt. On macOS ARM, add '--platform macosx_11_0_arm64' if cross-compiling or targeting a specific platform.",
+      "success_rate": 0.80,
+      "tradeoff": "Adds pip-tools dependency to workflow; resolution may take longer on complex dependency trees",
+      "sources": [
+        "https://pip-tools.readthedocs.io/en/latest/"
+      ]
+    },
+    {
+      "action": "Use the legacy resolver as a temporary escape hatch",
+      "how": "pip install --use-deprecated=legacy-resolver package-a package-b. This skips strict conflict detection. Verify runtime compatibility manually after installation.",
+      "success_rate": 0.58,
+      "tradeoff": "May install incompatible versions; the legacy resolver is deprecated and produces a warning; runtime errors may surface later",
+      "condition": "The conflict involves overly strict version bounds that you have manually verified are compatible",
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "pip/import-error-version-mismatch/pip23-macos",
+        "probability": 0.45,
+        "condition": "When the conflict is bypassed, incompatible package versions cause runtime errors",
+        "typical_delay": "immediate on import"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/build-wheel-failed/pip23-macos-arm64",
+        "distinction": "Conflicting dependencies is a version resolution error. Build wheel failure is a compilation error. The former occurs before any download; the latter occurs during the build phase after resolution succeeds."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 35,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

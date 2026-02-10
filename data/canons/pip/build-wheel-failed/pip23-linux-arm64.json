@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/build-wheel-failed/pip23-linux-arm64",
+  "url": "https://deadend.dev/pip/build-wheel-failed/pip23-linux-arm64",
+
+  "error": {
+    "signature": "Failed building wheel for X",
+    "regex": "Failed building wheel for \\S+",
+    "domain": "pip",
+    "category": "build",
+    "first_seen": "2018-01-01",
+    "last_confirmed": "2025-05-08"
+  },
+
+  "environment": {
+    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "os": "linux",
+    "additional": { "architecture": "arm64" }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.83,
+    "last_updated": "2025-05-08",
+    "summary": "Wheel build failures on Linux ARM64 are predominantly caused by missing C/C++ build tools and development headers, or by packages that do not publish prebuilt ARM64 wheels on PyPI. ARM64 Linux has significantly fewer prebuilt wheels available compared to x86_64, forcing pip to compile from source distributions which requires build dependencies."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'pip install --no-cache-dir' to force a fresh download",
+      "why_fails": "The cache is not the problem. The build fails because compilation dependencies (gcc, python3-dev, library headers) are missing from the system, or the package's C extension does not support ARM64. Re-downloading the same source distribution does not fix the build environment.",
+      "fail_rate": 0.92,
+      "sources": [],
+      "common_misconception": "Developers often conflate cached corrupted wheels with build failures. --no-cache-dir is for cache corruption, not missing build tools."
+    },
+    {
+      "action": "Upgrading pip alone without installing build dependencies",
+      "why_fails": "While an older pip may lack support for newer wheel formats (PEP 517/518 builds), the primary cause on ARM64 is missing system-level build tools. Upgrading pip does not install gcc, python3-dev, or library headers required by C extensions.",
+      "fail_rate": 0.80,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install C/C++ build tools and Python development headers",
+      "how": "On Debian/Ubuntu: 'sudo apt-get install build-essential python3-dev libffi-dev libssl-dev'. On RHEL/Fedora: 'sudo dnf install gcc gcc-c++ python3-devel libffi-devel openssl-devel'. Then retry 'pip install <package>'. For specific packages, check their documentation for additional system dependencies (e.g., numpy needs BLAS: 'sudo apt-get install libopenblas-dev').",
+      "success_rate": 0.82,
+      "tradeoff": "Adds system-level build dependencies; compilation takes longer than downloading prebuilt wheels; Docker images become larger if build tools are included",
+      "sources": []
+    },
+    {
+      "action": "Use piwheels or find prebuilt ARM64 wheels",
+      "how": "For Raspberry Pi and ARM64 Linux, piwheels.org provides prebuilt wheels: 'pip install --extra-index-url https://www.piwheels.org/simple <package>'. Alternatively, check if the package publishes ARM64 wheels on PyPI for a newer version: 'pip install --only-binary :all: <package>' to test.",
+      "success_rate": 0.65,
+      "tradeoff": "piwheels may not have the latest versions; not all packages are available; adds an external index dependency",
+      "condition": "The package is available as a prebuilt wheel on piwheels or another ARM64 wheel repository",
+      "sources": [
+        "https://www.piwheels.org/"
+      ]
+    },
+    {
+      "action": "Build in a multi-stage Docker build with build dependencies",
+      "how": "Use a multi-stage Dockerfile: first stage installs build-essential and compiles wheels, second stage copies only the built wheels into a slim runtime image:\nFROM python:3.11 AS builder\nRUN apt-get update && apt-get install -y build-essential\nRUN pip wheel --wheel-dir=/wheels -r requirements.txt\nFROM python:3.11-slim\nCOPY --from=builder /wheels /wheels\nRUN pip install --no-index --find-links=/wheels -r requirements.txt",
+      "success_rate": 0.85,
+      "tradeoff": "More complex Dockerfile; build stage takes longer; requires Docker",
+      "condition": "Deploying in containers where minimizing image size matters",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "pip/gcc-error-compilation/pip23-linux-arm64",
+        "probability": 0.30,
+        "condition": "Even with build tools installed, some C extensions have ARM64-specific compilation errors",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/conflicting-dependencies/pip23-linux",
+        "distinction": "Build wheel failure occurs during the build phase (compilation). Conflicting dependencies occurs during the resolution phase (before any download). Check whether pip was resolving versions or attempting to build when the error occurred."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 33,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

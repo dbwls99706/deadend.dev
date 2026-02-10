@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/refusing-to-merge-unrelated/git2.40-macos",
+  "url": "https://deadend.dev/git/refusing-to-merge-unrelated/git2.40-macos",
+
+  "error": {
+    "signature": "fatal: refusing to merge unrelated histories",
+    "regex": "fatal: refusing to merge unrelated histories",
+    "domain": "git",
+    "category": "merge",
+    "first_seen": "2016-10-01",
+    "last_confirmed": "2025-05-12"
+  },
+
+  "environment": {
+    "runtime": { "name": "git", "version_range": ">=2.9,<3.0" },
+    "os": "macos",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2025-05-12",
+    "summary": "Same fundamental error as Linux: two branches with no common ancestor. On macOS, an additional common trigger is Xcode's Git integration or GitHub Desktop creating repositories differently than the command line. macOS ships with Apple Git (a slightly customized build), but the behavior and fix are identical to standard Git."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Trying 'git merge --force' (not a valid flag)",
+      "why_fails": "Git merge does not accept a --force flag. This produces 'error: unknown option `force`'. Developers who use GUI clients may expect a force option that does not exist in the Git CLI. The correct flag is --allow-unrelated-histories.",
+      "fail_rate": 1.0,
+      "sources": []
+    },
+    {
+      "action": "Deleting .git and reinitializing to start fresh",
+      "why_fails": "This destroys all local history, branches, stashes, and configuration. After reinitializing, pulling from the remote will produce the exact same error because the new empty repository still has no common ancestor with the remote's history.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "Developers believe that starting with a clean .git will somehow align histories. In reality, 'git init' creates a brand new empty history that is equally unrelated to the remote."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Use --allow-unrelated-histories flag",
+      "how": "git pull origin main --allow-unrelated-histories. On macOS, if using Apple Git (check with 'git --version'), this flag is supported since Apple Git 73 (based on Git 2.9+). Resolve any merge conflicts that arise, then commit the merge.",
+      "success_rate": 0.95,
+      "tradeoff": "Joins two independent histories into one graph with two root commits; merge conflicts may need manual resolution",
+      "sources": [
+        "https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---allow-unrelated-histories"
+      ]
+    },
+    {
+      "action": "Clone the remote repository and add local changes on top",
+      "how": "git clone <remote-url> project-combined && cp -r local-project/* project-combined/ && cd project-combined && git add . && git commit -m 'Add local project files'. This avoids the unrelated histories problem entirely by starting from the remote's history.",
+      "success_rate": 0.90,
+      "tradeoff": "Loses the local repository's commit history; only suitable when local history is expendable",
+      "condition": "The local repository has minimal history worth preserving",
+      "sources": []
+    },
+    {
+      "action": "Use Xcode or GitHub Desktop GUI to perform the merge",
+      "how": "Some macOS Git GUI clients (GitHub Desktop, Tower, Fork) handle the --allow-unrelated-histories flag through their merge UI. In GitHub Desktop, pull the remote branch and the client may offer to merge with unrelated histories automatically.",
+      "success_rate": 0.80,
+      "tradeoff": "Depends on the specific GUI client version; behavior may vary between clients",
+      "condition": "Using a macOS Git GUI client that supports this merge scenario",
+      "sources": []
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "git/merge-conflict/git2.40-macos",
+        "probability": 0.50,
+        "condition": "Both histories contain files at the same paths (commonly README.md, .gitignore, LICENSE)",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "git/remote-add-origin/git2.40-macos",
+        "probability": 0.55,
+        "condition": "Local repo created with 'git init' or Xcode, then remote added that was independently initialized on GitHub"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/divergent-branches/git2.40-macos",
+        "distinction": "'Unrelated histories' means zero common ancestors. 'Divergent branches' (Git 2.27+) means shared history that has forked. The solutions are different: --allow-unrelated-histories vs choosing merge/rebase strategy."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 52,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

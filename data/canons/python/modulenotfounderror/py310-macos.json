@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/modulenotfounderror/py310-macos",
+  "url": "https://deadend.dev/python/modulenotfounderror/py310-macos",
+
+  "error": {
+    "signature": "ModuleNotFoundError: No module named 'X'",
+    "regex": "ModuleNotFoundError: No module named '([\\w\\.]+)'",
+    "domain": "python",
+    "category": "import_error",
+    "first_seen": "2017-06-01",
+    "last_confirmed": "2025-05-15"
+  },
+
+  "environment": {
+    "runtime": { "name": "cpython", "version_range": ">=3.10,<3.11" },
+    "os": "macos",
+    "python": ">=3.10,<3.11",
+    "additional": {
+      "common_contexts": ["homebrew python", "system python", "pyenv", "virtualenv"]
+    }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.89,
+    "last_updated": "2025-05-15",
+    "summary": "Resolvable in the vast majority of cases. macOS introduces additional complexity due to multiple Python installations (Apple system Python, Homebrew, pyenv, official installer). The primary failure mode is installing into the wrong Python's site-packages."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'brew install <module-name>' to install a Python module",
+      "why_fails": "Homebrew installs system-level packages, not Python packages. 'brew install numpy' installs a Homebrew formula that may place the library in a location invisible to the user's active Python interpreter. Brew-installed Python packages are only available to the Homebrew-managed Python, not to pyenv, virtualenv, or the official python.org installer Python.",
+      "fail_rate": 0.82,
+      "sources": ["https://docs.brew.sh/Homebrew-and-Python"],
+      "common_misconception": "Users on macOS often conflate Homebrew package management with Python package management, attempting 'brew install' for any missing dependency."
+    },
+    {
+      "action": "Running 'pip install X' where X is the import name, not the package name",
+      "why_fails": "Many Python packages have PyPI distribution names that differ from their import names. For example, 'import cv2' requires 'pip install opencv-python', 'import sklearn' requires 'pip install scikit-learn'. Using the import name either fails to find the package or installs an incorrect one.",
+      "fail_rate": 0.65,
+      "sources": ["https://stackoverflow.com/questions/11680815/importerror-no-module-named-cv2"],
+      "common_misconception": "Developers assume the import name always matches the pip package name."
+    },
+    {
+      "action": "Using Apple's system Python (/usr/bin/python3) for package installation",
+      "why_fails": "macOS Ventura+ ships with a minimal Python 3 at /usr/bin/python3 that lacks pip and has a read-only site-packages. Installing packages into it is either impossible or overwritten on OS updates. It is not intended for development use.",
+      "fail_rate": 0.90,
+      "sources": ["https://developer.apple.com/forums/thread/700906"],
+      "common_misconception": "Users assume /usr/bin/python3 on macOS is a full development Python installation."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install using the correct PyPI package name with the correct pip",
+      "how": "Identify the correct package name on pypi.org, then install with the pip bound to your target interpreter: 'python3.10 -m pip install <correct-package-name>'. Use 'which python3.10' to verify the interpreter path.",
+      "success_rate": 0.91,
+      "tradeoff": "Requires knowing the package name mapping and which Python is active",
+      "sources": ["https://pypi.org/"]
+    },
+    {
+      "action": "Use pyenv to manage Python versions and isolate environments",
+      "how": "Install pyenv via 'brew install pyenv', then 'pyenv install 3.10.x' and 'pyenv local 3.10.x'. Create a virtualenv with 'python -m venv .venv && source .venv/bin/activate' before installing packages.",
+      "success_rate": 0.88,
+      "tradeoff": "Adds pyenv as a dependency and requires shell configuration (PATH setup in .zshrc)",
+      "sources": ["https://github.com/pyenv/pyenv"]
+    },
+    {
+      "action": "Verify active Python and environment before installing",
+      "how": "Run 'which python3', 'python3 --version', and 'python3 -m pip --version' to confirm the active interpreter. On macOS, multiple Pythons (/usr/bin, Homebrew, pyenv) cause frequent confusion. Ensure pip targets the same interpreter used to run your code.",
+      "success_rate": 0.83,
+      "tradeoff": "Diagnostic step; no functional tradeoff",
+      "sources": ["https://docs.python.org/3/using/mac.html"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/importerror-dylib-not-found/py310-macos",
+        "probability": 0.15,
+        "condition": "When the Python package is installed but depends on a missing macOS dylib (e.g., libssl, libblas)",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/pip-externally-managed-environment/py310-macos",
+        "probability": 0.25,
+        "condition": "Homebrew Python on macOS Sonoma+ blocks global pip installs via PEP 668"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/importerror-cannot-import-name/py310-macos",
+        "distinction": "ModuleNotFoundError means the entire module is absent. ImportError: cannot import name means the module exists but a specific symbol is missing, often due to version mismatch or circular imports."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

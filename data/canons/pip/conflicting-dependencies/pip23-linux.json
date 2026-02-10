@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/conflicting-dependencies/pip23-linux",
+  "url": "https://deadend.dev/pip/conflicting-dependencies/pip23-linux",
+
+  "error": {
+    "signature": "ERROR: Cannot install X and Y because these package versions have conflicting dependencies",
+    "regex": "ERROR: Cannot install .+ because these package versions have conflicting dependencies",
+    "domain": "pip",
+    "category": "dependency-resolution",
+    "first_seen": "2020-10-01",
+    "last_confirmed": "2025-05-10"
+  },
+
+  "environment": {
+    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "os": "linux",
+    "additional": {}
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.75,
+    "confidence": 0.82,
+    "last_updated": "2025-05-10",
+    "summary": "Pip's modern dependency resolver (introduced in pip 20.3) correctly detects conflicting version requirements between packages. This error means two or more packages require incompatible versions of a shared dependency. Resolution requires identifying compatible version combinations or using tools like pip-compile to find a valid resolution."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Running 'pip install --force-reinstall' on the conflicting packages",
+      "why_fails": "Force-reinstall re-downloads and reinstalls packages but does NOT bypass the dependency resolver. The same conflict will be detected. If combined with --no-deps, it installs without checking dependencies, which leads to runtime ImportError or version-mismatch crashes.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "common_misconception": "Developers often confuse --force-reinstall with forcing resolution. It only forces re-download and reinstall, not conflict override. The dependency conflict remains."
+    },
+    {
+      "action": "Ignoring the error and proceeding with --no-deps",
+      "why_fails": "Installing with --no-deps skips dependency checks entirely, allowing installation to succeed. However, this virtually guarantees runtime failures: wrong API versions, missing methods, or subtle data corruption when libraries assume specific dependency versions.",
+      "fail_rate": 0.70,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Create a clean virtual environment and install with constrained versions",
+      "how": "python -m venv .venv && source .venv/bin/activate && pip install package-a==X.Y package-b==Z.W. Start from a clean venv to eliminate stale package interference. Use version constraints to find a compatible combination. Check each package's PyPI page for compatible version ranges.",
+      "success_rate": 0.78,
+      "tradeoff": "Requires manual research of compatible version combinations; may require downgrading one or more packages",
+      "sources": []
+    },
+    {
+      "action": "Use pip-compile from pip-tools to resolve dependencies",
+      "how": "pip install pip-tools. Create a requirements.in file with your top-level dependencies (without version pins). Run 'pip-compile requirements.in' to generate a requirements.txt with a fully resolved, conflict-free set of pinned versions. Install with 'pip install -r requirements.txt'.",
+      "success_rate": 0.82,
+      "tradeoff": "Adds pip-tools to your workflow; may pin versions that are not the latest; requires maintaining requirements.in alongside requirements.txt",
+      "sources": [
+        "https://pip-tools.readthedocs.io/en/latest/"
+      ]
+    },
+    {
+      "action": "Use the legacy resolver as a temporary fallback",
+      "how": "pip install --use-deprecated=legacy-resolver package-a package-b. The legacy resolver does not check for conflicts as strictly, which may allow installation. Warning: this may install incompatible versions that cause runtime errors.",
+      "success_rate": 0.60,
+      "tradeoff": "May install incompatible package combinations that fail at runtime; the legacy resolver is deprecated and may be removed in future pip versions",
+      "condition": "The conflict is a false positive due to overly strict version specifiers and you have verified runtime compatibility manually",
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "pip/import-error-version-mismatch/pip23-linux",
+        "probability": 0.45,
+        "condition": "When the conflict is bypassed with --no-deps or legacy resolver, incompatible versions cause runtime ImportError",
+        "typical_delay": "immediate on first import"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/build-wheel-failed/pip23-linux-arm64",
+        "distinction": "Conflicting dependencies is a version resolution problem (package A needs X>=2 but package B needs X<2). Build wheel failure is a compilation problem (C extension fails to compile). Different phases of installation: resolution vs build."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

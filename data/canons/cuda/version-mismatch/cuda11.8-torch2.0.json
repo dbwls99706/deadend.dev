@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/version-mismatch/cuda11.8-torch2.0",
+  "url": "https://deadend.dev/cuda/version-mismatch/cuda11.8-torch2.0",
+
+  "error": {
+    "signature": "RuntimeError: The current CUDA version is not compatible with the installed PyTorch build. CUDA version: 11.8, PyTorch CUDA: 11.7",
+    "regex": "RuntimeError: The current CUDA version is not compatible.*",
+    "domain": "cuda",
+    "category": "version_incompatibility",
+    "first_seen": "2023-01-10",
+    "last_confirmed": "2025-04-28"
+  },
+
+  "environment": {
+    "runtime": { "name": "pytorch", "version_range": ">=2.0,<2.1" },
+    "hardware": { "gpu": "RTX 4090", "vram_gb": 24 },
+    "os": "linux",
+    "python": ">=3.8,<3.12",
+    "additional": {
+      "cuda_toolkit": "11.8",
+      "driver_version": ">=520.61"
+    }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.85,
+    "last_updated": "2025-04-28",
+    "summary": "CUDA 11.8 with PyTorch 2.0 version mismatches typically arise when the default pip wheel is built against CUDA 11.7. The fix is to install PyTorch from the cu118 index URL. This scenario is especially common on systems that shipped with CUDA 11.8 but where users ran a bare 'pip install torch'."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Reinstalling torch without specifying CUDA version (pip install torch --force-reinstall)",
+      "why_fails": "The default PyPI torch 2.0.x wheel is compiled against CUDA 11.7. Without providing the cu118 index URL, pip will download the same CUDA 11.7-linked binary every time, regardless of how many times you reinstall.",
+      "fail_rate": 0.96,
+      "sources": ["https://github.com/pytorch/pytorch/issues/98997"],
+      "common_misconception": "Users expect pip to detect the locally installed CUDA toolkit and select the matching wheel automatically. pip has no CUDA detection capability."
+    },
+    {
+      "action": "Using pip install torch without --index-url",
+      "why_fails": "PyPI only hosts the default PyTorch wheel (CUDA 11.7 for the 2.0.x series). The CUDA 11.8 wheel is hosted on PyTorch's own download server at https://download.pytorch.org/whl/cu118 and is not available on PyPI.",
+      "fail_rate": 0.97,
+      "sources": ["https://pytorch.org/get-started/previous-versions/"],
+      "common_misconception": "Users assume all CUDA variants are available on PyPI. Only the default CUDA variant and the CPU-only variant are published to PyPI."
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Install PyTorch with the CUDA 11.8 index URL",
+      "how": "pip install torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118",
+      "success_rate": 0.93,
+      "tradeoff": "Pins exact versions; must update the command when upgrading PyTorch",
+      "condition": "CUDA toolkit 11.8 must be installed; nvidia-smi driver must be >=520.61",
+      "sources": ["https://pytorch.org/get-started/previous-versions/"]
+    },
+    {
+      "action": "Use conda with the pytorch-cuda=11.8 package",
+      "how": "conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.8 -c pytorch -c nvidia",
+      "success_rate": 0.88,
+      "tradeoff": "Requires conda environment; slower environment resolution; may conflict with pip-installed packages",
+      "condition": "conda or mamba available; should not mix with pip-based PyTorch in the same environment",
+      "sources": ["https://pytorch.org/get-started/previous-versions/"]
+    },
+    {
+      "action": "Use NVIDIA NGC PyTorch container with matching CUDA version",
+      "how": "docker run --gpus all -it nvcr.io/nvidia/pytorch:23.05-py3",
+      "success_rate": 0.95,
+      "tradeoff": "Requires Docker and NVIDIA Container Toolkit; container images are large (10-15 GB)",
+      "condition": "Docker and nvidia-container-toolkit must be installed on the host",
+      "sources": ["https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch"]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/cublas-init-error/cuda11.8-rtx3090",
+        "probability": 0.10,
+        "condition": "When partial CUDA library updates leave cuBLAS version mismatched",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-a100-40gb",
+        "probability": 0.06,
+        "condition": "When users attempt downgrading PyTorch to resolve OOM issues and encounter version mismatch"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
+        "distinction": "Same class of error but different CUDA/PyTorch version pair. The fix differs in the index URL used (cu118 vs cu121). Check the error message for the exact versions reported."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 31,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}

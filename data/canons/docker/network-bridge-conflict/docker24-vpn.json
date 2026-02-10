@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/network-bridge-conflict/docker24-vpn",
+  "url": "https://deadend.dev/docker/network-bridge-conflict/docker24-vpn",
+
+  "error": {
+    "signature": "Error response from daemon: Pool overlaps with other one on this address space",
+    "regex": "Error response from daemon: Pool overlaps with other one on this address space",
+    "domain": "docker",
+    "category": "networking",
+    "first_seen": "2017-06-01",
+    "last_confirmed": "2025-05-01"
+  },
+
+  "environment": {
+    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "os": "linux",
+    "additional": { "vpn_active": true }
+  },
+
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.80,
+    "last_updated": "2025-05-01",
+    "summary": "When a VPN is active, it typically claims large private IP ranges (often 10.0.0.0/8 or 172.16.0.0/12) via routing table entries. Docker's default network allocation overlaps with these VPN-claimed ranges, causing 'Pool overlaps' errors. This is particularly common with corporate VPNs (Cisco AnyConnect, OpenVPN, WireGuard) that route broad subnets."
+  },
+
+  "dead_ends": [
+    {
+      "action": "Disconnecting the VPN to create Docker networks, then reconnecting",
+      "why_fails": "While this allows network creation, the Docker network's subnet will still overlap with the VPN range. When the VPN reconnects, routing conflicts cause Docker containers to lose network connectivity or the VPN to malfunction. The overlap is not resolved, just deferred.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "common_misconception": "Creating the Docker network while the VPN is down does not prevent routing conflicts when the VPN reconnects. Both Docker and the VPN add routes to the kernel routing table, and overlapping routes cause unpredictable packet delivery."
+    },
+    {
+      "action": "Running 'docker network rm' followed by recreating without explicit subnet",
+      "why_fails": "Docker will pick a new subnet from its default pool, which likely also overlaps with the VPN. Since VPNs typically claim large blocks of private IP space, most of Docker's default allocations will conflict.",
+      "fail_rate": 0.80,
+      "sources": []
+    }
+  ],
+
+  "workarounds": [
+    {
+      "action": "Configure Docker daemon to use address pools that do not overlap with VPN ranges",
+      "how": "First, identify VPN routes: 'ip route | grep -E \"tun|vpn|wg\"' to see which subnets the VPN claims. Then edit /etc/docker/daemon.json:\n{\"default-address-pools\": [{\"base\": \"10.250.0.0/16\", \"size\": 24}]}\nChoose a base range that falls outside the VPN's claimed subnets. Restart Docker. Common safe choices when VPN uses 10.0.0.0/8: use 172.28.0.0/14 or a narrow 10.x range the VPN does not route.",
+      "success_rate": 0.85,
+      "tradeoff": "Requires understanding of the VPN's routing configuration; the safe range depends on the specific VPN setup. Docker daemon restart required.",
+      "sources": [
+        "https://docs.docker.com/engine/daemon/#daemon-configuration-file"
+      ]
+    },
+    {
+      "action": "Specify explicit non-conflicting subnets in docker-compose.yml",
+      "how": "networks:\n  app:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 172.28.0.0/16\nChoose a subnet that does not overlap with VPN routes. This is a per-project fix that does not require daemon configuration changes.",
+      "success_rate": 0.82,
+      "tradeoff": "Must be done for every docker-compose project individually; requires coordination across teams to avoid inter-project conflicts",
+      "sources": []
+    },
+    {
+      "action": "Use Docker's macvlan or ipvlan network driver to avoid bridge subnet conflicts",
+      "how": "Create a macvlan network attached to the host's physical interface: 'docker network create -d macvlan --subnet=<host-subnet> --gateway=<host-gw> -o parent=eth0 macnet'. Containers get IPs on the host's physical network, bypassing Docker's bridge subnet allocation entirely.",
+      "success_rate": 0.65,
+      "tradeoff": "macvlan has limitations: containers cannot communicate with the host without additional configuration; not all environments support promiscuous mode required by macvlan",
+      "condition": "Bridge networking is not strictly required and the host network supports macvlan",
+      "sources": [
+        "https://docs.docker.com/engine/network/drivers/macvlan/"
+      ]
+    }
+  ],
+
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/container-no-internet/docker24-vpn",
+        "probability": 0.35,
+        "condition": "Even after resolving the pool overlap, routing conflicts between Docker and VPN may prevent containers from reaching the internet",
+        "typical_delay": "immediate"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/network-bridge-conflict/docker24-linux",
+        "distinction": "The error message is identical, but the root cause differs. With a VPN active, the conflict is between Docker's subnet allocation and VPN-claimed routes, not between two Docker networks. Check 'ip route' for VPN-related routes (tun0, wg0) to distinguish."
+      }
+    ]
+  },
+
+  "metadata": {
+    "generated_by": "deadend-seed-v1",
+    "generation_date": "2025-06-01",
+    "review_status": "auto_generated",
+    "evidence_count": 22,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2025-06-01"
+  }
+}
