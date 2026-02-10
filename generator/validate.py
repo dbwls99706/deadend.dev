@@ -1,5 +1,6 @@
 """Validation script for ErrorCanon JSON files and generated HTML pages."""
 
+import argparse
 import json
 import re
 import sys
@@ -12,19 +13,20 @@ from generator.schema import ERRORCANON_SCHEMA
 BASE_URL = "https://deadend.dev"
 
 
-def validate_canon_json(data: dict) -> list[str]:
+def validate_canon_json(data: dict) -> tuple[list[str], list[str]]:
     """Validate an ErrorCanon JSON object against the schema and business rules.
 
-    Returns a list of error messages (empty if valid).
+    Returns (errors, warnings) — errors fail the build, warnings do not.
     """
     errors = []
+    warnings = []
 
     # Schema validation
     try:
         validate(instance=data, schema=ERRORCANON_SCHEMA)
     except ValidationError as e:
         errors.append(f"Schema validation error: {e.message}")
-        return errors  # No point checking business rules if schema fails
+        return errors, warnings  # No point checking business rules if schema fails
 
     # Business rule: dead_ends must have at least 1 item
     if len(data.get("dead_ends", [])) < 1:
@@ -75,7 +77,60 @@ def validate_canon_json(data: dict) -> list[str]:
     except re.error as e:
         errors.append(f"Invalid error regex: {e}")
 
-    return errors
+    # Warning: dead_ends with empty sources
+    for i, de in enumerate(data.get("dead_ends", [])):
+        if not de.get("sources"):
+            warnings.append(
+                f"dead_ends[{i}] '{de['action']}' has no sources — "
+                "consider adding evidence URLs"
+            )
+
+    # Warning: evidence_count vs actual sources mismatch
+    total_sources = sum(
+        len(de.get("sources", [])) for de in data.get("dead_ends", [])
+    ) + sum(len(wa.get("sources", [])) for wa in data.get("workarounds", []))
+
+    if total_sources == 0 and data["metadata"]["evidence_count"] > 10:
+        warnings.append(
+            f"evidence_count={data['metadata']['evidence_count']} but no source URLs provided"
+        )
+
+    return errors, warnings
+
+
+def validate_cross_references(canons: list[dict]) -> list[str]:
+    """Validate that all referenced error_ids exist in the dataset.
+
+    Returns warnings (not errors) since early data may reference future pages.
+    """
+    warnings = []
+    known_ids = {c["id"] for c in canons}
+
+    for canon in canons:
+        graph = canon.get("transition_graph", {})
+
+        for lt in graph.get("leads_to", []):
+            if lt["error_id"] not in known_ids:
+                warnings.append(
+                    f"{canon['id']}: transition_graph.leads_to references "
+                    f"non-existent error '{lt['error_id']}'"
+                )
+
+        for pb in graph.get("preceded_by", []):
+            if pb["error_id"] not in known_ids:
+                warnings.append(
+                    f"{canon['id']}: transition_graph.preceded_by references "
+                    f"non-existent error '{pb['error_id']}'"
+                )
+
+        for fc in graph.get("frequently_confused_with", []):
+            if fc["error_id"] not in known_ids:
+                warnings.append(
+                    f"{canon['id']}: transition_graph.frequently_confused_with "
+                    f"references non-existent error '{fc['error_id']}'"
+                )
+
+    return warnings
 
 
 def validate_html(html_path: Path) -> list[str]:
@@ -116,45 +171,113 @@ def validate_html(html_path: Path) -> list[str]:
     return errors
 
 
-def validate_all(data_dir: Path, site_dir: Path | None = None) -> bool:
-    """Validate all canon JSON files and optionally generated HTML.
+def validate_html_json_consistency(
+    html_path: Path, canons_by_id: dict[str, dict]
+) -> list[str]:
+    """Verify that HTML page content matches the source JSON data."""
+    errors = []
+    content = html_path.read_text(encoding="utf-8")
 
-    Returns True if all validations pass.
+    json_ld_match = re.search(
+        r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
+        content,
+        re.DOTALL,
+    )
+    if not json_ld_match:
+        return [f"{html_path}: Could not extract JSON-LD for consistency check"]
+
+    try:
+        ld_data = json.loads(json_ld_match.group(1))
+    except json.JSONDecodeError:
+        return [f"{html_path}: Invalid JSON-LD for consistency check"]
+
+    canon_id = ld_data.get("id")
+    if canon_id and canon_id in canons_by_id:
+        source = canons_by_id[canon_id]
+        ld_verdict = ld_data.get("verdict", {})
+        src_verdict = source["verdict"]
+
+        if ld_verdict.get("resolvable") != src_verdict["resolvable"]:
+            errors.append(
+                f"{html_path}: JSON-LD verdict.resolvable mismatch with source data"
+            )
+        if ld_verdict.get("fix_success_rate") != src_verdict["fix_success_rate"]:
+            errors.append(
+                f"{html_path}: JSON-LD fix_success_rate mismatch with source data"
+            )
+
+    return errors
+
+
+def validate_all(
+    data_dir: Path | None = None, site_dir: Path | None = None
+) -> bool:
+    """Validate canon JSON files and/or generated HTML.
+
+    Returns True if all validations pass (warnings don't cause failure).
     """
     all_errors = []
+    all_warnings = []
+    all_canons = []
 
     # Validate canon JSON files
-    canon_files = list(data_dir.rglob("*.json"))
-    if not canon_files:
-        print("WARNING: No canon JSON files found")
-        return True
+    if data_dir:
+        canon_files = list(data_dir.rglob("*.json"))
+        if not canon_files:
+            print("WARNING: No canon JSON files found")
+        else:
+            for canon_file in canon_files:
+                try:
+                    with open(canon_file, encoding="utf-8") as f:
+                        data = json.load(f)
+                    all_canons.append(data)
+                    errors, warnings = validate_canon_json(data)
+                    for error in errors:
+                        all_errors.append(f"{canon_file}: {error}")
+                        print(f"  FAIL: {canon_file}: {error}")
+                    for warning in warnings:
+                        all_warnings.append(f"{canon_file}: {warning}")
+                        print(f"  WARN: {canon_file}: {warning}")
+                    if not errors:
+                        print(f"  OK: {canon_file}")
+                except json.JSONDecodeError as e:
+                    all_errors.append(f"{canon_file}: Invalid JSON: {e}")
+                    print(f"  FAIL: {canon_file}: Invalid JSON: {e}")
 
-    for canon_file in canon_files:
-        try:
-            with open(canon_file, encoding="utf-8") as f:
-                data = json.load(f)
-            errors = validate_canon_json(data)
-            for error in errors:
-                all_errors.append(f"{canon_file}: {error}")
-                print(f"  FAIL: {canon_file}: {error}")
-            if not errors:
-                print(f"  OK: {canon_file}")
-        except json.JSONDecodeError as e:
-            all_errors.append(f"{canon_file}: Invalid JSON: {e}")
-            print(f"  FAIL: {canon_file}: Invalid JSON: {e}")
+            # Cross-reference validation (warnings only)
+            xref_warnings = validate_cross_references(all_canons)
+            for warning in xref_warnings:
+                all_warnings.append(warning)
+                print(f"  WARN: {warning}")
 
     # Validate HTML files if site_dir provided
     if site_dir and site_dir.exists():
         html_files = list(site_dir.rglob("index.html"))
-        # Exclude top-level index.html
-        html_files = [f for f in html_files if f.parent != site_dir]
-        for html_file in html_files:
+        # Exclude top-level index.html and domain listing pages
+        error_pages = [
+            f
+            for f in html_files
+            if f.parent != site_dir and len(f.relative_to(site_dir).parts) > 2
+        ]
+        for html_file in error_pages:
             errors = validate_html(html_file)
             for error in errors:
                 all_errors.append(error)
                 print(f"  FAIL: {error}")
             if not errors:
                 print(f"  OK: {html_file}")
+
+        # HTML-JSON consistency check
+        if all_canons:
+            canons_by_id = {c["id"]: c for c in all_canons}
+            for html_file in error_pages:
+                errors = validate_html_json_consistency(html_file, canons_by_id)
+                for error in errors:
+                    all_errors.append(error)
+                    print(f"  FAIL: {error}")
+
+    if all_warnings:
+        print(f"\n{len(all_warnings)} warning(s)")
 
     if all_errors:
         print(f"\nValidation FAILED: {len(all_errors)} error(s)")
@@ -165,14 +288,28 @@ def validate_all(data_dir: Path, site_dir: Path | None = None) -> bool:
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Validate ErrorCanon data and site")
+    parser.add_argument(
+        "--data-only", action="store_true", help="Validate canon JSON only"
+    )
+    parser.add_argument(
+        "--site-only", action="store_true", help="Validate generated HTML only"
+    )
+    args = parser.parse_args()
+
     project_root = Path(__file__).parent.parent
     data_dir = project_root / "data" / "canons"
     site_dir = project_root / "site"
 
     print("Validating ErrorCanon data and site...\n")
 
-    site_path = site_dir if site_dir.exists() else None
-    success = validate_all(data_dir, site_path)
+    if args.site_only:
+        success = validate_all(data_dir=data_dir, site_dir=site_dir)
+    elif args.data_only:
+        success = validate_all(data_dir=data_dir, site_dir=None)
+    else:
+        site_path = site_dir if site_dir.exists() else None
+        success = validate_all(data_dir, site_path)
 
     sys.exit(0 if success else 1)
 

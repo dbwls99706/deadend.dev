@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ domain }} errors | deadend.dev</title>
+  <meta name="description" content="Structured failure knowledge for {{ domain }} errors.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://deadend.dev/{{ domain }}/">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
+    a { color: #58a6ff; }
+    h1 { font-size: 1.6rem; }
+    .meta { color: #8b949e; font-size: 0.85rem; }
+    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
+    .entry { padding: 0.75rem 0; border-bottom: 1px solid #161b22; }
+    .verdict-false { color: #f85149; }
+    .verdict-partial { color: #d29922; }
+    .verdict-true { color: #3fb950; }
+    nav a { color: #8b949e; text-decoration: none; }
+    nav a:hover { color: #58a6ff; }
+    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+  </style>
+</head>
+<body>
+  <pre id="ai-summary" style="display:none;">DOMAIN: {{ domain }}
+TOTAL_ERRORS: {{ total }}
+ENTRIES:{% for e in entries %} [{{ e.id }} resolvable={{ e.resolvable }} rate={{ e.fix_success_rate }}]{% endfor %}</pre>
+
+  <nav><a href="/">deadend.dev</a></nav>
+
+  <h1>{{ domain }} errors</h1>
+  <p class="meta">{{ total }} error entr{{ 'ies' if total != 1 else 'y' }}</p>
+
+  {% for e in entries %}
+  <div class="entry">
+    <a href="/{{ e.id }}"><code>{{ e.signature }}</code></a>
+    <span class="verdict-{{ e.resolvable }}">[{{ e.resolvable }}]</span>
+    <span class="meta">{{ e.env_summary }}</span>
+  </div>
+  {% endfor %}
+
+  <footer class="meta">
+    <p><a href="/">deadend.dev</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
+  </footer>
+</body>
+</html>

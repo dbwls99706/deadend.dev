@@ -11,6 +11,8 @@ authors = [
 dependencies = [
     "jinja2>=3.1",
     "jsonschema>=4.20",
+    "requests>=2.31",
+    "anthropic>=0.25",
 ]
 
 [project.optional-dependencies]

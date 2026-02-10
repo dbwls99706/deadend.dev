@@ -21,16 +21,19 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Lint
-        run: ruff check generator/
+        run: ruff check generator/ tests/
+
+      - name: Run tests
+        run: pytest tests/ -v
 
       - name: Validate canon data
-        run: python -m generator.validate
+        run: python -m generator.validate --data-only
 
       - name: Build site
         run: python -m generator.build_site
 
       - name: Validate generated HTML
-        run: python -m generator.validate
+        run: python -m generator.validate --site-only
 
       - name: Upload site artifact
         if: github.ref == 'refs/heads/main'
@@ -49,6 +52,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

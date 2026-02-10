@@ -11,6 +11,8 @@ ERRORCANON_SCHEMA = {
         "environment",
         "verdict",
         "dead_ends",
+        "workarounds",
+        "transition_graph",
         "metadata",
     ],
     "properties": {
@@ -50,7 +52,7 @@ ERRORCANON_SCHEMA = {
         },
         "environment": {
             "type": "object",
-            "required": ["runtime"],
+            "required": ["runtime", "os"],
             "properties": {
                 "runtime": {
                     "type": "object",
@@ -101,6 +103,7 @@ ERRORCANON_SCHEMA = {
         },
         "workarounds": {
             "type": "array",
+            "minItems": 0,
             "items": {
                 "type": "object",
                 "required": ["action", "success_rate"],
@@ -116,6 +119,7 @@ ERRORCANON_SCHEMA = {
         },
         "transition_graph": {
             "type": "object",
+            "required": ["leads_to", "preceded_by", "frequently_confused_with"],
             "properties": {
                 "leads_to": {
                     "type": "array",

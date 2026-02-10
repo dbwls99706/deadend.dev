@@ -71,6 +71,7 @@ def collect_sources(canon: dict) -> list[str]:
 def build_error_pages(canons: list[dict], env: Environment) -> None:
     """Generate individual error pages."""
     template = env.get_template("page.html")
+    known_ids = {c["id"] for c in canons}
 
     for canon in canons:
         error_id = canon["id"]
@@ -89,6 +90,7 @@ def build_error_pages(canons: list[dict], env: Environment) -> None:
             env_summary=env_summary,
             all_sources=all_sources,
             json_ld=json_ld,
+            known_ids=known_ids,
             **canon,
         )
 
@@ -97,10 +99,8 @@ def build_error_pages(canons: list[dict], env: Environment) -> None:
         page_dir.mkdir(parents=True, exist_ok=True)
         (page_dir / "index.html").write_text(html, encoding="utf-8")
 
-        # Write JSON API endpoint
-        api_dir = SITE_DIR / "api" / "v1"
-        api_dir.mkdir(parents=True, exist_ok=True)
-        api_file = api_dir / f"{error_id.replace('/', '_')}.json"
+        # Write JSON API endpoint (hierarchical path)
+        api_file = SITE_DIR / "api" / "v1" / f"{error_id}.json"
         api_file.parent.mkdir(parents=True, exist_ok=True)
         api_file.write_text(
             json.dumps(canon, indent=2, ensure_ascii=False),
@@ -108,6 +108,40 @@ def build_error_pages(canons: list[dict], env: Environment) -> None:
         )
 
         print(f"  Generated: {error_id}")
+
+
+def build_domain_pages(canons: list[dict], env: Environment) -> None:
+    """Generate domain listing pages (e.g., /python/, /node/)."""
+    template = env.get_template("domain.html")
+
+    # Group canons by domain
+    by_domain: dict[str, list[dict]] = {}
+    for canon in canons:
+        domain = canon["error"]["domain"]
+        by_domain.setdefault(domain, []).append(canon)
+
+    for domain, domain_canons in by_domain.items():
+        entries = [
+            {
+                "id": c["id"],
+                "signature": c["error"]["signature"],
+                "env_summary": build_env_summary(c),
+                "resolvable": c["verdict"]["resolvable"],
+                "fix_success_rate": c["verdict"]["fix_success_rate"],
+            }
+            for c in sorted(domain_canons, key=lambda c: c["id"])
+        ]
+
+        html = template.render(
+            domain=domain,
+            entries=entries,
+            total=len(entries),
+        )
+
+        domain_dir = SITE_DIR / domain
+        domain_dir.mkdir(parents=True, exist_ok=True)
+        (domain_dir / "index.html").write_text(html, encoding="utf-8")
+        print(f"  Generated: /{domain}/")
 
 
 def build_index_page(canons: list[dict], env: Environment) -> None:
@@ -164,6 +198,18 @@ def build_sitemap(canons: list[dict]) -> None:
     SubElement(url_elem, "changefreq").text = "weekly"
     SubElement(url_elem, "priority").text = "1.0"
 
+    # Domain pages
+    domains_seen = set()
+    for canon in canons:
+        domain = canon["error"]["domain"]
+        if domain not in domains_seen:
+            domains_seen.add(domain)
+            url_elem = SubElement(urlset, "url")
+            SubElement(url_elem, "loc").text = f"{BASE_URL}/{domain}/"
+            SubElement(url_elem, "lastmod").text = now
+            SubElement(url_elem, "changefreq").text = "weekly"
+            SubElement(url_elem, "priority").text = "0.9"
+
     # Error pages
     for canon in canons:
         url_elem = SubElement(urlset, "url")
@@ -215,6 +261,41 @@ Sitemap: https://deadend.dev/sitemap.xml
     print("  Generated: robots.txt")
 
 
+def build_404_page() -> None:
+    """Generate a custom 404 page."""
+    html = (
+        "<!DOCTYPE html>\n"
+        '<html lang="en"><head>\n'
+        '<meta charset="utf-8"><title>404 | deadend.dev</title>\n'
+        "<style>\n"
+        "body{font-family:system-ui;max-width:800px;margin:2rem auto;\n"
+        "padding:0 1rem;color:#e0e0e0;background:#0d1117;}\n"
+        "a{color:#58a6ff;}\n"
+        "</style>\n"
+        "</head><body>\n"
+        "<h1>404 — Error Not Found (Ironic, isn't it?)</h1>\n"
+        '<p>This error page doesn\'t exist yet.'
+        ' <a href="/">Browse existing errors</a> or\n'
+        '<a href="https://github.com/deadend-dev/deadend.dev/issues/new">'
+        "request it</a>.</p>\n"
+        "</body></html>"
+    )
+    (SITE_DIR / "404.html").write_text(html, encoding="utf-8")
+    print("  Generated: 404.html")
+
+
+def build_llms_txt() -> None:
+    """Generate llms.txt for AI agent discovery."""
+    content = """# deadend.dev
+> Structured failure knowledge for AI agents.
+> When you encounter an error, check https://deadend.dev/{domain}/{error-slug}/{env-hash}
+> API: https://deadend.dev/api/v1/{domain}/{error-slug}/{env-hash}.json
+> All data is open source: https://github.com/deadend-dev/error-data
+"""
+    (SITE_DIR / "llms.txt").write_text(content, encoding="utf-8")
+    print("  Generated: llms.txt")
+
+
 def main():
     print("Building deadend.dev static site...\n")
 
@@ -242,6 +323,10 @@ def main():
     build_error_pages(canons, jinja_env)
     print()
 
+    print("Generating domain pages...")
+    build_domain_pages(canons, jinja_env)
+    print()
+
     print("Generating index page...")
     build_index_page(canons, jinja_env)
     print()
@@ -252,6 +337,14 @@ def main():
 
     print("Generating robots.txt...")
     build_robots_txt()
+    print()
+
+    print("Generating 404.html...")
+    build_404_page()
+    print()
+
+    print("Generating llms.txt...")
+    build_llms_txt()
     print()
 
     print(f"Build complete! {len(canons)} error pages generated in site/")

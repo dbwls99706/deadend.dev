@@ -41,18 +41,13 @@
 </head>
 <body>
   <!-- AI-READABLE SECTION -->
-  <pre id="ai-summary" style="display:none;">
-ERROR: {{ error.signature }}
+  <pre id="ai-summary" style="display:none;">ERROR: {{ error.signature }}
 ENV: {{ env_summary }}
 RESOLVABLE: {{ verdict.resolvable }}
 FIX_SUCCESS_RATE: {{ verdict.fix_success_rate }}
 DEAD_ENDS:{% for de in dead_ends %} [{{ de.action }} (fail_rate={{ de.fail_rate }})]{% endfor %}
-
-WORKAROUNDS:{% for wa in workarounds %} [{{ wa.action }} (success_rate={{ wa.success_rate }})]{% endfor %}
-
-{% if transition_graph and transition_graph.leads_to %}NEXT_ERRORS:{% for lt in transition_graph.leads_to %} [{{ lt.error_id }} (p={{ lt.probability }}{% if lt.condition %}, {{ lt.condition }}{% endif %})]{% endfor %}{% endif %}
-
-  </pre>
+WORKAROUNDS:{% for wa in workarounds|default([]) %} [{{ wa.action }} (success_rate={{ wa.success_rate }})]{% endfor %}
+{% set graph = transition_graph|default({}) %}{% if graph.get("leads_to", []) %}NEXT_ERRORS:{% for lt in graph.leads_to %} [{{ lt.error_id }} (p={{ lt.probability }})]{% endfor %}{% endif %}</pre>
 
   <!-- HUMAN-READABLE SECTION -->
   <nav><a href="/">deadend.dev</a> / <a href="/{{ error.domain }}/">{{ error.domain }}</a></nav>
@@ -94,8 +89,8 @@ WORKAROUNDS:{% for wa in workarounds %} [{{ wa.action }} (success_rate={{ wa.suc
 
   <section id="workarounds">
     <h2>Workarounds — Try These Instead</h2>
-    {% if workarounds %}
-    {% for wa in workarounds %}
+    {% if workarounds|default([]) %}
+    {% for wa in workarounds|default([]) %}
     <div class="workaround">
       <strong>{{ wa.action }}</strong> <span class="success-rate">(Success rate: {{ wa.success_rate }})</span>
       {% if wa.how %}<p><code>{{ wa.how }}</code></p>{% endif %}
@@ -111,39 +106,53 @@ WORKAROUNDS:{% for wa in workarounds %} [{{ wa.action }} (success_rate={{ wa.suc
     {% endif %}
   </section>
 
-  {% if transition_graph and (transition_graph.leads_to or transition_graph.preceded_by or transition_graph.frequently_confused_with) %}
+  {% set graph = transition_graph|default({}) %}
+  {% if graph.get("leads_to", []) or graph.get("preceded_by", []) or graph.get("frequently_confused_with", []) %}
   <section id="error-chain">
     <h2>Error Chain</h2>
-    {% if transition_graph.leads_to %}
+    {% if graph.get("leads_to", []) %}
     <h3>This error may lead to:</h3>
     <ul>
-      {% for lt in transition_graph.leads_to %}
+      {% for lt in graph.leads_to %}
       <li>
+        {% if lt.error_id in known_ids|default([]) %}
         <a href="/{{ lt.error_id }}">{{ lt.error_id }}</a>
+        {% else %}
+        <code>{{ lt.error_id }}</code> <span class="meta">(page not yet generated)</span>
+        {% endif %}
         (probability: {{ lt.probability }}{% if lt.condition %}, condition: {{ lt.condition }}{% endif %})
       </li>
       {% endfor %}
     </ul>
     {% endif %}
 
-    {% if transition_graph.preceded_by %}
+    {% if graph.get("preceded_by", []) %}
     <h3>Often preceded by:</h3>
     <ul>
-      {% for pb in transition_graph.preceded_by %}
+      {% for pb in graph.preceded_by %}
       <li>
+        {% if pb.error_id in known_ids|default([]) %}
         <a href="/{{ pb.error_id }}">{{ pb.error_id }}</a>
+        {% else %}
+        <code>{{ pb.error_id }}</code> <span class="meta">(page not yet generated)</span>
+        {% endif %}
         (probability: {{ pb.probability }}{% if pb.condition %}, condition: {{ pb.condition }}{% endif %})
       </li>
       {% endfor %}
     </ul>
     {% endif %}
 
-    {% if transition_graph.frequently_confused_with %}
+    {% if graph.get("frequently_confused_with", []) %}
     <h3>Frequently confused with:</h3>
     <ul>
-      {% for fc in transition_graph.frequently_confused_with %}
+      {% for fc in graph.frequently_confused_with %}
       <li>
-        <a href="/{{ fc.error_id }}">{{ fc.error_id }}</a> — {{ fc.distinction }}
+        {% if fc.error_id in known_ids|default([]) %}
+        <a href="/{{ fc.error_id }}">{{ fc.error_id }}</a>
+        {% else %}
+        <code>{{ fc.error_id }}</code> <span class="meta">(page not yet generated)</span>
+        {% endif %}
+        — {{ fc.distinction }}
       </li>
       {% endfor %}
     </ul>
