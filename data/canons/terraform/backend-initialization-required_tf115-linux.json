@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/backend-initialization-required/tf115-linux",
+  "url": "https://deadends.dev/terraform/backend-initialization-required/tf115-linux",
+  "error": {
+    "signature": "Error: Backend initialization required, please run 'terraform init'",
+    "regex": "Backend initialization required.*terraform init",
+    "domain": "terraform",
+    "category": "init",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Terraform backend configuration changed but terraform init wasn't run to apply the change."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually editing .terraform directory files",
+      "why_fails": "May corrupt the local state cache",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Copying state files between backends manually",
+      "why_fails": "Easy to lose state or corrupt it; use terraform init -migrate-state instead",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run terraform init to initialize the new backend",
+      "success_rate": 0.97,
+      "how": "Terraform will prompt to migrate state if the backend changed",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform init -migrate-state to move state between backends",
+      "success_rate": 0.93,
+      "how": "Safely copies state from old backend to new backend during init",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

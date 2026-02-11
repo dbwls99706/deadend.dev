@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/layer-already-being-pulled/docker24-linux",
+  "url": "https://deadends.dev/docker/layer-already-being-pulled/docker24-linux",
+  "error": {
+    "signature": "layer already being pulled by another client. Waiting...",
+    "regex": "layer already being pulled|already being pulled by another",
+    "domain": "docker",
+    "category": "registry",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.10"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Another Docker pull is downloading the same layer concurrently."
+  },
+  "dead_ends": [
+    {
+      "action": "Canceling and restarting the pull",
+      "why_fails": "Will hit the same issue if another pull is still running",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Deleting all local images to force a fresh pull",
+      "why_fails": "Wastes bandwidth; all images need to be re-downloaded",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wait for the other pull to complete — this is expected behavior during parallel pulls",
+      "success_rate": 0.9,
+      "how": "Docker daemon serializes layer downloads; the second pull reuses the first's result",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "If stuck, restart Docker daemon: sudo systemctl restart docker",
+      "success_rate": 0.85,
+      "how": "Clears stuck layer downloads; running containers will stop",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

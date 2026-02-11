@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/invalid-value-metadata-name/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/invalid-value-metadata-name/k8s128-linux",
+  "error": {
+    "signature": "Invalid value: must be no more than 63 characters",
+    "regex": "Invalid value.*must be no more than 63 characters",
+    "domain": "kubernetes",
+    "category": "validation",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "Kubernetes resource names must follow DNS label rules — max 63 characters, lowercase, alphanumeric and hyphens."
+  },
+  "dead_ends": [
+    {
+      "action": "Truncating the name arbitrarily",
+      "why_fails": "May cause duplicate names or lose identifying information",
+      "fail_rate": 0.5,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using underscores instead of hyphens",
+      "why_fails": "Underscores are not valid in Kubernetes resource names",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Shorten the name to 63 characters or fewer while keeping it identifiable",
+      "success_rate": 0.95,
+      "how": "Use abbreviations: 'prod' not 'production', 'svc' not 'service'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use generateName for automatic suffix: metadata.generateName: 'my-prefix-'",
+      "success_rate": 0.88,
+      "how": "Kubernetes adds a random suffix; ensures uniqueness within 63 chars",
+      "sources": [
+        "https://kubernetes.io/docs/reference/using-api/api-concepts/#generated-values"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

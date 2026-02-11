@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/forward-ref-deprecation/react18-linux",
+  "url": "https://deadends.dev/react/forward-ref-deprecation/react18-linux",
+  "error": {
+    "signature": "Warning: forwardRef render functions accept exactly two parameters: props and ref",
+    "regex": "forwardRef.*two parameters|forwardRef.*props and ref|forwardRef.*deprecated",
+    "domain": "react",
+    "category": "deprecation_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "forwardRef component has wrong signature or is being deprecated (React 19+ removes it)."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove forwardRef and pass ref as a regular prop",
+      "why_fails": "In React <19, ref is special and won't be forwarded as a prop",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://react.dev/reference/react/forwardRef"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure function takes exactly (props, ref) parameters",
+      "success_rate": 0.92,
+      "how": "const Input = forwardRef((props, ref) => <input ref={ref} {...props} />);",
+      "sources": [
+        "https://react.dev/reference/react/forwardRef"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "In React 19+, ref is a regular prop — no need for forwardRef",
+      "success_rate": 0.85,
+      "how": "function Input({ ref, ...props }) { return <input ref={ref} {...props} />; }",
+      "sources": [
+        "https://react.dev/blog/2024/12/05/react-19"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

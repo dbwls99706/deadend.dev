@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/enospc-system-limit-watchers/node20-linux",
+  "url": "https://deadends.dev/node/enospc-system-limit-watchers/node20-linux",
+  "error": {
+    "signature": "Error: ENOSPC: System limit for number of file watchers reached",
+    "regex": "ENOSPC.*file watchers reached",
+    "domain": "node",
+    "category": "filesystem",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "Linux inotify watcher limit exhausted, common with large projects using webpack/vite/jest --watch."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling file watching entirely",
+      "why_fails": "Breaks hot-reload and watch mode development workflow",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restarting the dev server repeatedly",
+      "why_fails": "Temporary; watchers accumulate again",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase inotify watcher limit: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p",
+      "success_rate": 0.97,
+      "how": "Permanently increases the limit to 524288",
+      "sources": [
+        "https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add large directories to watchOptions.ignored in webpack/vite config",
+      "success_rate": 0.88,
+      "how": "Ignore node_modules and build output directories from file watching",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

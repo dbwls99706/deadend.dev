@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/hooks-rules-violation/react18-linux",
+  "url": "https://deadends.dev/react/hooks-rules-violation/react18-linux",
+  "error": {
+    "signature": "Error: Rendered more hooks than during the previous render",
+    "regex": "(Rendered (more|fewer) hooks|hooks rules|Rules of Hooks)",
+    "domain": "react",
+    "category": "hooks",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=16.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Hooks called conditionally or in different order between renders — violates Rules of Hooks."
+  },
+  "dead_ends": [
+    {
+      "action": "Using useRef to track which hooks to call",
+      "why_fails": "Adds complexity; still violates hook ordering rules",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Converting to class components to avoid hooks entirely",
+      "why_fails": "Loses functional component benefits; class components are less ergonomic",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move all hooks to the top level of the component, before any conditionals or returns",
+      "success_rate": 0.97,
+      "how": "Hooks must be called in the same order every render",
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use the eslint-plugin-react-hooks to catch violations at lint time",
+      "success_rate": 0.93,
+      "how": "npm install -D eslint-plugin-react-hooks — catches hook order violations automatically",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

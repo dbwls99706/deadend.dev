@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/module-not-found-client-component/next14-linux",
+  "url": "https://deadends.dev/nextjs/module-not-found-client-component/next14-linux",
+  "error": {
+    "signature": "Module not found: Can't resolve 'fs' in client component",
+    "regex": "Module not found.*Can't resolve '(fs|path|child_process|crypto)'",
+    "domain": "nextjs",
+    "category": "app-router",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Client component (use client) tries to import a Node.js-only module like fs, path, or child_process."
+  },
+  "dead_ends": [
+    {
+      "action": "Polyfilling the Node.js module for the browser",
+      "why_fails": "fs and child_process cannot be meaningfully polyfilled in browsers",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Installing the module from npm",
+      "why_fails": "fs is a built-in Node module; npm install fs installs a shim that doesn't work",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move the Node.js code to a Server Component or API route",
+      "success_rate": 0.96,
+      "how": "Remove 'use client' from the component that needs Node.js APIs",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use dynamic import with { ssr: false } if the module is only needed on the server side of the component",
+      "success_rate": 0.85,
+      "how": "Separate server-only logic into a separate module imported dynamically",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

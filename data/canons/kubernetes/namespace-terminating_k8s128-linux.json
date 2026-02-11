@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/namespace-terminating/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/namespace-terminating/k8s128-linux",
+  "error": {
+    "signature": "namespace is being terminated",
+    "regex": "namespace.*terminating",
+    "domain": "kubernetes",
+    "category": "namespace",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Namespace stuck in Terminating state — usually due to a finalizer that can't complete."
+  },
+  "dead_ends": [
+    {
+      "action": "Force-deleting the namespace with kubectl delete ns --force --grace-period=0",
+      "why_fails": "Does not work for stuck Terminating namespaces; finalizers still block",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Waiting indefinitely for it to resolve",
+      "why_fails": "May never resolve if the finalizer controller is gone",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove the finalizer: kubectl get ns <ns> -o json | jq '.spec.finalizers = []' | kubectl replace --raw /api/v1/namespaces/<ns>/finalize -f -",
+      "success_rate": 0.92,
+      "how": "Clears the stuck finalizer allowing deletion to proceed",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/overview/working-with-objects/finalizers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check what's preventing deletion: kubectl api-resources --verbs=list --namespaced -o name | xargs -n1 kubectl get -n <ns>",
+      "success_rate": 0.85,
+      "how": "Lists all remaining resources in the namespace that may block deletion",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

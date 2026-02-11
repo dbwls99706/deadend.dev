@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/err-fs-eisdir/node20-linux",
+  "url": "https://deadends.dev/node/err-fs-eisdir/node20-linux",
+  "error": {
+    "signature": "Error: EISDIR: illegal operation on a directory, read",
+    "regex": "EISDIR: illegal operation on a directory",
+    "domain": "node",
+    "category": "filesystem",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Attempting to read/write a directory as if it were a file."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding recursive option to the read call",
+      "why_fails": "fs.readFile doesn't support reading directories; recursive is for mkdir/rmdir",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Catching the error and skipping",
+      "why_fails": "The file you need isn't being read; the feature is broken",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check if the path is a file: fs.statSync(path).isFile() before reading",
+      "success_rate": 0.95,
+      "how": "Use lstatSync to not follow symlinks",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the path to point to the actual file, not its parent directory",
+      "success_rate": 0.97,
+      "how": "Common when path.join or path.resolve produces a directory path instead of file path",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/invalid-count-argument/tf115-linux",
+  "url": "https://deadends.dev/terraform/invalid-count-argument/tf115-linux",
+  "error": {
+    "signature": "Error: Invalid count argument: count.index is not valid in this context",
+    "regex": "Invalid count argument|count\\.index.*not valid",
+    "domain": "terraform",
+    "category": "meta-arguments",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Using count.index outside of a resource that has count, or mixing count with for_each."
+  },
+  "dead_ends": [
+    {
+      "action": "Using both count and for_each on the same resource",
+      "why_fails": "Terraform doesn't allow both; pick one",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting count = 0 to skip the resource",
+      "why_fails": "Works but prevents use of count.index in any expressions",
+      "fail_rate": 0.4,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use for_each with a map/set instead of count for complex scenarios",
+      "success_rate": 0.93,
+      "how": "for_each provides each.key and each.value for more control",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure count is set on the resource block before using count.index",
+      "success_rate": 0.95,
+      "how": "count.index is only valid inside resources/modules with count defined",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

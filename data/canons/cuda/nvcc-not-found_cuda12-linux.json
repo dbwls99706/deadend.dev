@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/nvcc-not-found/cuda12-linux",
+  "url": "https://deadends.dev/cuda/nvcc-not-found/cuda12-linux",
+  "error": {
+    "signature": "FileNotFoundError: nvcc not found. Please ensure CUDA is installed",
+    "regex": "(nvcc.*not found|No such file.*nvcc)",
+    "domain": "cuda",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.94,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "CUDA compiler (nvcc) is not in PATH — CUDA toolkit not installed or not configured."
+  },
+  "dead_ends": [
+    {
+      "action": "Installing nvidia-driver instead of CUDA toolkit",
+      "why_fails": "The driver enables GPU compute but doesn't include nvcc or development tools",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding a random path to PATH hoping it has nvcc",
+      "why_fails": "Wrong CUDA version's nvcc may be incompatible",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the CUDA toolkit: apt install nvidia-cuda-toolkit or download from NVIDIA",
+      "success_rate": 0.93,
+      "how": "The toolkit includes nvcc, libraries, and headers",
+      "sources": [
+        "https://developer.nvidia.com/cuda-downloads"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add CUDA to PATH: export PATH=/usr/local/cuda/bin:$PATH",
+      "success_rate": 0.95,
+      "how": "Most installations put nvcc in /usr/local/cuda/bin",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

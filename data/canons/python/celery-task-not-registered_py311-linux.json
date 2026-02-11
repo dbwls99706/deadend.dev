@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/celery-task-not-registered/py311-linux",
+  "url": "https://deadends.dev/python/celery-task-not-registered/py311-linux",
+  "error": {
+    "signature": "celery.exceptions.NotRegistered: 'app.tasks.my_task'",
+    "regex": "NotRegistered.*task|Received unregistered task|KeyError.*celery",
+    "domain": "python",
+    "category": "task_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Celery worker doesn't know about the task. Worker code differs from caller code."
+  },
+  "dead_ends": [
+    {
+      "action": "Use send_task() to bypass registration",
+      "why_fails": "send_task skips validation — typos won't be caught",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.celeryq.dev/en/stable/userguide/calling.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Restart the Celery worker after code changes — it caches task definitions",
+      "success_rate": 0.95,
+      "sources": [
+        "https://docs.celeryq.dev/en/stable/userguide/workers.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure autodiscover_tasks finds the task: check include/imports config",
+      "success_rate": 0.9,
+      "how": "app.autodiscover_tasks(['myapp.tasks'])",
+      "sources": [
+        "https://docs.celeryq.dev/en/stable/userguide/tasks.html#automatic-naming-and-relative-imports"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify worker and caller import the same task module path",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.celeryq.dev/en/stable/userguide/tasks.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

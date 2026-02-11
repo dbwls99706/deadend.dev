@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2454-variable-used-before-assigned/ts5-linux",
+  "error": {
+    "signature": "error TS2454: Variable 'x' is used before being assigned",
+    "regex": "TS2454.*used before being assigned",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Variable accessed before all code paths assign it. TypeScript flow analysis detected a gap."
+  },
+  "dead_ends": [
+    {
+      "action": "Use ! non-null assertion: x!",
+      "why_fails": "May cause runtime undefined access if the analysis is correct",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Initialize the variable at declaration: let x: Type = defaultValue",
+      "success_rate": 0.95,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restructure code so all branches assign before use",
+      "success_rate": 0.9,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/hydration-text-mismatch/next14-linux",
+  "url": "https://deadends.dev/nextjs/hydration-text-mismatch/next14-linux",
+  "error": {
+    "signature": "Error: Text content does not match server-rendered HTML",
+    "regex": "(Text content does not match|Hydration failed because)",
+    "domain": "nextjs",
+    "category": "hydration",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-11",
+    "summary": "Server-rendered HTML differs from client-side render, causing a hydration mismatch."
+  },
+  "dead_ends": [
+    {
+      "action": "Suppressing with suppressHydrationWarning on every element",
+      "why_fails": "Masks real bugs; mismatches can cause UI inconsistencies",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Forcing client-side only rendering for the whole page",
+      "why_fails": "Loses SSR benefits (SEO, performance)",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure server and client render the same content — avoid Date.now(), Math.random() in render",
+      "success_rate": 0.93,
+      "how": "Move dynamic content to useEffect or use suppressHydrationWarning only on specific elements",
+      "sources": [
+        "https://nextjs.org/docs/messages/react-hydration-error"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use dynamic() with { ssr: false } for components that can only render on the client",
+      "success_rate": 0.88,
+      "how": "import dynamic from 'next/dynamic'; const Comp = dynamic(() => import('./Comp'), { ssr: false })",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

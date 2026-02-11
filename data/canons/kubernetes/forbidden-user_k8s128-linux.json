@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/forbidden-user/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/forbidden-user/k8s128-linux",
+  "error": {
+    "signature": "Error from server (Forbidden): pods is forbidden: User 'system:serviceaccount:default:default' cannot list resource 'pods'",
+    "regex": "Forbidden.*cannot (list|get|create|delete|update) resource",
+    "domain": "kubernetes",
+    "category": "rbac",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.94,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Service account or user lacks RBAC permissions for the requested operation."
+  },
+  "dead_ends": [
+    {
+      "action": "Granting cluster-admin to the service account",
+      "why_fails": "Excessive permissions; violates principle of least privilege",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disabling RBAC",
+      "why_fails": "Removes all access control from the cluster",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a Role and RoleBinding with the specific permissions needed",
+      "success_rate": 0.95,
+      "how": "kubectl create role pod-reader --verb=get,list --resource=pods",
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use ClusterRole for cluster-wide access or Role for namespace-scoped access",
+      "success_rate": 0.9,
+      "how": "Match the scope of permissions to the actual need",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

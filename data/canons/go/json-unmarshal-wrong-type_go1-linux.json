@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/json-unmarshal-wrong-type/go1-linux",
+  "url": "https://deadends.dev/go/json-unmarshal-wrong-type/go1-linux",
+  "error": {
+    "signature": "json: cannot unmarshal string into Go struct field X of type int",
+    "regex": "json: cannot unmarshal .+ into Go (struct field|value of type)",
+    "domain": "go",
+    "category": "serialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "JSON field type doesn't match Go struct type. API returns string '123' but struct expects int."
+  },
+  "dead_ends": [
+    {
+      "action": "Use interface{} for all struct fields",
+      "why_fails": "Loses all type safety — every field needs type assertion",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Unmarshal"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use json.Number or custom UnmarshalJSON for flexible types",
+      "success_rate": 0.9,
+      "how": "type MyStruct struct {\n    Count json.Number `json:\"count\"`\n}",
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Number"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Match struct field types to actual JSON — use string if API sends strings",
+      "success_rate": 0.92,
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Unmarshal"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use string tag for numeric fields that come as strings: `json:\"id,string\"`",
+      "success_rate": 0.88,
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Marshal"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

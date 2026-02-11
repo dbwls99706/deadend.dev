@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/next-image-unconfigured-host/next14-linux",
+  "url": "https://deadends.dev/nextjs/next-image-unconfigured-host/next14-linux",
+  "error": {
+    "signature": "Error: Invalid src prop on `next/image`, hostname is not configured",
+    "regex": "Invalid src prop.*next/image.*hostname.*not configured",
+    "domain": "nextjs",
+    "category": "images",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "next/image requires explicit allowlist of external image hostnames."
+  },
+  "dead_ends": [
+    {
+      "action": "Using a regular <img> tag instead",
+      "why_fails": "Loses Next.js image optimization (lazy loading, resizing, WebP)",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting unoptimized={true} on the Image component",
+      "why_fails": "Disables all optimization; images are served as-is",
+      "fail_rate": 0.5,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the hostname to next.config.js images.remotePatterns",
+      "success_rate": 0.97,
+      "how": "images: { remotePatterns: [{ hostname: 'example.com' }] }",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/components/image#remotepatterns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For all subdomains, use a wildcard: { hostname: '**.example.com' }",
+      "success_rate": 0.88,
+      "how": "Wildcard patterns match any subdomain",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

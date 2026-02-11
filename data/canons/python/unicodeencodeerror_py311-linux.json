@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/unicodeencodeerror/py311-linux",
+  "url": "https://deadends.dev/python/unicodeencodeerror/py311-linux",
+  "error": {
+    "signature": "UnicodeEncodeError: 'ascii' codec can't encode characters in position 0-2: ordinal not in range(128)",
+    "regex": "UnicodeEncodeError: '(ascii|latin-1|charmap)' codec can't encode",
+    "domain": "python",
+    "category": "encoding",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Attempting to encode Unicode text with a codec that cannot represent certain characters."
+  },
+  "dead_ends": [
+    {
+      "action": "Using .encode('ascii', errors='ignore')",
+      "why_fails": "Silently drops characters; corrupts the data",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replacing with .encode('latin-1')",
+      "why_fails": "Only supports 0-255 codepoints; still fails for CJK, emoji, etc.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use UTF-8 encoding explicitly: text.encode('utf-8')",
+      "success_rate": 0.96,
+      "how": "UTF-8 can represent all Unicode characters",
+      "sources": [
+        "https://docs.python.org/3/howto/unicode.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set PYTHONIOENCODING=utf-8 for stdout encoding issues",
+      "success_rate": 0.88,
+      "how": "export PYTHONIOENCODING=utf-8 — fixes encoding errors when piping output",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

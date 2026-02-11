@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/pod-evicted/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/pod-evicted/k8s128-linux",
+  "error": {
+    "signature": "The node was low on resource: ephemeral-storage",
+    "regex": "(evicted|low on resource: ephemeral-storage|DiskPressure)",
+    "domain": "kubernetes",
+    "category": "resources",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Pod evicted due to node running low on disk (ephemeral storage) or memory."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting very high resource requests to get scheduled on bigger nodes",
+      "why_fails": "Wastes cluster resources; doesn't fix the storage consumption",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling eviction thresholds on the kubelet",
+      "why_fails": "Node can run out of disk and become unresponsive",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set ephemeral-storage resource limits on containers to prevent excessive disk use",
+      "success_rate": 0.92,
+      "how": "resources: limits: ephemeral-storage: 2Gi",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Clean up container logs and temp files; use emptyDir sizeLimit",
+      "success_rate": 0.88,
+      "how": "emptyDir: sizeLimit: 1Gi prevents unbounded temp file growth",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

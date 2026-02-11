@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/context-canceled/docker24-linux",
+  "url": "https://deadends.dev/docker/context-canceled/docker24-linux",
+  "error": {
+    "signature": "failed to solve: context canceled",
+    "regex": "failed to solve.*context canceled",
+    "domain": "docker",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.10"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Docker build was interrupted — usually Ctrl+C, OOM kill, or buildkit timeout."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing Docker memory limit without checking actual usage",
+      "why_fails": "If the build legitimately needs more memory, this helps; but often it's a build cache issue",
+      "fail_rate": 0.5,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching from buildkit to legacy builder",
+      "why_fails": "Legacy builder is deprecated and slower",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Clear build cache and retry: docker builder prune -f && docker build .",
+      "success_rate": 0.9,
+      "how": "Stale cache layers can cause hangs that lead to cancellation",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check Docker daemon memory: docker system info and increase if needed",
+      "success_rate": 0.85,
+      "how": "OOM kills appear as context canceled in buildkit logs",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

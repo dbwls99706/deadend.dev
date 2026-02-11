@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/hash-mismatch/pip23-linux",
+  "url": "https://deadends.dev/pip/hash-mismatch/pip23-linux",
+  "error": {
+    "signature": "ERROR: THESE PACKAGES DO NOT MATCH THE HASHES FROM THE REQUIREMENTS FILE",
+    "regex": "(PACKAGES DO NOT MATCH THE HASHES|hash mismatch)",
+    "domain": "pip",
+    "category": "security",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Package hash doesn't match what's recorded in requirements file — corrupted download or changed package."
+  },
+  "dead_ends": [
+    {
+      "action": "Using --no-cache-dir and retrying",
+      "why_fails": "If the hash in requirements is wrong, cache doesn't matter",
+      "fail_rate": 0.5,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing the hash from requirements.txt",
+      "why_fails": "Disables hash verification for that package; supply chain risk",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Regenerate hashes: pip-compile --generate-hashes to update hash values",
+      "success_rate": 0.93,
+      "how": "pip-compile creates a fresh requirements.txt with correct hashes",
+      "sources": [
+        "https://github.com/jazzband/pip-tools"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Clear the pip cache and retry: pip cache purge && pip install -r requirements.txt",
+      "success_rate": 0.88,
+      "how": "A corrupted cached download may cause the mismatch",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

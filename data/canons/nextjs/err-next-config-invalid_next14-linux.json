@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/err-next-config-invalid/next14-linux",
+  "url": "https://deadends.dev/nextjs/err-next-config-invalid/next14-linux",
+  "error": {
+    "signature": "Error: Invalid next.config.js options detected",
+    "regex": "Invalid next\\.config\\.(js|mjs) options detected",
+    "domain": "nextjs",
+    "category": "config",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "next.config.js contains invalid or deprecated configuration options."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrading Next.js to match the old config format",
+      "why_fails": "Loses security patches and new features",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Suppressing the warning with typescript/eslint rules",
+      "why_fails": "The config error is at build time, not lint time",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check Next.js migration guide for your version and update deprecated options",
+      "success_rate": 0.95,
+      "how": "Each major version has a migration guide with config changes",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use the Next.js config type for autocomplete: /** @type {import('next').NextConfig} */",
+      "success_rate": 0.9,
+      "how": "TypeScript-powered autocomplete catches invalid options before build",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

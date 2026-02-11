@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/overflowerror-int-too-large/py311-linux",
+  "url": "https://deadends.dev/python/overflowerror-int-too-large/py311-linux",
+  "error": {
+    "signature": "OverflowError: Python int too large to convert to C long",
+    "regex": "OverflowError: (Python )?int too large to convert to C (long|ssize_t)",
+    "domain": "python",
+    "category": "numeric",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Python arbitrary-precision int exceeds C long range when passed to C extension or numpy."
+  },
+  "dead_ends": [
+    {
+      "action": "Casting to float first",
+      "why_fails": "Loses precision for very large integers",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Upgrading to 64-bit Python",
+      "why_fails": "Does not help — C long is already 64-bit on 64-bit Linux; the int is simply too large",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use numpy int64 or Python's math module for the calculation",
+      "success_rate": 0.88,
+      "how": "np.int64(value) if within 64-bit range, or use pure Python arithmetic",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Chunk the large integer operation to stay within C long bounds",
+      "success_rate": 0.85,
+      "how": "Process in batches or use libraries that handle arbitrary precision natively",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

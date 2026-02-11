@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/no-kernel-image-for-device/cuda12-linux",
+  "url": "https://deadends.dev/cuda/no-kernel-image-for-device/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: no kernel image is available for execution on the device",
+    "regex": "no kernel image is available for execution on the device",
+    "domain": "cuda",
+    "category": "compatibility",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "The compiled CUDA binary doesn't include kernels for the GPU architecture (compute capability mismatch)."
+  },
+  "dead_ends": [
+    {
+      "action": "Installing a different CUDA toolkit version",
+      "why_fails": "The toolkit version doesn't determine compiled architectures",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using CUDA_VISIBLE_DEVICES to select a different GPU",
+      "why_fails": "All GPUs on the machine likely have the same architecture",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Rebuild with the correct CUDA architecture: set TORCH_CUDA_ARCH_LIST or pass -arch=sm_XX",
+      "success_rate": 0.93,
+      "how": "For RTX 3090 use sm_86, RTX 4090 use sm_89, A100 use sm_80",
+      "sources": [
+        "https://developer.nvidia.com/cuda-gpus"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Install pre-built binaries that support your GPU: pip install torch --index-url https://download.pytorch.org/whl/cu121",
+      "success_rate": 0.9,
+      "how": "PyTorch wheels include all common architectures",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

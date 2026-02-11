@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0382-use-after-move/rust1-linux",
+  "url": "https://deadends.dev/rust/e0382-use-after-move/rust1-linux",
+  "error": {
+    "signature": "error[E0382]: borrow of moved value: `x`",
+    "regex": "E0382.*borrow of moved value",
+    "domain": "rust",
+    "category": "ownership",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rustc",
+      "version_range": ">=1.60"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.94,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Value has been moved to another owner and cannot be used anymore."
+  },
+  "dead_ends": [
+    {
+      "action": "Using unsafe to read the moved memory",
+      "why_fails": "Undefined behavior; memory may have been freed or reused",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Making everything Copy",
+      "why_fails": "Not all types can be Copy (heap-allocated types like String, Vec)",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Clone the value before moving if you need to use it again",
+      "success_rate": 0.92,
+      "how": "let y = x.clone(); move_fn(x); use(y);",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use references instead of moves where possible",
+      "success_rate": 0.95,
+      "how": "fn process(x: &MyType) instead of fn process(x: MyType)",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

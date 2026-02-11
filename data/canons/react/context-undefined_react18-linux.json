@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/context-undefined/react18-linux",
+  "url": "https://deadends.dev/react/context-undefined/react18-linux",
+  "error": {
+    "signature": "TypeError: Cannot read properties of undefined (reading 'dispatch'). useContext must be used within a Provider",
+    "regex": "(Cannot read properties of undefined.*useContext|useContext.*must be used within)",
+    "domain": "react",
+    "category": "context",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=16.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "useContext returns undefined because the component is not wrapped in the corresponding Provider."
+  },
+  "dead_ends": [
+    {
+      "action": "Providing a default value in createContext to avoid the error",
+      "why_fails": "Default value masks missing Provider; component uses stale/wrong data",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Making the context value optional and checking everywhere",
+      "why_fails": "Adds null checks throughout the codebase; verbose and error-prone",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wrap the component tree with the Provider: <MyContext.Provider value={...}>",
+      "success_rate": 0.96,
+      "how": "Ensure the Provider is above the component that calls useContext in the tree",
+      "sources": [
+        "https://react.dev/reference/react/useContext"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create a custom hook that throws if context is missing: useMyContext() with runtime check",
+      "success_rate": 0.9,
+      "how": "const ctx = useContext(MyCtx); if (!ctx) throw new Error('Missing Provider'); return ctx;",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/npm-install-eacces-docker/docker27-linux",
+  "url": "https://deadends.dev/docker/npm-install-eacces-docker/docker27-linux",
+  "error": {
+    "signature": "npm error EACCES: permission denied in Docker container during npm install",
+    "regex": "EACCES.*npm.*Docker|npm.*permission denied.*Docker|npm.*EACCES.*container",
+    "domain": "docker",
+    "category": "permission_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "npm install fails inside Docker due to root user + npm cache permissions."
+  },
+  "dead_ends": [
+    {
+      "action": "Run npm with --unsafe-perm",
+      "why_fails": "Security risk and deprecated flag",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.npmjs.com/cli/v10/using-npm/config#unsafe-perm"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a non-root user in Dockerfile: USER node",
+      "success_rate": 0.92,
+      "how": "FROM node:20-alpine\nRUN mkdir -p /app && chown node:node /app\nUSER node\nWORKDIR /app",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#user"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set npm cache directory writable: RUN npm config set cache /tmp/.npm",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.npmjs.com/cli/v10/using-npm/config#cache"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

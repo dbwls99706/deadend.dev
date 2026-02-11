@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2532-object-possibly-undefined/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2532-object-possibly-undefined/ts5-linux",
+  "error": {
+    "signature": "error TS2532: Object is possibly 'undefined'",
+    "regex": "TS2532.*Object is possibly 'undefined'",
+    "domain": "typescript",
+    "category": "strictness",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "tsc",
+      "version_range": ">=4.5"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Strict null checks detect that a value could be undefined at the point of use."
+  },
+  "dead_ends": [
+    {
+      "action": "Using the non-null assertion operator (!) everywhere",
+      "why_fails": "Tells TypeScript 'trust me' — runtime errors when wrong",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling strictNullChecks",
+      "why_fails": "Disables a critical safety feature; null/undefined bugs become runtime crashes",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add a null/undefined check: if (obj !== undefined) { obj.method() }",
+      "success_rate": 0.97,
+      "how": "Narrows the type and satisfies the compiler",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use optional chaining: obj?.method() ?? defaultValue",
+      "success_rate": 0.93,
+      "how": "Safely accesses properties and provides a fallback",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

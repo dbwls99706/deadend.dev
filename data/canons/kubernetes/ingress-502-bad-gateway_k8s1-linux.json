@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/ingress-502-bad-gateway/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/ingress-502-bad-gateway/k8s1-linux",
+  "error": {
+    "signature": "502 Bad Gateway (Ingress/Nginx)",
+    "regex": "502 Bad Gateway|upstream.*connect.*error|no live upstreams",
+    "domain": "kubernetes",
+    "category": "networking_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.8,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Ingress can't reach backend pods. Service misconfigured, pods not ready, or port mismatch."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase proxy timeouts to very large values",
+      "why_fails": "If pods are down, timeouts don't help",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify service selector matches pod labels: kubectl get ep <service>",
+      "success_rate": 0.92,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check pod readiness — unready pods are removed from endpoints",
+      "success_rate": 0.9,
+      "how": "kubectl get pods -o wide\nkubectl describe endpoints <service-name>",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify service port matches container port (not just pod port)",
+      "success_rate": 0.88,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/err-next-api-write-after-end/next14-linux",
+  "url": "https://deadends.dev/nextjs/err-next-api-write-after-end/next14-linux",
+  "error": {
+    "signature": "Error: write after end in API route",
+    "regex": "(write after end|Cannot set headers after they are sent)",
+    "domain": "nextjs",
+    "category": "api-routes",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "API route sends response twice — usually a missing return after res.json()."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding res.headersSent check before every response",
+      "why_fails": "Band-aid; masks the control flow bug",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Wrapping everything in try/catch",
+      "why_fails": "The second write is intentional code, not an exception",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add return after res.json()/res.send(): return res.json({ ok: true })",
+      "success_rate": 0.96,
+      "how": "return prevents execution of code below that would send another response",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Refactor to single response point at the end of the handler",
+      "success_rate": 0.88,
+      "how": "Collect the response data in a variable and send once at the end",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

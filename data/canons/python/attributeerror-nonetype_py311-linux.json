@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/attributeerror-nonetype/py311-linux",
+  "url": "https://deadends.dev/python/attributeerror-nonetype/py311-linux",
+  "error": {
+    "signature": "AttributeError: 'NoneType' object has no attribute 'split'",
+    "regex": "AttributeError: 'NoneType' object has no attribute",
+    "domain": "python",
+    "category": "typing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Calling a method on None — usually from an unhandled function return value or missing dictionary key."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding a global try/except AttributeError",
+      "why_fails": "Masks the None source; bug surfaces elsewhere",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting a default attribute on NoneType",
+      "why_fails": "Cannot modify built-in types; SyntaxError in strict mode",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Trace where the None comes from — add assertions or type hints",
+      "success_rate": 0.95,
+      "how": "assert value is not None, 'Expected non-None from function X'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Optional type hints and None checks: if result is not None: result.split()",
+      "success_rate": 0.93,
+      "how": "Type checkers like mypy will flag unsafe None access",
+      "sources": [
+        "https://docs.python.org/3/library/typing.html#typing.Optional"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

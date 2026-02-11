@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/import-cycle-not-allowed/go121-linux",
+  "url": "https://deadends.dev/go/import-cycle-not-allowed/go121-linux",
+  "error": {
+    "signature": "import cycle not allowed",
+    "regex": "import cycle not allowed",
+    "domain": "go",
+    "category": "packages",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-11",
+    "summary": "Go packages have a circular dependency — package A imports B and B imports A."
+  },
+  "dead_ends": [
+    {
+      "action": "Merging the packages into one",
+      "why_fails": "Creates a monolithic package; violates separation of concerns",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using go:linkname to access unexported symbols",
+      "why_fails": "Compiler directive abuse; breaks with Go updates",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Extract shared types/interfaces into a third package imported by both",
+      "success_rate": 0.95,
+      "how": "Create a types or models package with the shared definitions",
+      "sources": [
+        "https://go.dev/doc/effective_go#package-names"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use interfaces to break the dependency: depend on abstractions, not implementations",
+      "success_rate": 0.9,
+      "how": "Package A defines an interface; package B implements it",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

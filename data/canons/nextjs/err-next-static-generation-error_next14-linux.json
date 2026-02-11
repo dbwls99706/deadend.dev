@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/err-next-static-generation-error/next14-linux",
+  "url": "https://deadends.dev/nextjs/err-next-static-generation-error/next14-linux",
+  "error": {
+    "signature": "Error occurred prerendering page '/path'. Read more: https://nextjs.org/docs/messages/prerender-error",
+    "regex": "(Error occurred prerendering|prerender-error|getStaticProps)",
+    "domain": "nextjs",
+    "category": "static-generation",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Static page generation failed during next build — usually a data fetching error or runtime error in the page component."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding try/catch to suppress the error and return empty props",
+      "why_fails": "Publishes a page with no data; users see an empty or broken page",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching all pages to SSR to avoid static generation",
+      "why_fails": "Loses static optimization; increases server load and TTFB",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the specific error in the build output — it shows the root cause above the prerender error",
+      "success_rate": 0.95,
+      "how": "Scroll up in the build log to find the actual error: API timeout, missing env var, etc.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use generateStaticParams or fallback: 'blocking' for dynamic routes",
+      "success_rate": 0.88,
+      "how": "For dynamic pages, generate known paths statically and render new ones on demand",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

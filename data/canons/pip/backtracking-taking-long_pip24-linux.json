@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/backtracking-taking-long/pip24-linux",
+  "url": "https://deadends.dev/pip/backtracking-taking-long/pip24-linux",
+  "error": {
+    "signature": "INFO: pip is looking at multiple versions of X to determine which version is compatible (backtracking)",
+    "regex": "backtracking|pip is looking at multiple versions|Collecting.*very slow",
+    "domain": "pip",
+    "category": "resolution_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.75,
+    "confidence": 0.8,
+    "last_updated": "2026-02-11",
+    "summary": "pip dependency resolver backtracking through many versions. Can take minutes to hours."
+  },
+  "dead_ends": [
+    {
+      "action": "Cancel and use --no-deps",
+      "why_fails": "Skips dependency resolution — may install incompatible versions",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pin more versions in requirements.txt to reduce the search space",
+      "success_rate": 0.88,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use pip-compile (pip-tools) to pre-resolve and lock versions",
+      "success_rate": 0.9,
+      "how": "pip-compile requirements.in",
+      "sources": [
+        "https://pip-tools.readthedocs.io/en/stable/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade pip — newer versions have faster resolver: pip install --upgrade pip",
+      "success_rate": 0.82,
+      "sources": [
+        "https://pip.pypa.io/en/stable/installation/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

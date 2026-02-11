@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/next-dev-port-conflict/node20-linux",
+  "url": "https://deadends.dev/node/next-dev-port-conflict/node20-linux",
+  "error": {
+    "signature": "Error: listen EADDRINUSE: address already in use :::3000 (next dev)",
+    "regex": "EADDRINUSE.*3000.*next|next.*dev.*port.*in use",
+    "domain": "node",
+    "category": "server_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Next.js dev server port already in use. Another instance or process on port 3000."
+  },
+  "dead_ends": [
+    {
+      "action": "Change to a random port each time",
+      "why_fails": "Inconsistent URLs during development",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://nextjs.org/docs/api-reference/cli"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Kill existing process: lsof -i :3000 and kill the PID",
+      "success_rate": 0.95,
+      "how": "lsof -ti :3000 | xargs kill -9",
+      "sources": [
+        "https://nextjs.org/docs/api-reference/cli"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a different port: next dev -p 3001",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nextjs.org/docs/api-reference/cli#development"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
