@@ -1075,7 +1075,7 @@ def build_version_json(canons: list[dict]) -> None:
         "discovery": {
             "ai_plugin": f"{BASE_URL}/.well-known/ai-plugin.json",
             "agent_card": f"{BASE_URL}/.well-known/agent-card.json",
-            "mcp_server": "pip install deadend-dev && python -m mcp.server",
+            "mcp_server": "pip install deadends-dev && python -m mcp.server",
         },
     }
 
