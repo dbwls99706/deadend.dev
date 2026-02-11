@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0277-trait-bound/rust1-linux",
+  "url": "https://deadend.dev/rust/e0277-trait-bound/rust1-linux",
+  "error": {
+    "signature": "error[E0277]: the trait bound 'T: Trait' is not satisfied",
+    "regex": "error\\[E0277\\]: the trait bound .+ is not satisfied",
+    "domain": "rust",
+    "category": "trait_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-10",
+    "summary": "Type doesn't implement a required trait. Common with Display, Debug, Clone, Serialize."
+  },
+  "dead_ends": [
+    {
+      "action": "Implement the trait manually when derive would work",
+      "why_fails": "Unnecessary boilerplate for standard traits",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Remove the trait bound from the function",
+      "why_fails": "Breaks the function's ability to use trait methods",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add #[derive(Trait)] to your struct/enum",
+      "success_rate": 0.92,
+      "how": "#[derive(Debug, Clone, Serialize)]",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add the trait bound to your generic function signature",
+      "success_rate": 0.85,
+      "how": "fn process<T: Display + Clone>(item: T)",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

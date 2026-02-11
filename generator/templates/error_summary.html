@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>{{ signature }} — All Environments & Fixes | deadend.dev</title>
-  <meta name="description" content="How to fix {{ signature }}. Covers {{ environments|length }} environments with {{ total_dead_ends }} dead ends to avoid and {{ total_workarounds }} verified workarounds.">
+  <meta name="description" content="How to fix {{ signature }}. Covers {{ environments|length }} environments with {{ total_dead_ends }} dead ends to avoid and {{ total_workarounds }} verified workarounds. Fix rates: {{ min_rate }}%–{{ max_rate }}%.">
   <meta name="robots" content="index, follow, max-snippet:-1">
-  <meta name="keywords" content="{{ signature }}, {{ domain }}, error fix, troubleshooting, dead end, workaround, how to fix, solve{% for env in environments %}, {{ env.env_summary }}{% endfor %}">
+  <meta name="keywords" content="{{ signature }}, {{ domain }}, error fix, troubleshooting, dead end, workaround, how to fix, solve{% for env in environments %}, {{ env.env_summary }}{% endfor %}{% for v in common_variations|default([]) %}, {{ v }}{% endfor %}">
 
   <link rel="canonical" href="https://deadend.dev/{{ domain }}/{{ slug }}/">
 
@@ -35,21 +35,22 @@
     .env-card { border: 1px solid #30363d; border-radius: 6px; padding: 1rem; margin: 0.75rem 0; }
     .dead-end { border-left: 4px solid #f85149; padding-left: 1rem; margin: 1rem 0; }
     .workaround { border-left: 4px solid #3fb950; padding-left: 1rem; margin: 1rem 0; }
+    .variation { display: inline-block; background: #161b22; padding: 0.2rem 0.6rem; border-radius: 4px; margin: 0.2rem; font-size: 0.85rem; }
     footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
   </style>
 </head>
 <body>
-  <pre id="ai-summary" style="display:none;">ERROR: {{ signature }}
-REGEX: {{ regex }}
-DOMAIN: {{ domain }}
-ENVIRONMENTS: {{ environments|length }}
-TOTAL_DEAD_ENDS: {{ total_dead_ends }}
-TOTAL_WORKAROUNDS: {{ total_workarounds }}
-FIX_RATE_RANGE: {{ min_rate }}%-{{ max_rate }}%
-{% for env in environments %}ENV: {{ env.env_summary }} | resolvable={{ env.resolvable }} | rate={{ env.fix_rate }} | url=https://deadend.dev/{{ env.id }}
-{% endfor %}COMMON_DEAD_ENDS:{% for de in common_dead_ends %}
-  - {{ de.action }} (fail_rate={{ de.fail_rate }}){% endfor %}
-JSON_API_PATTERN: https://deadend.dev/api/v1/{{ domain }}/{{ slug }}/{env}.json</pre>
+  <pre id="ai-summary" style="display:none;">ERROR={{ signature }}
+REGEX={{ regex }}
+DOMAIN={{ domain }}
+ENVIRONMENTS={{ environments|length }}
+TOTAL_DEAD_ENDS={{ total_dead_ends }}
+TOTAL_WORKAROUNDS={{ total_workarounds }}
+FIX_RATE_RANGE={{ min_rate }}%-{{ max_rate }}%
+{% for env in environments %}ENV={{ env.env_summary }} | resolvable={{ env.resolvable }} | rate={{ env.fix_rate }} | url=https://deadend.dev/{{ env.id }}
+{% endfor %}DEAD_ENDS={% for de in common_dead_ends %}{{ de.action }} (fail_rate={{ de.fail_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
+JSON_API_PATTERN=https://deadend.dev/api/v1/{{ domain }}/{{ slug }}/{env}.json
+MATCH_API=https://deadend.dev/api/v1/match.json</pre>
 
   <nav><a href="/">deadend.dev</a> / <a href="/{{ domain }}/">{{ domain }}</a></nav>
 
@@ -57,6 +58,23 @@ JSON_API_PATTERN: https://deadend.dev/api/v1/{{ domain }}/{{ slug }}/{env}.json<
     <h1><code>{{ signature }}</code></h1>
     <p class="meta">{{ environments|length }} environment{{ 's' if environments|length != 1 else '' }} · {{ total_dead_ends }} dead ends · {{ total_workarounds }} workarounds · Fix rates: {{ min_rate }}%–{{ max_rate }}%</p>
   </header>
+
+  <!-- TL;DR for AI agents -->
+  <section id="tldr" style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1rem;margin:1rem 0;">
+    <strong>TL;DR:</strong> Fix rates range from {{ min_rate }}% to {{ max_rate }}% across {{ environments|length }} environments.
+    Top dead end: <em>{{ common_dead_ends[0].action }}</em> ({{ (common_dead_ends[0].fail_rate * 100)|int }}% fail).
+    {% if common_workarounds %}Top workaround: <em>{{ common_workarounds[0].action }}</em> ({{ (common_workarounds[0].success_rate * 100)|int }}% success).{% endif %}
+  </section>
+
+  {% if common_variations|default([]) %}
+  <section id="common-variations">
+    <h2>Common Variations</h2>
+    <p>This error appears in several forms. All are covered by this page:</p>
+    {% for v in common_variations %}
+    <span class="variation"><code>{{ v }}</code></span>
+    {% endfor %}
+  </section>
+  {% endif %}
 
   <section>
     <h2>Environments</h2>

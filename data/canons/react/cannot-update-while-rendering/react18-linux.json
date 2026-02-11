@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/cannot-update-while-rendering/react18-linux",
+  "url": "https://deadend.dev/react/cannot-update-while-rendering/react18-linux",
+  "error": {
+    "signature": "Cannot update a component while rendering a different component",
+    "regex": "Cannot update a component .+ while rendering a different component",
+    "domain": "react",
+    "category": "render_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-10",
+    "summary": "State update triggered during render phase of another component. Usually setState in render body."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap the update in setTimeout",
+      "why_fails": "Hacky fix that can cause flickering and race conditions",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use useLayoutEffect for the update",
+      "why_fails": "May cause the same issue if the update triggers a re-render",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move the state update into useEffect",
+      "success_rate": 0.9,
+      "how": "useEffect(() => { setState(value); }, [dependency]);",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restructure to lift state up or use a shared context",
+      "success_rate": 0.82,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

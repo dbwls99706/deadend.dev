@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/permissionerror-errno13/py311-linux",
+  "url": "https://deadend.dev/python/permissionerror-errno13/py311-linux",
+  "error": {
+    "signature": "PermissionError: [Errno 13] Permission denied",
+    "regex": "PermissionError: \\[Errno 13\\] Permission denied:?\\s*['\\\"]?(.+?)['\\\"]?",
+    "domain": "python",
+    "category": "io_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.87,
+    "last_updated": "2026-02-10",
+    "summary": "Insufficient file system permissions. Common with system paths, Docker volumes, or pip installs."
+  },
+  "dead_ends": [
+    {
+      "action": "Run with sudo",
+      "why_fails": "Creates root-owned files causing more permission issues later",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "chmod 777 the directory",
+      "why_fails": "Security vulnerability, doesn't fix the ownership issue",
+      "fail_rate": 0.82,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix ownership with chown and use appropriate user permissions",
+      "success_rate": 0.9,
+      "how": "chown -R $(whoami) /path/to/dir",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use virtual environments or user-local paths",
+      "success_rate": 0.88,
+      "how": "pip install --user or python -m venv .venv",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

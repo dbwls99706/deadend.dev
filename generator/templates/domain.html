@@ -23,9 +23,11 @@
   </style>
 </head>
 <body>
-  <pre id="ai-summary" style="display:none;">DOMAIN: {{ domain }}
-TOTAL_ERRORS: {{ total }}
-ENTRIES:{% for e in entries %} [{{ e.id }} resolvable={{ e.resolvable }} rate={{ e.fix_success_rate }}]{% endfor %}</pre>
+  <pre id="ai-summary" style="display:none;">DOMAIN={{ domain }}
+TOTAL_ERRORS={{ total }}
+MATCH_API=https://deadend.dev/api/v1/match.json
+{% for e in entries %}ENTRY={{ e.id }} | resolvable={{ e.resolvable }} | rate={{ e.fix_success_rate }}
+{% endfor %}</pre>
 
   <nav><a href="/">deadend.dev</a></nav>
 

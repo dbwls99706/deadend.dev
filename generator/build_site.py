@@ -15,6 +15,13 @@ SITE_DIR = PROJECT_ROOT / "site"
 TEMPLATE_DIR = PROJECT_ROOT / "generator" / "templates"
 BASE_URL = "https://deadend.dev"
 
+# Search engine verification codes — replace with actual codes after registering
+GOOGLE_VERIFICATION = ""  # e.g., "google1234567890abcdef"
+BING_VERIFICATION = ""  # e.g., "ABCDEF1234567890"
+
+# IndexNow key — generated deterministically for the site
+INDEXNOW_KEY = "deadend-dev-indexnow-key"
+
 
 def load_canons(data_dir: Path) -> list[dict]:
     """Load all ErrorCanon JSON files from the data directory."""
@@ -217,6 +224,8 @@ def build_index_page(canons: list[dict], jinja_env: Environment) -> None:
         domains=domains,
         domain_stats=domain_stats,
         recent_entries=recent_entries,
+        google_verification=GOOGLE_VERIFICATION,
+        bing_verification=BING_VERIFICATION,
     )
 
     (SITE_DIR / "index.html").write_text(html, encoding="utf-8")
@@ -346,6 +355,7 @@ Allow: /
 Sitemap: https://deadend.dev/sitemap.xml
 
 # AI-specific endpoints:
+# Lightweight matching: https://deadend.dev/api/v1/match.json
 # Error index (JSON): https://deadend.dev/api/v1/index.json
 # OpenAPI spec: https://deadend.dev/api/v1/openapi.json
 # LLM-optimized: https://deadend.dev/llms.txt
@@ -383,6 +393,58 @@ def build_cname() -> None:
     """Generate CNAME file for custom domain."""
     (SITE_DIR / "CNAME").write_text("deadend.dev\n", encoding="utf-8")
     print("  Generated: CNAME")
+
+
+def _generate_variations(signature: str, regex: str, domain: str) -> list[str]:
+    """Generate common text variations of an error signature.
+
+    These help with SEO by covering different phrasings AI agents
+    or developers might search for.
+    """
+    variations = []
+
+    # Domain-specific variation patterns
+    _VARIATION_FILLS: dict[str, list[str]] = {
+        "python": ["torch", "numpy", "cv2", "pandas", "tensorflow", "sklearn"],
+        "node": ["express", "react", "next", "axios", "webpack"],
+        "pip": ["torch", "numpy", "opencv-python", "tensorflow", "scipy"],
+        "docker": ["/var/run/docker.sock", "/dev/sda1", "172.17.0.0/16"],
+        "cuda": ["0", "1", "cuda:0", "NVIDIA A100"],
+        "git": ["main", "master", "origin/main", "develop"],
+        "typescript": ["react", "./components", "@types/node", "lodash"],
+        "rust": ["String", "&str", "Vec<T>", "Box<dyn Error>"],
+        "go": ["main", "http", "fmt", "context"],
+        "kubernetes": ["nginx", "postgres", "redis", "my-app"],
+        "terraform": ["aws_instance", "azurerm_resource_group", "google_compute_instance"],
+        "aws": ["s3:GetObject", "sts:AssumeRole", "ec2:DescribeInstances"],
+        "nextjs": ["./components/Header", "react-dom", "next/image"],
+        "react": ["useState", "useEffect", "useContext", "useReducer"],
+    }
+
+    fills = _VARIATION_FILLS.get(domain, [])
+
+    # If signature has a placeholder pattern (like 'X' or quotes),
+    # substitute common module/package names
+    import re as _re
+
+    # Check for common placeholder patterns
+    placeholder_patterns = [
+        (r"'([^']*)'", fills[:4]),  # single-quoted
+        (r'"([^"]*)"', fills[:4]),  # double-quoted
+        (r"'X'", fills[:4]),
+    ]
+
+    for pattern, substitutions in placeholder_patterns:
+        match = _re.search(pattern, signature)
+        if match:
+            original = match.group(0)
+            for sub in substitutions:
+                new_sig = signature.replace(original, f"'{sub}'", 1)
+                if new_sig != signature and new_sig not in variations:
+                    variations.append(new_sig)
+            break
+
+    return variations[:6]  # Limit to 6 variations
 
 
 def build_error_summary_pages(
@@ -457,6 +519,9 @@ def build_error_summary_pages(
         min_rate = int(min(rates) * 100)
         max_rate = int(max(rates) * 100)
 
+        # Generate common variations from the regex pattern
+        common_variations = _generate_variations(signature, regex, domain)
+
         html = template.render(
             signature=signature,
             regex=regex,
@@ -465,6 +530,7 @@ def build_error_summary_pages(
             environments=environments,
             common_dead_ends=common_dead_ends,
             common_workarounds=common_workarounds,
+            common_variations=common_variations,
             total_dead_ends=len(common_dead_ends),
             total_workarounds=len(common_workarounds),
             min_rate=min_rate,
@@ -530,47 +596,66 @@ def build_search_page(
 
 
 def build_llms_txt(canons: list[dict]) -> None:
-    """Generate llms.txt and llms-full.txt for AI agent discovery."""
+    """Generate llms.txt (llmstxt.org standard) and llms-full.txt."""
     # Group by domain for organized listing
     by_domain: dict[str, list[dict]] = {}
     for c in canons:
         by_domain.setdefault(c["error"]["domain"], []).append(c)
 
+    # Deduplicate signatures for llms.txt (environment-agnostic)
+    seen_signatures: dict[str, dict] = {}
+    for c in sorted(canons, key=lambda x: x["id"]):
+        sig = c["error"]["signature"]
+        if sig not in seen_signatures:
+            seen_signatures[sig] = c
+
+    # llmstxt.org standard format
     lines = [
         "# deadend.dev",
         "",
-        "> Structured failure knowledge for AI agents.",
-        "> Before trying a fix for an error, check if it's a known dead end.",
+        "> Structured failure knowledge for AI coding agents. "
+        f"{len(canons)} error entries across {len(by_domain)} domains. "
+        "Check dead ends before attempting a fix. "
+        "Check workarounds for approaches that actually work.",
+        "",
+        "## About",
+        "",
+        "- [API Index](https://deadend.dev/api/v1/index.json): "
+        "All errors with regex patterns and API URLs",
+        "- [Match Endpoint](https://deadend.dev/api/v1/match.json): "
+        "Lightweight regex-only matching (fits in context window)",
+        "- [OpenAPI Spec](https://deadend.dev/api/v1/openapi.json): "
+        "Full API specification",
+        "- [Complete Database](https://deadend.dev/llms-full.txt): "
+        "Full error dump in plaintext",
+        "- [Error Search](https://deadend.dev/search/): "
+        "Client-side error matching",
         "",
         "## How to Use",
         "",
-        "1. Match your error against signatures below",
-        "2. Fetch the JSON: GET https://deadend.dev/api/v1/{id}.json",
-        "3. Check dead_ends[] — do NOT try these",
-        "4. Check workarounds[] — try these instead",
-        "5. Check transition_graph — know what error comes next",
-        "",
-        "## API",
-        "",
-        "- Error lookup: `GET /api/v1/{domain}/{slug}/{env}.json`",
-        "- Error index: `GET /api/v1/index.json`",
-        "- OpenAPI spec: `GET /api/v1/openapi.json`",
-        "",
-        "## Error Signatures",
+        "1. Match your error against the regex patterns below",
+        "2. Fetch the full canon: `GET https://deadend.dev/api/v1/{id}.json`",
+        "3. Read `dead_ends[]` — do NOT try these (saves time and tokens)",
+        "4. Read `workarounds[]` — try these instead (includes success rates)",
+        "5. Read `transition_graph` — know what error comes next",
         "",
     ]
 
     for domain in sorted(by_domain.keys()):
-        lines.append(f"### {domain}")
-        lines.append("")
+        domain_sigs = {}
         for c in sorted(by_domain[domain], key=lambda x: x["id"]):
+            sig = c["error"]["signature"]
+            if sig not in domain_sigs:
+                domain_sigs[sig] = c
+
+        lines.append(f"## {domain}")
+        lines.append("")
+        for sig, c in domain_sigs.items():
+            slug_key = c["id"].rsplit("/", 1)[0]
             lines.append(
                 f"- [{c['error']['signature']}]"
-                f"(https://deadend.dev/{c['id']})"
-                f" — {c['verdict']['resolvable']}"
-            )
-            lines.append(
-                f"  regex: `{c['error']['regex']}`"
+                f"(https://deadend.dev/{slug_key}/): "
+                f"{c['verdict']['summary']}"
             )
         lines.append("")
 
@@ -581,34 +666,42 @@ def build_llms_txt(canons: list[dict]) -> None:
     full_lines = [
         "# deadend.dev — Complete Error Database",
         "",
-        f"# Total: {len(canons)} errors across "
-        f"{len(by_domain)} domains",
-        f"# Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
+        f"> {len(canons)} errors across {len(by_domain)} domains. "
+        f"Generated {datetime.now(timezone.utc).strftime('%Y-%m-%d')}.",
+        "",
+        "## Quick Reference",
+        "",
+        "- Match endpoint: `GET /api/v1/match.json`",
+        "- Full canon: `GET /api/v1/{domain}/{slug}/{env}.json`",
         "",
     ]
     for canon in sorted(canons, key=lambda c: c["id"]):
         full_lines.append(f"## {canon['id']}")
-        full_lines.append(f"ERROR: {canon['error']['signature']}")
-        full_lines.append(f"REGEX: {canon['error']['regex']}")
-        full_lines.append(f"RESOLVABLE: {canon['verdict']['resolvable']}")
+        full_lines.append("")
+        full_lines.append(f"- ERROR: {canon['error']['signature']}")
+        full_lines.append(f"- REGEX: `{canon['error']['regex']}`")
+        full_lines.append(f"- RESOLVABLE: {canon['verdict']['resolvable']}")
         full_lines.append(
-            f"FIX_RATE: {canon['verdict']['fix_success_rate']}"
+            f"- FIX_RATE: {canon['verdict']['fix_success_rate']}"
         )
-        full_lines.append(f"SUMMARY: {canon['verdict']['summary']}")
-        full_lines.append("DEAD_ENDS:")
+        full_lines.append(f"- SUMMARY: {canon['verdict']['summary']}")
+        full_lines.append("")
+        full_lines.append("### Dead Ends")
+        full_lines.append("")
         for de in canon["dead_ends"]:
             full_lines.append(
-                f"  - {de['action']} (fail_rate={de['fail_rate']})"
+                f"- {de['action']} (fail_rate={de['fail_rate']}): "
+                f"{de['why_fails']}"
             )
-            full_lines.append(f"    WHY: {de['why_fails']}")
-        full_lines.append("WORKAROUNDS:")
+        full_lines.append("")
+        full_lines.append("### Workarounds")
+        full_lines.append("")
         for wa in canon.get("workarounds", []):
+            how_text = f" — `{wa['how']}`" if wa.get("how") else ""
             full_lines.append(
-                f"  - {wa['action']} "
-                f"(success_rate={wa['success_rate']})"
+                f"- {wa['action']} "
+                f"(success_rate={wa['success_rate']}){how_text}"
             )
-            if wa.get("how"):
-                full_lines.append(f"    HOW: {wa['how']}")
         full_lines.append("")
 
     (SITE_DIR / "llms-full.txt").write_text(
@@ -827,6 +920,75 @@ def build_well_known(canons: list[dict]) -> None:
     print("  Generated: .well-known/ai-plugin.json")
 
 
+def build_match_json(canons: list[dict]) -> None:
+    """Generate /api/v1/match.json — ultra-lightweight matching file.
+
+    Contains only signatures and regexes so AI agents can load the entire
+    file into their context window and match errors without fetching
+    individual pages.
+    """
+    match_data = {
+        "version": "1.0.0",
+        "total": len(canons),
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "usage": (
+            "Match your error message against the regex patterns below. "
+            "On match, fetch the api_url for full dead_ends and workarounds."
+        ),
+        "patterns": [],
+    }
+
+    for canon in sorted(canons, key=lambda c: c["id"]):
+        match_data["patterns"].append({
+            "id": canon["id"],
+            "sig": canon["error"]["signature"],
+            "re": canon["error"]["regex"],
+            "domain": canon["error"]["domain"],
+            "ok": canon["verdict"]["resolvable"],
+            "rate": canon["verdict"]["fix_success_rate"],
+            "url": f"{BASE_URL}/api/v1/{canon['id']}.json",
+        })
+
+    api_dir = SITE_DIR / "api" / "v1"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    # Compact JSON to minimize token usage for AI agents
+    (api_dir / "match.json").write_text(
+        json.dumps(match_data, separators=(",", ":"), ensure_ascii=False),
+        encoding="utf-8",
+    )
+    print("  Generated: /api/v1/match.json")
+
+
+def build_indexnow(canons: list[dict]) -> None:
+    """Generate IndexNow key file and URL list for search engine notification."""
+    # IndexNow key verification file
+    (SITE_DIR / f"{INDEXNOW_KEY}.txt").write_text(
+        INDEXNOW_KEY, encoding="utf-8"
+    )
+
+    # URL list for IndexNow submission
+    urls = [BASE_URL]
+    urls.append(f"{BASE_URL}/search/")
+
+    domains_seen = set()
+    for canon in canons:
+        domain = canon["error"]["domain"]
+        if domain not in domains_seen:
+            domains_seen.add(domain)
+            urls.append(f"{BASE_URL}/{domain}/")
+
+    for canon in sorted(canons, key=lambda c: c["id"]):
+        urls.append(canon["url"])
+
+    urls.append(f"{BASE_URL}/api/v1/index.json")
+    urls.append(f"{BASE_URL}/llms.txt")
+
+    (SITE_DIR / "indexnow-urls.txt").write_text(
+        "\n".join(urls), encoding="utf-8"
+    )
+    print(f"  Generated: {INDEXNOW_KEY}.txt + indexnow-urls.txt ({len(urls)} URLs)")
+
+
 def main():
     print("Building deadend.dev static site...\n")
 
@@ -900,6 +1062,14 @@ def main():
 
     print("Generating .well-known/ai-plugin.json...")
     build_well_known(canons)
+    print()
+
+    print("Generating match.json (lightweight AI matching)...")
+    build_match_json(canons)
+    print()
+
+    print("Generating IndexNow support...")
+    build_indexnow(canons)
     print()
 
     print(f"Build complete! {len(canons)} error pages generated in site/")

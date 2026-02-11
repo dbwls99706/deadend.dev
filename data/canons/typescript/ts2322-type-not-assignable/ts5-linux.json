@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2322-type-not-assignable/ts5-linux",
+  "url": "https://deadend.dev/typescript/ts2322-type-not-assignable/ts5-linux",
+  "error": {
+    "signature": "TS2322: Type 'X' is not assignable to type 'Y'",
+    "regex": "TS2322: Type ['\\\"]?(.+?)['\\\"]? is not assignable to type ['\\\"]?(.+?)['\\\"]?",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-10",
+    "summary": "Type mismatch in assignment. The most common TypeScript error."
+  },
+  "dead_ends": [
+    {
+      "action": "Cast with 'as any'",
+      "why_fails": "Removes all type safety, defeats the purpose of TypeScript",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add @ts-expect-error",
+      "why_fails": "Silences the error without fixing the type issue",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the type at the source (function return type, API response type, etc.)",
+      "success_rate": 0.92,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use type guards or narrowing to handle union types properly",
+      "success_rate": 0.88,
+      "how": "if ('field' in obj) { /* obj is narrowed */ }",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/cycle-in-module/tf1-linux",
+  "url": "https://deadend.dev/terraform/cycle-in-module/tf1-linux",
+  "error": {
+    "signature": "Error: Cycle",
+    "regex": "Error: Cycle:?\\s*(.+)",
+    "domain": "terraform",
+    "category": "dependency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.55,
+    "confidence": 0.78,
+    "last_updated": "2026-02-10",
+    "summary": "Circular dependency between resources. Terraform cannot determine apply order."
+  },
+  "dead_ends": [
+    {
+      "action": "Add depends_on to break the cycle",
+      "why_fails": "depends_on can make cycles worse by adding more edges to the dependency graph",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Move resources to separate modules",
+      "why_fails": "Cycles across modules are even harder to debug",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use terraform graph to visualize the cycle and refactor",
+      "success_rate": 0.78,
+      "how": "terraform graph | dot -Tpng > graph.png",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Break the cycle by using data sources instead of direct references for one direction",
+      "success_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

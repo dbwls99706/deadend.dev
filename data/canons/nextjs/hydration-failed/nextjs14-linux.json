@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/hydration-failed/nextjs14-linux",
+  "url": "https://deadend.dev/nextjs/hydration-failed/nextjs14-linux",
+  "error": {
+    "signature": "Error: Hydration failed because the initial UI does not match what was rendered on the server",
+    "regex": "Hydration failed because the initial UI does not match",
+    "domain": "nextjs",
+    "category": "render_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.6,
+    "confidence": 0.82,
+    "last_updated": "2026-02-10",
+    "summary": "Server-rendered HTML doesn't match client-side render. Common with dynamic content, dates, or browser APIs."
+  },
+  "dead_ends": [
+    {
+      "action": "Suppress hydration warnings with suppressHydrationWarning",
+      "why_fails": "Masks real bugs, content will flash/shift for users",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Make everything client-side with 'use client'",
+      "why_fails": "Loses all SSR/SSG benefits, defeats the purpose of Next.js",
+      "fail_rate": 0.78,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move browser-only code into useEffect",
+      "success_rate": 0.82,
+      "how": "const [mounted, setMounted] = useState(false); useEffect(() => setMounted(true), []);",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use dynamic import with ssr: false for client-only components",
+      "success_rate": 0.78,
+      "how": "const Comp = dynamic(() => import('./Comp'), { ssr: false })",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}

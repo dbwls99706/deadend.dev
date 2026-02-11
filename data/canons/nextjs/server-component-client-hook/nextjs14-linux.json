@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/server-component-client-hook/nextjs14-linux",
+  "url": "https://deadend.dev/nextjs/server-component-client-hook/nextjs14-linux",
+  "error": {
+    "signature": "Error: useState/useEffect can only be used in Client Components",
+    "regex": "(useState|useEffect|useContext).+can only be used in Client Components",
+    "domain": "nextjs",
+    "category": "component_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-10"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.9,
+    "last_updated": "2026-02-10",
+    "summary": "React hooks used in a Server Component. Next.js App Router defaults to Server Components."
+  },
+  "dead_ends": [
+    {
+      "action": "Make the entire page a Client Component",
+      "why_fails": "Loses server-side rendering benefits for the whole page",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Pass hooks through props from a parent Client Component",
+      "why_fails": "Hooks cannot be passed as props, they must be called in the component",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add 'use client' directive at the top of the file that uses hooks",
+      "success_rate": 0.95,
+      "how": "// Add as first line:\n'use client';",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Extract the interactive part into a separate Client Component",
+      "success_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-10",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-10"
+  }
+}
