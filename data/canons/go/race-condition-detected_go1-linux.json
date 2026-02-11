@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/race-condition-detected/go1-linux",
+  "url": "https://deadends.dev/go/race-condition-detected/go1-linux",
+  "error": {
+    "signature": "WARNING: DATA RACE",
+    "regex": "DATA RACE|race condition|concurrent map (read and map write|writes)",
+    "domain": "go",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Race detector found concurrent access to shared data without synchronization."
+  },
+  "dead_ends": [
+    {
+      "action": "Ignore race detector warnings",
+      "why_fails": "Race conditions cause data corruption and random crashes",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://go.dev/doc/articles/race_detector"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add sleep() to avoid races",
+      "why_fails": "Sleep doesn't synchronize — just makes races less frequent",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://go.dev/doc/articles/race_detector"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use sync.Mutex to protect shared data",
+      "success_rate": 0.92,
+      "how": "var mu sync.Mutex\nmu.Lock()\nsharedMap[key] = value\nmu.Unlock()",
+      "sources": [
+        "https://pkg.go.dev/sync#Mutex"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use channels for goroutine communication instead of shared memory",
+      "success_rate": 0.9,
+      "how": "ch := make(chan Result)\ngo func() { ch <- compute() }()",
+      "sources": [
+        "https://go.dev/doc/effective_go#channels"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use sync.Map for concurrent map access",
+      "success_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/sync#Map"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

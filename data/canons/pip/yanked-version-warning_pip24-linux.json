@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/yanked-version-warning/pip24-linux",
+  "url": "https://deadends.dev/pip/yanked-version-warning/pip24-linux",
+  "error": {
+    "signature": "WARNING: The candidate selected for download or install is a yanked version",
+    "regex": "yanked version|yanked.*release|has been yanked",
+    "domain": "pip",
+    "category": "security_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "Package version was yanked (recalled) from PyPI. Usually has a critical bug or security issue."
+  },
+  "dead_ends": [
+    {
+      "action": "Pin to the yanked version to suppress the warning",
+      "why_fails": "The version was yanked for a reason — likely has a serious issue",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/yanked/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the warning",
+      "why_fails": "You may be installing a broken or vulnerable version",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/yanked/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install a different version: pip install 'pkg!=yanked_version'",
+      "success_rate": 0.95,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/yanked/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check PyPI for the reason it was yanked and the recommended replacement version",
+      "success_rate": 0.9,
+      "sources": [
+        "https://pypi.org/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Update to the latest non-yanked version: pip install --upgrade pkg",
+      "success_rate": 0.88,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

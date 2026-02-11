@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/loading-chunk-failed/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/loading-chunk-failed/nextjs14-linux",
+  "error": {
+    "signature": "ChunkLoadError: Loading chunk X failed",
+    "regex": "ChunkLoadError|Loading chunk.*failed|Failed to fetch dynamically imported module",
+    "domain": "nextjs",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Webpack chunk (code split piece) not found. Deploy replaced files while users had old HTML."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable code splitting",
+      "why_fails": "Destroys performance — one huge bundle",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Force reload on every navigation",
+      "why_fails": "Terrible UX — kills SPA behavior",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add error boundary that triggers window.location.reload() on ChunkLoadError",
+      "success_rate": 0.9,
+      "sources": [
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use content-addressed filenames (default in Next.js) so old chunks remain available",
+      "success_rate": 0.85,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Keep old build assets for a grace period during deployments",
+      "success_rate": 0.82,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

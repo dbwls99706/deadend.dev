@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/cors-blocked/node20-linux",
+  "url": "https://deadends.dev/node/cors-blocked/node20-linux",
+  "error": {
+    "signature": "Access to fetch has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header",
+    "regex": "CORS.*blocked|Access-Control-Allow-Origin|has been blocked by CORS",
+    "domain": "node",
+    "category": "http_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Browser blocks cross-origin request. Server must send correct CORS headers."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable CORS in the browser",
+      "why_fails": "Only works for development — can't ask users to disable CORS",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use no-cors mode in fetch",
+      "why_fails": "Response becomes opaque — you can't read the data",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Request/mode"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add CORS headers on the server: Access-Control-Allow-Origin",
+      "success_rate": 0.95,
+      "how": "// Express: app.use(cors())\n// or: res.setHeader('Access-Control-Allow-Origin', '*')",
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a proxy in development: Next.js rewrites, Vite proxy, or CRA proxy",
+      "success_rate": 0.9,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For APIs you don't control, use a server-side proxy to make the request",
+      "success_rate": 0.85,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

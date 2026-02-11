@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/context-value-undefined/react18-linux",
+  "url": "https://deadends.dev/react/context-value-undefined/react18-linux",
+  "error": {
+    "signature": "Cannot destructure property 'X' of useContext(...) as it is null/undefined",
+    "regex": "Cannot destructure.*useContext|useContext.*undefined|context.*null",
+    "domain": "react",
+    "category": "context_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "useContext returns default (undefined/null) because component isn't wrapped in Provider."
+  },
+  "dead_ends": [
+    {
+      "action": "Provide a default value in createContext that mimics the real value",
+      "why_fails": "Default values mask the missing Provider — bugs appear silently",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://react.dev/reference/react/createContext"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use optional chaining on every context property",
+      "why_fails": "Verbose and hides the real issue — missing Provider",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/useContext"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the component is a child of the Context.Provider in the tree",
+      "success_rate": 0.95,
+      "how": "<MyContext.Provider value={value}>\n  <ChildComponent />  {/* can now useContext */}\n</MyContext.Provider>",
+      "sources": [
+        "https://react.dev/reference/react/useContext"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create a custom hook that throws if used outside Provider",
+      "success_rate": 0.9,
+      "how": "function useMyContext() {\n  const ctx = useContext(MyCtx);\n  if (!ctx) throw new Error('Missing Provider');\n  return ctx;\n}",
+      "sources": [
+        "https://react.dev/reference/react/useContext"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

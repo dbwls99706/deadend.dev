@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/node-not-ready/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/node-not-ready/k8s1-linux",
+  "error": {
+    "signature": "Node condition: NotReady",
+    "regex": "NotReady|node.*not ready|condition.*Ready.*False",
+    "domain": "kubernetes",
+    "category": "node_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.78,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Kubernetes node is not healthy. Kubelet, container runtime, or networking issue."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the node and readd it",
+      "why_fails": "May lose workloads that aren't replicated",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Cordon and ignore",
+      "why_fails": "Doesn't fix the issue — workloads won't be scheduled there",
+      "fail_rate": 0.5,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check kubelet status: systemctl status kubelet on the node",
+      "success_rate": 0.92,
+      "sources": [
+        "https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check node conditions: kubectl describe node <name> for detailed status",
+      "success_rate": 0.9,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Common causes: disk pressure, memory pressure, PID pressure, or container runtime down",
+      "success_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

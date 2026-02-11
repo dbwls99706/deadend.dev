@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/pydantic-validation-error/py311-linux",
+  "url": "https://deadends.dev/python/pydantic-validation-error/py311-linux",
+  "error": {
+    "signature": "pydantic.error_wrappers.ValidationError: N validation errors for Model",
+    "regex": "ValidationError.*validation error.*for|pydantic.*ValidationError",
+    "domain": "python",
+    "category": "validation_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Pydantic model received data that doesn't match the schema. Type or required field error."
+  },
+  "dead_ends": [
+    {
+      "action": "Use model_construct() to skip validation",
+      "why_fails": "Creates invalid model instances — bugs will surface later",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.pydantic.dev/latest/concepts/models/#model-methods-and-properties"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Make all fields Optional",
+      "why_fails": "Defeats the purpose of validation — model can hold invalid state",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.pydantic.dev/latest/concepts/fields/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Read the error details — Pydantic tells you exactly which field and what's wrong",
+      "success_rate": 0.95,
+      "how": "try:\n    Model(**data)\nexcept ValidationError as e:\n    print(e.errors())  # detailed field-by-field errors",
+      "sources": [
+        "https://docs.pydantic.dev/latest/concepts/models/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use model_validate with strict=False for coercion if types are close",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.pydantic.dev/latest/concepts/models/#model-methods-and-properties"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

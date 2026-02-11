@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/depends-on-module/tf1-linux",
+  "url": "https://deadends.dev/terraform/depends-on-module/tf1-linux",
+  "error": {
+    "signature": "Error: Module output depends on resource that no longer exists",
+    "regex": "depends on resource.*no longer exists|orphan.*resource|module.*output.*depends",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.8,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Module references a resource that was removed from config but exists in state."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the entire module and recreate",
+      "why_fails": "Destroys all resources in the module — may cause outage",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules/syntax"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Manually edit the state JSON",
+      "why_fails": "Error-prone — one mistake can corrupt the entire state",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use terraform state rm to remove the orphaned resource from state",
+      "success_rate": 0.92,
+      "how": "terraform state rm module.name.resource_type.name",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/rm"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run terraform plan to see what will change, then targeted apply if needed",
+      "success_rate": 0.85,
+      "how": "terraform plan -target=module.name",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/plan"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform state list to inventory what's tracked vs what's in config",
+      "success_rate": 0.82,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/list"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

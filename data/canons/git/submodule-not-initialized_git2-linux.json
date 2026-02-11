@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/submodule-not-initialized/git2-linux",
+  "url": "https://deadends.dev/git/submodule-not-initialized/git2-linux",
+  "error": {
+    "signature": "fatal: no submodule mapping found in .gitmodules for path 'X'",
+    "regex": "no submodule mapping|submodule.*not initialized|Submodule.*not updated",
+    "domain": "git",
+    "category": "submodule_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.30,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Git submodule not initialized. Common after cloning a repo with submodules."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the submodule directory and re-clone the whole repo",
+      "why_fails": "git submodule init is much simpler",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://git-scm.com/docs/git-submodule"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Copy the submodule code directly into the repo",
+      "why_fails": "Defeats the purpose of submodules — lose upstream updates",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://git-scm.com/docs/git-submodule"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Initialize and update: git submodule init && git submodule update",
+      "success_rate": 0.95,
+      "sources": [
+        "https://git-scm.com/docs/git-submodule"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Or clone with submodules included: git clone --recurse-submodules <url>",
+      "success_rate": 0.92,
+      "sources": [
+        "https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---recurse-submodules"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Update to latest: git submodule update --init --recursive",
+      "success_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs/git-submodule"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

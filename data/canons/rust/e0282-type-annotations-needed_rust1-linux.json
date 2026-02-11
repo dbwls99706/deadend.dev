@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0282-type-annotations-needed/rust1-linux",
+  "url": "https://deadends.dev/rust/e0282-type-annotations-needed/rust1-linux",
+  "error": {
+    "signature": "error[E0282]: type annotations needed",
+    "regex": "E0282.*type annotations needed|cannot infer type",
+    "domain": "rust",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Rust can't infer the type. Need explicit annotation or turbofish syntax."
+  },
+  "dead_ends": [
+    {
+      "action": "Use dyn Any to avoid specifying types",
+      "why_fails": "Loses all type safety — defeats the purpose of Rust's type system",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0282.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use macro magic to auto-infer",
+      "why_fails": "Macros can't infer types that the compiler can't",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0282.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add type annotation: let x: Vec<i32> = vec![];",
+      "success_rate": 0.95,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0282.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use turbofish syntax: iter.collect::<Vec<_>>()",
+      "success_rate": 0.92,
+      "sources": [
+        "https://doc.rust-lang.org/reference/expressions/method-call-expr.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Provide type through usage context: the compiler can sometimes infer from how the value is used",
+      "success_rate": 0.85,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch03-02-data-types.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

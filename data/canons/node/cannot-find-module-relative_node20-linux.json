@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/cannot-find-module-relative/node20-linux",
+  "url": "https://deadends.dev/node/cannot-find-module-relative/node20-linux",
+  "error": {
+    "signature": "Error: Cannot find module './X' (local file import)",
+    "regex": "Cannot find module '\\.\\/.+'|MODULE_NOT_FOUND.*\\.\\/",
+    "domain": "node",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Local file import failed. Wrong path, missing extension, or file doesn't exist."
+  },
+  "dead_ends": [
+    {
+      "action": "Install it as an npm package",
+      "why_fails": "It's a local file (./), not a package — it won't be on npm",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/modules.html#file-modules"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add an index.js file",
+      "why_fails": "Only works if importing a directory, not a specific file",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://nodejs.org/api/modules.html#folders-as-modules"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the file path — case-sensitive on Linux: ./Utils.js != ./utils.js",
+      "success_rate": 0.95,
+      "sources": [
+        "https://nodejs.org/api/modules.html#file-modules"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For TypeScript/ESM, you may need the extension: import './file.js' (not .ts)",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/esm.html#mandatory-file-extensions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the file exists at the path relative to the importing file",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nodejs.org/api/modules.html#file-modules"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

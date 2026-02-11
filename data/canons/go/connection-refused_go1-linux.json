@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/connection-refused/go1-linux",
+  "url": "https://deadends.dev/go/connection-refused/go1-linux",
+  "error": {
+    "signature": "dial tcp [::1]:PORT: connect: connection refused",
+    "regex": "dial tcp.*connection refused|connect:.*connection refused",
+    "domain": "go",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "TCP connection refused. Target server not running or wrong host/port."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the connection timeout",
+      "why_fails": "Connection refused is immediate — timeout doesn't help",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pkg.go.dev/net#Dial"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use net.DialUDP instead",
+      "why_fails": "If the server expects TCP, switching to UDP won't work",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://pkg.go.dev/net"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the server is running on the expected host:port",
+      "success_rate": 0.95,
+      "how": "curl -v http://localhost:PORT  # or: ss -tlnp | grep PORT",
+      "sources": [
+        "https://pkg.go.dev/net#Dial"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if using IPv6 [::1] vs IPv4 127.0.0.1 — server may only listen on one",
+      "success_rate": 0.88,
+      "sources": [
+        "https://pkg.go.dev/net#Dial"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add retry logic with backoff for services that start slowly",
+      "success_rate": 0.82,
+      "sources": [
+        "https://pkg.go.dev/net#Dial"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

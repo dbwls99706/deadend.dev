@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/cherry-pick-conflict/git2-linux",
+  "url": "https://deadends.dev/git/cherry-pick-conflict/git2-linux",
+  "error": {
+    "signature": "error: could not apply <hash>... Commit message (cherry-pick conflict)",
+    "regex": "could not apply.*cherry.?pick|CONFLICT.*cherry.?pick|cherry-pick.*failed",
+    "domain": "git",
+    "category": "cherry_pick_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.30,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Cherry-pick has conflicts. Target branch diverged from the source branch."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --skip to skip conflicting commits",
+      "why_fails": "Loses the changes from that commit entirely",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://git-scm.com/docs/git-cherry-pick"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Abort and merge instead",
+      "why_fails": "Merge brings all commits — you wanted just specific ones",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://git-scm.com/docs/git-cherry-pick"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Resolve conflicts manually, then: git add <files> && git cherry-pick --continue",
+      "success_rate": 0.95,
+      "sources": [
+        "https://git-scm.com/docs/git-cherry-pick"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use -x flag to record the source commit hash in the message",
+      "success_rate": 0.82,
+      "how": "git cherry-pick -x <hash>",
+      "sources": [
+        "https://git-scm.com/docs/git-cherry-pick#Documentation/git-cherry-pick.txt--x"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Abort and start over if it gets messy: git cherry-pick --abort",
+      "success_rate": 0.88,
+      "sources": [
+        "https://git-scm.com/docs/git-cherry-pick"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

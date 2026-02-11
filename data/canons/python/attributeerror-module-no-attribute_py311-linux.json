@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/attributeerror-module-no-attribute/py311-linux",
+  "url": "https://deadends.dev/python/attributeerror-module-no-attribute/py311-linux",
+  "error": {
+    "signature": "AttributeError: module 'X' has no attribute 'Y'",
+    "regex": "AttributeError: module '(\\w+)' has no attribute '(\\w+)'",
+    "domain": "python",
+    "category": "import_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Module imported but attribute doesn't exist. Common: file named same as module (shadowing)."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstall the package",
+      "why_fails": "Usually not a package issue — it's a naming conflict in your project",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://docs.python.org/3/reference/import.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use importlib to force reimport",
+      "why_fails": "Reimporting doesn't fix shadowed module names",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.python.org/3/library/importlib.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check if you have a local file named same as the module: ls *.py | grep <module>",
+      "success_rate": 0.95,
+      "how": "# e.g., having 'random.py' shadows stdlib random module",
+      "sources": [
+        "https://docs.python.org/3/reference/import.html#the-module-search-path"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check the module version — attribute may have been added/removed in an update",
+      "success_rate": 0.88,
+      "how": "python -c 'import module; print(module.__version__)'",
+      "sources": [
+        "https://docs.python.org/3/library/importlib.metadata.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

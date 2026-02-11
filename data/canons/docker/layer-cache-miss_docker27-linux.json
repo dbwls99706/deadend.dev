@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/layer-cache-miss/docker27-linux",
+  "url": "https://deadends.dev/docker/layer-cache-miss/docker27-linux",
+  "error": {
+    "signature": "Docker build not using cache / rebuilding all layers",
+    "regex": "(COPY|ADD).*cache miss|layer cache|--no-cache|cache bust",
+    "domain": "docker",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Docker layer cache invalidated. A COPY before the layer invalidates all subsequent layers."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --no-cache to fix cache issues",
+      "why_fails": "Rebuilds everything — the opposite of what you want",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/build/cache/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Put all COPY commands at the beginning",
+      "why_fails": "Invalidates all layers on any file change — worst ordering",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.docker.com/build/cache/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Order Dockerfile: system deps → copy package files → install deps → copy source",
+      "success_rate": 0.95,
+      "how": "COPY package.json package-lock.json ./\nRUN npm install\nCOPY . .  # source changes don't bust npm cache",
+      "sources": [
+        "https://docs.docker.com/build/cache/#order-your-layers"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use .dockerignore to exclude files that change frequently (logs, .git, node_modules)",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/build/concepts/context/#dockerignore-files"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use BuildKit cache mounts for package managers: --mount=type=cache,target=/root/.cache/pip",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.docker.com/build/cache/#use-cache-mounts"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

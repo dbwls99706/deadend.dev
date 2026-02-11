@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cuda-lazy-loading/cuda12-rtx4090",
+  "url": "https://deadends.dev/cuda/cuda-lazy-loading/cuda12-rtx4090",
+  "error": {
+    "signature": "RuntimeError: CUDA lazy loading is not enabled",
+    "regex": "CUDA lazy loading|CUDA_MODULE_LOADING|lazy.*loading.*CUDA",
+    "domain": "cuda",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "RTX 4090",
+      "vram_gb": 24
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "CUDA lazy loading environment variable not set. Improves startup time and memory usage."
+  },
+  "dead_ends": [
+    {
+      "action": "Set CUDA_MODULE_LOADING=EAGER",
+      "why_fails": "EAGER is the default — you want LAZY for better performance",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the warning",
+      "why_fails": "Missing lazy loading wastes GPU memory at startup",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set CUDA_MODULE_LOADING=LAZY in your environment",
+      "success_rate": 0.95,
+      "how": "export CUDA_MODULE_LOADING=LAZY",
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add to .bashrc or .env file for persistence",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

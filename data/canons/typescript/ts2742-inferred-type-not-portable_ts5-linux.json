@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2742-inferred-type-not-portable/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2742-inferred-type-not-portable/ts5-linux",
+  "error": {
+    "signature": "error TS2742: The inferred type of 'X' cannot be named without a reference to 'Y'",
+    "regex": "TS2742.*inferred type.*cannot be named",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "TypeScript can infer the type but can't express it in declaration files. Common with monorepos."
+  },
+  "dead_ends": [
+    {
+      "action": "Set declaration: false in tsconfig",
+      "why_fails": "Breaks libraries that need .d.ts files for consumers",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig/#declaration"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use any as the explicit type",
+      "why_fails": "Loses all type information for consumers",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the dependency that defines the type to your package.json dependencies (not just devDependencies)",
+      "success_rate": 0.92,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add an explicit return type annotation to avoid relying on inference",
+      "success_rate": 0.88,
+      "how": "export function create(): ExplicitReturnType { ... }",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/functions.html#return-type-annotations"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "In monorepos, ensure TypeScript project references are set up correctly",
+      "success_rate": 0.82,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/project-references.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

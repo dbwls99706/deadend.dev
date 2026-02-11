@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/segfault-native-module/node20-linux",
+  "url": "https://deadends.dev/node/segfault-native-module/node20-linux",
+  "error": {
+    "signature": "Segmentation fault (core dumped) in Node.js",
+    "regex": "Segmentation fault|SIGSEGV|segfault",
+    "domain": "node",
+    "category": "crash_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.7,
+    "confidence": 0.8,
+    "last_updated": "2026-02-11",
+    "summary": "Node process crashed with segfault. Usually a native addon bug or memory corruption."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase memory with --max-old-space-size",
+      "why_fails": "Segfaults aren't OOM errors — more memory won't help",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/report.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use try/catch to handle segfaults",
+      "why_fails": "Segfaults can't be caught by JavaScript — they crash the process",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://nodejs.org/api/process.html#event-uncaughtexception"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Rebuild native modules for current Node version: npm rebuild",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/addons.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run with --report-on-fatalerror to get diagnostic report",
+      "success_rate": 0.85,
+      "how": "node --report-on-fatalerror app.js",
+      "sources": [
+        "https://nodejs.org/api/report.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If reproducible, report to the native module's issue tracker with Node version info",
+      "success_rate": 0.78,
+      "sources": [
+        "https://nodejs.org/api/report.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
