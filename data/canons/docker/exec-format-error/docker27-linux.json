@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/exec-format-error/docker27-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/exec-format-error/docker27-linux",
+  "url": "https://deadends.dev/docker/exec-format-error/docker27-linux",
   "error": {
     "signature": "exec format error",
     "regex": "exec format error|exec user process caused:.*exec format error",

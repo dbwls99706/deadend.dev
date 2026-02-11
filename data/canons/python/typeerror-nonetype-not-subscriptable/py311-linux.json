@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/typeerror-nonetype-not-subscriptable/py311-linux",
+  "url": "https://deadends.dev/python/typeerror-nonetype-not-subscriptable/py311-linux",
   "error": {
     "signature": "TypeError: 'NoneType' object is not subscriptable",
     "regex": "TypeError: 'NoneType' object is not (subscriptable|iterable)",

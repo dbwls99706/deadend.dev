@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/no-matching-distribution/pip24-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/pip/no-matching-distribution/pip24-linux",
+  "url": "https://deadends.dev/pip/no-matching-distribution/pip24-linux",
   "error": {
     "signature": "ERROR: No matching distribution found for package",
     "regex": "ERROR: No matching distribution found for (.+)",

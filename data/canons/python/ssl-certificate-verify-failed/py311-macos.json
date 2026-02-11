@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/ssl-certificate-verify-failed/py311-macos",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/ssl-certificate-verify-failed/py311-macos",
-
+  "url": "https://deadends.dev/python/ssl-certificate-verify-failed/py311-macos",
   "error": {
     "signature": "ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)",
     "regex": "ssl\\.SSLCertVerificationError: \\[SSL: CERTIFICATE_VERIFY_FAILED\\] certificate verify failed",
@@ -11,16 +10,22 @@
     "first_seen": "2018-08-01",
     "last_confirmed": "2025-05-20"
   },
-
   "environment": {
-    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.12"
+    },
     "os": "macos",
     "python": ">=3.11,<3.12",
     "additional": {
-      "common_contexts": ["fresh python.org installer", "urllib", "requests", "aiohttp"]
+      "common_contexts": [
+        "fresh python.org installer",
+        "urllib",
+        "requests",
+        "aiohttp"
+      ]
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.93,
@@ -28,7 +33,6 @@
     "last_updated": "2025-05-20",
     "summary": "On macOS, the official python.org installer ships with its own OpenSSL that does not use the macOS Keychain certificate store. The installer includes an 'Install Certificates.command' script that installs the certifi CA bundle, but users often skip this step. Running the script or manually installing certifi resolves the issue in nearly all cases."
   },
-
   "dead_ends": [
     {
       "action": "Downgrading or replacing the ssl module",
@@ -40,48 +44,56 @@
     {
       "action": "Disabling SSL verification globally with ssl._create_unverified_context()",
       "why_fails": "While this suppresses the error, it disables all certificate verification, making the application vulnerable to man-in-the-middle attacks. It is a security regression, not a fix. Code using this will fail security audits, and it does not work for libraries that create their own SSL contexts.",
-      "fail_rate": 0.40,
-      "sources": ["https://docs.python.org/3/library/ssl.html#ssl._create_unverified_context"],
+      "fail_rate": 0.4,
+      "sources": [
+        "https://docs.python.org/3/library/ssl.html#ssl._create_unverified_context"
+      ],
       "common_misconception": "Disabling verification is seen as a quick fix, but it introduces serious security vulnerabilities and is explicitly discouraged by Python documentation."
     },
     {
       "action": "Setting PYTHONHTTPSVERIFY=0 environment variable",
       "why_fails": "This is an undocumented legacy workaround that only affects urllib in older Python versions. It does not affect the requests library, aiohttp, or any library that constructs its own SSL context. Like disabling verification, it is a security hazard.",
       "fail_rate": 0.75,
-      "sources": ["https://bugs.python.org/issue28150"],
+      "sources": [
+        "https://bugs.python.org/issue28150"
+      ],
       "common_misconception": "Users find this variable in outdated Stack Overflow answers, but it has limited scope and introduces security risks."
     }
   ],
-
   "workarounds": [
     {
       "action": "Run the 'Install Certificates.command' script bundled with the python.org installer",
       "how": "Navigate to /Applications/Python 3.11/ and double-click 'Install Certificates.command', or run it from terminal: '/Applications/Python\\ 3.11/Install\\ Certificates.command'. This script uses pip to install the certifi package and creates a symlink from OpenSSL's expected cert path to certifi's CA bundle.",
       "success_rate": 0.95,
       "tradeoff": "Only works for python.org installer installations, not Homebrew or pyenv builds",
-      "sources": ["https://github.com/python/cpython/blob/main/Mac/BuildScript/resources/install_certificates.command"]
+      "sources": [
+        "https://github.com/python/cpython/blob/main/Mac/BuildScript/resources/install_certificates.command"
+      ]
     },
     {
       "action": "Install certifi and configure SSL_CERT_FILE",
       "how": "Run 'pip install certifi', then set the environment variable: 'export SSL_CERT_FILE=$(python -c \"import certifi; print(certifi.where())\")'. Add this to your .zshrc for persistence. This tells OpenSSL where to find trusted CA certificates.",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Requires environment variable to be set in every shell session or added to shell profile",
-      "sources": ["https://pypi.org/project/certifi/"]
+      "sources": [
+        "https://pypi.org/project/certifi/"
+      ]
     },
     {
       "action": "Use Homebrew Python instead of python.org installer",
       "how": "Install Python via 'brew install python@3.11'. Homebrew's Python links against Homebrew's OpenSSL which is configured to use the system certificate store. This avoids the certificate issue entirely.",
       "success_rate": 0.88,
       "tradeoff": "Switches Python distribution; may affect existing project configurations. Homebrew Python updates on its own schedule.",
-      "sources": ["https://docs.brew.sh/Homebrew-and-Python"]
+      "sources": [
+        "https://docs.brew.sh/Homebrew-and-Python"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "python/requests-connectionerror-ssl/py311-macos",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "When the certificate issue is worked around with verify=False but the server requires client certificates",
         "typical_delay": "immediate"
       }
@@ -89,7 +101,7 @@
     "preceded_by": [
       {
         "error_id": "python/pip-install-ssl-error/py311-macos",
-        "probability": 0.40,
+        "probability": 0.4,
         "condition": "pip itself may fail to download packages over HTTPS before certifi is installed"
       }
     ],
@@ -100,7 +112,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

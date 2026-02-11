@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "aws/resource-not-found/awscli2-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/aws/resource-not-found/awscli2-linux",
+  "url": "https://deadends.dev/aws/resource-not-found/awscli2-linux",
   "error": {
     "signature": "An error occurred (ResourceNotFoundException): The specified resource does not exist",
     "regex": "ResourceNotFoundException|NoSuchBucket|NoSuchKey|404.*Not Found",

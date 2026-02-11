@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/eaddrinuse-port/node20-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/eaddrinuse-port/node20-linux",
-
+  "url": "https://deadends.dev/node/eaddrinuse-port/node20-linux",
   "error": {
     "signature": "Error: listen EADDRINUSE: address already in use :::3000",
     "regex": "Error: listen EADDRINUSE: address already in use (?:::)?\\d+",
@@ -11,13 +10,14 @@
     "first_seen": "2014-01-01",
     "last_confirmed": "2025-05-12"
   },
-
   "environment": {
-    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<23"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.92,
@@ -25,23 +25,21 @@
     "last_updated": "2025-05-12",
     "summary": "EADDRINUSE means another process is already listening on the requested port. This is almost always resolvable by identifying and stopping the conflicting process or choosing a different port. It is one of the most common and straightforward Node.js errors."
   },
-
   "dead_ends": [
     {
       "action": "Binding to port 0 to let the OS assign a random port",
       "why_fails": "While technically valid, port 0 makes the service unreachable at a predictable address. Other services, reverse proxies, and clients that depend on a known port will break. This avoids the symptom but creates a different problem.",
-      "fail_rate": 0.70,
+      "fail_rate": 0.7,
       "sources": [],
       "common_misconception": "Port 0 is useful for testing but is not a production solution. It shifts the problem from port conflict to service discovery."
     },
     {
       "action": "Running 'killall node' to kill all Node processes",
       "why_fails": "This kills every Node process on the system, including unrelated ones such as build watchers, other services, or VS Code extensions. It is a blunt instrument that causes collateral damage and does not address the root cause of why a stale process held the port.",
-      "fail_rate": 0.40,
+      "fail_rate": 0.4,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Find and kill the specific process using the port",
@@ -63,12 +61,11 @@
     {
       "action": "Add graceful shutdown to prevent orphaned processes",
       "how": "Handle SIGTERM and SIGINT in your Node process: process.on('SIGTERM', () => { server.close(() => process.exit(0)); }); This ensures the port is released when the process is stopped, preventing stale listeners.",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "tradeoff": "Preventive measure; does not fix the current occurrence but prevents future ones",
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [
@@ -85,7 +82,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

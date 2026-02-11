@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/connectionrefusederror/py311-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/connectionrefusederror/py311-linux",
+  "url": "https://deadends.dev/python/connectionrefusederror/py311-linux",
   "error": {
     "signature": "ConnectionRefusedError: [Errno 111] Connection refused",
     "regex": "ConnectionRefusedError: \\[Errno 111\\] Connection refused",

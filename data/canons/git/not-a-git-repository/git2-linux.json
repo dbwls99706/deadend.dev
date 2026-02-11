@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "git/not-a-git-repository/git2-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/git/not-a-git-repository/git2-linux",
+  "url": "https://deadends.dev/git/not-a-git-repository/git2-linux",
   "error": {
     "signature": "fatal: not a git repository (or any of the parent directories)",
     "regex": "fatal: not a git repository",

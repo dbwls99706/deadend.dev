@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/enoent-no-such-file/node20-macos-x64",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/enoent-no-such-file/node20-macos-x64",
-
+  "url": "https://deadends.dev/node/enoent-no-such-file/node20-macos-x64",
   "error": {
     "signature": "Error: ENOENT: no such file or directory, open 'X'",
     "regex": "Error: ENOENT: no such file or directory, (?:open|stat|lstat|access) '.+'",
@@ -11,21 +10,23 @@
     "first_seen": "2015-01-01",
     "last_confirmed": "2025-05-15"
   },
-
   "environment": {
-    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<23"
+    },
     "os": "macos",
-    "additional": { "architecture": "x64" }
+    "additional": {
+      "architecture": "x64"
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2025-05-15",
     "summary": "ENOENT on macOS x64 is most commonly caused by missing files after incomplete npm installs, broken symlinks, or path assumptions that break when moving between case-insensitive HFS+ (default) and case-sensitive APFS volumes. Since macOS is case-insensitive by default, this error less often stems from case mismatches and more often from genuinely missing files or stale symlinks."
   },
-
   "dead_ends": [
     {
       "action": "Running npm cache clean --force",
@@ -37,16 +38,15 @@
     {
       "action": "Reinstalling Xcode Command Line Tools",
       "why_fails": "Unless the ENOENT involves a native module that requires compilation tools, reinstalling Xcode CLT has no effect on missing file paths. This conflates build errors with path resolution errors.",
-      "fail_rate": 0.90,
+      "fail_rate": 0.9,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Verify the file path exists and check for broken symlinks",
       "how": "Extract the path from the error message. Run 'ls -la <path>' and 'file <path>' to check if the target exists or is a broken symlink. If a symlink, recreate it with 'ln -s <real_target> <link_name>'.",
-      "success_rate": 0.70,
+      "success_rate": 0.7,
       "tradeoff": "Manual investigation required; must trace the origin of the path reference",
       "sources": []
     },
@@ -61,13 +61,12 @@
     {
       "action": "Check for case-sensitive volume if using APFS case-sensitive format",
       "how": "Run 'diskutil info / | grep \"File System Personality\"' to check if the volume is case-sensitive. If so, audit file imports for case mismatches using 'find . -name \"*.js\" | xargs grep -n require'.",
-      "success_rate": 0.50,
+      "success_rate": 0.5,
       "tradeoff": "Only relevant if the volume is explicitly formatted as case-sensitive APFS",
       "condition": "macOS volume is formatted as case-sensitive APFS",
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -85,7 +84,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

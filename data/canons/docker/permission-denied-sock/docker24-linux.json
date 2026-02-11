@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/permission-denied-sock/docker24-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/permission-denied-sock/docker24-linux",
-
+  "url": "https://deadends.dev/docker/permission-denied-sock/docker24-linux",
   "error": {
     "signature": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock",
     "regex": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker\\.sock",
@@ -11,13 +10,14 @@
     "first_seen": "2017-01-01",
     "last_confirmed": "2025-05-08"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.95,
@@ -25,12 +25,11 @@
     "last_updated": "2025-05-08",
     "summary": "This error occurs when the current user does not have permission to access the Docker daemon socket. The standard fix is adding the user to the 'docker' group. This is one of the most common Docker setup errors on Linux and is almost always resolvable."
   },
-
   "dead_ends": [
     {
       "action": "Running chmod 777 /var/run/docker.sock",
       "why_fails": "This opens the Docker socket to all users on the system, which is a severe security vulnerability. The Docker daemon runs as root, so unrestricted socket access grants root-equivalent privileges to any local user. The permission also resets on Docker daemon restart.",
-      "fail_rate": 0.30,
+      "fail_rate": 0.3,
       "sources": [
         "https://docs.docker.com/engine/security/#docker-daemon-attack-surface"
       ],
@@ -43,7 +42,6 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Add your user to the docker group",
@@ -57,20 +55,19 @@
     {
       "action": "Use rootless Docker mode",
       "how": "Install rootless Docker: 'dockerd-rootless-setuptool.sh install'. This runs the Docker daemon as a non-root user, eliminating the socket permission issue entirely. Requires uidmap package: 'sudo apt-get install uidmap'.",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "tradeoff": "Some features are limited in rootless mode: no privileged containers, limited network options, and some volume mount behaviors differ. Performance may be slightly lower due to user namespace overhead.",
       "sources": [
         "https://docs.docker.com/engine/security/rootless/"
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [
       {
         "error_id": "docker/install-fresh/docker24-linux",
-        "probability": 0.60,
+        "probability": 0.6,
         "condition": "Fresh Docker installation where the post-install group setup step was skipped"
       }
     ],
@@ -81,7 +78,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

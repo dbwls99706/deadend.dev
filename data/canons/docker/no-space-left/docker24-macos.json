@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/no-space-left/docker24-macos",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/no-space-left/docker24-macos",
-
+  "url": "https://deadends.dev/docker/no-space-left/docker24-macos",
   "error": {
     "signature": "no space left on device",
     "regex": "no space left on device",
@@ -11,13 +10,16 @@
     "first_seen": "2016-01-01",
     "last_confirmed": "2025-05-05"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "macos",
-    "additional": { "platform": "docker-desktop" }
+    "additional": {
+      "platform": "docker-desktop"
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
@@ -25,23 +27,21 @@
     "last_updated": "2025-05-05",
     "summary": "On macOS, Docker runs inside a lightweight Linux VM managed by Docker Desktop. 'no space left on device' means the VM's virtual disk image has reached its size limit or the host disk is full. This is different from native Linux because the storage is inside a VM disk image file (Docker.raw or Docker.qcow2), not directly on the filesystem."
   },
-
   "dead_ends": [
     {
       "action": "Running 'docker system prune' without --volumes",
       "why_fails": "Same as Linux: the default prune does not remove volumes, which are often the largest consumers of space. Additionally, on macOS, the VM disk image may not shrink even after pruning because the virtual disk does not automatically compact.",
-      "fail_rate": 0.60,
+      "fail_rate": 0.6,
       "sources": [],
       "common_misconception": "On macOS, even after a thorough prune, you may not see host disk space recovered because the VM's virtual disk file (~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw) does not automatically shrink."
     },
     {
       "action": "Deleting the Docker.raw file manually",
       "why_fails": "Deleting the VM disk image destroys all Docker data (images, containers, volumes) without recovery. Docker Desktop will recreate an empty disk on restart, but all data is permanently lost. This is equivalent to wiping the entire Docker installation.",
-      "fail_rate": 0.20,
+      "fail_rate": 0.2,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Prune all unused Docker objects including volumes",
@@ -55,7 +55,7 @@
     {
       "action": "Increase the Docker Desktop virtual disk size limit",
       "how": "Open Docker Desktop > Settings > Resources > Advanced. Increase 'Virtual disk limit' (default is typically 64GB). Click 'Apply & restart'. This expands the VM disk image to accommodate more Docker data.",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Consumes more host disk space; does not address the root cause of space accumulation. The virtual disk file grows but does not automatically shrink.",
       "condition": "Host disk has sufficient free space to allocate a larger VM disk",
       "sources": [
@@ -70,7 +70,6 @@
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -88,7 +87,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

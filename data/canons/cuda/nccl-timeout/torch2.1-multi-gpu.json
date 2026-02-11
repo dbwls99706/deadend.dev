@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/nccl-timeout/torch2.1-multi-gpu",
-  "url": "https://dbwls99706.github.io/deadend.dev/cuda/nccl-timeout/torch2.1-multi-gpu",
-
+  "url": "https://deadends.dev/cuda/nccl-timeout/torch2.1-multi-gpu",
   "error": {
     "signature": "RuntimeError: NCCL communicator was aborted on rank 0. Original reason for aborting was: Timeout at NCCL sequence 42",
     "regex": "RuntimeError: NCCL communicator was aborted.*Timeout at.*sequence \\d+",
@@ -11,10 +10,15 @@
     "first_seen": "2023-07-15",
     "last_confirmed": "2025-05-22"
   },
-
   "environment": {
-    "runtime": { "name": "pytorch", "version_range": ">=2.1,<2.3" },
-    "hardware": { "gpu": "A100-80GB", "vram_gb": 80 },
+    "runtime": {
+      "name": "pytorch",
+      "version_range": ">=2.1,<2.3"
+    },
+    "hardware": {
+      "gpu": "A100-80GB",
+      "vram_gb": 80
+    },
     "os": "linux",
     "python": ">=3.9,<3.13",
     "additional": {
@@ -24,7 +28,6 @@
       "interconnect": "NVLink or PCIe"
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.74,
@@ -32,38 +35,45 @@
     "last_updated": "2025-05-22",
     "summary": "NCCL timeout errors in multi-GPU PyTorch 2.1 setups are caused by network misconfiguration, asymmetric GPU workloads, or NCCL selecting the wrong network interface. Diagnosing with NCCL_DEBUG=INFO and fixing the network configuration resolves most cases. The root cause is almost never NCCL itself but rather the networking layer it operates over."
   },
-
   "dead_ends": [
     {
       "action": "Increasing the NCCL timeout value alone (NCCL_TIMEOUT or dist.init_process_group timeout parameter)",
       "why_fails": "Increasing the timeout masks the underlying issue without resolving it. If NCCL is timing out because it selected the wrong network interface (e.g., a loopback or a slow management NIC), a longer timeout just delays the failure. The root cause is a communication path problem, not an insufficient timeout.",
       "fail_rate": 0.85,
-      "sources": ["https://github.com/pytorch/pytorch/issues/105390", "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"],
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/105390",
+        "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
+      ],
       "common_misconception": "Users assume NCCL timeouts mean the operation is 'almost completing' and just needs more time. In practice, a timeout usually means no data is flowing at all due to a misconfigured interface or routing issue."
     },
     {
       "action": "Restarting the training script without fixing the network configuration",
       "why_fails": "NCCL timeout errors are deterministic when caused by network misconfiguration. Restarting does not change the network interface selection, routing tables, or firewall rules. The same failure will recur at the same point in training (or earlier if NCCL state is not cleanly torn down).",
       "fail_rate": 0.92,
-      "sources": ["https://github.com/pytorch/pytorch/issues/102403"],
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/102403"
+      ],
       "common_misconception": "Users think the timeout is a transient issue (like a temporary network blip). While transient NCCL failures exist, repeated timeouts at the same sequence number indicate a persistent configuration problem."
     },
     {
       "action": "Setting NCCL_P2P_DISABLE=1 as a blanket fix",
       "why_fails": "Disabling peer-to-peer communication forces NCCL to fall back to shared-memory or network-based transfers, which are significantly slower. On NVLink-equipped systems (like multi-GPU A100 nodes), this destroys the performance advantage of NVLink. It may also not fix the timeout if the underlying issue is interface selection.",
       "fail_rate": 0.68,
-      "sources": ["https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"]
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
+      ]
     }
   ],
-
   "workarounds": [
     {
       "action": "Set NCCL_DEBUG=INFO to diagnose the actual failure point",
       "how": "export NCCL_DEBUG=INFO && export NCCL_DEBUG_SUBSYS=ALL && torchrun --nproc_per_node=NUM_GPUS your_script.py 2>&1 | tee nccl_debug.log",
-      "success_rate": 0.70,
+      "success_rate": 0.7,
       "tradeoff": "Produces verbose output that may slow down training by 5-10%; generates large log files. This is a diagnostic step, not a direct fix, but it reveals the root cause in most cases.",
       "condition": "Must be combined with reading the debug output to identify which interface NCCL selected and where the hang occurs",
-      "sources": ["https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"]
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
+      ]
     },
     {
       "action": "Fix network configuration by specifying the correct interface with NCCL_SOCKET_IFNAME",
@@ -71,7 +81,10 @@
       "success_rate": 0.82,
       "tradeoff": "Must be set consistently across all nodes in multi-node setups; interface names may differ between nodes",
       "condition": "The system must have a working high-bandwidth network interface (e.g., eth0, eno1, ib0). Verify with 'ip addr' that the interface has an IP address and is UP.",
-      "sources": ["https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html", "https://github.com/pytorch/pytorch/issues/105390"]
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html",
+        "https://github.com/pytorch/pytorch/issues/105390"
+      ]
     },
     {
       "action": "Ensure all ranks can communicate by fixing firewall and routing",
@@ -79,7 +92,9 @@
       "success_rate": 0.76,
       "tradeoff": "Requires network/admin access; firewall changes affect system security posture",
       "condition": "Applicable primarily to multi-node setups; single-node multi-GPU typically does not have firewall issues",
-      "sources": ["https://pytorch.org/docs/stable/distributed.html"]
+      "sources": [
+        "https://pytorch.org/docs/stable/distributed.html"
+      ]
     },
     {
       "action": "Use NCCL_IB_DISABLE=1 on systems without InfiniBand",
@@ -87,10 +102,11 @@
       "success_rate": 0.73,
       "tradeoff": "Disables InfiniBand transport; only use on systems that do not have IB hardware. On IB-equipped systems, this forces TCP fallback and severely impacts bandwidth.",
       "condition": "Only for systems where NCCL incorrectly tries to use InfiniBand when it is not available or not configured",
-      "sources": ["https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"]
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -108,7 +124,7 @@
       },
       {
         "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
-        "probability": 0.10,
+        "probability": 0.1,
         "condition": "After fixing CUDA version mismatch, users attempt distributed training for the first time"
       }
     ],
@@ -119,7 +135,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

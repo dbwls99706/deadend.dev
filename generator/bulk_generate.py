@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "canons"
-BASE_URL = "https://dbwls99706.github.io/deadend.dev"
+BASE_URL = "https://deadends.dev"
 TODAY = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 

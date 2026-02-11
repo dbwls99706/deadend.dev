@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/filenotfounderror/py311-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/filenotfounderror/py311-linux",
+  "url": "https://deadends.dev/python/filenotfounderror/py311-linux",
   "error": {
     "signature": "FileNotFoundError: [Errno 2] No such file or directory",
     "regex": "FileNotFoundError: \\[Errno 2\\] No such file or directory:?\\s*['\\\"]?(.+?)['\\\"]?$",

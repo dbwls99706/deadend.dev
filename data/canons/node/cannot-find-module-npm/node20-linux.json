@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/cannot-find-module-npm/node20-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/cannot-find-module-npm/node20-linux",
+  "url": "https://deadends.dev/node/cannot-find-module-npm/node20-linux",
   "error": {
     "signature": "Error: Cannot find module",
     "regex": "Error: Cannot find module ['\\\"](.+?)['\\\"]",

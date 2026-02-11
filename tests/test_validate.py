@@ -67,7 +67,7 @@ class TestSchemaErrors:
 
 class TestBusinessRules:
     def test_url_mismatch(self, make_canon):
-        canon = make_canon(url="https://dbwls99706.github.io/deadend.dev/wrong/path/here")
+        canon = make_canon(url="https://deadends.dev/wrong/path/here")
         errors, _ = validate_canon_json(canon)
         assert any("URL mismatch" in e for e in errors)
 
@@ -131,7 +131,7 @@ class TestCrossReferences:
     def test_valid_cross_reference(self, make_canon):
         canon1 = make_canon(
             id="python/error-a/env1",
-            url="https://dbwls99706.github.io/deadend.dev/python/error-a/env1",
+            url="https://deadends.dev/python/error-a/env1",
             transition_graph={
                 "leads_to": [{"error_id": "python/error-b/env1", "probability": 0.5}],
                 "preceded_by": [],
@@ -140,7 +140,7 @@ class TestCrossReferences:
         )
         canon2 = make_canon(
             id="python/error-b/env1",
-            url="https://dbwls99706.github.io/deadend.dev/python/error-b/env1",
+            url="https://deadends.dev/python/error-b/env1",
         )
         warnings = validate_cross_references([canon1, canon2])
         assert len(warnings) == 0

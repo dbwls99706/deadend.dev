@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "react/cannot-update-while-rendering/react18-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/react/cannot-update-while-rendering/react18-linux",
+  "url": "https://deadends.dev/react/cannot-update-while-rendering/react18-linux",
   "error": {
     "signature": "Cannot update a component while rendering a different component",
     "regex": "Cannot update a component .+ while rendering a different component",

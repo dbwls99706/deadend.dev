@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "kubernetes/crashloopbackoff/k8s1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/kubernetes/crashloopbackoff/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/crashloopbackoff/k8s1-linux",
   "error": {
     "signature": "CrashLoopBackOff",
     "regex": "CrashLoopBackOff",

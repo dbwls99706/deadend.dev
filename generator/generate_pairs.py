@@ -192,7 +192,7 @@ def main():
 
             pair = {
                 "id": pair_id,
-                "url": f"https://dbwls99706.github.io/deadend.dev/{pair_id}",
+                "url": f"https://deadends.dev/{pair_id}",
                 "signature": sig,
                 "environment": env,
                 "env_hash": generate_env_hash(env),

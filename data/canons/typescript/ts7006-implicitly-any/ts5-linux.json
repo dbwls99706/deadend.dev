@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "typescript/ts7006-implicitly-any/ts5-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/typescript/ts7006-implicitly-any/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts7006-implicitly-any/ts5-linux",
   "error": {
     "signature": "TS7006: Parameter 'x' implicitly has an 'any' type",
     "regex": "TS7006: Parameter ['\\\"]?(.+?)['\\\"]? implicitly has an ['\\\"]any['\\\"] type",

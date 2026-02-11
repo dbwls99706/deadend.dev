@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/cannot-connect-to-docker-daemon/docker27-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/cannot-connect-to-docker-daemon/docker27-linux",
+  "url": "https://deadends.dev/docker/cannot-connect-to-docker-daemon/docker27-linux",
   "error": {
     "signature": "Cannot connect to the Docker daemon. Is the docker daemon running?",
     "regex": "Cannot connect to the Docker daemon",

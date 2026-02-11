@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "git/pathspec-no-match/git2-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/git/pathspec-no-match/git2-linux",
+  "url": "https://deadends.dev/git/pathspec-no-match/git2-linux",
   "error": {
     "signature": "error: pathspec 'X' did not match any file(s) known to git",
     "regex": "error: pathspec ['\\\"]?(.+?)['\\\"]? did not match any file",

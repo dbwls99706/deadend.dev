@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/pickle-unpickling-error/py311-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/pickle-unpickling-error/py311-linux",
-
+  "url": "https://deadends.dev/python/pickle-unpickling-error/py311-linux",
   "error": {
     "signature": "_pickle.UnpicklingError: invalid load key, '\\x00'.",
     "regex": "_pickle\\.UnpicklingError: invalid load key, '.*'\\.",
@@ -11,16 +10,22 @@
     "first_seen": "2015-01-01",
     "last_confirmed": "2025-05-18"
   },
-
   "environment": {
-    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.12"
+    },
     "os": "linux",
     "python": ">=3.11,<3.12",
     "additional": {
-      "common_contexts": ["ML model loading", "torch.load()", "joblib.load()", "multiprocessing"]
+      "common_contexts": [
+        "ML model loading",
+        "torch.load()",
+        "joblib.load()",
+        "multiprocessing"
+      ]
     }
   },
-
   "verdict": {
     "resolvable": "partial",
     "fix_success_rate": 0.55,
@@ -28,13 +33,14 @@
     "last_updated": "2025-05-18",
     "summary": "The error indicates the data being unpickled is not valid pickle format. Common causes: the file was saved in a different format (safetensors, HDF5, JSON) but loaded with pickle, the file was corrupted during transfer (incomplete download, text-mode FTP), or there is a pickle protocol version mismatch. Resolution depends on whether the original data is recoverable."
   },
-
   "dead_ends": [
     {
       "action": "Upgrading Python or the pickle module",
       "why_fails": "The pickle module is part of CPython's standard library and cannot be independently upgraded. While newer Python versions support higher pickle protocols, they are backwards-compatible: Python 3.11 can read any protocol 0-5 file. The error means the data is not valid pickle at all, not that the protocol is too new.",
       "fail_rate": 0.95,
-      "sources": ["https://docs.python.org/3/library/pickle.html#data-stream-format"],
+      "sources": [
+        "https://docs.python.org/3/library/pickle.html#data-stream-format"
+      ],
       "common_misconception": "Users assume the error means their Python is too old to read the pickle format. In reality, 'invalid load key' means the data is not pickle-formatted, regardless of version."
     },
     {
@@ -47,26 +53,29 @@
     {
       "action": "Re-downloading or re-generating the file without verifying the format",
       "why_fails": "If the file was never pickle format to begin with (e.g., it is a safetensors, GGUF, or HDF5 file), re-downloading it produces the same error. The issue is using the wrong deserialization function, not a corrupt download.",
-      "fail_rate": 0.60,
+      "fail_rate": 0.6,
       "condition": "When the file is intentionally in a non-pickle format",
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Identify the actual file format and use the correct loader",
       "how": "Inspect the file header: 'head -c 16 file | xxd'. Safetensors files start with '{', HDF5 with '\\x89HDF', numpy .npy with '\\x93NUMPY'. For PyTorch: try 'torch.load()' with weights_only=True (PyTorch 2.0+), or use safetensors.torch.load_file() for .safetensors files.",
       "success_rate": 0.78,
       "tradeoff": "Requires understanding the file format; may need additional libraries installed",
-      "sources": ["https://huggingface.co/docs/safetensors/"]
+      "sources": [
+        "https://huggingface.co/docs/safetensors/"
+      ]
     },
     {
       "action": "Use safetensors instead of pickle for ML model weights",
       "how": "If the model was saved in safetensors format, load with 'from safetensors.torch import load_file; state_dict = load_file(\"model.safetensors\")'. For new models, save with safetensors to avoid pickle entirely: 'from safetensors.torch import save_file; save_file(model.state_dict(), \"model.safetensors\")'.",
       "success_rate": 0.82,
       "tradeoff": "Safetensors only stores tensors, not arbitrary Python objects. Cannot replace pickle for complex objects with custom classes.",
-      "sources": ["https://github.com/huggingface/safetensors"]
+      "sources": [
+        "https://github.com/huggingface/safetensors"
+      ]
     },
     {
       "action": "Ensure pickle protocol version compatibility",
@@ -74,10 +83,11 @@
       "success_rate": 0.45,
       "tradeoff": "Lower protocols are slower and produce larger files. Protocol 5 has out-of-band data support not available in earlier protocols.",
       "condition": "Only applicable when the file is actually pickle format but protocol is mismatched",
-      "sources": ["https://docs.python.org/3/library/pickle.html#pickle.DEFAULT_PROTOCOL"]
+      "sources": [
+        "https://docs.python.org/3/library/pickle.html#pickle.DEFAULT_PROTOCOL"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -90,7 +100,7 @@
     "preceded_by": [
       {
         "error_id": "python/torch-load-weights-only/torch2.1-linux",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "User switches from torch.load(weights_only=True) to pickle.load() after getting weights_only warning, but the file isn't pickle format"
       }
     ],
@@ -101,7 +111,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

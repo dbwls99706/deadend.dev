@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "rust/e0308-mismatched-types/rust1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/rust/e0308-mismatched-types/rust1-linux",
+  "url": "https://deadends.dev/rust/e0308-mismatched-types/rust1-linux",
   "error": {
     "signature": "error[E0308]: mismatched types",
     "regex": "error\\[E0308\\]: mismatched types",

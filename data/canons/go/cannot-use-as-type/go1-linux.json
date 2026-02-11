@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "go/cannot-use-as-type/go1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/go/cannot-use-as-type/go1-linux",
+  "url": "https://deadends.dev/go/cannot-use-as-type/go1-linux",
   "error": {
     "signature": "cannot use X (variable of type T1) as type T2 in argument",
     "regex": "cannot use .+ \\(.*type .+\\) as .*type .+ in",

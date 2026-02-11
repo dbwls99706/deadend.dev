@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/recursion-limit-exceeded/py311-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/recursion-limit-exceeded/py311-linux",
-
+  "url": "https://deadends.dev/python/recursion-limit-exceeded/py311-linux",
   "error": {
     "signature": "RecursionError: maximum recursion depth exceeded",
     "regex": "RecursionError: maximum recursion depth exceeded(?: in comparison| while calling a Python object| while getting the repr of an object)?",
@@ -11,14 +10,15 @@
     "first_seen": "2015-09-13",
     "last_confirmed": "2025-05-12"
   },
-
   "environment": {
-    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.12"
+    },
     "os": "linux",
     "python": ">=3.11,<3.12",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.82,
@@ -26,31 +26,35 @@
     "last_updated": "2025-05-12",
     "summary": "Almost always resolvable by refactoring the recursive algorithm to iterative form or adding proper memoization. The error indicates genuine infinite or excessively deep recursion; increasing the limit merely delays the crash and risks a segfault from stack overflow."
   },
-
   "dead_ends": [
     {
       "action": "Setting sys.setrecursionlimit(999999) or higher",
       "why_fails": "CPython uses the C stack for Python function calls. Raising the recursion limit beyond the OS thread stack size (typically 8MB on Linux, ~8000-10000 frames) causes a hard segfault instead of a catchable RecursionError. The limit exists as a safety mechanism. Setting it to 999999 will crash the process with SIGSEGV for any recursion deeper than ~8000 frames.",
       "fail_rate": 0.85,
-      "sources": ["https://docs.python.org/3/library/sys.html#sys.setrecursionlimit"],
+      "sources": [
+        "https://docs.python.org/3/library/sys.html#sys.setrecursionlimit"
+      ],
       "common_misconception": "Users believe the recursion limit is artificially low and raising it is safe. In reality, the default of 1000 is calibrated to stay well within the C stack size."
     },
     {
       "action": "Increasing thread stack size with 'ulimit -s unlimited' or threading.stack_size()",
       "why_fails": "While this technically allows deeper recursion, it does not fix the underlying algorithmic problem. Algorithms that hit the recursion limit on realistic inputs (trees, graphs, parsing) will eventually exhaust any finite stack. It also consumes significantly more memory per thread and can cause OOM on multi-threaded applications.",
-      "fail_rate": 0.70,
-      "sources": ["https://docs.python.org/3/library/threading.html#threading.stack_size"],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.python.org/3/library/threading.html#threading.stack_size"
+      ],
       "common_misconception": "Increasing the stack size is seen as a fix, but it only raises the ceiling on a fundamentally unscalable approach."
     }
   ],
-
   "workarounds": [
     {
       "action": "Convert recursive algorithm to iterative form using an explicit stack",
       "how": "Replace the recursive function with a while loop and a list used as a stack. For tree traversal: use 'stack = [root]; while stack: node = stack.pop(); stack.extend(node.children)'. For DFS/BFS, this is a standard transformation that eliminates recursion entirely.",
       "success_rate": 0.91,
       "tradeoff": "Code may be slightly less readable than the recursive version; requires manual stack management",
-      "sources": ["https://docs.python.org/3/tutorial/datastructures.html#using-lists-as-stacks"]
+      "sources": [
+        "https://docs.python.org/3/tutorial/datastructures.html#using-lists-as-stacks"
+      ]
     },
     {
       "action": "Add memoization with functools.lru_cache or functools.cache",
@@ -58,17 +62,20 @@
       "success_rate": 0.78,
       "tradeoff": "Increases memory usage proportional to the number of unique argument combinations. Only effective when the recursion has overlapping subproblems (dynamic programming problems). Does not help for inherently deep recursion like linked list traversal.",
       "condition": "Function arguments must be hashable; recursion must have overlapping subproblems",
-      "sources": ["https://docs.python.org/3/library/functools.html#functools.lru_cache"]
+      "sources": [
+        "https://docs.python.org/3/library/functools.html#functools.lru_cache"
+      ]
     },
     {
       "action": "Use tail-call optimization via trampolining",
       "how": "Refactor the function to return a thunk (zero-argument lambda) instead of making the recursive call directly. A trampoline loop repeatedly calls the thunk until a final value is returned. Libraries like 'tail-recursive' on PyPI automate this pattern.",
       "success_rate": 0.65,
       "tradeoff": "Adds complexity and indirection. CPython does not natively support TCO, so this is a manual workaround. Performance overhead from lambda creation.",
-      "sources": ["https://pypi.org/project/tail-recursive/"]
+      "sources": [
+        "https://pypi.org/project/tail-recursive/"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -86,7 +93,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

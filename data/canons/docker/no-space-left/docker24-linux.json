@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/no-space-left/docker24-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/no-space-left/docker24-linux",
-
+  "url": "https://deadends.dev/docker/no-space-left/docker24-linux",
   "error": {
     "signature": "no space left on device",
     "regex": "no space left on device",
@@ -11,21 +10,21 @@
     "first_seen": "2015-01-01",
     "last_confirmed": "2025-05-05"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2025-05-05",
     "summary": "Docker 'no space left on device' on Linux is caused by accumulated images, containers, volumes, and build cache consuming disk space in /var/lib/docker. The fix involves pruning unused Docker objects and potentially moving the Docker data root to a larger partition."
   },
-
   "dead_ends": [
     {
       "action": "Running 'docker system prune' without the --volumes flag",
@@ -39,18 +38,17 @@
     {
       "action": "Manually deleting files from /var/lib/docker",
       "why_fails": "The /var/lib/docker directory has a complex internal structure managed by Docker's storage drivers (overlay2, btrfs, etc.). Manually deleting files corrupts Docker's internal state, leading to broken containers, orphaned layers, and potentially an unrecoverable Docker installation.",
-      "fail_rate": 0.90,
+      "fail_rate": 0.9,
       "sources": [
         "https://docs.docker.com/engine/storage/drivers/"
       ]
     }
   ],
-
   "workarounds": [
     {
       "action": "Run a comprehensive Docker prune including volumes",
       "how": "docker system prune -a --volumes --force. The '-a' flag removes all unused images (not just dangling ones), and '--volumes' removes unused volumes. Warning: this removes ALL data in unnamed volumes. Verify no important data is in volumes first with 'docker volume ls'.",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Destroys all data in unused volumes; all images must be re-pulled; build cache is cleared, slowing subsequent builds",
       "sources": [
         "https://docs.docker.com/reference/cli/docker/system/prune/"
@@ -69,17 +67,16 @@
     {
       "action": "Set up automatic pruning with a cron job or Docker's built-in log rotation",
       "how": "Add to crontab: '0 2 * * 0 docker system prune -af --filter \"until=168h\"' (weekly prune of resources older than 7 days). For log rotation, add to /etc/docker/daemon.json: {\"log-driver\": \"json-file\", \"log-opts\": {\"max-size\": \"10m\", \"max-file\": \"3\"}}.",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "tradeoff": "Preventive measure; does not immediately free space but prevents recurrence. Log rotation requires daemon restart.",
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "docker/build-failed-disk/docker24-linux",
-        "probability": 0.50,
+        "probability": 0.5,
         "condition": "Disk full causes docker build to fail mid-layer",
         "typical_delay": "immediate"
       }
@@ -92,7 +89,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "aws/access-denied-exception/awscli2-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/aws/access-denied-exception/awscli2-linux",
+  "url": "https://deadends.dev/aws/access-denied-exception/awscli2-linux",
   "error": {
     "signature": "An error occurred (AccessDeniedException) when calling the X operation",
     "regex": "(AccessDeniedException|AccessDenied|403 Forbidden).*when calling",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/dependency-resolver-conflict/pip24-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/pip/dependency-resolver-conflict/pip24-linux",
+  "url": "https://deadends.dev/pip/dependency-resolver-conflict/pip24-linux",
   "error": {
     "signature": "ERROR: pip's dependency resolver does not currently consider all the packages",
     "regex": "ERROR: pip's dependency resolver does not currently consider",

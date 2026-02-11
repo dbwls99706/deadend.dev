@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/version-mismatch/cuda12.1-torch2.1",
-  "url": "https://dbwls99706.github.io/deadend.dev/cuda/version-mismatch/cuda12.1-torch2.1",
-
+  "url": "https://deadends.dev/cuda/version-mismatch/cuda12.1-torch2.1",
   "error": {
     "signature": "RuntimeError: The current CUDA version is not compatible with the installed PyTorch build. CUDA version: 12.1, PyTorch CUDA: 11.8",
     "regex": "RuntimeError: The current CUDA version is not compatible.*",
@@ -11,10 +10,15 @@
     "first_seen": "2023-06-20",
     "last_confirmed": "2025-05-15"
   },
-
   "environment": {
-    "runtime": { "name": "pytorch", "version_range": ">=2.1,<2.2" },
-    "hardware": { "gpu": "A100-80GB", "vram_gb": 80 },
+    "runtime": {
+      "name": "pytorch",
+      "version_range": ">=2.1,<2.2"
+    },
+    "hardware": {
+      "gpu": "A100-80GB",
+      "vram_gb": 80
+    },
     "os": "linux",
     "python": ">=3.9,<3.13",
     "additional": {
@@ -22,7 +26,6 @@
       "driver_version": ">=530.30"
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.92,
@@ -30,31 +33,35 @@
     "last_updated": "2025-05-15",
     "summary": "CUDA 12.1 and PyTorch 2.1 version mismatches occur when pip installs the default PyTorch wheel built against CUDA 11.8. Specifying the correct CUDA index URL during installation resolves the issue in the vast majority of cases."
   },
-
   "dead_ends": [
     {
       "action": "Reinstalling torch without specifying CUDA version (pip install torch --force-reinstall)",
       "why_fails": "The default PyPI torch wheel is built against CUDA 11.8 (or the CPU-only variant). Without specifying the CUDA-specific index URL, pip will reinstall the same incompatible wheel, leaving the version mismatch unchanged.",
       "fail_rate": 0.95,
-      "sources": ["https://github.com/pytorch/pytorch/issues/100974"],
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/100974"
+      ],
       "common_misconception": "Users assume 'pip install torch' will auto-detect the system CUDA version and pull the correct binary. PyPI does not perform CUDA detection — it always serves the default wheel."
     },
     {
       "action": "Using plain pip install torch (without --index-url)",
       "why_fails": "The default PyPI index serves wheels built against CUDA 11.8 or CPU-only builds. The CUDA 12.1-compatible wheels are only available from PyTorch's own download index at https://download.pytorch.org/whl/cu121. Without this index URL, pip cannot find the correct wheel.",
       "fail_rate": 0.97,
-      "sources": ["https://pytorch.org/get-started/locally/"],
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ],
       "common_misconception": "Users expect PyPI to host all CUDA variants. In reality, only the default CUDA build (typically 11.8) is published to PyPI; other variants require PyTorch's custom index."
     },
     {
       "action": "Downgrading the NVIDIA driver to match an older CUDA toolkit",
       "why_fails": "NVIDIA drivers are forward-compatible: a driver for CUDA 12.x supports CUDA 11.x runtimes. Downgrading the driver to target CUDA 11.8 may break other software, and the correct solution is to install the matching PyTorch wheel — not to change the driver.",
       "fail_rate": 0.78,
-      "sources": ["https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
+      ],
       "common_misconception": "Users conflate driver version with CUDA toolkit version. The driver API version and the runtime toolkit version are independent — a newer driver supports older CUDA runtimes."
     }
   ],
-
   "workarounds": [
     {
       "action": "Install PyTorch with the CUDA 12.1 index URL",
@@ -62,7 +69,9 @@
       "success_rate": 0.94,
       "tradeoff": "None significant; this is the officially recommended installation method for CUDA 12.1",
       "condition": "CUDA toolkit 12.1 must be installed and nvidia-smi must report a compatible driver (>=530.30)",
-      "sources": ["https://pytorch.org/get-started/locally/"]
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ]
     },
     {
       "action": "Use conda with the pytorch-cuda=12.1 package",
@@ -70,7 +79,9 @@
       "success_rate": 0.89,
       "tradeoff": "Requires conda/mamba environment; may conflict with pip-installed packages in mixed environments",
       "condition": "conda or mamba must be available; avoids mixing pip and conda PyTorch installs",
-      "sources": ["https://pytorch.org/get-started/locally/"]
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ]
     },
     {
       "action": "Build PyTorch from source with CUDA 12.1 support",
@@ -78,10 +89,11 @@
       "success_rate": 0.75,
       "tradeoff": "Build takes 30-90 minutes; requires build dependencies (cmake, ninja, gcc-compatible compiler)",
       "condition": "For custom configurations or when pre-built wheels are unavailable",
-      "sources": ["https://github.com/pytorch/pytorch#from-source"]
+      "sources": [
+        "https://github.com/pytorch/pytorch#from-source"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -105,7 +117,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

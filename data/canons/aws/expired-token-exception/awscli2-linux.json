@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "aws/expired-token-exception/awscli2-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/aws/expired-token-exception/awscli2-linux",
+  "url": "https://deadends.dev/aws/expired-token-exception/awscli2-linux",
   "error": {
     "signature": "An error occurred (ExpiredTokenException): The security token included in the request is expired",
     "regex": "ExpiredTokenException|security token.+is expired|token.+has expired",

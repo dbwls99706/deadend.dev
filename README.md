@@ -50,13 +50,13 @@ Then Claude will automatically check deadend.dev when encountering errors.
 
 | Endpoint | Description |
 |----------|-------------|
-| [`/api/v1/match.json`](https://dbwls99706.github.io/deadend.dev/api/v1/match.json) | Lightweight regex matching (fits in context window) |
-| [`/api/v1/index.json`](https://dbwls99706.github.io/deadend.dev/api/v1/index.json) | Full error index with all metadata |
+| [`/api/v1/match.json`](https://deadends.dev/api/v1/match.json) | Lightweight regex matching (fits in context window) |
+| [`/api/v1/index.json`](https://deadends.dev/api/v1/index.json) | Full error index with all metadata |
 | `/api/v1/{domain}/{slug}/{env}.json` | Individual error canon |
-| [`/api/v1/openapi.json`](https://dbwls99706.github.io/deadend.dev/api/v1/openapi.json) | OpenAPI 3.1 spec |
-| [`/llms.txt`](https://dbwls99706.github.io/deadend.dev/llms.txt) | LLM-optimized error listing ([llmstxt.org](https://llmstxt.org) standard) |
-| [`/llms-full.txt`](https://dbwls99706.github.io/deadend.dev/llms-full.txt) | Complete database dump |
-| [`/.well-known/ai-plugin.json`](https://dbwls99706.github.io/deadend.dev/.well-known/ai-plugin.json) | AI plugin manifest |
+| [`/api/v1/openapi.json`](https://deadends.dev/api/v1/openapi.json) | OpenAPI 3.1 spec |
+| [`/llms.txt`](https://deadends.dev/llms.txt) | LLM-optimized error listing ([llmstxt.org](https://llmstxt.org) standard) |
+| [`/llms-full.txt`](https://deadends.dev/llms-full.txt) | Complete database dump |
+| [`/.well-known/ai-plugin.json`](https://deadends.dev/.well-known/ai-plugin.json) | AI plugin manifest |
 
 ## Covered Domains (14)
 

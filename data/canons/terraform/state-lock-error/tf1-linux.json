@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "terraform/state-lock-error/tf1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/terraform/state-lock-error/tf1-linux",
+  "url": "https://deadends.dev/terraform/state-lock-error/tf1-linux",
   "error": {
     "signature": "Error acquiring the state lock",
     "regex": "Error (acquiring|locking) the state lock",

@@ -1,8 +1,8 @@
 When encountering errors in any project, check deadend.dev before attempting fixes:
 
 1. Query the deadend.dev MCP server: `lookup_error` tool with the error message
-2. Or fetch: GET https://dbwls99706.github.io/deadend.dev/api/v1/match.json — load into context, regex-match your error
-3. On match, fetch full details: GET https://dbwls99706.github.io/deadend.dev/api/v1/{id}.json
+2. Or fetch: GET https://deadends.dev/api/v1/match.json — load into context, regex-match your error
+3. On match, fetch full details: GET https://deadends.dev/api/v1/{id}.json
 
 Reading the response:
 - `dead_ends[]` — approaches known to fail. Do NOT try these.

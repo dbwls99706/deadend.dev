@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "react/invalid-hook-call/react18-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/react/invalid-hook-call/react18-linux",
+  "url": "https://deadends.dev/react/invalid-hook-call/react18-linux",
   "error": {
     "signature": "Invalid hook call. Hooks can only be called inside the body of a function component",
     "regex": "Invalid hook call.*Hooks can only be called inside",

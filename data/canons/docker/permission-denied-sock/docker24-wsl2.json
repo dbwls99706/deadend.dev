@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/permission-denied-sock/docker24-wsl2",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/permission-denied-sock/docker24-wsl2",
-
+  "url": "https://deadends.dev/docker/permission-denied-sock/docker24-wsl2",
   "error": {
     "signature": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock",
     "regex": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker\\.sock",
@@ -11,13 +10,16 @@
     "first_seen": "2020-01-01",
     "last_confirmed": "2025-05-08"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "linux",
-    "additional": { "platform": "wsl2" }
+    "additional": {
+      "platform": "wsl2"
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.85,
@@ -25,12 +27,11 @@
     "last_updated": "2025-05-08",
     "summary": "Docker socket permission denied on WSL2 has multiple root causes beyond the standard Linux group membership issue. Docker Desktop for Windows manages the socket differently through WSL integration, and the socket may not be properly forwarded if Docker Desktop's WSL2 integration is misconfigured or the WSL distro is not enabled in Docker Desktop settings."
   },
-
   "dead_ends": [
     {
       "action": "Running chmod 777 /var/run/docker.sock inside WSL2",
       "why_fails": "The Docker socket in WSL2 is managed by Docker Desktop's WSL integration. Changing permissions is overridden whenever Docker Desktop restarts or the WSL distro is restarted. This also poses the same security risks as on native Linux.",
-      "fail_rate": 0.50,
+      "fail_rate": 0.5,
       "sources": [],
       "common_misconception": "The socket in WSL2 is not a regular Linux socket; it is a proxy managed by Docker Desktop. Permission changes do not persist and do not address the root cause."
     },
@@ -41,7 +42,6 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Enable WSL2 integration for your distro in Docker Desktop settings",
@@ -62,7 +62,7 @@
     {
       "action": "Use Docker Engine natively in WSL2 without Docker Desktop",
       "how": "Uninstall Docker Desktop. Inside WSL2, install Docker Engine following the standard Linux instructions for your distro. Start the daemon with 'sudo service docker start'. Add your user to the docker group. Note: you must start the daemon manually or configure it to start with your WSL session.",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "tradeoff": "Loses Docker Desktop GUI, Kubernetes integration, and automatic daemon management. Must manually start Docker on each WSL session.",
       "condition": "Docker Desktop license is not available or not desired",
       "sources": [
@@ -70,7 +70,6 @@
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [
@@ -87,7 +86,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

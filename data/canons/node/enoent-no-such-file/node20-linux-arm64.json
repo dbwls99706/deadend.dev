@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/enoent-no-such-file/node20-linux-arm64",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/enoent-no-such-file/node20-linux-arm64",
-
+  "url": "https://deadends.dev/node/enoent-no-such-file/node20-linux-arm64",
   "error": {
     "signature": "Error: ENOENT: no such file or directory, open 'X'",
     "regex": "Error: ENOENT: no such file or directory, (?:open|stat|lstat|access) '.+'",
@@ -11,21 +10,23 @@
     "first_seen": "2015-01-01",
     "last_confirmed": "2025-05-15"
   },
-
   "environment": {
-    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<23"
+    },
     "os": "linux",
-    "additional": { "architecture": "arm64" }
+    "additional": {
+      "architecture": "arm64"
+    }
   },
-
   "verdict": {
     "resolvable": "partial",
     "fix_success_rate": 0.55,
-    "confidence": 0.70,
+    "confidence": 0.7,
     "last_updated": "2025-05-15",
     "summary": "ENOENT on ARM64 Linux is often caused by case-sensitive filesystem differences (paths valid on macOS are invalid on Linux) or missing native modules that lack ARM64 prebuilt binaries."
   },
-
   "dead_ends": [
     {
       "action": "Running npm cache clean --force",
@@ -42,7 +43,6 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Check and fix case sensitivity in file paths",
@@ -61,12 +61,11 @@
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "node/gyp-rebuild-error/node20-linux-arm64",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "When attempting npm rebuild for native modules",
         "typical_delay": "immediate"
       }
@@ -79,7 +78,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

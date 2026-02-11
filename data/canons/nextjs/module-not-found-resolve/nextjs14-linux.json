@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "nextjs/module-not-found-resolve/nextjs14-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/nextjs/module-not-found-resolve/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/module-not-found-resolve/nextjs14-linux",
   "error": {
     "signature": "Module not found: Can't resolve 'X'",
     "regex": "Module not found: Can't resolve ['\\\"](.+?)['\\\"]",

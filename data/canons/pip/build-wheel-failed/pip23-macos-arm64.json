@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/build-wheel-failed/pip23-macos-arm64",
-  "url": "https://dbwls99706.github.io/deadend.dev/pip/build-wheel-failed/pip23-macos-arm64",
-
+  "url": "https://deadends.dev/pip/build-wheel-failed/pip23-macos-arm64",
   "error": {
     "signature": "Failed building wheel for X",
     "regex": "Failed building wheel for \\S+",
@@ -11,21 +10,24 @@
     "first_seen": "2020-11-01",
     "last_confirmed": "2025-05-08"
   },
-
   "environment": {
-    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22,<25"
+    },
     "os": "macos",
-    "additional": { "architecture": "arm64", "apple_silicon": true }
+    "additional": {
+      "architecture": "arm64",
+      "apple_silicon": true
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.76,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2025-05-08",
     "summary": "Wheel build failures on macOS ARM64 (Apple Silicon M1/M2/M3) are caused by packages lacking native ARM64 wheels, C extensions compiled for x86_64 but not arm64, or missing Xcode Command Line Tools. Some packages require Rosetta 2 translation or explicit architecture flags. The transition from x86_64 to ARM64 on macOS created a wave of compatibility issues that has largely but not completely resolved."
   },
-
   "dead_ends": [
     {
       "action": "Running 'pip install --no-cache-dir' to bypass cached artifacts",
@@ -40,7 +42,6 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Install Xcode Command Line Tools and retry",
@@ -60,7 +61,7 @@
     {
       "action": "Set architecture-specific compiler flags for the build",
       "how": "For packages that fail to detect ARM64 correctly: 'ARCHFLAGS=\"-arch arm64\" pip install <package>'. For packages needing OpenSSL (like cryptography): 'LDFLAGS=\"-L$(brew --prefix openssl)/lib\" CFLAGS=\"-I$(brew --prefix openssl)/include\" pip install <package>'.",
-      "success_rate": 0.70,
+      "success_rate": 0.7,
       "tradeoff": "Requires package-specific knowledge of which flags are needed; fragile if Homebrew paths change",
       "condition": "The build fails with architecture-related compiler errors",
       "sources": [
@@ -75,7 +76,6 @@
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -93,7 +93,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

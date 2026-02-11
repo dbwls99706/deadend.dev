@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "terraform/provider-not-present/tf1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/terraform/provider-not-present/tf1-linux",
+  "url": "https://deadends.dev/terraform/provider-not-present/tf1-linux",
   "error": {
     "signature": "Provider configuration not present",
     "regex": "Provider configuration not present|provider .+ not available",

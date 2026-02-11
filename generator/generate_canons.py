@@ -49,7 +49,7 @@ Be factual and specific. Base your analysis on the evidence provided.
 {{
   "schema_version": "1.0.0",
   "id": "{pair_id}",
-  "url": "https://dbwls99706.github.io/deadend.dev/{pair_id}",
+  "url": "https://deadends.dev/{pair_id}",
   "error": {{
     "signature": "<exact error message pattern>",
     "regex": "<valid Python regex matching this error>",

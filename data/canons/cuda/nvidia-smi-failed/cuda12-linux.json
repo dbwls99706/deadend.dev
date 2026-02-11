@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/nvidia-smi-failed/cuda12-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/cuda/nvidia-smi-failed/cuda12-linux",
+  "url": "https://deadends.dev/cuda/nvidia-smi-failed/cuda12-linux",
   "error": {
     "signature": "NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver",
     "regex": "NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver",

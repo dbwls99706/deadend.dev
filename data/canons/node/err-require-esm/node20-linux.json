@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/err-require-esm/node20-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/err-require-esm/node20-linux",
+  "url": "https://deadends.dev/node/err-require-esm/node20-linux",
   "error": {
     "signature": "Error [ERR_REQUIRE_ESM]: require() of ES Module not supported",
     "regex": "Error \\[ERR_REQUIRE_ESM\\]:.*require\\(\\) of ES Module.+not supported",

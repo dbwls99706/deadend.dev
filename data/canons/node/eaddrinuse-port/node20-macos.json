@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/eaddrinuse-port/node20-macos",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/eaddrinuse-port/node20-macos",
-
+  "url": "https://deadends.dev/node/eaddrinuse-port/node20-macos",
   "error": {
     "signature": "Error: listen EADDRINUSE: address already in use :::3000",
     "regex": "Error: listen EADDRINUSE: address already in use (?:::)?\\d+",
@@ -11,13 +10,14 @@
     "first_seen": "2014-01-01",
     "last_confirmed": "2025-05-12"
   },
-
   "environment": {
-    "runtime": { "name": "node", "version_range": ">=18,<23" },
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<23"
+    },
     "os": "macos",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.92,
@@ -25,23 +25,21 @@
     "last_updated": "2025-05-12",
     "summary": "EADDRINUSE on macOS is the same fundamental issue as Linux -- another process holds the port. However, macOS has additional common culprits: AirPlay Receiver uses port 5000, and macOS Monterey+ uses port 7000 for AirPlay. The commands to find port-holding processes differ slightly from Linux."
   },
-
   "dead_ends": [
     {
       "action": "Binding to port 0 to auto-assign a random port",
       "why_fails": "Using port 0 avoids the conflict but makes the service unreachable at a known address. Other tools, browser bookmarks, and reverse proxy configs that reference the original port will break.",
-      "fail_rate": 0.70,
+      "fail_rate": 0.7,
       "sources": []
     },
     {
       "action": "Running 'killall node' to stop all Node processes",
       "why_fails": "On macOS, killall node terminates every Node process including Electron apps, VS Code helper processes, and other unrelated services. This causes disruption far beyond the intended scope.",
-      "fail_rate": 0.40,
+      "fail_rate": 0.4,
       "sources": [],
       "common_misconception": "Developers assume only their server is running Node, but macOS often has multiple Node processes from Electron-based apps like VS Code, Slack, or Discord."
     }
   ],
-
   "workarounds": [
     {
       "action": "Find and kill the specific process using the port",
@@ -53,7 +51,7 @@
     {
       "action": "Disable AirPlay Receiver if it conflicts with port 5000",
       "how": "Go to System Settings > General > AirDrop & Handoff > AirPlay Receiver and toggle it off. On macOS Monterey/Ventura, AirPlay Receiver listens on ports 5000 and 7000 by default, which conflicts with common development ports (e.g., Flask defaults to 5000).",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Disables AirPlay receiving functionality on the Mac",
       "condition": "The conflicting port is 5000 or 7000 on macOS Monterey or later",
       "sources": [
@@ -71,13 +69,12 @@
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [
       {
         "error_id": "node/process-crash-unhandled/node20-macos",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "A previous Node process crashed without closing the server socket"
       }
     ],
@@ -88,7 +85,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

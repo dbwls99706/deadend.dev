@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "nextjs/hydration-failed/nextjs14-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/nextjs/hydration-failed/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/hydration-failed/nextjs14-linux",
   "error": {
     "signature": "Error: Hydration failed because the initial UI does not match what was rendered on the server",
     "regex": "Hydration failed because the initial UI does not match",

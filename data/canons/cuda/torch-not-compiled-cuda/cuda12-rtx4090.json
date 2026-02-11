@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
-  "url": "https://dbwls99706.github.io/deadend.dev/cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+  "url": "https://deadends.dev/cuda/torch-not-compiled-cuda/cuda12-rtx4090",
   "error": {
     "signature": "AssertionError: Torch not compiled with CUDA enabled",
     "regex": "(AssertionError|AssertError):.*Torch not compiled with CUDA enabled",

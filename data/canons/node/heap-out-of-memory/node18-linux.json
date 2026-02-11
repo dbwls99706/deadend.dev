@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/heap-out-of-memory/node18-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/node/heap-out-of-memory/node18-linux",
-
+  "url": "https://deadends.dev/node/heap-out-of-memory/node18-linux",
   "error": {
     "signature": "FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory",
     "regex": "FATAL ERROR: (?:CALL_AND_RETRY_LAST|Reached heap limit) Allocation failed - JavaScript heap out of memory",
@@ -11,13 +10,14 @@
     "first_seen": "2016-03-01",
     "last_confirmed": "2025-04-20"
   },
-
   "environment": {
-    "runtime": { "name": "node", "version_range": ">=18,<19" },
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<19"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
@@ -25,12 +25,11 @@
     "last_updated": "2025-04-20",
     "summary": "Heap out of memory in Node 18 on Linux behaves similarly to Node 20, but Node 18 has a slightly lower default heap limit on some configurations. Node 18's V8 version (10.2) may show the older CALL_AND_RETRY_LAST message more consistently than Node 20's 'Reached heap limit' variant."
   },
-
   "dead_ends": [
     {
       "action": "Setting --max-old-space-size without investigating the root cause",
       "why_fails": "Increasing the heap limit without understanding what consumes memory only delays the inevitable crash. In containerized environments with hard memory limits, this leads to OOM kills by the kernel or orchestrator.",
-      "fail_rate": 0.60,
+      "fail_rate": 0.6,
       "sources": [
         "https://nodejs.org/en/docs/guides/diagnostics/memory/using-heap-snapshot"
       ],
@@ -43,12 +42,11 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Increase heap size via NODE_OPTIONS environment variable",
       "how": "export NODE_OPTIONS='--max-old-space-size=4096' && node app.js. Node 18 defaults to approximately 1.5-2GB on 64-bit systems. Setting 4096 (4GB) is a safe starting point for build processes.",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "tradeoff": "Higher memory usage; does not address the root cause of memory consumption",
       "sources": [
         "https://nodejs.org/api/cli.html#node_optionsoptions"
@@ -72,12 +70,11 @@
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "node/process-oom-killed/node18-linux",
-        "probability": 0.40,
+        "probability": 0.4,
         "condition": "When the raised heap limit exceeds container or system memory",
         "typical_delay": "minutes to hours"
       }
@@ -90,7 +87,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/cuda-out-of-memory/torch2.1-a100-40gb",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/cuda-out-of-memory/torch2.1-a100-40gb",
-
+  "url": "https://deadends.dev/python/cuda-out-of-memory/torch2.1-a100-40gb",
   "error": {
     "signature": "RuntimeError: CUDA out of memory. Tried to allocate X GiB",
     "regex": "RuntimeError: CUDA out of memory\\. Tried to allocate \\d+\\.\\d+ [GM]iB",
@@ -11,15 +10,19 @@
     "first_seen": "2020-03-15",
     "last_confirmed": "2025-05-20"
   },
-
   "environment": {
-    "runtime": { "name": "pytorch", "version_range": ">=2.0,<2.3" },
-    "hardware": { "gpu": "A100-40GB", "vram_gb": 40 },
+    "runtime": {
+      "name": "pytorch",
+      "version_range": ">=2.0,<2.3"
+    },
+    "hardware": {
+      "gpu": "A100-40GB",
+      "vram_gb": 40
+    },
     "os": "linux",
     "python": ">=3.9,<3.13",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "partial",
     "fix_success_rate": 0.34,
@@ -27,13 +30,14 @@
     "last_updated": "2025-05-20",
     "summary": "In this environment, allocation failures of 2GiB+ are not resolved by batch_size adjustment alone in 66% of cases. gradient_checkpointing shows the highest success rate but depends on model architecture."
   },
-
   "dead_ends": [
     {
       "action": "Calling torch.cuda.empty_cache()",
       "why_fails": "Does not resolve memory fragmentation. Space occupied by already-allocated tensors is not freed. Ineffective when the root cause is lack of contiguous memory blocks.",
       "fail_rate": 0.89,
-      "sources": ["https://github.com/pytorch/pytorch/issues/16417"],
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/16417"
+      ],
       "common_misconception": "Many believe empty_cache 'cleans up' GPU memory, but it only returns cached unused blocks to the allocator — it has no effect on active tensors."
     },
     {
@@ -48,10 +52,11 @@
       "why_fails": "Introduced in PyTorch 2.1 but does not work in A100 MIG partition environments. Only effective for fragmentation — useless for absolute memory shortage.",
       "fail_rate": 0.61,
       "condition": "A100 MIG mode or absolute memory shortage",
-      "sources": ["https://pytorch.org/docs/stable/notes/cuda.html"]
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html"
+      ]
     }
   ],
-
   "workarounds": [
     {
       "action": "Enable gradient_checkpointing",
@@ -59,7 +64,9 @@
       "success_rate": 0.72,
       "tradeoff": "Training speed decreases by 20-30%",
       "condition": "Model must support gradient_checkpointing (most HuggingFace models do)",
-      "sources": ["https://huggingface.co/docs/transformers/perf_train_gpu_one"]
+      "sources": [
+        "https://huggingface.co/docs/transformers/perf_train_gpu_one"
+      ]
     },
     {
       "action": "Switch to mixed precision (FP16/BF16)",
@@ -75,10 +82,11 @@
       "success_rate": 0.85,
       "tradeoff": "Increased configuration complexity; single GPU may require ZeRO-Offload",
       "condition": "DeepSpeed must be installable; NCCL compatibility required",
-      "sources": ["https://www.deepspeed.ai/tutorials/zero/"]
+      "sources": [
+        "https://www.deepspeed.ai/tutorials/zero/"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -108,7 +116,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

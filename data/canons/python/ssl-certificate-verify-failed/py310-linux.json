@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/ssl-certificate-verify-failed/py310-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/ssl-certificate-verify-failed/py310-linux",
-
+  "url": "https://deadends.dev/python/ssl-certificate-verify-failed/py310-linux",
   "error": {
     "signature": "ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:997)",
     "regex": "ssl\\.SSLCertVerificationError: \\[SSL: CERTIFICATE_VERIFY_FAILED\\] certificate verify failed",
@@ -11,16 +10,21 @@
     "first_seen": "2018-08-01",
     "last_confirmed": "2025-05-14"
   },
-
   "environment": {
-    "runtime": { "name": "cpython", "version_range": ">=3.10,<3.11" },
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.10,<3.11"
+    },
     "os": "linux",
     "python": ">=3.10,<3.11",
     "additional": {
-      "common_contexts": ["minimal Docker images", "corporate proxy environments", "custom-compiled Python"]
+      "common_contexts": [
+        "minimal Docker images",
+        "corporate proxy environments",
+        "custom-compiled Python"
+      ]
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.87,
@@ -28,38 +32,44 @@
     "last_updated": "2025-05-14",
     "summary": "On Linux, this error typically occurs in minimal Docker images (alpine, slim) that lack CA certificates, in corporate environments with custom CA roots, or when Python is compiled against an OpenSSL that cannot find the system certificate store. Updating ca-certificates or setting SSL_CERT_FILE resolves most cases."
   },
-
   "dead_ends": [
     {
       "action": "Running 'pip install certifi' alone without configuring SSL_CERT_FILE",
       "why_fails": "Installing certifi makes the CA bundle available as a Python package, but CPython's ssl module does not automatically use it. The ssl module looks for certificates at the OpenSSL default path (e.g., /etc/ssl/certs/ca-certificates.crt), not in Python's site-packages. Without setting SSL_CERT_FILE or programmatically configuring the SSL context, certifi sits unused.",
-      "fail_rate": 0.80,
-      "sources": ["https://pypi.org/project/certifi/"],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pypi.org/project/certifi/"
+      ],
       "common_misconception": "Users assume installing certifi automatically fixes SSL verification. While the requests library uses certifi by default, urllib and other standard library modules do not."
     },
     {
       "action": "Disabling SSL verification with verify=False or ssl._create_unverified_context()",
       "why_fails": "This suppresses the error but disables all certificate validation, allowing man-in-the-middle attacks. It is a security regression, not a fix. Most production security scanners will flag this as a critical vulnerability.",
       "fail_rate": 0.35,
-      "sources": ["https://docs.python.org/3/library/ssl.html#ssl._create_unverified_context"],
+      "sources": [
+        "https://docs.python.org/3/library/ssl.html#ssl._create_unverified_context"
+      ],
       "common_misconception": "Disabling verification is treated as a quick workaround, but it removes a fundamental security layer."
     }
   ],
-
   "workarounds": [
     {
       "action": "Install or update the system CA certificates package",
       "how": "On Debian/Ubuntu: 'apt-get update && apt-get install -y ca-certificates'. On Alpine: 'apk add ca-certificates'. On RHEL/CentOS: 'yum install ca-certificates && update-ca-trust'. This populates /etc/ssl/certs/ which OpenSSL reads by default.",
       "success_rate": 0.91,
       "tradeoff": "Requires root/sudo access. In Docker, add this to the Dockerfile.",
-      "sources": ["https://packages.debian.org/bookworm/ca-certificates"]
+      "sources": [
+        "https://packages.debian.org/bookworm/ca-certificates"
+      ]
     },
     {
       "action": "Set SSL_CERT_FILE to point to certifi's CA bundle",
       "how": "Run 'pip install certifi' then 'export SSL_CERT_FILE=$(python3 -c \"import certifi; print(certifi.where())\")'. Add this to .bashrc or set it in your Docker ENTRYPOINT. This tells OpenSSL to use certifi's regularly-updated Mozilla CA bundle.",
       "success_rate": 0.88,
       "tradeoff": "Requires the environment variable to be set before any SSL connections. Must be persisted in shell profile or container configuration.",
-      "sources": ["https://pypi.org/project/certifi/"]
+      "sources": [
+        "https://pypi.org/project/certifi/"
+      ]
     },
     {
       "action": "Add corporate CA certificate to the system trust store",
@@ -67,10 +77,11 @@
       "success_rate": 0.82,
       "tradeoff": "Requires obtaining the corporate CA certificate from IT. Must be repeated in each Docker image or new environment.",
       "condition": "Applicable when behind a corporate TLS-inspecting proxy",
-      "sources": ["https://manpages.debian.org/bookworm/ca-certificates/update-ca-certificates.8.en.html"]
+      "sources": [
+        "https://manpages.debian.org/bookworm/ca-certificates/update-ca-certificates.8.en.html"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -94,7 +105,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

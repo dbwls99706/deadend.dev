@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/cublas-init-error/cuda11.8-rtx3090",
-  "url": "https://dbwls99706.github.io/deadend.dev/cuda/cublas-init-error/cuda11.8-rtx3090",
-
+  "url": "https://deadends.dev/cuda/cublas-init-error/cuda11.8-rtx3090",
   "error": {
     "signature": "RuntimeError: CUBLAS_STATUS_NOT_INITIALIZED when calling cublasCreate(handle)",
     "regex": "RuntimeError: CUBLAS_STATUS_NOT_INITIALIZED.*",
@@ -11,10 +10,15 @@
     "first_seen": "2022-08-05",
     "last_confirmed": "2025-05-10"
   },
-
   "environment": {
-    "runtime": { "name": "pytorch", "version_range": ">=1.13,<2.2" },
-    "hardware": { "gpu": "RTX 3090", "vram_gb": 24 },
+    "runtime": {
+      "name": "pytorch",
+      "version_range": ">=1.13,<2.2"
+    },
+    "hardware": {
+      "gpu": "RTX 3090",
+      "vram_gb": 24
+    },
     "os": "linux",
     "python": ">=3.8,<3.12",
     "additional": {
@@ -23,7 +27,6 @@
       "driver_version": ">=520.61"
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.81,
@@ -31,23 +34,25 @@
     "last_updated": "2025-05-10",
     "summary": "CUBLAS_STATUS_NOT_INITIALIZED on RTX 3090 with CUDA 11.8 is typically caused by cuBLAS library version drift after partial CUDA updates, or by insufficient GPU memory for cuBLAS workspace allocation. The RTX 3090's 24 GB VRAM makes workspace allocation failures less common than on lower-VRAM GPUs, so library version mismatches are the primary cause."
   },
-
   "dead_ends": [
     {
       "action": "Reinstalling cuBLAS alone (apt install --reinstall libcublas-11-8)",
       "why_fails": "Reinstalling the same cuBLAS package does not change its version. If the installed cuBLAS version is incompatible with other CUDA 11.8 runtime libraries, a reinstall just puts the same incompatible binary back. The fix requires aligning all CUDA library versions, not reinstalling a single component.",
       "fail_rate": 0.84,
-      "sources": ["https://github.com/pytorch/pytorch/issues/94292"],
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/94292"
+      ],
       "common_misconception": "Users assume that 'reinstall' means 'repair'. Package managers reinstall the exact same version from the repository — if the repository version is itself mismatched with the rest of the toolkit, reinstalling changes nothing."
     },
     {
       "action": "Calling torch.cuda.init() before any CUDA operations",
       "why_fails": "torch.cuda.init() initializes the CUDA runtime context but does not initialize cuBLAS. cuBLAS is lazily initialized on first use and has its own version checks. If the cuBLAS library binary is incompatible with the CUDA runtime, the init failure occurs at first cuBLAS call regardless of prior torch.cuda.init() calls.",
-      "fail_rate": 0.90,
-      "sources": ["https://pytorch.org/docs/stable/generated/torch.cuda.init.html"]
+      "fail_rate": 0.9,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.cuda.init.html"
+      ]
     }
   ],
-
   "workarounds": [
     {
       "action": "Install the complete CUDA 11.8 toolkit to ensure consistent library versions",
@@ -55,15 +60,19 @@
       "success_rate": 0.85,
       "tradeoff": "Full toolkit install is ~3.5 GB; may require reboot if the driver component is updated",
       "condition": "Root access is required for system-wide install. Verify with 'dpkg -l | grep cuda' that no mixed CUDA versions remain.",
-      "sources": ["https://developer.nvidia.com/cuda-11-8-0-download-archive"]
+      "sources": [
+        "https://developer.nvidia.com/cuda-11-8-0-download-archive"
+      ]
     },
     {
       "action": "Set CUBLAS_WORKSPACE_CONFIG environment variable",
       "how": "export CUBLAS_WORKSPACE_CONFIG=:4096:8",
-      "success_rate": 0.70,
+      "success_rate": 0.7,
       "tradeoff": "Slightly increases cuBLAS workspace memory allocation; negligible impact on RTX 3090's 24 GB VRAM",
       "condition": "Effective when the init failure is triggered by workspace size constraints rather than a version mismatch. Verify by checking if the error only occurs with large batch sizes.",
-      "sources": ["https://docs.nvidia.com/cuda/cublas/index.html#results-reproducibility"]
+      "sources": [
+        "https://docs.nvidia.com/cuda/cublas/index.html#results-reproducibility"
+      ]
     },
     {
       "action": "Use PyTorch-bundled CUDA libraries via LD_LIBRARY_PATH",
@@ -71,7 +80,9 @@
       "success_rate": 0.78,
       "tradeoff": "Overrides system CUDA libraries for the process; other non-PyTorch CUDA applications in the same session may behave differently",
       "condition": "PyTorch must be installed from the cu118 index URL (pip install torch --index-url https://download.pytorch.org/whl/cu118)",
-      "sources": ["https://github.com/pytorch/pytorch/issues/94292"]
+      "sources": [
+        "https://github.com/pytorch/pytorch/issues/94292"
+      ]
     },
     {
       "action": "Use NVIDIA NGC PyTorch container for a known-good CUDA stack",
@@ -79,10 +90,11 @@
       "success_rate": 0.93,
       "tradeoff": "Requires Docker and nvidia-container-toolkit; container images are 10-15 GB; may not match host filesystem layout",
       "condition": "Docker and nvidia-container-toolkit must be installed",
-      "sources": ["https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch"]
+      "sources": [
+        "https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -106,7 +118,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

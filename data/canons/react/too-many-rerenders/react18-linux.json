@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "react/too-many-rerenders/react18-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/react/too-many-rerenders/react18-linux",
+  "url": "https://deadends.dev/react/too-many-rerenders/react18-linux",
   "error": {
     "signature": "Error: Too many re-renders. React limits the number of renders to prevent an infinite loop",
     "regex": "Too many re-renders.*React limits the number of renders",

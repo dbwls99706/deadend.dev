@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "kubernetes/oomkilled/k8s1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/kubernetes/oomkilled/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/oomkilled/k8s1-linux",
   "error": {
     "signature": "OOMKilled",
     "regex": "OOMKilled|Out of memory|OOM",

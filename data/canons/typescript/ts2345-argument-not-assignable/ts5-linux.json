@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "typescript/ts2345-argument-not-assignable/ts5-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/typescript/ts2345-argument-not-assignable/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2345-argument-not-assignable/ts5-linux",
   "error": {
     "signature": "TS2345: Argument of type 'X' is not assignable to parameter of type 'Y'",
     "regex": "TS2345: Argument of type ['\\\"]?(.+?)['\\\"]? is not assignable to parameter",

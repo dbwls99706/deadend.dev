@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "git/refusing-to-merge-unrelated/git2.40-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/git/refusing-to-merge-unrelated/git2.40-linux",
-
+  "url": "https://deadends.dev/git/refusing-to-merge-unrelated/git2.40-linux",
   "error": {
     "signature": "fatal: refusing to merge unrelated histories",
     "regex": "fatal: refusing to merge unrelated histories",
@@ -11,21 +10,21 @@
     "first_seen": "2016-10-01",
     "last_confirmed": "2025-05-12"
   },
-
   "environment": {
-    "runtime": { "name": "git", "version_range": ">=2.9,<3.0" },
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.9,<3.0"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2025-05-12",
     "summary": "This error was introduced in Git 2.9 as a safety measure. It occurs when merging or pulling two branches that do not share a common ancestor commit. The most common scenarios are: (1) a GitHub repo was created with a README and the local repo was initialized separately, (2) two unrelated repos are being merged, or (3) the repo history was rewritten with filter-branch or filter-repo."
   },
-
   "dead_ends": [
     {
       "action": "Trying 'git merge --force' (not a valid flag)",
@@ -41,7 +40,6 @@
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Use --allow-unrelated-histories flag on merge or pull",
@@ -62,18 +60,17 @@
     {
       "action": "Clone the remote and copy local files instead of merging",
       "how": "If the local repo is new with few commits, the simplest approach is: clone the remote ('git clone <url>'), copy your local files into the cloned directory, and commit them. This avoids the unrelated histories entirely.",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Loses local commit history (suitable only when local history is minimal or unimportant)",
       "condition": "The local repository has very few commits and preserving its history is not important",
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "git/merge-conflict/git2.40-linux",
-        "probability": 0.50,
+        "probability": 0.5,
         "condition": "After --allow-unrelated-histories, both histories may have files with the same path (e.g., README.md) causing merge conflicts",
         "typical_delay": "immediate"
       }
@@ -92,7 +89,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

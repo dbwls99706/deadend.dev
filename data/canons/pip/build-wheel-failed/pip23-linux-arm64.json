@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/build-wheel-failed/pip23-linux-arm64",
-  "url": "https://dbwls99706.github.io/deadend.dev/pip/build-wheel-failed/pip23-linux-arm64",
-
+  "url": "https://deadends.dev/pip/build-wheel-failed/pip23-linux-arm64",
   "error": {
     "signature": "Failed building wheel for X",
     "regex": "Failed building wheel for \\S+",
@@ -11,13 +10,16 @@
     "first_seen": "2018-01-01",
     "last_confirmed": "2025-05-08"
   },
-
   "environment": {
-    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22,<25"
+    },
     "os": "linux",
-    "additional": { "architecture": "arm64" }
+    "additional": {
+      "architecture": "arm64"
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.78,
@@ -25,7 +27,6 @@
     "last_updated": "2025-05-08",
     "summary": "Wheel build failures on Linux ARM64 are predominantly caused by missing C/C++ build tools and development headers, or by packages that do not publish prebuilt ARM64 wheels on PyPI. ARM64 Linux has significantly fewer prebuilt wheels available compared to x86_64, forcing pip to compile from source distributions which requires build dependencies."
   },
-
   "dead_ends": [
     {
       "action": "Running 'pip install --no-cache-dir' to force a fresh download",
@@ -37,11 +38,10 @@
     {
       "action": "Upgrading pip alone without installing build dependencies",
       "why_fails": "While an older pip may lack support for newer wheel formats (PEP 517/518 builds), the primary cause on ARM64 is missing system-level build tools. Upgrading pip does not install gcc, python3-dev, or library headers required by C extensions.",
-      "fail_rate": 0.80,
+      "fail_rate": 0.8,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Install C/C++ build tools and Python development headers",
@@ -69,12 +69,11 @@
       "sources": []
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
         "error_id": "pip/gcc-error-compilation/pip23-linux-arm64",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "Even with build tools installed, some C extensions have ARM64-specific compilation errors",
         "typical_delay": "immediate"
       }
@@ -87,7 +86,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

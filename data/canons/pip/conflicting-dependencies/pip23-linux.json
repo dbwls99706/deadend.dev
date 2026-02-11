@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/conflicting-dependencies/pip23-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/pip/conflicting-dependencies/pip23-linux",
-
+  "url": "https://deadends.dev/pip/conflicting-dependencies/pip23-linux",
   "error": {
     "signature": "ERROR: Cannot install X and Y because these package versions have conflicting dependencies",
     "regex": "ERROR: Cannot install .+ because these package versions have conflicting dependencies",
@@ -11,13 +10,14 @@
     "first_seen": "2020-10-01",
     "last_confirmed": "2025-05-10"
   },
-
   "environment": {
-    "runtime": { "name": "pip", "version_range": ">=22,<25" },
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22,<25"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
@@ -25,7 +25,6 @@
     "last_updated": "2025-05-10",
     "summary": "Pip's modern dependency resolver (introduced in pip 20.3) correctly detects conflicting version requirements between packages. This error means two or more packages require incompatible versions of a shared dependency. Resolution requires identifying compatible version combinations or using tools like pip-compile to find a valid resolution."
   },
-
   "dead_ends": [
     {
       "action": "Running 'pip install --force-reinstall' on the conflicting packages",
@@ -37,11 +36,10 @@
     {
       "action": "Ignoring the error and proceeding with --no-deps",
       "why_fails": "Installing with --no-deps skips dependency checks entirely, allowing installation to succeed. However, this virtually guarantees runtime failures: wrong API versions, missing methods, or subtle data corruption when libraries assume specific dependency versions.",
-      "fail_rate": 0.70,
+      "fail_rate": 0.7,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Create a clean virtual environment and install with constrained versions",
@@ -62,7 +60,7 @@
     {
       "action": "Use the legacy resolver as a temporary fallback",
       "how": "pip install --use-deprecated=legacy-resolver package-a package-b. The legacy resolver does not check for conflicts as strictly, which may allow installation. Warning: this may install incompatible versions that cause runtime errors.",
-      "success_rate": 0.60,
+      "success_rate": 0.6,
       "tradeoff": "May install incompatible package combinations that fail at runtime; the legacy resolver is deprecated and may be removed in future pip versions",
       "condition": "The conflict is a false positive due to overly strict version specifiers and you have verified runtime compatibility manually",
       "sources": [
@@ -70,7 +68,6 @@
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -88,7 +85,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

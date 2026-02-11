@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/oci-runtime-create-failed/docker27-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/oci-runtime-create-failed/docker27-linux",
+  "url": "https://deadends.dev/docker/oci-runtime-create-failed/docker27-linux",
   "error": {
     "signature": "OCI runtime create failed: unable to start container process",
     "regex": "OCI runtime create failed:.*unable to start container process",

@@ -13,10 +13,10 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data" / "canons"
 SITE_DIR = PROJECT_ROOT / "site"
 TEMPLATE_DIR = PROJECT_ROOT / "generator" / "templates"
-BASE_URL = "https://dbwls99706.github.io/deadend.dev"
+BASE_URL = "https://deadends.dev"
 # Base path for subpath hosting (e.g., "/deadend.dev" for github.io/deadend.dev/)
 # Empty string when hosted at root domain
-BASE_PATH = "/deadend.dev"
+BASE_PATH = ""
 
 # Search engine verification codes — replace with actual codes after registering
 GOOGLE_VERIFICATION = "bOa6r9d87jFHgTQb7iuN5QokGsgy99_NYrz0x1jsSmk"
@@ -423,6 +423,12 @@ def build_404_page() -> None:
     (SITE_DIR / "404.html").write_text(html, encoding="utf-8")
     print("  Generated: 404.html")
 
+
+
+def build_cname() -> None:
+    """Generate CNAME file for custom domain."""
+    (SITE_DIR / "CNAME").write_text("deadends.dev\n", encoding="utf-8")
+    print("  Generated: CNAME")
 
 
 def build_favicon() -> None:
@@ -1205,6 +1211,10 @@ def main():
 
     print("Generating 404.html...")
     build_404_page()
+    print()
+
+    print("Generating CNAME...")
+    build_cname()
     print()
 
     print("Generating llms.txt + llms-full.txt...")

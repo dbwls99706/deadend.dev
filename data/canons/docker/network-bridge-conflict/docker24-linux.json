@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/network-bridge-conflict/docker24-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/network-bridge-conflict/docker24-linux",
-
+  "url": "https://deadends.dev/docker/network-bridge-conflict/docker24-linux",
   "error": {
     "signature": "Error response from daemon: Pool overlaps with other one on this address space",
     "regex": "Error response from daemon: Pool overlaps with other one on this address space",
@@ -11,13 +10,14 @@
     "first_seen": "2017-06-01",
     "last_confirmed": "2025-05-01"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "linux",
     "additional": {}
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.85,
@@ -25,7 +25,6 @@
     "last_updated": "2025-05-01",
     "summary": "This error occurs when Docker tries to create a network with a subnet that overlaps an existing Docker network, a host network interface, or a VPN subnet. Docker assigns subnets from private IP ranges (172.16.0.0/12, 192.168.0.0/16) and conflicts arise when those ranges are already in use."
   },
-
   "dead_ends": [
     {
       "action": "Running 'docker network rm' on the conflicting network alone",
@@ -37,16 +36,15 @@
     {
       "action": "Restarting the Docker daemon without changing the network configuration",
       "why_fails": "Restarting Docker (systemctl restart docker) does not change subnet allocations. Docker persists network state and will reassign the same subnets upon restart. The overlap condition remains.",
-      "fail_rate": 0.90,
+      "fail_rate": 0.9,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Specify a non-conflicting subnet in docker-compose.yml",
       "how": "In your docker-compose.yml, explicitly define the network subnet to avoid the conflict:\nnetworks:\n  mynet:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 10.100.0.0/16\nChoose a subnet from 10.0.0.0/8 that does not conflict with your host or VPN networks. Run 'ip route' to see which ranges are in use.",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "tradeoff": "Requires knowledge of the host's network topology; manual subnet management across projects",
       "sources": [
         "https://docs.docker.com/compose/how-tos/networking/"
@@ -71,13 +69,12 @@
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [
       {
         "error_id": "docker/compose-network-create/docker24-linux",
-        "probability": 0.40,
+        "probability": 0.4,
         "condition": "Running docker-compose up creates networks automatically, which can trigger subnet conflicts"
       }
     ],
@@ -88,7 +85,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

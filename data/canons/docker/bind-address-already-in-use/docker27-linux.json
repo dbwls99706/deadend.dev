@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/bind-address-already-in-use/docker27-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/bind-address-already-in-use/docker27-linux",
+  "url": "https://deadends.dev/docker/bind-address-already-in-use/docker27-linux",
   "error": {
     "signature": "Bind for 0.0.0.0:PORT failed: port is already allocated",
     "regex": "Bind for .+?:\\d+ failed: port is already allocated|address already in use",

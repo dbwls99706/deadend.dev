@@ -7,7 +7,7 @@ import pytest
 VALID_CANON = {
     "schema_version": "1.0.0",
     "id": "python/test-error/env1",
-    "url": "https://dbwls99706.github.io/deadend.dev/python/test-error/env1",
+    "url": "https://deadends.dev/python/test-error/env1",
     "error": {
         "signature": "TestError: something failed",
         "regex": "TestError: .+",

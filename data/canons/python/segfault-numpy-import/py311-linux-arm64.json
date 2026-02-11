@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/segfault-numpy-import/py311-linux-arm64",
-  "url": "https://dbwls99706.github.io/deadend.dev/python/segfault-numpy-import/py311-linux-arm64",
-
+  "url": "https://deadends.dev/python/segfault-numpy-import/py311-linux-arm64",
   "error": {
     "signature": "Segmentation fault (core dumped)",
     "regex": "Segmentation fault \\(core dumped\\)",
@@ -11,18 +10,26 @@
     "first_seen": "2021-09-01",
     "last_confirmed": "2025-05-10"
   },
-
   "environment": {
-    "runtime": { "name": "cpython", "version_range": ">=3.11,<3.12" },
-    "hardware": { "architecture": "arm64/aarch64" },
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.12"
+    },
+    "hardware": {
+      "architecture": "arm64/aarch64"
+    },
     "os": "linux",
     "python": ">=3.11,<3.12",
     "additional": {
       "trigger": "import numpy",
-      "common_platforms": ["Raspberry Pi 4/5", "AWS Graviton", "Apple Silicon under Linux VM", "Ampere Altra"]
+      "common_platforms": [
+        "Raspberry Pi 4/5",
+        "AWS Graviton",
+        "Apple Silicon under Linux VM",
+        "Ampere Altra"
+      ]
     }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.76,
@@ -30,13 +37,14 @@
     "last_updated": "2025-05-10",
     "summary": "The segfault is caused by numpy's bundled OpenBLAS failing to detect the correct ARM CPU core type at runtime. Setting the OPENBLAS_CORETYPE environment variable or switching to conda-forge's numpy (which ships with a properly configured OpenBLAS for ARM) resolves the issue in most cases."
   },
-
   "dead_ends": [
     {
       "action": "Reinstalling numpy with 'pip install --force-reinstall numpy'",
       "why_fails": "The crash is not caused by a corrupt installation. It is caused by the OpenBLAS library bundled inside the numpy wheel failing to auto-detect the ARM CPU microarchitecture. Reinstalling downloads the same binary wheel with the same broken auto-detection.",
       "fail_rate": 0.93,
-      "sources": ["https://github.com/numpy/numpy/issues/22due07"],
+      "sources": [
+        "https://github.com/numpy/numpy/issues/22due07"
+      ],
       "common_misconception": "Users assume the segfault indicates a corrupt or incomplete installation, but the binaries themselves are intact."
     },
     {
@@ -50,25 +58,30 @@
       "action": "Downgrading numpy to an older version",
       "why_fails": "Older numpy versions have the same or worse ARM support. The OpenBLAS auto-detection issue has been present across multiple numpy versions. Older versions are more likely to lack arm64 wheel support entirely, forcing a slow source build that may also fail.",
       "fail_rate": 0.72,
-      "sources": ["https://github.com/numpy/numpy/issues/21sp799"],
+      "sources": [
+        "https://github.com/numpy/numpy/issues/21sp799"
+      ],
       "common_misconception": "Downgrading is assumed to revert to a 'known working' version, but on arm64 the problem is architectural, not version-specific."
     }
   ],
-
   "workarounds": [
     {
       "action": "Set OPENBLAS_CORETYPE environment variable before import",
       "how": "Export OPENBLAS_CORETYPE=ARMV8 (or CORTEXA72, CORTEXA53, etc. depending on your CPU) before running Python. Add to shell profile: 'export OPENBLAS_CORETYPE=ARMV8'. This overrides the faulty auto-detection and forces OpenBLAS to use a safe, compatible code path.",
       "success_rate": 0.84,
       "tradeoff": "May use a less optimized code path than the true CPU type, resulting in up to 15% performance reduction for linear algebra operations",
-      "sources": ["https://github.com/OpenMathLib/OpenBLAS/wiki/Faq#what-is-openblas_coretype"]
+      "sources": [
+        "https://github.com/OpenMathLib/OpenBLAS/wiki/Faq#what-is-openblas_coretype"
+      ]
     },
     {
       "action": "Install numpy via conda-forge",
       "how": "Use 'conda install -c conda-forge numpy' or 'mamba install -c conda-forge numpy'. Conda-forge builds numpy with OpenBLAS configured specifically for the target architecture and includes proper ARM detection.",
       "success_rate": 0.89,
       "tradeoff": "Requires conda/mamba environment manager, which adds complexity if the project uses pip/venv exclusively",
-      "sources": ["https://conda-forge.org/"]
+      "sources": [
+        "https://conda-forge.org/"
+      ]
     },
     {
       "action": "Build numpy from source with system BLAS",
@@ -76,10 +89,11 @@
       "success_rate": 0.71,
       "tradeoff": "Build from source takes 5-15 minutes and requires build tools (gcc, gfortran). May fail if build dependencies are missing.",
       "condition": "Build tools (gcc, gfortran, python3-dev) must be installed",
-      "sources": ["https://numpy.org/doc/stable/building/"]
+      "sources": [
+        "https://numpy.org/doc/stable/building/"
+      ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -92,7 +106,7 @@
     "preceded_by": [
       {
         "error_id": "python/pip-build-wheel-failed-numpy/py311-linux-arm64",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "When building from source fails, user falls back to binary wheel which has the segfault"
       }
     ],
@@ -103,7 +117,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

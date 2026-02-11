@@ -1,8 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/network-bridge-conflict/docker24-vpn",
-  "url": "https://dbwls99706.github.io/deadend.dev/docker/network-bridge-conflict/docker24-vpn",
-
+  "url": "https://deadends.dev/docker/network-bridge-conflict/docker24-vpn",
   "error": {
     "signature": "Error response from daemon: Pool overlaps with other one on this address space",
     "regex": "Error response from daemon: Pool overlaps with other one on this address space",
@@ -11,21 +10,23 @@
     "first_seen": "2017-06-01",
     "last_confirmed": "2025-05-01"
   },
-
   "environment": {
-    "runtime": { "name": "docker", "version_range": ">=20,<26" },
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20,<26"
+    },
     "os": "linux",
-    "additional": { "vpn_active": true }
+    "additional": {
+      "vpn_active": true
+    }
   },
-
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.78,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2025-05-01",
     "summary": "When a VPN is active, it typically claims large private IP ranges (often 10.0.0.0/8 or 172.16.0.0/12) via routing table entries. Docker's default network allocation overlaps with these VPN-claimed ranges, causing 'Pool overlaps' errors. This is particularly common with corporate VPNs (Cisco AnyConnect, OpenVPN, WireGuard) that route broad subnets."
   },
-
   "dead_ends": [
     {
       "action": "Disconnecting the VPN to create Docker networks, then reconnecting",
@@ -37,11 +38,10 @@
     {
       "action": "Running 'docker network rm' followed by recreating without explicit subnet",
       "why_fails": "Docker will pick a new subnet from its default pool, which likely also overlaps with the VPN. Since VPNs typically claim large blocks of private IP space, most of Docker's default allocations will conflict.",
-      "fail_rate": 0.80,
+      "fail_rate": 0.8,
       "sources": []
     }
   ],
-
   "workarounds": [
     {
       "action": "Configure Docker daemon to use address pools that do not overlap with VPN ranges",
@@ -70,7 +70,6 @@
       ]
     }
   ],
-
   "transition_graph": {
     "leads_to": [
       {
@@ -88,7 +87,6 @@
       }
     ]
   },
-
   "metadata": {
     "generated_by": "deadend-seed-v1",
     "generation_date": "2025-06-01",

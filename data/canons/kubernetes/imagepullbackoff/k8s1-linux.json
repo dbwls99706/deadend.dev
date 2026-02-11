@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "kubernetes/imagepullbackoff/k8s1-linux",
-  "url": "https://dbwls99706.github.io/deadend.dev/kubernetes/imagepullbackoff/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/imagepullbackoff/k8s1-linux",
   "error": {
     "signature": "ImagePullBackOff",
     "regex": "ImagePullBackOff|ErrImagePull",
