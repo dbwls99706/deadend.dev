@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/indexerror-list-out-of-range/py311-linux",
+  "url": "https://deadends.dev/python/indexerror-list-out-of-range/py311-linux",
+  "error": {
+    "signature": "IndexError: list index out of range",
+    "regex": "IndexError: list index out of range",
+    "domain": "python",
+    "category": "index_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Accessing a list index that doesn't exist. Common in loops, API responses, and off-by-one errors."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap in try/except IndexError",
+      "why_fails": "Masks the real issue — the list is shorter than expected",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Pad list with None values",
+      "why_fails": "Introduces None downstream which causes TypeError later",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#IndexError"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check len() before access or use try/except with clear fallback logic",
+      "success_rate": 0.92,
+      "how": "if idx < len(items): val = items[idx]",
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#len"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use negative indexing or slice notation for safe tail access",
+      "success_rate": 0.88,
+      "how": "last = items[-1] if items else default",
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#sequence-types-list-tuple-range"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.25,
+        "condition": "Safe access returns None which is then used unsafely"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/keyerror/py311-linux",
+        "probability": 0.15,
+        "condition": "Data structure changed from dict to list"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

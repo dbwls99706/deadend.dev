@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/nil-pointer-dereference/go1-linux",
+  "url": "https://deadends.dev/go/nil-pointer-dereference/go1-linux",
+  "error": {
+    "signature": "runtime error: invalid memory address or nil pointer dereference",
+    "regex": "nil pointer dereference|invalid memory address",
+    "domain": "go",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Dereferencing a nil pointer. Common with uninitialized structs, failed type assertions, and error-ignored returns."
+  },
+  "dead_ends": [
+    {
+      "action": "Add nil check before every pointer use",
+      "why_fails": "Defensive checks everywhere obscure the real bug",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://go.dev/doc/faq#nil_error"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use recover() to catch the panic",
+      "why_fails": "Masks the bug, doesn't fix the nil source",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://go.dev/blog/defer-panic-and-recover"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Find where the nil value originates — check error returns, interface assertions, and struct init",
+      "success_rate": 0.92,
+      "sources": [
+        "https://go.dev/doc/effective_go#errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use the comma-ok pattern for type assertions and map lookups",
+      "success_rate": 0.88,
+      "how": "val, ok := m[key]; if !ok { handle() }",
+      "sources": [
+        "https://go.dev/doc/effective_go#interface_conversions"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

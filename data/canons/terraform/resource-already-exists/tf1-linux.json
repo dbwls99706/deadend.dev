@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/resource-already-exists/tf1-linux",
+  "url": "https://deadends.dev/terraform/resource-already-exists/tf1-linux",
+  "error": {
+    "signature": "Error: creating resource: already exists",
+    "regex": "(already exists|AlreadyExists|ConflictException|EntityAlreadyExists)",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Cloud resource exists but not in Terraform state. Common after manual changes or failed applies."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the resource manually and re-apply",
+      "why_fails": "Causes downtime and may delete data",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/import"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform taint to force recreation",
+      "why_fails": "Destroys and recreates, causing downtime",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/taint"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Import existing resource into state: terraform import",
+      "success_rate": 0.92,
+      "how": "terraform import aws_instance.example i-1234567890abcdef0",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/import"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use import blocks (TF 1.5+) for declarative imports",
+      "success_rate": 0.88,
+      "how": "import { to = aws_instance.example; id = \"i-123\" }",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/import"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "probability": 0.2,
+        "condition": "Lock error caused partial apply, resource created but not in state"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

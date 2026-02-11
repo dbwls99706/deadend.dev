@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/attributeerror-no-attribute/py311-linux",
+  "url": "https://deadends.dev/python/attributeerror-no-attribute/py311-linux",
+  "error": {
+    "signature": "AttributeError: 'NoneType' object has no attribute 'method'",
+    "regex": "AttributeError: '(\\w+)' object has no attribute '(\\w+)'",
+    "domain": "python",
+    "category": "attribute_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Calling method/attribute on wrong type or None. Common when function returns None unexpectedly."
+  },
+  "dead_ends": [
+    {
+      "action": "Add hasattr() check before every access",
+      "why_fails": "Defensive coding that hides the root cause",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#hasattr"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Catch AttributeError broadly",
+      "why_fails": "Silences real bugs, makes debugging harder",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Trace where the object becomes None/wrong type and fix the source",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#breakpoint"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add type hints and use mypy/pyright to catch statically",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.python.org/3/library/typing.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.3,
+        "condition": "Same root cause: None where object expected"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

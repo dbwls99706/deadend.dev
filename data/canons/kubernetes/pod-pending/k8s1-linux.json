@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/pod-pending/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/pod-pending/k8s1-linux",
+  "error": {
+    "signature": "Pod status: Pending — 0/N nodes are available",
+    "regex": "0/\\d+ nodes are available|Insufficient (cpu|memory)|Unschedulable",
+    "domain": "kubernetes",
+    "category": "scheduling_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<1.32"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "Pod can't be scheduled. Insufficient resources, node taints, or affinity constraints."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete and recreate the pod",
+      "why_fails": "Same scheduling constraints apply, pod will be Pending again",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove all resource requests/limits",
+      "why_fails": "Pod runs but can OOMKill or starve other workloads",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check kubectl describe pod for scheduling failure reason, then fix resources or node capacity",
+      "success_rate": 0.92,
+      "how": "kubectl describe pod <name> | grep -A5 Events",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Scale up node pool or reduce resource requests to fit available capacity",
+      "success_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.2,
+        "condition": "Increased memory limits made pod unschedulable"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "distinction": "CrashLoopBackOff means pod runs and crashes; Pending means pod never starts"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

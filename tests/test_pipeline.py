@@ -1,19 +1,27 @@
 """Tests for the pipeline steps (collect_signatures, generate_pairs)."""
 
-from generator.collect_signatures import (
-    SEED_SIGNATURES,
-    build_regex_from_signature,
-    deduplicate_signatures,
-    normalize_signature,
-    signature_hash,
-)
-from generator.generate_pairs import (
-    ENVIRONMENT_MATRIX,
-    generate_env_hash,
-    generate_env_slug,
-    is_valid_combo,
-    slugify_signature,
-)
+import pytest
+
+try:
+    from generator.collect_signatures import (
+        SEED_SIGNATURES,
+        build_regex_from_signature,
+        deduplicate_signatures,
+        normalize_signature,
+        signature_hash,
+    )
+    from generator.generate_pairs import (
+        ENVIRONMENT_MATRIX,
+        generate_env_hash,
+        generate_env_slug,
+        is_valid_combo,
+        slugify_signature,
+    )
+except ImportError:
+    pytest.skip(
+        "pipeline dependencies not installed (pip install -e '.[pipeline]')",
+        allow_module_level=True,
+    )
 
 
 class TestNormalizeSignature:

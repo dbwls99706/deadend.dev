@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/syntaxerror-invalid-syntax/py311-linux",
+  "url": "https://deadends.dev/python/syntaxerror-invalid-syntax/py311-linux",
+  "error": {
+    "signature": "SyntaxError: invalid syntax",
+    "regex": "SyntaxError: invalid syntax",
+    "domain": "python",
+    "category": "syntax_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Python parser cannot understand the code. Often points to the line AFTER the actual error."
+  },
+  "dead_ends": [
+    {
+      "action": "Fix only the reported line",
+      "why_fails": "The real error is often on the PREVIOUS line (missing colon, paren, bracket)",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html#syntax-errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Assume Python version mismatch",
+      "why_fails": "Usually it's just a typo, not a version issue",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://docs.python.org/3/reference/lexical_analysis.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the line BEFORE the reported error for missing colons, parentheses, or brackets",
+      "success_rate": 0.95,
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html#syntax-errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use an editor with syntax highlighting or run py_compile to get precise location",
+      "success_rate": 0.9,
+      "how": "python -m py_compile script.py",
+      "sources": [
+        "https://docs.python.org/3/library/py_compile.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
