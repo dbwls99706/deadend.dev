@@ -385,7 +385,42 @@ Allow: /
 User-agent: iaskspider
 Allow: /
 
+User-agent: DeepSeekBot
+Allow: /
+
+User-agent: PhindBot
+Allow: /
+
+User-agent: PetalBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: ImagesiftBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: Timpibot
+Allow: /
+
+User-agent: Webzio-Extended
+Allow: /
+
+User-agent: AI2Bot
+Allow: /
+
+User-agent: Ai2Bot-Dolma
+Allow: /
+
 Sitemap: {BASE_URL}/sitemap.xml
+
+# AI agent config files:
+# CLAUDE.md:      {BASE_URL}/CLAUDE.md
+# .cursorrules:   {BASE_URL}/.cursorrules
+# .windsurfrules: {BASE_URL}/.windsurfrules
 
 # AI agent discovery:
 # Match errors:    {BASE_URL}/api/v1/match.json
@@ -1126,6 +1161,22 @@ def build_match_json(canons: list[dict]) -> None:
     print("  Generated: /api/v1/match.json")
 
 
+def build_ai_config_files() -> None:
+    """Copy AI agent config files (CLAUDE.md, .cursorrules, .windsurfrules) to site root.
+
+    These files are discovered by AI coding agents (Claude Code, Cursor, Windsurf)
+    when they visit the deployed site, enabling them to understand how to use the service.
+    """
+    config_files = ["CLAUDE.md", ".cursorrules", ".windsurfrules"]
+    copied = 0
+    for fname in config_files:
+        src = PROJECT_ROOT / fname
+        if src.exists():
+            shutil.copy2(src, SITE_DIR / fname)
+            copied += 1
+    print(f"  Copied {copied} AI config files to site/")
+
+
 def build_indexnow(canons: list[dict]) -> None:
     """Generate IndexNow key file and URL list for search engine notification."""
     # IndexNow key verification file
@@ -1247,6 +1298,10 @@ def main():
 
     print("Generating favicon...")
     build_favicon()
+    print()
+
+    print("Copying AI agent config files...")
+    build_ai_config_files()
     print()
 
     print(f"Build complete! {len(canons)} error pages generated in site/")
