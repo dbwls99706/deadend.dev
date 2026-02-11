@@ -40,6 +40,7 @@
   </style>
 </head>
 <body>
+  {% autoescape false %}
   <pre id="ai-summary" style="display:none;">ERROR={{ signature }}
 REGEX={{ regex }}
 DOMAIN={{ domain }}
@@ -51,6 +52,7 @@ FIX_RATE_RANGE={{ min_rate }}%-{{ max_rate }}%
 {% endfor %}DEAD_ENDS={% for de in common_dead_ends %}{{ de.action }} (fail_rate={{ de.fail_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
 JSON_API_PATTERN=https://deadend.dev/api/v1/{{ domain }}/{{ slug }}/{env}.json
 MATCH_API=https://deadend.dev/api/v1/match.json</pre>
+  {% endautoescape %}
 
   <nav><a href="/">deadend.dev</a> / <a href="/{{ domain }}/">{{ domain }}</a></nav>
 
