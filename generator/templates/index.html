@@ -5,6 +5,7 @@
   <title>deadend.dev — Structured Failure Knowledge for AI Agents</title>
   <meta name="description" content="When AI agents fail, they search the web. deadend.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next. {{ total_errors }} errors across {{ domains | length }} domains.">
   <meta name="robots" content="index, follow, max-snippet:-1">
+  <link rel="icon" href="{{ base_path }}/favicon.svg" type="image/svg+xml">
   {% if google_verification %}<meta name="google-site-verification" content="{{ google_verification }}">{% endif %}
   {% if bing_verification %}<meta name="msvalidate.01" content="{{ bing_verification }}">{% endif %}
 
@@ -61,7 +62,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <p>When AI agents hit an error, they search the web. But search results are written by humans, for humans — unstructured, environment-unaware, and often wrong for specific conditions.</p>
     <p><strong>deadend.dev</strong> tells you what <em>NOT</em> to try, what actually works (and under which conditions), and what error comes next if you take a particular path.</p>
     <p><strong><a href="{{ base_path }}/search/">Paste your error message here to find matches instantly.</a></strong></p>
-    <p class="meta">{{ total_errors }} error entries across {{ domains | length }} domains. All data available as <a href="https://github.com/deadend-dev/error-data">open source JSON</a>.</p>
+    <p class="meta">{{ total_errors }} error entries across {{ domains | length }} domains. All data available as <a href="https://github.com/dbwls99706/deadend.dev">open source JSON</a>.</p>
   </div>
 
   <section>
@@ -104,7 +105,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
   </section>
 
   <footer class="meta">
-    <p>deadend.dev · <a href="{{ base_path }}/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a> · Data licensed under CC BY 4.0</p>
+    <p>deadend.dev · <a href="{{ base_path }}/api/v1/index.json">API</a> · <a href="https://github.com/dbwls99706/deadend.dev">GitHub</a> · Data licensed under CC BY 4.0</p>
   </footer>
 </body>
 </html>

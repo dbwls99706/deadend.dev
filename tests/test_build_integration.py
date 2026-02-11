@@ -43,6 +43,8 @@ def built_site(tmp_path_factory):
             loader=FileSystemLoader(str(template_dir)),
             autoescape=True,
         )
+        jinja_env.globals["base_path"] = bs.BASE_PATH
+        jinja_env.globals["base_url"] = bs.BASE_URL
 
         build_error_pages(canons, jinja_env)
         build_domain_pages(canons, jinja_env)

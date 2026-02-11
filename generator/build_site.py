@@ -19,7 +19,7 @@ BASE_URL = "https://dbwls99706.github.io/deadend.dev"
 BASE_PATH = "/deadend.dev"
 
 # Search engine verification codes — replace with actual codes after registering
-GOOGLE_VERIFICATION = ""  # e.g., "google1234567890abcdef"
+GOOGLE_VERIFICATION = "bOa6r9d87jFHgTQb7iuN5QokGsgy99_NYrz0x1jsSmk"
 BING_VERIFICATION = ""  # e.g., "ABCDEF1234567890"
 
 # IndexNow key — generated deterministically for the site
@@ -416,7 +416,7 @@ def build_404_page() -> None:
         "<h1>404 — Error Not Found (Ironic, isn't it?)</h1>\n"
         '<p>This error page doesn\'t exist yet.'
         f' <a href="{BASE_PATH}/">Browse existing errors</a> or\n'
-        '<a href="https://github.com/deadend-dev/deadend.dev/issues/new">'
+        '<a href="https://github.com/dbwls99706/deadend.dev/issues/new">'
         "request it</a>.</p>\n"
         "</body></html>"
     )
@@ -424,10 +424,19 @@ def build_404_page() -> None:
     print("  Generated: 404.html")
 
 
-def build_cname() -> None:
-    """Generate CNAME file for custom domain (skipped for github.io hosting)."""
-    # No CNAME needed for github.io subpath hosting
-    pass
+
+def build_favicon() -> None:
+    """Generate a simple SVG favicon."""
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'
+        '<rect width="100" height="100" rx="12" fill="#0d1117"/>'
+        '<text x="50" y="68" font-size="56" text-anchor="middle" '
+        'font-family="system-ui,sans-serif" font-weight="bold">'
+        '<tspan fill="#f85149">&#x2718;</tspan>'
+        '</text></svg>'
+    )
+    (SITE_DIR / "favicon.svg").write_text(svg, encoding="utf-8")
+    print("  Generated: favicon.svg")
 
 
 def _generate_variations(signature: str, regex: str, domain: str) -> list[str]:
@@ -604,7 +613,7 @@ def build_search_page(
             "fix_success_rate": canon["verdict"]["fix_success_rate"],
             "dead_end_count": len(canon["dead_ends"]),
             "workaround_count": len(canon.get("workarounds", [])),
-            "page_url": f"/{canon['id']}",
+            "page_url": f"{BASE_PATH}/{canon['id']}",
         })
 
     # Group by domain for the "all errors" section
@@ -791,7 +800,7 @@ def build_openapi_spec(canons: list[dict]) -> None:
                 "and error transition graphs."
             ),
             "version": "1.0.0",
-            "contact": {"url": "https://github.com/deadend-dev/deadend.dev"},
+            "contact": {"url": "https://github.com/dbwls99706/deadend.dev"},
         },
         "servers": [{"url": f"{BASE_URL}/api/v1"}],
         "paths": {
@@ -947,9 +956,9 @@ def build_well_known(canons: list[dict]) -> None:
             "type": "openapi",
             "url": f"{BASE_URL}/api/v1/openapi.json",
         },
-        "logo_url": f"{BASE_URL}/logo.png",
-        "contact_email": "hello@deadend.dev",
-        "legal_info_url": f"{BASE_URL}/legal",
+        "logo_url": f"{BASE_URL}/favicon.svg",
+        "contact_email": "dbwls99706@github.io",
+        "legal_info_url": f"{BASE_URL}/",
     }
 
     (well_known_dir / "ai-plugin.json").write_text(
@@ -1198,10 +1207,6 @@ def main():
     build_404_page()
     print()
 
-    print("Generating CNAME...")
-    build_cname()
-    print()
-
     print("Generating llms.txt + llms-full.txt...")
     build_llms_txt(canons)
     print()
@@ -1228,6 +1233,10 @@ def main():
 
     print("Generating IndexNow support...")
     build_indexnow(canons)
+    print()
+
+    print("Generating favicon...")
+    build_favicon()
     print()
 
     print(f"Build complete! {len(canons)} error pages generated in site/")
