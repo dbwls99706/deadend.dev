@@ -23,11 +23,13 @@
   </style>
 </head>
 <body>
+  {% autoescape false %}
   <pre id="ai-summary" style="display:none;">DOMAIN={{ domain }}
 TOTAL_ERRORS={{ total }}
 MATCH_API=https://deadend.dev/api/v1/match.json
 {% for e in entries %}ENTRY={{ e.id }} | resolvable={{ e.resolvable }} | rate={{ e.fix_success_rate }}
 {% endfor %}</pre>
+  {% endautoescape %}
 
   <nav><a href="/">deadend.dev</a></nav>
 

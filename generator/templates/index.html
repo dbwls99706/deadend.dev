@@ -38,6 +38,7 @@
   </style>
 </head>
 <body>
+  {% autoescape false %}
   <pre id="ai-summary" style="display:none;">SITE=deadend.dev
 PURPOSE=Structured failure knowledge for AI agents — dead ends, workarounds, error chains
 TOTAL_ERRORS={{ total_errors }}
@@ -49,6 +50,7 @@ OPENAPI_SPEC=https://deadend.dev/api/v1/openapi.json
 LLMS_TXT=https://deadend.dev/llms.txt
 LLMS_FULL=https://deadend.dev/llms-full.txt
 USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[].</pre>
+  {% endautoescape %}
 
   <header>
     <h1>deadend.dev</h1>

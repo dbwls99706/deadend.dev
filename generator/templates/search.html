@@ -38,10 +38,12 @@
   </style>
 </head>
 <body>
+  {% autoescape false %}
   <pre id="ai-summary" style="display:none;">PAGE: Error Search
 PURPOSE: Match error messages against {{ total_errors }} known patterns across {{ domain_count }} domains
 USAGE: Fetch /api/v1/index.json to get all error signatures with regex patterns. Match your error against regexes. Fetch the matching error's api_url for full dead_ends and workarounds.
 API_INDEX: https://deadend.dev/api/v1/index.json</pre>
+  {% endautoescape %}
 
   <nav><a href="/">deadend.dev</a></nav>
 
