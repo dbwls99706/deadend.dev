@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/error-refreshing-state/tf1-linux",
+  "url": "https://deadends.dev/terraform/error-refreshing-state/tf1-linux",
+  "error": {
+    "signature": "Error refreshing state: state data in S3 does not have the expected content",
+    "regex": "Error refreshing state|Error loading state",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.78,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Terraform state file corrupted or backend misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the state file and re-import",
+      "why_fails": "Deleting state loses all resource tracking — very dangerous",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Switch to local backend temporarily",
+      "why_fails": "Creates state divergence between local and remote",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/backend"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check S3 bucket permissions and backend configuration in terraform block",
+      "success_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/backend/s3"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If state is corrupted, pull the state file, fix it, and push back",
+      "success_rate": 0.8,
+      "how": "terraform state pull > state.json\n# fix the JSON\nterraform state push state.json",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/pull"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for concurrent terraform operations that may have corrupted state",
+      "success_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

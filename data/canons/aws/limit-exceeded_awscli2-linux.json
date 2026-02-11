@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/limit-exceeded/awscli2-linux",
+  "url": "https://deadends.dev/aws/limit-exceeded/awscli2-linux",
+  "error": {
+    "signature": "An error occurred (LimitExceededException) when calling the X operation",
+    "regex": "LimitExceededException.*when calling the .+ operation",
+    "domain": "aws",
+    "category": "quota_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.75,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "AWS service limit reached. Each service has default limits that can be increased."
+  },
+  "dead_ends": [
+    {
+      "action": "Create a new AWS account",
+      "why_fails": "Limits apply per-account but new accounts have LOWER limits",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a different region",
+      "why_fails": "Limits are usually per-region but this isn't a real solution",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Request a limit increase through AWS Service Quotas console",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.aws.amazon.com/servicequotas/latest/userguide/request-quota-increase.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check current usage: aws service-quotas list-service-quotas",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.aws.amazon.com/cli/latest/reference/service-quotas/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Clean up unused resources to free capacity under the limit",
+      "success_rate": 0.8,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

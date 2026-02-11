@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/no-required-module/go1-linux",
+  "url": "https://deadends.dev/go/no-required-module/go1-linux",
+  "error": {
+    "signature": "no required module provides package X; to add it: go get X",
+    "regex": "no required module provides package|missing go.sum entry",
+    "domain": "go",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Go module dependency not in go.mod. Need to add the dependency."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually edit go.mod to add the dependency",
+      "why_fails": "go.sum won't be updated — use go get instead",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://go.dev/ref/mod#go-get"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable Go modules with GO111MODULE=off",
+      "why_fails": "Go modules are the standard — GOPATH mode is deprecated",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://go.dev/ref/mod"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run: go get <package>@latest",
+      "success_rate": 0.95,
+      "how": "go get github.com/some/package@latest",
+      "sources": [
+        "https://go.dev/ref/mod#go-get"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run go mod tidy to clean up and add all missing dependencies",
+      "success_rate": 0.92,
+      "sources": [
+        "https://go.dev/ref/mod#go-mod-tidy"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

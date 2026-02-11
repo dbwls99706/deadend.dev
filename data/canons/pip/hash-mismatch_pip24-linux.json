@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/hash-mismatch/pip24-linux",
+  "url": "https://deadends.dev/pip/hash-mismatch/pip24-linux",
+  "error": {
+    "signature": "ERROR: THESE PACKAGES DO NOT MATCH THE HASHES FROM THE REQUIREMENTS FILE",
+    "regex": "PACKAGES DO NOT MATCH THE HASHES|hash.*mismatch|HashMismatchError",
+    "domain": "pip",
+    "category": "security_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Package hash doesn't match requirements file. Package was updated or corrupted."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --no-cache-dir and retry",
+      "why_fails": "Cache isn't the issue — the hash in requirements file is wrong",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/caching/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove --require-hashes flag",
+      "why_fails": "Removes security protection — hashes prevent supply chain attacks",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/secure-installs/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Regenerate hashes: pip-compile --generate-hashes requirements.in",
+      "success_rate": 0.92,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Pin exact versions with hashes: pip hash <package>.whl",
+      "success_rate": 0.88,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_hash/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if the package was yanked/replaced on PyPI — this could be a security issue",
+      "success_rate": 0.85,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/secure-installs/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

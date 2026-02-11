@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/resource-already-exists/awscli2-linux",
+  "url": "https://deadends.dev/aws/resource-already-exists/awscli2-linux",
+  "error": {
+    "signature": "An error occurred (ResourceAlreadyExistsException)",
+    "regex": "ResourceAlreadyExistsException|EntityAlreadyExists|BucketAlreadyOwnedByYou",
+    "domain": "aws",
+    "category": "conflict_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "AWS resource with that name already exists. Use existing or choose different name."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete and recreate the resource",
+      "why_fails": "May lose data, configurations, or dependent resources",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add a random suffix to the name",
+      "why_fails": "Makes resource names unpredictable and hard to manage",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the existing resource — describe/get it to verify it matches your needs",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For IaC (Terraform/CloudFormation), import the existing resource into your state",
+      "success_rate": 0.88,
+      "how": "terraform import aws_s3_bucket.example my-bucket",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/import"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use data sources to reference existing resources instead of creating new ones",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

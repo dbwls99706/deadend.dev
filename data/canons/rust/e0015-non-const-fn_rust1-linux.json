@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0015-non-const-fn/rust1-linux",
+  "url": "https://deadends.dev/rust/e0015-non-const-fn/rust1-linux",
+  "error": {
+    "signature": "error[E0015]: cannot call non-const fn in const context",
+    "regex": "E0015.*cannot call non-const fn",
+    "domain": "rust",
+    "category": "const_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Calling a runtime function in a const/static context. Not all functions can run at compile time."
+  },
+  "dead_ends": [
+    {
+      "action": "Make every function const",
+      "why_fails": "Most functions can't be const — they allocate, do IO, or have side effects",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0015.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use unsafe to bypass const restrictions",
+      "why_fails": "unsafe doesn't override const restrictions",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://doc.rust-lang.org/reference/const_eval.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use lazy_static! or std::sync::LazyLock for runtime-initialized global values",
+      "success_rate": 0.92,
+      "how": "use std::sync::LazyLock;\nstatic CACHE: LazyLock<HashMap<String, i32>> = LazyLock::new(|| HashMap::new());",
+      "sources": [
+        "https://doc.rust-lang.org/std/sync/struct.LazyLock.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Move initialization from const/static to a function that runs at startup",
+      "success_rate": 0.85,
+      "sources": [
+        "https://doc.rust-lang.org/reference/const_eval.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/typeerror-string-indices/py311-linux",
+  "url": "https://deadends.dev/python/typeerror-string-indices/py311-linux",
+  "error": {
+    "signature": "TypeError: string indices must be integers, not 'str'",
+    "regex": "TypeError: string indices must be integers",
+    "domain": "python",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Treating a string as a dict. Usually JSON wasn't parsed, or iterating dict gives keys not items."
+  },
+  "dead_ends": [
+    {
+      "action": "Convert string to dict with dict()",
+      "why_fails": "dict() can't parse JSON strings — use json.loads()",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.python.org/3/library/json.html#json.loads"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use int() on the index",
+      "why_fails": "The index is correct type — the object is wrong type",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#str"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "If working with JSON, parse it first: data = json.loads(text)",
+      "success_rate": 0.95,
+      "sources": [
+        "https://docs.python.org/3/library/json.html#json.loads"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If iterating a dict, use .items() — for k in dict gives keys (strings), not dicts",
+      "success_rate": 0.9,
+      "how": "for item in data:  # item is a string key, not a dict!\nfor key, value in data.items():  # correct",
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#dict.items"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

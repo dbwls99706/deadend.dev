@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/not-found-function/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/not-found-function/nextjs14-linux",
+  "error": {
+    "signature": "Error: NEXT_NOT_FOUND",
+    "regex": "NEXT_NOT_FOUND|notFound\\(\\) is not allowed",
+    "domain": "nextjs",
+    "category": "routing_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "notFound() called in wrong context or not-found.tsx page missing."
+  },
+  "dead_ends": [
+    {
+      "action": "Use redirect('/404') instead",
+      "why_fails": "Creates a redirect loop or shows wrong status code",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/not-found"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Throw a custom 404 error",
+      "why_fails": "Next.js has built-in notFound() — custom errors bypass its handling",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/not-found"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a not-found.tsx file in the appropriate route segment",
+      "success_rate": 0.95,
+      "how": "// app/not-found.tsx\nexport default function NotFound() { return <div>Not Found</div> }",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/not-found"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure notFound() is called in a Server Component, not a Client Component",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/not-found"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

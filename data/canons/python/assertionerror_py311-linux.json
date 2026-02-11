@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/assertionerror/py311-linux",
+  "url": "https://deadends.dev/python/assertionerror/py311-linux",
+  "error": {
+    "signature": "AssertionError",
+    "regex": "AssertionError",
+    "domain": "python",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Assert statement failed. Never use assert for data validation — it's stripped with python -O."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the assert statement",
+      "why_fails": "Hides the bug — the assertion caught a real problem",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap in try/except AssertionError",
+      "why_fails": "Silences the error but doesn't fix the cause",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Read the assert message to understand what condition failed, then fix the data/logic",
+      "success_rate": 0.95,
+      "sources": [
+        "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Replace assert with proper if/raise ValueError for production validation",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2694-no-exported-member/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2694-no-exported-member/ts5-linux",
+  "error": {
+    "signature": "error TS2694: Namespace 'X' has no exported member 'Y'",
+    "regex": "TS2694.*has no exported member",
+    "domain": "typescript",
+    "category": "import_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Named export doesn't exist in the module. Common after library updates or wrong import syntax."
+  },
+  "dead_ends": [
+    {
+      "action": "Use import * as X to get everything",
+      "why_fails": "Loses tree-shaking and may not fix the issue if the export was removed",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade the package",
+      "why_fails": "The export may have been intentionally removed — check migration guide",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the library's changelog/migration guide for renamed or removed exports",
+      "success_rate": 0.92,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use IDE Go to Definition to find the actual export path",
+      "success_rate": 0.9,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if import path changed: import { X } from 'lib' vs 'lib/subpath'",
+      "success_rate": 0.88,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

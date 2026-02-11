@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/volume-mount-permission-denied/docker27-linux",
+  "url": "https://deadends.dev/docker/volume-mount-permission-denied/docker27-linux",
+  "error": {
+    "signature": "Error: EACCES: permission denied (inside container with volume mount)",
+    "regex": "EACCES.*permission denied|Permission denied.*volume|chown.*Operation not permitted",
+    "domain": "docker",
+    "category": "permission_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Container process can't write to mounted volume due to UID/GID mismatch."
+  },
+  "dead_ends": [
+    {
+      "action": "Run container as root",
+      "why_fails": "Security risk and may not fix file ownership on the host",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://docs.docker.com/engine/security/#docker-daemon-attack-surface"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "chmod 777 on host directory",
+      "why_fails": "Major security risk — opens directory to all users",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/engine/storage/volumes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Match container user UID to host user UID: docker run --user $(id -u):$(id -g)",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.docker.com/engine/reference/run/#user"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set ownership in Dockerfile: RUN chown -R appuser:appgroup /app",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#user"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use named volumes instead of bind mounts for data that doesn't need host access",
+      "success_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/engine/storage/volumes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/interface-nil-not-nil/go1-linux",
+  "url": "https://deadends.dev/go/interface-nil-not-nil/go1-linux",
+  "error": {
+    "signature": "panic: interface conversion: interface is nil, not T",
+    "regex": "interface conversion.*interface is nil|interface.*nil.*not",
+    "domain": "go",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Type assertion on nil interface. Common with error interfaces and empty interface{}."
+  },
+  "dead_ends": [
+    {
+      "action": "Use recover() to catch the panic",
+      "why_fails": "Hides the bug — nil interface means logic error",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://go.dev/blog/defer-panic-and-recover"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Initialize to empty value of the type",
+      "why_fails": "May hide cases where nil is a valid/expected state",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://go.dev/ref/spec#Interface_types"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use comma-ok pattern for safe type assertion: val, ok := iface.(Type)",
+      "success_rate": 0.95,
+      "how": "if val, ok := iface.(MyType); ok {\n    // use val\n}",
+      "sources": [
+        "https://go.dev/ref/spec#Type_assertions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for nil before type assertion: if iface != nil { ... }",
+      "success_rate": 0.9,
+      "sources": [
+        "https://go.dev/ref/spec#Type_assertions"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

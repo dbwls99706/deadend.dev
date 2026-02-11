@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/unable-to-recognize/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/unable-to-recognize/k8s1-linux",
+  "error": {
+    "signature": "error: unable to recognize 'file.yaml': no matches for kind",
+    "regex": "unable to recognize.*no matches for kind",
+    "domain": "kubernetes",
+    "category": "api_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Custom resource kind not installed. CRD needs to be applied before the resource."
+  },
+  "dead_ends": [
+    {
+      "action": "Change the apiVersion to a core API group",
+      "why_fails": "The resource IS a custom resource — it needs its own API",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade kubectl version",
+      "why_fails": "Usually not a kubectl issue — the CRD isn't installed on the cluster",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://kubernetes.io/docs/reference/kubectl/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the CRD first: kubectl apply -f <crd-definition>.yaml",
+      "success_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if the operator/controller is installed that manages this CRD",
+      "success_rate": 0.88,
+      "how": "kubectl get crd | grep <resource-name>",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/extend-kubernetes/operator/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

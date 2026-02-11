@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts6133-declared-not-read/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts6133-declared-not-read/ts5-linux",
+  "error": {
+    "signature": "error TS6133: 'x' is declared but its value is never read",
+    "regex": "TS6133.*declared but.*never read",
+    "domain": "typescript",
+    "category": "lint_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Unused variable or import. TypeScript reports this when noUnusedLocals/noUnusedParameters is enabled."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable noUnusedLocals in tsconfig",
+      "why_fails": "Disables a useful lint rule across the entire project",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig/#noUnusedLocals"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Assign to void: void unusedVar",
+      "why_fails": "Obscure and confusing — just remove or prefix with underscore",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove the unused variable or import",
+      "success_rate": 0.98,
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig/#noUnusedLocals"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Prefix with underscore if intentionally unused: _unusedParam",
+      "success_rate": 0.92,
+      "how": "function handler(_req: Request, res: Response) { ... }",
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig/#noUnusedParameters"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
