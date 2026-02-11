@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/modulenotfounderror/py311-linux",
-  "url": "https://deadend.dev/python/modulenotfounderror/py311-linux",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/modulenotfounderror/py311-linux",
 
   "error": {
     "signature": "ModuleNotFoundError: No module named 'X'",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/cublas-init-error/cuda11.8-rtx3090",
-  "url": "https://deadend.dev/cuda/cublas-init-error/cuda11.8-rtx3090",
+  "url": "https://dbwls99706.github.io/deadend.dev/cuda/cublas-init-error/cuda11.8-rtx3090",
 
   "error": {
     "signature": "RuntimeError: CUBLAS_STATUS_NOT_INITIALIZED when calling cublasCreate(handle)",

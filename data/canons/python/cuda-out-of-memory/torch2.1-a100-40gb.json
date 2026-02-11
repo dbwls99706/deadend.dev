@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/cuda-out-of-memory/torch2.1-a100-40gb",
-  "url": "https://deadend.dev/python/cuda-out-of-memory/torch2.1-a100-40gb",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/cuda-out-of-memory/torch2.1-a100-40gb",
 
   "error": {
     "signature": "RuntimeError: CUDA out of memory. Tried to allocate X GiB",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/ssl-certificate-verify-failed/py311-macos",
-  "url": "https://deadend.dev/python/ssl-certificate-verify-failed/py311-macos",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/ssl-certificate-verify-failed/py311-macos",
 
   "error": {
     "signature": "ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1007)",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "cuda/version-mismatch/cuda12.1-torch2.1",
-  "url": "https://deadend.dev/cuda/version-mismatch/cuda12.1-torch2.1",
+  "url": "https://dbwls99706.github.io/deadend.dev/cuda/version-mismatch/cuda12.1-torch2.1",
 
   "error": {
     "signature": "RuntimeError: The current CUDA version is not compatible with the installed PyTorch build. CUDA version: 12.1, PyTorch CUDA: 11.8",

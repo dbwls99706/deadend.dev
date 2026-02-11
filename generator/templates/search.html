@@ -6,11 +6,11 @@
   <meta name="description" content="Paste your error message to instantly find dead ends to avoid and verified workarounds. Matches against {{ total_errors }} known error patterns across {{ domain_count }} domains.">
   <meta name="robots" content="index, follow, max-snippet:-1">
   <meta name="keywords" content="error search, error fix, troubleshooting, dead end, workaround, python error, cuda error, node error, docker error, pip error, git error">
-  <link rel="canonical" href="https://deadend.dev/search/">
+  <link rel="canonical" href="{{ base_url }}/search/">
   <meta property="og:title" content="Error Search — Find Dead Ends & Fixes | deadend.dev">
   <meta property="og:description" content="Paste your error message to instantly find known dead ends and verified workarounds.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://deadend.dev/search/">
+  <meta property="og:url" content="{{ base_url }}/search/">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
     a { color: #58a6ff; }
@@ -42,10 +42,10 @@
   <pre id="ai-summary" style="display:none;">PAGE: Error Search
 PURPOSE: Match error messages against {{ total_errors }} known patterns across {{ domain_count }} domains
 USAGE: Fetch /api/v1/index.json to get all error signatures with regex patterns. Match your error against regexes. Fetch the matching error's api_url for full dead_ends and workarounds.
-API_INDEX: https://deadend.dev/api/v1/index.json</pre>
+API_INDEX: {{ base_url }}/api/v1/index.json</pre>
   {% endautoescape %}
 
-  <nav><a href="/">deadend.dev</a></nav>
+  <nav><a href="{{ base_path }}/">deadend.dev</a></nav>
 
   <h1>Error Search</h1>
   <p>Paste your error message below. We'll match it against {{ total_errors }} known error patterns.</p>
@@ -74,7 +74,7 @@ API_INDEX: https://deadend.dev/api/v1/index.json</pre>
   </section>
 
   <footer class="meta">
-    <p><a href="/">deadend.dev</a> · <a href="/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
+    <p><a href="{{ base_path }}/">deadend.dev</a> · <a href="{{ base_path }}/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
   </footer>
 
   <script>

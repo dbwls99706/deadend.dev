@@ -10,7 +10,7 @@ from jsonschema import ValidationError, validate
 
 from generator.schema import ERRORCANON_SCHEMA
 
-BASE_URL = "https://deadend.dev"
+BASE_URL = "https://dbwls99706.github.io/deadend.dev"
 
 
 def validate_canon_json(data: dict) -> tuple[list[str], list[str]]:

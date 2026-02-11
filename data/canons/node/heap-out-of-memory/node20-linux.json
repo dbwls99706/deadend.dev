@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/heap-out-of-memory/node20-linux",
-  "url": "https://deadend.dev/node/heap-out-of-memory/node20-linux",
+  "url": "https://dbwls99706.github.io/deadend.dev/node/heap-out-of-memory/node20-linux",
 
   "error": {
     "signature": "FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory",

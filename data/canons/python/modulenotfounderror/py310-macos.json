@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/modulenotfounderror/py310-macos",
-  "url": "https://deadend.dev/python/modulenotfounderror/py310-macos",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/modulenotfounderror/py310-macos",
 
   "error": {
     "signature": "ModuleNotFoundError: No module named 'X'",

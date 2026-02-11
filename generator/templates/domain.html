@@ -6,7 +6,7 @@
   <meta name="description" content="All known {{ domain }} errors with dead ends and verified workarounds. {{ total }} error entries with fix success rates and what NOT to try.">
   <meta name="robots" content="index, follow, max-snippet:-1">
   <meta name="keywords" content="{{ domain }}, {{ domain }} error, {{ domain }} fix, troubleshooting, dead end, workaround{% for e in entries %}, {{ e.signature }}{% endfor %}">
-  <link rel="canonical" href="https://deadend.dev/{{ domain }}/">
+  <link rel="canonical" href="{{ base_url }}/{{ domain }}/">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
     a { color: #58a6ff; }
@@ -26,26 +26,26 @@
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">DOMAIN={{ domain }}
 TOTAL_ERRORS={{ total }}
-MATCH_API=https://deadend.dev/api/v1/match.json
+MATCH_API={{ base_url }}/api/v1/match.json
 {% for e in entries %}ENTRY={{ e.id }} | resolvable={{ e.resolvable }} | rate={{ e.fix_success_rate }}
 {% endfor %}</pre>
   {% endautoescape %}
 
-  <nav><a href="/">deadend.dev</a></nav>
+  <nav><a href="{{ base_path }}/">deadend.dev</a></nav>
 
   <h1>{{ domain }} errors</h1>
   <p class="meta">{{ total }} error entr{{ 'ies' if total != 1 else 'y' }}</p>
 
   {% for e in entries %}
   <div class="entry">
-    <a href="/{{ e.id }}"><code>{{ e.signature }}</code></a>
+    <a href="{{ base_path }}/{{ e.id }}"><code>{{ e.signature }}</code></a>
     <span class="verdict-{{ e.resolvable }}">[{{ e.resolvable }}]</span>
     <span class="meta">{{ e.env_summary }}</span>
   </div>
   {% endfor %}
 
   <footer class="meta">
-    <p><a href="/">deadend.dev</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
+    <p><a href="{{ base_path }}/">deadend.dev</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a></p>
   </footer>
 </body>
 </html>

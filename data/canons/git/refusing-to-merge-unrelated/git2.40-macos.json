@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "git/refusing-to-merge-unrelated/git2.40-macos",
-  "url": "https://deadend.dev/git/refusing-to-merge-unrelated/git2.40-macos",
+  "url": "https://dbwls99706.github.io/deadend.dev/git/refusing-to-merge-unrelated/git2.40-macos",
 
   "error": {
     "signature": "fatal: refusing to merge unrelated histories",

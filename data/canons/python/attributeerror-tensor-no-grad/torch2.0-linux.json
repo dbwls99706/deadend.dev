@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/attributeerror-tensor-no-grad/torch2.0-linux",
-  "url": "https://deadend.dev/python/attributeerror-tensor-no-grad/torch2.0-linux",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/attributeerror-tensor-no-grad/torch2.0-linux",
 
   "error": {
     "signature": "AttributeError: 'Tensor' object has no attribute 'grad'",
