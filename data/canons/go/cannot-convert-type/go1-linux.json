@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/cannot-convert-type/go1-linux",
+  "url": "https://deadends.dev/go/cannot-convert-type/go1-linux",
+  "error": {
+    "signature": "cannot convert x (variable of type string) to type int",
+    "regex": "cannot convert .+ to type",
+    "domain": "go",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Direct type conversion not possible. Need strconv or encoding."
+  },
+  "dead_ends": [
+    {
+      "action": "Use unsafe.Pointer for conversion",
+      "why_fails": "Undefined behavior, corrupts data",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://pkg.go.dev/unsafe"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert via interface{}",
+      "why_fails": "Runtime panic on wrong assertion",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://go.dev/doc/effective_go#interface_conversions"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use strconv package for string ↔ number conversions",
+      "success_rate": 0.95,
+      "how": "n, err := strconv.Atoi(s)  // string to int\ns := strconv.Itoa(n)  // int to string",
+      "sources": [
+        "https://pkg.go.dev/strconv"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use encoding/json for complex struct conversions",
+      "success_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/encoding/json"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

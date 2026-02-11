@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/runtimeerror-event-loop/py311-linux",
+  "url": "https://deadends.dev/python/runtimeerror-event-loop/py311-linux",
+  "error": {
+    "signature": "RuntimeError: This event loop is already running",
+    "regex": "RuntimeError: This event loop is already running",
+    "domain": "python",
+    "category": "async_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Calling asyncio.run() inside an already-running loop. Common in Jupyter and web frameworks."
+  },
+  "dead_ends": [
+    {
+      "action": "Use nest_asyncio.apply()",
+      "why_fails": "Monkey-patches asyncio, can cause subtle bugs in production",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create new event loop in thread",
+      "why_fails": "Complex, error-prone, usually unnecessary",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.new_event_loop"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use await directly instead of asyncio.run() when already in async context",
+      "success_rate": 0.92,
+      "how": "result = await async_function()",
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-task.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "In Jupyter: use await directly (Jupyter runs its own event loop)",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-runner.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

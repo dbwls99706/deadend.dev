@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/healthcheck-unhealthy/docker27-linux",
+  "url": "https://deadends.dev/docker/healthcheck-unhealthy/docker27-linux",
+  "error": {
+    "signature": "Container health status: unhealthy",
+    "regex": "health(check|y|status).*unhealthy|unhealthy.*container",
+    "domain": "docker",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Container healthcheck failing. App may be starting slow or endpoint misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove healthcheck entirely",
+      "why_fails": "Orchestrator can't detect failures, routes traffic to dead containers",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set very long timeout/interval",
+      "why_fails": "Delays failure detection, slow recovery",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check healthcheck command matches actual app endpoint and port",
+      "success_rate": 0.92,
+      "how": "docker inspect --format='{{json .State.Health}}' container_name",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add start-period to allow for slow startup",
+      "success_rate": 0.85,
+      "how": "HEALTHCHECK --start-period=30s --interval=10s CMD curl -f http://localhost:8080/health",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

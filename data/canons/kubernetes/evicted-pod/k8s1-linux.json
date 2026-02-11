@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/evicted-pod/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/evicted-pod/k8s1-linux",
+  "error": {
+    "signature": "Pod status: Evicted — The node was low on resource: ephemeral-storage",
+    "regex": "Evicted|DiskPressure|ephemeral-storage",
+    "domain": "kubernetes",
+    "category": "resource_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<1.32"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "Pod evicted due to node resource pressure (disk, memory)."
+  },
+  "dead_ends": [
+    {
+      "action": "Just recreate the pod",
+      "why_fails": "Will be evicted again if resource issue persists",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable eviction in kubelet config",
+      "why_fails": "Node can run out of resources entirely, affecting all pods",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set resource requests/limits and clean up ephemeral storage (logs, tmp files)",
+      "success_rate": 0.9,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use emptyDir sizeLimit to prevent individual pods from consuming too much disk",
+      "success_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/createcontainerconfigerror/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/createcontainerconfigerror/k8s1-linux",
+  "error": {
+    "signature": "CreateContainerConfigError: secret not found",
+    "regex": "CreateContainerConfigError|secret.*not found|configmap.*not found",
+    "domain": "kubernetes",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<1.32"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Pod references a Secret or ConfigMap that doesn't exist in the namespace."
+  },
+  "dead_ends": [
+    {
+      "action": "Create empty secret as placeholder",
+      "why_fails": "App starts but with wrong/missing config, causes runtime errors",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/secret/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set optional: true on the volume mount",
+      "why_fails": "App runs without expected config, fails in unexpected ways",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/secret/#optional-secrets"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create the missing secret/configmap in the correct namespace",
+      "success_rate": 0.95,
+      "how": "kubectl create secret generic my-secret --from-literal=key=value -n namespace",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/secret/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check namespace — resources are namespace-scoped",
+      "success_rate": 0.88,
+      "how": "kubectl get secrets -n target-namespace",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

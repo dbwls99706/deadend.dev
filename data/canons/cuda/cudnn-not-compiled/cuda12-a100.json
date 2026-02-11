@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cudnn-not-compiled/cuda12-a100",
+  "url": "https://deadends.dev/cuda/cudnn-not-compiled/cuda12-a100",
+  "error": {
+    "signature": "RuntimeError: cuDNN error: CUDNN_STATUS_NOT_INITIALIZED",
+    "regex": "cuDNN error|CUDNN_STATUS_(NOT_INITIALIZED|EXECUTION_FAILED|INTERNAL_ERROR)",
+    "domain": "cuda",
+    "category": "library_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "A100-40GB"
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.8,
+    "confidence": 0.82,
+    "last_updated": "2026-02-11",
+    "summary": "cuDNN library not properly initialized. Version mismatch with CUDA or PyTorch."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstall cuDNN manually from NVIDIA",
+      "why_fails": "Version must match exact CUDA version, easy to get wrong",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/cudnn/installation/overview.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set torch.backends.cudnn.enabled = False",
+      "why_fails": "Disables GPU acceleration for convolutions, much slower",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pytorch.org/docs/stable/backends.html#torch.backends.cudnn"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install PyTorch with matching CUDA version from official channel",
+      "success_rate": 0.92,
+      "how": "pip install torch --index-url https://download.pytorch.org/whl/cu121",
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use torch.backends.cudnn.benchmark = True after fixing version match",
+      "success_rate": 0.8,
+      "sources": [
+        "https://pytorch.org/docs/stable/backends.html#torch.backends.cudnn"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

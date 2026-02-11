@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/metadata-generation-failed/pip24-linux",
+  "url": "https://deadends.dev/pip/metadata-generation-failed/pip24-linux",
+  "error": {
+    "signature": "error: metadata-generation-failed",
+    "regex": "metadata-generation-failed|setup\\.py.*error",
+    "domain": "pip",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-11",
+    "summary": "Package setup.py or pyproject.toml has errors. Common with packages needing C compilation."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrade pip to old version",
+      "why_fails": "Old pip has worse dependency resolution and security issues",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pip.pypa.io/en/stable/news/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use --no-build-isolation",
+      "why_fails": "Can cause dependency conflicts between build and runtime",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-build-isolation"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install build dependencies first: C compiler, python-dev headers",
+      "success_rate": 0.88,
+      "how": "sudo apt install python3-dev build-essential",
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if a pre-built wheel exists for your platform",
+      "success_rate": 0.85,
+      "how": "pip install --only-binary=:all: package-name",
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-only-binary"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

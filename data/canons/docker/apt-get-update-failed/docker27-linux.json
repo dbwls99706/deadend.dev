@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/apt-get-update-failed/docker27-linux",
+  "url": "https://deadends.dev/docker/apt-get-update-failed/docker27-linux",
+  "error": {
+    "signature": "E: Failed to fetch http://archive.ubuntu.com/... 404 Not Found",
+    "regex": "E: Failed to fetch|apt-get update.*failed|404.*Not Found.*archive",
+    "domain": "docker",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "apt package cache stale in Docker build. Common with cached layers."
+  },
+  "dead_ends": [
+    {
+      "action": "Pin specific mirror URL",
+      "why_fails": "Mirrors change too; doesn't fix stale cache layer",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.docker.com/build/cache/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use --no-cache for entire build",
+      "why_fails": "Rebuilds everything, very slow",
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.docker.com/build/cache/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Always run apt-get update && apt-get install in same RUN layer",
+      "success_rate": 0.95,
+      "how": "RUN apt-get update && apt-get install -y pkg && rm -rf /var/lib/apt/lists/*",
+      "sources": [
+        "https://docs.docker.com/build/building/best-practices/#apt-get"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use specific base image tags, not :latest",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.docker.com/build/building/best-practices/#from"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

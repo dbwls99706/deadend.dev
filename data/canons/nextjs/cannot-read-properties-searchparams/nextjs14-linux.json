@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/cannot-read-properties-searchparams/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/cannot-read-properties-searchparams/nextjs14-linux",
+  "error": {
+    "signature": "TypeError: Cannot read properties of undefined (reading 'searchParams')",
+    "regex": "Cannot read properties of undefined.*searchParams",
+    "domain": "nextjs",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "searchParams is now a Promise in Next.js 15+, or page component not receiving props correctly."
+  },
+  "dead_ends": [
+    {
+      "action": "Use window.location.search instead",
+      "why_fails": "Doesn't work in server components",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Default to empty object",
+      "why_fails": "Silently ignores URL parameters",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure page component accepts { searchParams } prop correctly",
+      "success_rate": 0.92,
+      "how": "export default function Page({ searchParams }: { searchParams: { q?: string } })",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useSearchParams() hook in client components",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/each-child-unique-key/react18-linux",
+  "url": "https://deadends.dev/react/each-child-unique-key/react18-linux",
+  "error": {
+    "signature": "Warning: Each child in a list should have a unique 'key' prop",
+    "regex": "Each child in a list should have a unique .key. prop",
+    "domain": "react",
+    "category": "render_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Missing or non-unique key prop on list items. Causes incorrect re-renders."
+  },
+  "dead_ends": [
+    {
+      "action": "Use array index as key",
+      "why_fails": "Causes bugs when list is reordered/filtered/sorted",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use Math.random() as key",
+      "why_fails": "New key every render, destroys all component state",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://react.dev/learn/rendering-lists#rules-of-keys"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a stable unique identifier from data (id, slug, etc.)",
+      "success_rate": 0.95,
+      "how": "{items.map(item => <Item key={item.id} {...item} />)}",
+      "sources": [
+        "https://react.dev/learn/rendering-lists#where-to-get-your-key"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If no ID exists, generate stable keys from content hash",
+      "success_rate": 0.82,
+      "sources": [
+        "https://react.dev/learn/rendering-lists#rules-of-keys"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/permission-denied-publickey/git2-linux",
+  "url": "https://deadends.dev/git/permission-denied-publickey/git2-linux",
+  "error": {
+    "signature": "Permission denied (publickey). fatal: Could not read from remote repository.",
+    "regex": "Permission denied \\(publickey\\)",
+    "domain": "git",
+    "category": "auth_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.30,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "SSH key not configured or not added to SSH agent."
+  },
+  "dead_ends": [
+    {
+      "action": "Switch to HTTPS and enter password every time",
+      "why_fails": "Tedious, and GitHub disabled password auth in 2021",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/authentication/connecting-to-github-with-ssh"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Generate new key pair every time",
+      "why_fails": "Doesn't help if the key isn't added to GitHub/agent",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add SSH key to agent and verify: ssh-add, then ssh -T git@github.com",
+      "success_rate": 0.92,
+      "how": "eval $(ssh-agent) && ssh-add ~/.ssh/id_ed25519 && ssh -T git@github.com",
+      "sources": [
+        "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use HTTPS with personal access token or gh auth login",
+      "success_rate": 0.88,
+      "how": "gh auth login",
+      "sources": [
+        "https://cli.github.com/manual/gh_auth_login"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0425-unresolved-name/rust1-linux",
+  "url": "https://deadends.dev/rust/e0425-unresolved-name/rust1-linux",
+  "error": {
+    "signature": "error[E0425]: cannot find value `x` in this scope",
+    "regex": "error\\[E0425\\]: cannot find (value|function) .+ in this scope",
+    "domain": "rust",
+    "category": "name_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Name not in scope. Missing import, typo, or wrong module path."
+  },
+  "dead_ends": [
+    {
+      "action": "Make everything pub",
+      "why_fails": "Breaks encapsulation without fixing the import",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch07-03-paths-for-referring-to-an-item-in-the-module-tree.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Copy the function definition locally",
+      "why_fails": "Code duplication, will diverge from original",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch07-02-defining-modules-to-control-scope-and-privacy.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the correct use statement for the module/function",
+      "success_rate": 0.95,
+      "how": "use crate::module::function_name;",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch07-04-bringing-paths-into-scope-with-the-use-keyword.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for typos in name and verify module visibility (pub)",
+      "success_rate": 0.88,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0425.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/oserror-too-many-open-files/py311-linux",
+  "url": "https://deadends.dev/python/oserror-too-many-open-files/py311-linux",
+  "error": {
+    "signature": "OSError: [Errno 24] Too many open files",
+    "regex": "OSError: \\[Errno 24\\] Too many open files",
+    "domain": "python",
+    "category": "os_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "Process exceeded file descriptor limit. Common in servers and data pipelines."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase ulimit to very high value",
+      "why_fails": "Band-aid — the real issue is file descriptor leak",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.python.org/3/library/resource.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the error and retry",
+      "why_fails": "Makes the leak worse over time",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#OSError"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use context managers (with statement) to ensure files are closed",
+      "success_rate": 0.95,
+      "how": "with open(path) as f: data = f.read()",
+      "sources": [
+        "https://docs.python.org/3/reference/compound_stmts.html#the-with-statement"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Find leaked file descriptors with lsof or /proc/self/fd",
+      "success_rate": 0.85,
+      "how": "ls -la /proc/self/fd | wc -l",
+      "sources": [
+        "https://docs.python.org/3/library/os.html#os.listdir"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

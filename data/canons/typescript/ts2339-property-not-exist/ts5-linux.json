@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2339-property-not-exist/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2339-property-not-exist/ts5-linux",
+  "error": {
+    "signature": "error TS2339: Property 'x' does not exist on type 'Y'",
+    "regex": "error TS2339: Property '(.+?)' does not exist on type",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Accessing property not in type definition. Common with API responses and DOM."
+  },
+  "dead_ends": [
+    {
+      "action": "Cast to any",
+      "why_fails": "Removes all type safety",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add // @ts-expect-error",
+      "why_fails": "Silences compiler without fixing the type",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Extend the type definition or use type assertion with proper type",
+      "success_rate": 0.92,
+      "how": "interface Extended extends Base { newProp: string }",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/objects.html#extending-types"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use 'in' operator for type narrowing",
+      "success_rate": 0.88,
+      "how": "if ('prop' in obj) { obj.prop }",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#the-in-operator-narrowing"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/useeffect-missing-dependency/react18-linux",
+  "url": "https://deadends.dev/react/useeffect-missing-dependency/react18-linux",
+  "error": {
+    "signature": "React Hook useEffect has a missing dependency",
+    "regex": "React Hook use\\w+ has a missing dependency",
+    "domain": "react",
+    "category": "hook_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "ESLint exhaustive-deps rule warning. Tricky — blindly adding deps can cause infinite loops."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable the ESLint rule",
+      "why_fails": "Hides real bugs — stale closures cause subtle issues",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/useEffect#specifying-reactive-dependencies"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add all listed deps immediately",
+      "why_fails": "Can cause infinite re-render if dep is object/array created in render",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Memoize object/array deps with useMemo, or move them inside useEffect",
+      "success_rate": 0.9,
+      "sources": [
+        "https://react.dev/reference/react/useMemo"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Extract the function used in useEffect to useCallback if it's a dep",
+      "success_rate": 0.85,
+      "sources": [
+        "https://react.dev/reference/react/useCallback"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

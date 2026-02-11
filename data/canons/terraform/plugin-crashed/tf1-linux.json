@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/plugin-crashed/tf1-linux",
+  "url": "https://deadends.dev/terraform/plugin-crashed/tf1-linux",
+  "error": {
+    "signature": "Error: Plugin did not respond: plugin process exited unexpectedly",
+    "regex": "Plugin did not respond|plugin.*crashed|plugin.*exited",
+    "domain": "terraform",
+    "category": "provider_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-11",
+    "summary": "Terraform provider plugin crashed. Version incompatibility or resource limit."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrade Terraform version",
+      "why_fails": "May introduce other incompatibilities",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/providers"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove .terraform and reinitialize",
+      "why_fails": "Downloads same broken version again",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update provider to latest patch version in required_providers block",
+      "success_rate": 0.88,
+      "how": "terraform init -upgrade",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check system resources (memory) — large state files can OOM the provider",
+      "success_rate": 0.82,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/providers"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

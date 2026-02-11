@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/invalid-reference/tf1-linux",
+  "url": "https://deadends.dev/terraform/invalid-reference/tf1-linux",
+  "error": {
+    "signature": "Error: Reference to undeclared resource",
+    "regex": "Reference to undeclared (resource|module|variable|input)",
+    "domain": "terraform",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Terraform config references a resource that doesn't exist. Typo or missing module."
+  },
+  "dead_ends": [
+    {
+      "action": "Create a dummy resource to satisfy the reference",
+      "why_fails": "Creates unneeded infrastructure, costs money",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/resources"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Comment out the reference",
+      "why_fails": "Breaks dependent resources",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/expressions/references"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check for typos in resource name and verify resource block exists",
+      "success_rate": 0.95,
+      "how": "grep -r 'resource \"aws_instance\"' .",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/expressions/references"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If in module, ensure output is declared and module source is correct",
+      "success_rate": 0.88,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

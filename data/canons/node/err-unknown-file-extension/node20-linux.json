@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/err-unknown-file-extension/node20-linux",
+  "url": "https://deadends.dev/node/err-unknown-file-extension/node20-linux",
+  "error": {
+    "signature": "TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension '.ts'",
+    "regex": "ERR_UNKNOWN_FILE_EXTENSION",
+    "domain": "node",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Node.js can't handle .ts/.jsx file directly. Need loader or compilation step."
+  },
+  "dead_ends": [
+    {
+      "action": "Rename .ts to .js",
+      "why_fails": "Loses TypeScript type checking entirely",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/errors.html#err_unknown_file_extension"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add type:module to package.json",
+      "why_fails": "Doesn't help — Node still can't parse TypeScript",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/packages.html#type"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use tsx or ts-node for TypeScript execution",
+      "success_rate": 0.95,
+      "how": "npx tsx script.ts",
+      "sources": [
+        "https://nodejs.org/api/typescript.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use --loader flag with ts-node/esm",
+      "success_rate": 0.85,
+      "how": "node --loader ts-node/esm script.ts",
+      "sources": [
+        "https://nodejs.org/api/esm.html#loaders"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

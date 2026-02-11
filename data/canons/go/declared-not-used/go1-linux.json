@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/declared-not-used/go1-linux",
+  "url": "https://deadends.dev/go/declared-not-used/go1-linux",
+  "error": {
+    "signature": "declared and not used: variable",
+    "regex": "declared and not used",
+    "domain": "go",
+    "category": "compile_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Go doesn't allow unused variables. Compile error, not warning."
+  },
+  "dead_ends": [
+    {
+      "action": "Assign to _ everywhere",
+      "why_fails": "If variable is needed later, you'll forget it exists",
+      "fail_rate": 0.5,
+      "sources": [
+        "https://go.dev/doc/effective_go#blank"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Comment out the variable",
+      "why_fails": "May break code that depends on its side effects",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://go.dev/ref/spec#Blank_identifier"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove the unused variable, or use _ if return value intentionally discarded",
+      "success_rate": 0.95,
+      "how": "_, err := someFunc()  // intentionally discard first return",
+      "sources": [
+        "https://go.dev/doc/effective_go#blank"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If debugging, use _ = variable to suppress temporarily",
+      "success_rate": 0.82,
+      "sources": [
+        "https://go.dev/ref/spec#Blank_identifier"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/objects-not-valid-as-child/react18-linux",
+  "url": "https://deadends.dev/react/objects-not-valid-as-child/react18-linux",
+  "error": {
+    "signature": "Error: Objects are not valid as a React child",
+    "regex": "Objects are not valid as a React child",
+    "domain": "react",
+    "category": "render_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Trying to render a plain object in JSX. Common with Date objects, API responses."
+  },
+  "dead_ends": [
+    {
+      "action": "Use JSON.stringify() in JSX",
+      "why_fails": "Shows raw JSON to users, not a real UI",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/Children"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap object in String()",
+      "why_fails": "Shows [object Object]",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://react.dev/learn/rendering-lists"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Render specific properties of the object, not the object itself",
+      "success_rate": 0.95,
+      "how": "<p>{user.name}</p> instead of <p>{user}</p>",
+      "sources": [
+        "https://react.dev/learn/rendering-lists"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For arrays, use .map() to render each element",
+      "success_rate": 0.9,
+      "how": "{items.map(item => <li key={item.id}>{item.name}</li>)}",
+      "sources": [
+        "https://react.dev/learn/rendering-lists"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

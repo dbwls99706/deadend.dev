@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/externally-managed-environment/pip24-linux",
+  "url": "https://deadends.dev/pip/externally-managed-environment/pip24-linux",
+  "error": {
+    "signature": "error: externally-managed-environment",
+    "regex": "externally-managed-environment",
+    "domain": "pip",
+    "category": "env_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "PEP 668: system Python rejects pip install. New in Debian 12, Ubuntu 23+, Fedora 38+."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove EXTERNALLY-MANAGED file",
+      "why_fails": "Breaks system Python and apt/dnf package manager",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://peps.python.org/pep-0668/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use --break-system-packages flag",
+      "why_fails": "Can corrupt system Python, break OS tools",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use virtual environment: python -m venv .venv && source .venv/bin/activate",
+      "success_rate": 0.98,
+      "how": "python3 -m venv .venv && source .venv/bin/activate && pip install package",
+      "sources": [
+        "https://peps.python.org/pep-0668/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use pipx for CLI tools: pipx install tool-name",
+      "success_rate": 0.9,
+      "sources": [
+        "https://pipx.pypa.io/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

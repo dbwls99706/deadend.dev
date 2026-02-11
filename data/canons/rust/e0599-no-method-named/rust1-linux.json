@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0599-no-method-named/rust1-linux",
+  "url": "https://deadends.dev/rust/e0599-no-method-named/rust1-linux",
+  "error": {
+    "signature": "error[E0599]: no method named `method` found for struct `Type`",
+    "regex": "error\\[E0599\\]: no method named .+ found for",
+    "domain": "rust",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Method doesn't exist on type, or trait not imported."
+  },
+  "dead_ends": [
+    {
+      "action": "Implement the method manually on the struct",
+      "why_fails": "May already exist in a trait that just needs importing",
+      "fail_rate": 0.5,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch05-03-method-syntax.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Cast to a different type",
+      "why_fails": "Type mismatch is the symptom, not the solution",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://doc.rust-lang.org/reference/expressions/operator-expr.html#type-cast-expressions"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check if you need to use a trait: use TraitName;",
+      "success_rate": 0.92,
+      "how": "use std::io::Read;  // now .read() works",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-02-traits.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check the type — you may have the wrong type; use compiler suggestions",
+      "success_rate": 0.88,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0599.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

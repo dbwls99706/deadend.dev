@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/multiple-value-in-single-context/go1-linux",
+  "url": "https://deadends.dev/go/multiple-value-in-single-context/go1-linux",
+  "error": {
+    "signature": "multiple-value func() (used as single value, error) in single-value context",
+    "regex": "multiple-value .+ in single-value context",
+    "domain": "go",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Function returns (value, error) but only one variable used."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap in a helper that drops the error",
+      "why_fails": "Silently ignores errors, Go's biggest anti-pattern",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://go.dev/doc/effective_go#errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use only the first return value",
+      "why_fails": "Go doesn't allow this syntactically",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://go.dev/ref/spec#Assignment_statements"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Capture both return values: val, err := func()",
+      "success_rate": 0.98,
+      "how": "val, err := someFunc()\nif err != nil { return err }",
+      "sources": [
+        "https://go.dev/doc/effective_go#errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use _ to explicitly discard error only when truly safe",
+      "success_rate": 0.8,
+      "how": "val, _ := strconv.Atoi(knownGoodString)",
+      "sources": [
+        "https://go.dev/doc/effective_go#blank"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

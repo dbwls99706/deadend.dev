@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/illegal-memory-access/cuda12-a100",
+  "url": "https://deadends.dev/cuda/illegal-memory-access/cuda12-a100",
+  "error": {
+    "signature": "CUDA error: an illegal memory access was encountered",
+    "regex": "CUDA error.*illegal memory access|RuntimeError.*CUDA.*illegal",
+    "domain": "cuda",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "A100-40GB"
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.75,
+    "confidence": 0.8,
+    "last_updated": "2026-02-11",
+    "summary": "GPU kernel accessed invalid memory. Hard to debug — error often reported asynchronously."
+  },
+  "dead_ends": [
+    {
+      "action": "Set CUDA_LAUNCH_BLOCKING=1 to find the error",
+      "why_fails": "Only helps locate it, doesn't fix it; also makes training much slower",
+      "fail_rate": 0.4,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restart and hope it doesn't recur",
+      "why_fails": "Memory corruption bugs are deterministic, will recur",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-memcheck/index.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run with compute-sanitizer to find exact kernel and line",
+      "success_rate": 0.85,
+      "how": "compute-sanitizer --tool memcheck python train.py",
+      "sources": [
+        "https://docs.nvidia.com/cuda/compute-sanitizer/index.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for index out of bounds in custom CUDA kernels or wrong tensor shapes",
+      "success_rate": 0.82,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

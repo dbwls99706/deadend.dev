@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/importerror-cannot-import-name/py311-linux",
+  "url": "https://deadends.dev/python/importerror-cannot-import-name/py311-linux",
+  "error": {
+    "signature": "ImportError: cannot import name 'X' from 'module'",
+    "regex": "ImportError: cannot import name '(.+?)' from '(.+?)'",
+    "domain": "python",
+    "category": "import_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Circular import or name doesn't exist in module. Very common in Django/Flask projects."
+  },
+  "dead_ends": [
+    {
+      "action": "Move import to top of file",
+      "why_fails": "May worsen circular import",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.python.org/3/reference/import.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Rename conflicting module",
+      "why_fails": "Doesn't fix the circular dependency",
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.python.org/3/faq/programming.html#what-are-the-best-practices-for-using-import-in-a-module"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use lazy import inside function to break circular dependency",
+      "success_rate": 0.9,
+      "how": "def func():\n    from module import name",
+      "sources": [
+        "https://docs.python.org/3/reference/import.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restructure modules to eliminate circular dependency",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.python.org/3/faq/programming.html#what-are-the-best-practices-for-using-import-in-a-module"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

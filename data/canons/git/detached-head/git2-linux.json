@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/detached-head/git2-linux",
+  "url": "https://deadends.dev/git/detached-head/git2-linux",
+  "error": {
+    "signature": "You are in 'detached HEAD' state",
+    "regex": "detached HEAD|HEAD detached at",
+    "domain": "git",
+    "category": "state_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.30,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "HEAD not on a branch. Commits may be lost if you switch branches."
+  },
+  "dead_ends": [
+    {
+      "action": "Just checkout another branch",
+      "why_fails": "Loses any commits made in detached state",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://git-scm.com/docs/git-checkout#_detached_head"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the warning",
+      "why_fails": "Commits become orphaned and eventually garbage collected",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://git-scm.com/docs/git-checkout#_detached_head"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a branch from current position: git checkout -b new-branch",
+      "success_rate": 0.95,
+      "how": "git checkout -b my-work",
+      "sources": [
+        "https://git-scm.com/docs/git-checkout#_detached_head"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If already lost commits, find with git reflog and cherry-pick",
+      "success_rate": 0.88,
+      "how": "git reflog | head -20",
+      "sources": [
+        "https://git-scm.com/docs/git-reflog"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

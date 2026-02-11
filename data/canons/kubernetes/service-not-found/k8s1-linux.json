@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/service-not-found/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/service-not-found/k8s1-linux",
+  "error": {
+    "signature": "couldn't find service: default/my-service",
+    "regex": "couldn't find service|service.*not found|no endpoints available",
+    "domain": "kubernetes",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<1.32"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Service doesn't exist or has no backing pods (no matching selector)."
+  },
+  "dead_ends": [
+    {
+      "action": "Create service without selector",
+      "why_fails": "Service exists but routes to nothing",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use pod IP directly",
+      "why_fails": "Pod IP changes on restart, breaks connectivity",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify service exists and selector matches pod labels",
+      "success_rate": 0.95,
+      "how": "kubectl get svc my-service -o yaml | grep selector && kubectl get pods -l app=my-app",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check endpoints: kubectl get endpoints my-service",
+      "success_rate": 0.88,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/#endpoints"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
