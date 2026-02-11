@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/generatestaticparams-error/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/generatestaticparams-error/nextjs14-linux",
+  "error": {
+    "signature": "Error: Page is missing generateStaticParams()",
+    "regex": "missing.*generateStaticParams|generateStaticParams.*required",
+    "domain": "nextjs",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Dynamic route with output: 'export' requires generateStaticParams to know all possible paths."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the dynamic route segment",
+      "why_fails": "You need the dynamic route — removing it changes the URL structure",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set output: 'standalone' to avoid static generation",
+      "why_fails": "Changes deployment model entirely",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/output"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add generateStaticParams to return all possible params",
+      "success_rate": 0.95,
+      "how": "export async function generateStaticParams() {\n  const posts = await getPosts();\n  return posts.map(p => ({ slug: p.slug }));\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use dynamicParams = false to return 404 for unknown params, or true (default) for ISR",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

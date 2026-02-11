@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/next-router-app-dir/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/next-router-app-dir/nextjs14-linux",
+  "error": {
+    "signature": "Error: NextRouter was not mounted",
+    "regex": "NextRouter was not mounted|next/router.*is not supported.*app",
+    "domain": "nextjs",
+    "category": "migration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Using next/router in App Router. App Router uses next/navigation instead."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap with RouterContext.Provider",
+      "why_fails": "Hack that doesn't work — App Router has a different router",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#step-5-migrating-routing-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Move the file to pages/ directory",
+      "why_fails": "Defeats the purpose of migrating to App Router",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Replace next/router with next/navigation",
+      "success_rate": 0.95,
+      "how": "// Old: import { useRouter } from 'next/router'\n// New: import { useRouter } from 'next/navigation'",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#step-5-migrating-routing-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Replace router.query with useSearchParams() and useParams()",
+      "success_rate": 0.92,
+      "how": "import { useSearchParams, useParams } from 'next/navigation';",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

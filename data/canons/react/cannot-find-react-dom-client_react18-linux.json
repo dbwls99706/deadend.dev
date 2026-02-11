@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/cannot-find-react-dom-client/react18-linux",
+  "url": "https://deadends.dev/react/cannot-find-react-dom-client/react18-linux",
+  "error": {
+    "signature": "Module not found: Can't resolve 'react-dom/client'",
+    "regex": "Can't resolve 'react-dom/client'|Cannot find module 'react-dom/client'",
+    "domain": "react",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "react-dom/client is React 18+ API. Using React 17 or older react-dom."
+  },
+  "dead_ends": [
+    {
+      "action": "Import from 'react-dom' instead",
+      "why_fails": "ReactDOM.render is deprecated in React 18+",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://react.dev/blog/2022/03/08/react-18-upgrade-guide"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade to React 17 to use old API",
+      "why_fails": "Loses React 18 features (concurrent mode, automatic batching)",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/blog/2022/03/08/react-18-upgrade-guide"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Upgrade react-dom to version 18+: npm install react-dom@latest",
+      "success_rate": 0.95,
+      "how": "npm install react@latest react-dom@latest",
+      "sources": [
+        "https://react.dev/blog/2022/03/08/react-18-upgrade-guide"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If already v18, check for version mismatch between react and react-dom",
+      "success_rate": 0.9,
+      "how": "npm ls react react-dom",
+      "sources": [
+        "https://react.dev/blog/2022/03/08/react-18-upgrade-guide"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

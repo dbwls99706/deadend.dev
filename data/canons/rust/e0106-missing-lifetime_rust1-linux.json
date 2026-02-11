@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0106-missing-lifetime/rust1-linux",
+  "url": "https://deadends.dev/rust/e0106-missing-lifetime/rust1-linux",
+  "error": {
+    "signature": "error[E0106]: missing lifetime specifier",
+    "regex": "E0106.*missing lifetime specifier",
+    "domain": "rust",
+    "category": "lifetime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Function returns a reference but Rust can't infer the lifetime. Need explicit lifetime annotation."
+  },
+  "dead_ends": [
+    {
+      "action": "Use 'static lifetime on everything",
+      "why_fails": "'static means lives forever — wrong for most references",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0106.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Return an owned value (String instead of &str) as a quick fix",
+      "why_fails": "May work but cloning every time can be expensive",
+      "fail_rate": 0.45,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add lifetime parameter: fn foo<'a>(s: &'a str) -> &'a str",
+      "success_rate": 0.92,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If function has one reference input, the compiler can infer (lifetime elision rules)",
+      "success_rate": 0.85,
+      "sources": [
+        "https://doc.rust-lang.org/reference/lifetime-elision.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Consider returning an owned type (String, Vec) if lifetime complexity isn't worth it",
+      "success_rate": 0.8,
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

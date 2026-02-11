@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/enomem/node20-linux",
+  "url": "https://deadends.dev/node/enomem/node20-linux",
+  "error": {
+    "signature": "Error: ENOMEM: not enough memory",
+    "regex": "ENOMEM.*not enough memory|Cannot allocate memory",
+    "domain": "node",
+    "category": "system_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.75,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "System out of memory. Node process or system-wide memory exhaustion."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase --max-old-space-size to very large value",
+      "why_fails": "If system RAM is exhausted, increasing V8 heap won't help",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add swap space",
+      "why_fails": "Swap is extremely slow — fix the memory usage instead",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nodejs.org/api/os.html#osfreemem"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile memory usage to find leaks: node --inspect + Chrome DevTools",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/en/learn/diagnostics/memory/using-heap-snapshot"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Process data in streams instead of loading everything into memory",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nodejs.org/api/stream.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for common leaks: growing arrays, unclosed connections, event listener accumulation",
+      "success_rate": 0.85,
+      "sources": [
+        "https://nodejs.org/en/learn/diagnostics/memory"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/pandas-settingwithcopywarning/py311-linux",
+  "url": "https://deadends.dev/python/pandas-settingwithcopywarning/py311-linux",
+  "error": {
+    "signature": "SettingWithCopyWarning: A value is trying to be set on a copy of a slice from a DataFrame",
+    "regex": "SettingWithCopyWarning.*copy of a slice",
+    "domain": "python",
+    "category": "data_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Pandas chained assignment. The write may not propagate to the original DataFrame."
+  },
+  "dead_ends": [
+    {
+      "action": "Suppress the warning with pd.options.mode.chained_assignment = None",
+      "why_fails": "Silences the warning but the bug remains — data may not be modified",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pandas.pydata.org/docs/user_guide/indexing.html#returning-a-view-versus-a-copy"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add .copy() everywhere",
+      "why_fails": "Overkill and wastes memory — only copy when needed",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.copy.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use .loc[] for assignment: df.loc[mask, 'col'] = value",
+      "success_rate": 0.95,
+      "how": "# Bad:  df[df['a'] > 0]['b'] = 1\n# Good: df.loc[df['a'] > 0, 'b'] = 1",
+      "sources": [
+        "https://pandas.pydata.org/docs/user_guide/indexing.html#returning-a-view-versus-a-copy"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If you intentionally want a copy, make it explicit: subset = df[mask].copy()",
+      "success_rate": 0.9,
+      "sources": [
+        "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.copy.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

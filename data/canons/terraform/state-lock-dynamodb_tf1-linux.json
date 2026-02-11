@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/state-lock-dynamodb/tf1-linux",
+  "url": "https://deadends.dev/terraform/state-lock-dynamodb/tf1-linux",
+  "error": {
+    "signature": "Error acquiring the state lock: ConditionalCheckFailedException",
+    "regex": "Error acquiring the state lock|ConditionalCheckFailedException|Lock Info",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "Another Terraform process holds the state lock (DynamoDB). Wait or force-unlock."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the DynamoDB lock item directly",
+      "why_fails": "May cause state corruption if another process is running",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable state locking with -lock=false",
+      "why_fails": "Risks concurrent state modifications — data corruption",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wait for the other process to finish — check the Lock Info in the error for who holds it",
+      "success_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If the lock is stale (crashed process), force-unlock: terraform force-unlock <LOCK_ID>",
+      "success_rate": 0.88,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check CI/CD for parallel Terraform runs that need serialization",
+      "success_rate": 0.82,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

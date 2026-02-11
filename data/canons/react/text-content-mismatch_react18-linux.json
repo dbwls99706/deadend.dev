@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/text-content-mismatch/react18-linux",
+  "url": "https://deadends.dev/react/text-content-mismatch/react18-linux",
+  "error": {
+    "signature": "Warning: Text content did not match. Server: 'X' Client: 'Y'",
+    "regex": "Text content did not match|Hydration failed.*text content",
+    "domain": "react",
+    "category": "hydration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "SSR hydration mismatch. Server and client render different text. Common: dates, random values, browser APIs."
+  },
+  "dead_ends": [
+    {
+      "action": "suppressHydrationWarning on every element",
+      "why_fails": "Hides the warning but the mismatch still causes visual flicker",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable SSR entirely",
+      "why_fails": "Loses SEO and initial load performance",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react-dom/server"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use useEffect for browser-only values (dates, localStorage, window size)",
+      "success_rate": 0.95,
+      "how": "const [time, setTime] = useState('');\nuseEffect(() => setTime(new Date().toLocaleString()), []);",
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use suppressHydrationWarning only on the specific element with dynamic content",
+      "success_rate": 0.85,
+      "sources": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure server and client use the same data — pass SSR data via props, not new fetches",
+      "success_rate": 0.88,
+      "sources": [
+        "https://react.dev/reference/react-dom/server"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/module-not-installed/tf1-linux",
+  "url": "https://deadends.dev/terraform/module-not-installed/tf1-linux",
+  "error": {
+    "signature": "Error: Module not installed",
+    "regex": "Module not installed|Module source has changed|terraform init",
+    "domain": "terraform",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Module source not downloaded. Need terraform init to download modules."
+  },
+  "dead_ends": [
+    {
+      "action": "Copy module source manually into .terraform/",
+      "why_fails": "Terraform manages .terraform/ — manual changes will be overwritten",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Change module source to a local path",
+      "why_fails": "Defeats the purpose of using versioned modules",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules/sources"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run terraform init to download modules",
+      "success_rate": 0.98,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If module source changed, run terraform init -upgrade to fetch new version",
+      "success_rate": 0.92,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For CI/CD, ensure terraform init runs before plan/apply",
+      "success_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

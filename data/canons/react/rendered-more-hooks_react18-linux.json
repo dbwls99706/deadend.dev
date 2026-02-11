@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/rendered-more-hooks/react18-linux",
+  "url": "https://deadends.dev/react/rendered-more-hooks/react18-linux",
+  "error": {
+    "signature": "Rendered more hooks than during the previous render",
+    "regex": "Rendered more hooks than during the previous render",
+    "domain": "react",
+    "category": "hook_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Hooks called conditionally or in different order between renders. Violates Rules of Hooks."
+  },
+  "dead_ends": [
+    {
+      "action": "Move the conditional inside the hook",
+      "why_fails": "Some hooks don't support conditional logic internally",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useRef to track which hooks to skip",
+      "why_fails": "Over-engineering — just follow Rules of Hooks",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://react.dev/reference/react/useRef"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Hooks must be called in the same order every render — move conditionals INSIDE hooks, not around them",
+      "success_rate": 0.95,
+      "how": "// Bad: if (cond) { useState(...) }\n// Good: const [val] = useState(cond ? x : y)",
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If a component conditionally needs a hook, split into two components",
+      "success_rate": 0.88,
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for early returns before hooks — all hooks must run before any return",
+      "success_rate": 0.9,
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

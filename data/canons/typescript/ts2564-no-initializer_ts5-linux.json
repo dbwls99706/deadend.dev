@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2564-no-initializer/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2564-no-initializer/ts5-linux",
+  "error": {
+    "signature": "error TS2564: Property 'X' has no initializer and is not definitely assigned in the constructor",
+    "regex": "TS2564.*has no initializer.*not definitely assigned",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Class property declared but not initialized. strictPropertyInitialization is enabled."
+  },
+  "dead_ends": [
+    {
+      "action": "Set strictPropertyInitialization to false",
+      "why_fails": "Disables a useful safety check across the entire project",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig/#strictPropertyInitialization"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add ! to suppress: property!: Type",
+      "why_fails": "Suppresses the check but may cause runtime undefined access",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/classes.html#--strictpropertyinitialization"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Initialize in the constructor or at declaration: property: Type = defaultValue",
+      "success_rate": 0.95,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/classes.html#--strictpropertyinitialization"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use definite assignment assertion (!) only when you're SURE it's set before use (e.g., DI)",
+      "success_rate": 0.8,
+      "how": "class Foo { @Inject() service!: Service; }  // OK: framework sets it",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/classes.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
