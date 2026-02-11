@@ -416,7 +416,7 @@ def build_404_page() -> None:
         "<h1>404 — Error Not Found (Ironic, isn't it?)</h1>\n"
         '<p>This error page doesn\'t exist yet.'
         f' <a href="{BASE_PATH}/">Browse existing errors</a> or\n'
-        '<a href="https://github.com/dbwls99706/deadend.dev/issues/new">'
+        '<a href="https://github.com/dbwls99706/deadends.dev/issues/new">'
         "request it</a>.</p>\n"
         "</body></html>"
     )
@@ -806,7 +806,7 @@ def build_openapi_spec(canons: list[dict]) -> None:
                 "and error transition graphs."
             ),
             "version": "1.0.0",
-            "contact": {"url": "https://github.com/dbwls99706/deadend.dev"},
+            "contact": {"url": "https://github.com/dbwls99706/deadends.dev"},
         },
         "servers": [{"url": f"{BASE_URL}/api/v1"}],
         "paths": {

@@ -31,7 +31,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://deadends.dev"
-Repository = "https://github.com/dbwls99706/deadend.dev"
+Repository = "https://github.com/dbwls99706/deadends.dev"
 API = "https://deadends.dev/api/v1/index.json"
 
 [project.optional-dependencies]
