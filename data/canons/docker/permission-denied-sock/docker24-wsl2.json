@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/permission-denied-sock/docker24-wsl2",
-  "url": "https://deadend.dev/docker/permission-denied-sock/docker24-wsl2",
+  "url": "https://dbwls99706.github.io/deadend.dev/docker/permission-denied-sock/docker24-wsl2",
 
   "error": {
     "signature": "Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock",

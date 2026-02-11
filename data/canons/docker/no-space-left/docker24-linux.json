@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/no-space-left/docker24-linux",
-  "url": "https://deadend.dev/docker/no-space-left/docker24-linux",
+  "url": "https://dbwls99706.github.io/deadend.dev/docker/no-space-left/docker24-linux",
 
   "error": {
     "signature": "no space left on device",

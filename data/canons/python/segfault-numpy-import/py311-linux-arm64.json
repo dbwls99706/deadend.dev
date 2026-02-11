@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "python/segfault-numpy-import/py311-linux-arm64",
-  "url": "https://deadend.dev/python/segfault-numpy-import/py311-linux-arm64",
+  "url": "https://dbwls99706.github.io/deadend.dev/python/segfault-numpy-import/py311-linux-arm64",
 
   "error": {
     "signature": "Segmentation fault (core dumped)",

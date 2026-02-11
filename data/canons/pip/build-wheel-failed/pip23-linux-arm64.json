@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/build-wheel-failed/pip23-linux-arm64",
-  "url": "https://deadend.dev/pip/build-wheel-failed/pip23-linux-arm64",
+  "url": "https://dbwls99706.github.io/deadend.dev/pip/build-wheel-failed/pip23-linux-arm64",
 
   "error": {
     "signature": "Failed building wheel for X",

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "node/eaddrinuse-port/node20-macos",
-  "url": "https://deadend.dev/node/eaddrinuse-port/node20-macos",
+  "url": "https://dbwls99706.github.io/deadend.dev/node/eaddrinuse-port/node20-macos",
 
   "error": {
     "signature": "Error: listen EADDRINUSE: address already in use :::3000",

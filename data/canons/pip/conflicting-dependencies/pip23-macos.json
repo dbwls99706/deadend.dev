@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "pip/conflicting-dependencies/pip23-macos",
-  "url": "https://deadend.dev/pip/conflicting-dependencies/pip23-macos",
+  "url": "https://dbwls99706.github.io/deadend.dev/pip/conflicting-dependencies/pip23-macos",
 
   "error": {
     "signature": "ERROR: Cannot install X and Y because these package versions have conflicting dependencies",

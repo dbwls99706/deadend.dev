@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "id": "docker/network-bridge-conflict/docker24-vpn",
-  "url": "https://deadend.dev/docker/network-bridge-conflict/docker24-vpn",
+  "url": "https://dbwls99706.github.io/deadend.dev/docker/network-bridge-conflict/docker24-vpn",
 
   "error": {
     "signature": "Error response from daemon: Pool overlaps with other one on this address space",

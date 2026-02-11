@@ -9,18 +9,18 @@
   {% if bing_verification %}<meta name="msvalidate.01" content="{{ bing_verification }}">{% endif %}
 
   <!-- AI agent discovery -->
-  <link rel="alternate" type="application/json" href="/api/v1/index.json" title="Error Index JSON API">
-  <link rel="alternate" type="application/json" href="/api/v1/match.json" title="Lightweight Error Matching">
-  <link rel="describedby" href="/api/v1/openapi.json" type="application/json">
+  <link rel="alternate" type="application/json" href="{{ base_path }}/api/v1/index.json" title="Error Index JSON API">
+  <link rel="alternate" type="application/json" href="{{ base_path }}/api/v1/match.json" title="Lightweight Error Matching">
+  <link rel="describedby" href="{{ base_path }}/api/v1/openapi.json" type="application/json">
 
   <meta property="og:title" content="deadend.dev — Structured Failure Knowledge for AI Agents">
   <meta property="og:description" content="Know which debugging paths are dead ends before wasting cycles. {{ total_errors }} errors across {{ domains | length }} domains.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://deadend.dev">
+  <meta property="og:url" content="{{ base_url }}">
   <meta property="og:site_name" content="deadend.dev">
   <meta name="twitter:card" content="summary">
 
-  <link rel="canonical" href="https://deadend.dev">
+  <link rel="canonical" href="{{ base_url }}">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
     a { color: #58a6ff; }
@@ -43,12 +43,12 @@
 PURPOSE=Structured failure knowledge for AI agents — dead ends, workarounds, error chains
 TOTAL_ERRORS={{ total_errors }}
 DOMAINS={{ domains | join(', ') }}
-MATCH_ENDPOINT=https://deadend.dev/api/v1/match.json
-API_INDEX=https://deadend.dev/api/v1/index.json
-API_PATTERN=https://deadend.dev/api/v1/{domain}/{slug}/{env}.json
-OPENAPI_SPEC=https://deadend.dev/api/v1/openapi.json
-LLMS_TXT=https://deadend.dev/llms.txt
-LLMS_FULL=https://deadend.dev/llms-full.txt
+MATCH_ENDPOINT={{ base_url }}/api/v1/match.json
+API_INDEX={{ base_url }}/api/v1/index.json
+API_PATTERN={{ base_url }}/api/v1/{domain}/{slug}/{env}.json
+OPENAPI_SPEC={{ base_url }}/api/v1/openapi.json
+LLMS_TXT={{ base_url }}/llms.txt
+LLMS_FULL={{ base_url }}/llms-full.txt
 USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[].</pre>
   {% endautoescape %}
 
@@ -60,7 +60,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
   <div class="hero">
     <p>When AI agents hit an error, they search the web. But search results are written by humans, for humans — unstructured, environment-unaware, and often wrong for specific conditions.</p>
     <p><strong>deadend.dev</strong> tells you what <em>NOT</em> to try, what actually works (and under which conditions), and what error comes next if you take a particular path.</p>
-    <p><strong><a href="/search/">Paste your error message here to find matches instantly.</a></strong></p>
+    <p><strong><a href="{{ base_path }}/search/">Paste your error message here to find matches instantly.</a></strong></p>
     <p class="meta">{{ total_errors }} error entries across {{ domains | length }} domains. All data available as <a href="https://github.com/deadend-dev/error-data">open source JSON</a>.</p>
   </div>
 
@@ -69,7 +69,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <ul class="domain-list">
       {% for domain in domain_stats %}
       <li>
-        <a href="/{{ domain.slug }}/">{{ domain.slug }}</a>
+        <a href="{{ base_path }}/{{ domain.slug }}/">{{ domain.slug }}</a>
         <span class="count">— {{ domain.count }} error{{ 's' if domain.count != 1 else '' }}</span>
       </li>
       {% endfor %}
@@ -81,14 +81,14 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <p>Every page includes machine-readable data in multiple formats:</p>
     <ul>
       <li><strong>JSON API</strong> — <code>GET /api/v1/{domain}/{slug}/{env}.json</code></li>
-      <li><strong>Error index</strong> — <code>GET <a href="/api/v1/index.json">/api/v1/index.json</a></code> — all errors with regex patterns</li>
-      <li><strong>OpenAPI spec</strong> — <code>GET <a href="/api/v1/openapi.json">/api/v1/openapi.json</a></code></li>
+      <li><strong>Error index</strong> — <code>GET <a href="{{ base_path }}/api/v1/index.json">/api/v1/index.json</a></code> — all errors with regex patterns</li>
+      <li><strong>OpenAPI spec</strong> — <code>GET <a href="{{ base_path }}/api/v1/openapi.json">/api/v1/openapi.json</a></code></li>
       <li><strong>JSON-LD</strong> — Schema.org TechArticle + ErrorCanon in every page <code>&lt;head&gt;</code></li>
       <li><strong>ai-summary</strong> — parseable <code>&lt;pre id="ai-summary"&gt;</code> block in every page</li>
-      <li><strong>llms.txt</strong> — <code>GET <a href="/llms.txt">/llms.txt</a></code> — error listing for LLMs</li>
-      <li><strong>Full dump</strong> — <code>GET <a href="/llms-full.txt">/llms-full.txt</a></code> — complete database</li>
+      <li><strong>llms.txt</strong> — <code>GET <a href="{{ base_path }}/llms.txt">/llms.txt</a></code> — error listing for LLMs</li>
+      <li><strong>Full dump</strong> — <code>GET <a href="{{ base_path }}/llms-full.txt">/llms-full.txt</a></code> — complete database</li>
     </ul>
-    <p>URL pattern: <code>https://deadend.dev/{domain}/{error-slug}/{env-hash}</code></p>
+    <p>URL pattern: <code>{{ base_url }}/{domain}/{error-slug}/{env-hash}</code></p>
   </section>
 
   <section>
@@ -96,7 +96,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <ul>
       {% for entry in recent_entries %}
       <li>
-        <a href="/{{ entry.id }}">{{ entry.error.signature }}</a>
+        <a href="{{ base_path }}/{{ entry.id }}">{{ entry.error.signature }}</a>
         <span class="meta">— {{ entry.env_summary }}</span>
       </li>
       {% endfor %}
@@ -104,7 +104,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
   </section>
 
   <footer class="meta">
-    <p>deadend.dev · <a href="/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a> · Data licensed under CC BY 4.0</p>
+    <p>deadend.dev · <a href="{{ base_path }}/api/v1/index.json">API</a> · <a href="https://github.com/deadend-dev/error-data">GitHub</a> · Data licensed under CC BY 4.0</p>
   </footer>
 </body>
 </html>

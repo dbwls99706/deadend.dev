@@ -13,7 +13,10 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data" / "canons"
 SITE_DIR = PROJECT_ROOT / "site"
 TEMPLATE_DIR = PROJECT_ROOT / "generator" / "templates"
-BASE_URL = "https://deadend.dev"
+BASE_URL = "https://dbwls99706.github.io/deadend.dev"
+# Base path for subpath hosting (e.g., "/deadend.dev" for github.io/deadend.dev/)
+# Empty string when hosted at root domain
+BASE_PATH = "/deadend.dev"
 
 # Search engine verification codes — replace with actual codes after registering
 GOOGLE_VERIFICATION = ""  # e.g., "google1234567890abcdef"
@@ -89,7 +92,7 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
         json_ld_data = {
             "@context": [
                 "https://schema.org",
-                {"deadend": "https://deadend.dev/schema/v1#"},
+                {"deadend": f"{BASE_URL}/schema/v1#"},
             ],
             "@type": "TechArticle",
             "name": canon["error"]["signature"],
@@ -99,7 +102,7 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
             "publisher": {
                 "@type": "Organization",
                 "name": "deadend.dev",
-                "url": "https://deadend.dev",
+                "url": BASE_URL,
             },
             "about": {
                 "@type": "SoftwareSourceCode",
@@ -309,7 +312,7 @@ def build_sitemap(
 
 def build_robots_txt() -> None:
     """Generate robots.txt with explicit AI crawler allowances."""
-    content = """# deadend.dev - Structured failure knowledge for AI agents
+    content = f"""# deadend.dev - Structured failure knowledge for AI agents
 # All crawlers welcome — this site is BUILT for AI consumption
 
 User-agent: *
@@ -382,17 +385,17 @@ Allow: /
 User-agent: iaskspider
 Allow: /
 
-Sitemap: https://deadend.dev/sitemap.xml
+Sitemap: {BASE_URL}/sitemap.xml
 
 # AI agent discovery:
-# Match errors:    https://deadend.dev/api/v1/match.json
-# Error index:     https://deadend.dev/api/v1/index.json
-# OpenAPI spec:    https://deadend.dev/api/v1/openapi.json
-# Version info:    https://deadend.dev/api/v1/version.json
-# LLM-optimized:   https://deadend.dev/llms.txt
-# Full data dump:  https://deadend.dev/llms-full.txt
-# Plugin manifest: https://deadend.dev/.well-known/ai-plugin.json
-# A2A agent card:  https://deadend.dev/.well-known/agent-card.json
+# Match errors:    {BASE_URL}/api/v1/match.json
+# Error index:     {BASE_URL}/api/v1/index.json
+# OpenAPI spec:    {BASE_URL}/api/v1/openapi.json
+# Version info:    {BASE_URL}/api/v1/version.json
+# LLM-optimized:   {BASE_URL}/llms.txt
+# Full data dump:  {BASE_URL}/llms-full.txt
+# Plugin manifest: {BASE_URL}/.well-known/ai-plugin.json
+# A2A agent card:  {BASE_URL}/.well-known/agent-card.json
 """
     (SITE_DIR / "robots.txt").write_text(content, encoding="utf-8")
     print("  Generated: robots.txt")
@@ -412,7 +415,7 @@ def build_404_page() -> None:
         "</head><body>\n"
         "<h1>404 — Error Not Found (Ironic, isn't it?)</h1>\n"
         '<p>This error page doesn\'t exist yet.'
-        ' <a href="/">Browse existing errors</a> or\n'
+        f' <a href="{BASE_PATH}/">Browse existing errors</a> or\n'
         '<a href="https://github.com/deadend-dev/deadend.dev/issues/new">'
         "request it</a>.</p>\n"
         "</body></html>"
@@ -422,9 +425,9 @@ def build_404_page() -> None:
 
 
 def build_cname() -> None:
-    """Generate CNAME file for custom domain."""
-    (SITE_DIR / "CNAME").write_text("deadend.dev\n", encoding="utf-8")
-    print("  Generated: CNAME")
+    """Generate CNAME file for custom domain (skipped for github.io hosting)."""
+    # No CNAME needed for github.io subpath hosting
+    pass
 
 
 def _generate_variations(signature: str, regex: str, domain: str) -> list[str]:
@@ -652,21 +655,21 @@ def build_llms_txt(canons: list[dict]) -> None:
         "",
         "## About",
         "",
-        "- [API Index](https://deadend.dev/api/v1/index.json): "
+        f"- [API Index]({BASE_URL}/api/v1/index.json): "
         "All errors with regex patterns and API URLs",
-        "- [Match Endpoint](https://deadend.dev/api/v1/match.json): "
+        f"- [Match Endpoint]({BASE_URL}/api/v1/match.json): "
         "Lightweight regex-only matching (fits in context window)",
-        "- [OpenAPI Spec](https://deadend.dev/api/v1/openapi.json): "
+        f"- [OpenAPI Spec]({BASE_URL}/api/v1/openapi.json): "
         "Full API specification",
-        "- [Complete Database](https://deadend.dev/llms-full.txt): "
+        f"- [Complete Database]({BASE_URL}/llms-full.txt): "
         "Full error dump in plaintext",
-        "- [Error Search](https://deadend.dev/search/): "
+        f"- [Error Search]({BASE_URL}/search/): "
         "Client-side error matching",
         "",
         "## How to Use",
         "",
         "1. Match your error against the regex patterns below",
-        "2. Fetch the full canon: `GET https://deadend.dev/api/v1/{id}.json`",
+        f"2. Fetch the full canon: `GET {BASE_URL}/api/v1/{{id}}.json`",
         "3. Read `dead_ends[]` — do NOT try these (saves time and tokens)",
         "4. Read `workarounds[]` — try these instead (includes success rates)",
         "5. Read `transition_graph` — know what error comes next",
@@ -686,7 +689,7 @@ def build_llms_txt(canons: list[dict]) -> None:
             slug_key = c["id"].rsplit("/", 1)[0]
             lines.append(
                 f"- [{c['error']['signature']}]"
-                f"(https://deadend.dev/{slug_key}/): "
+                f"({BASE_URL}/{slug_key}/): "
                 f"{c['verdict']['summary']}"
             )
         lines.append("")
@@ -790,7 +793,7 @@ def build_openapi_spec(canons: list[dict]) -> None:
             "version": "1.0.0",
             "contact": {"url": "https://github.com/deadend-dev/deadend.dev"},
         },
-        "servers": [{"url": "https://deadend.dev/api/v1"}],
+        "servers": [{"url": f"{BASE_URL}/api/v1"}],
         "paths": {
             "/index.json": {
                 "get": {
@@ -942,11 +945,11 @@ def build_well_known(canons: list[dict]) -> None:
         "auth": {"type": "none"},
         "api": {
             "type": "openapi",
-            "url": "https://deadend.dev/api/v1/openapi.json",
+            "url": f"{BASE_URL}/api/v1/openapi.json",
         },
-        "logo_url": "https://deadend.dev/logo.png",
+        "logo_url": f"{BASE_URL}/logo.png",
         "contact_email": "hello@deadend.dev",
-        "legal_info_url": "https://deadend.dev/legal",
+        "legal_info_url": f"{BASE_URL}/legal",
     }
 
     (well_known_dir / "ai-plugin.json").write_text(
@@ -965,10 +968,10 @@ def build_well_known(canons: list[dict]) -> None:
             f"and error transition graphs (what error comes next)."
         ),
         "version": "1.0.0",
-        "url": "https://deadend.dev",
+        "url": BASE_URL,
         "provider": {
             "organization": "deadend.dev",
-            "url": "https://deadend.dev",
+            "url": BASE_URL,
         },
         "capabilities": {
             "streaming": False,
@@ -1159,6 +1162,8 @@ def main():
         loader=FileSystemLoader(str(TEMPLATE_DIR)),
         autoescape=True,
     )
+    jinja_env.globals["base_path"] = BASE_PATH
+    jinja_env.globals["base_url"] = BASE_URL
 
     # Build pages
     print("Generating error pages...")
