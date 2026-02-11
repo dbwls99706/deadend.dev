@@ -385,17 +385,55 @@ Allow: /
 User-agent: iaskspider
 Allow: /
 
+User-agent: DeepSeekBot
+Allow: /
+
+User-agent: PhindBot
+Allow: /
+
+User-agent: PetalBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: ImagesiftBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: Timpibot
+Allow: /
+
+User-agent: Webzio-Extended
+Allow: /
+
+User-agent: AI2Bot
+Allow: /
+
+User-agent: Ai2Bot-Dolma
+Allow: /
+
 Sitemap: {BASE_URL}/sitemap.xml
+
+# AI agent config files:
+# CLAUDE.md:      {BASE_URL}/CLAUDE.md
+# .cursorrules:   {BASE_URL}/.cursorrules
+# .windsurfrules: {BASE_URL}/.windsurfrules
 
 # AI agent discovery:
 # Match errors:    {BASE_URL}/api/v1/match.json
 # Error index:     {BASE_URL}/api/v1/index.json
 # OpenAPI spec:    {BASE_URL}/api/v1/openapi.json
 # Version info:    {BASE_URL}/api/v1/version.json
+# Stats:           {BASE_URL}/api/v1/stats.json
+# NDJSON stream:   {BASE_URL}/api/v1/errors.ndjson
 # LLM-optimized:   {BASE_URL}/llms.txt
 # Full data dump:  {BASE_URL}/llms-full.txt
 # Plugin manifest: {BASE_URL}/.well-known/ai-plugin.json
 # A2A agent card:  {BASE_URL}/.well-known/agent-card.json
+# Security:        {BASE_URL}/.well-known/security.txt
 """
     (SITE_DIR / "robots.txt").write_text(content, encoding="utf-8")
     print("  Generated: robots.txt")
@@ -834,9 +872,76 @@ def build_openapi_spec(canons: list[dict]) -> None:
                                                 },
                                             },
                                         },
-                                    }
+                                    },
+                                    "example": {
+                                        "schema_version": "1.0.0",
+                                        "total": len(canons),
+                                        "errors": [{
+                                            "id": "python/modulenotfounderror/py311-linux",
+                                            "signature": "ModuleNotFoundError: No module named 'X'",
+                                            "regex": "ModuleNotFoundError.*No module named",
+                                            "domain": "python",
+                                            "resolvable": "true",
+                                            "fix_success_rate": 0.85,
+                                            "api_url": (
+                                                f"{BASE_URL}/api/v1/python/"
+                                                "modulenotfounderror/py311-linux.json"
+                                            ),
+                                        }],
+                                    },
                                 }
                             },
+                        }
+                    },
+                }
+            },
+            "/match.json": {
+                "get": {
+                    "summary": "Lightweight error matching",
+                    "description": (
+                        "Compact file with all error signatures and regexes. "
+                        "Load into context window and regex-match your error. "
+                        "On match, fetch the full canon via the api_url."
+                    ),
+                    "operationId": "matchErrors",
+                    "responses": {
+                        "200": {
+                            "description": "Compact matching patterns",
+                            "content": {"application/json": {}},
+                        }
+                    },
+                }
+            },
+            "/stats.json": {
+                "get": {
+                    "summary": "Dataset statistics by domain",
+                    "description": (
+                        "Detailed statistics: error counts, average fix rates, "
+                        "resolvability breakdowns, confidence levels per domain. "
+                        "Use this to assess data quality before relying on it."
+                    ),
+                    "operationId": "getStats",
+                    "responses": {
+                        "200": {
+                            "description": "Dataset statistics",
+                            "content": {"application/json": {}},
+                        }
+                    },
+                }
+            },
+            "/errors.ndjson": {
+                "get": {
+                    "summary": "Stream all errors as NDJSON",
+                    "description": (
+                        "Newline-delimited JSON. Each line is a complete "
+                        "ErrorCanon object. Use for streaming/batch processing "
+                        "without loading entire dataset into memory."
+                    ),
+                    "operationId": "streamErrors",
+                    "responses": {
+                        "200": {
+                            "description": "NDJSON stream",
+                            "content": {"application/x-ndjson": {}},
                         }
                     },
                 }
@@ -912,12 +1017,58 @@ def build_openapi_spec(canons: list[dict]) -> None:
                     ),
                     "properties": {
                         "id": {"type": "string"},
-                        "error": {"type": "object"},
+                        "error": {
+                            "type": "object",
+                            "properties": {
+                                "signature": {"type": "string"},
+                                "regex": {"type": "string"},
+                                "domain": {"type": "string"},
+                                "category": {"type": "string"},
+                            },
+                        },
                         "environment": {"type": "object"},
-                        "verdict": {"type": "object"},
-                        "dead_ends": {"type": "array"},
-                        "workarounds": {"type": "array"},
-                        "transition_graph": {"type": "object"},
+                        "verdict": {
+                            "type": "object",
+                            "properties": {
+                                "resolvable": {
+                                    "type": "string",
+                                    "enum": ["true", "partial", "false"],
+                                },
+                                "fix_success_rate": {"type": "number"},
+                                "confidence": {"type": "string"},
+                                "summary": {"type": "string"},
+                            },
+                        },
+                        "dead_ends": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {"type": "string"},
+                                    "why_fails": {"type": "string"},
+                                    "fail_rate": {"type": "number"},
+                                },
+                            },
+                        },
+                        "workarounds": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {"type": "string"},
+                                    "how": {"type": "string"},
+                                    "success_rate": {"type": "number"},
+                                },
+                            },
+                        },
+                        "transition_graph": {
+                            "type": "object",
+                            "properties": {
+                                "leads_to": {"type": "array"},
+                                "preceded_by": {"type": "array"},
+                                "frequently_confused_with": {"type": "array"},
+                            },
+                        },
                     },
                 },
             }
@@ -1044,6 +1195,78 @@ def build_well_known(canons: list[dict]) -> None:
     )
     print("  Generated: .well-known/agent-card.json")
 
+    # security.txt (RFC 9116)
+    security_txt = (
+        "Contact: https://github.com/dbwls99706/deadends.dev/issues\n"
+        "Expires: 2027-01-01T00:00:00Z\n"
+        "Preferred-Languages: en, ko\n"
+        f"Canonical: {BASE_URL}/.well-known/security.txt\n"
+    )
+    (well_known_dir / "security.txt").write_text(security_txt, encoding="utf-8")
+    print("  Generated: .well-known/security.txt")
+
+
+def build_stats_json(canons: list[dict]) -> None:
+    """Generate /api/v1/stats.json — detailed dataset statistics for AI agents."""
+    domains: dict[str, list[dict]] = {}
+    for c in canons:
+        domains.setdefault(c["error"]["domain"], []).append(c)
+
+    domain_stats = {}
+    for domain, dcanons in sorted(domains.items()):
+        rates = [c["verdict"]["fix_success_rate"] for c in dcanons]
+        res = {"true": 0, "partial": 0, "false": 0}
+        conf = {"high": 0, "medium": 0, "low": 0}
+        cats: dict[str, int] = {}
+        for c in dcanons:
+            res[c["verdict"]["resolvable"]] = res.get(c["verdict"]["resolvable"], 0) + 1
+            conf[c["verdict"]["confidence"]] = conf.get(c["verdict"]["confidence"], 0) + 1
+            cat = c["error"]["category"]
+            cats[cat] = cats.get(cat, 0) + 1
+
+        domain_stats[domain] = {
+            "count": len(dcanons),
+            "avg_fix_rate": round(sum(rates) / len(rates), 3),
+            "resolvability": res,
+            "confidence": conf,
+            "top_categories": dict(
+                sorted(cats.items(), key=lambda x: x[1], reverse=True)[:5]
+            ),
+        }
+
+    all_rates = [c["verdict"]["fix_success_rate"] for c in canons]
+    stats = {
+        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "total_errors": len(canons),
+        "total_domains": len(domains),
+        "avg_fix_rate": round(sum(all_rates) / len(all_rates), 3),
+        "domains": domain_stats,
+    }
+
+    api_dir = SITE_DIR / "api" / "v1"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    (api_dir / "stats.json").write_text(
+        json.dumps(stats, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print("  Generated: /api/v1/stats.json")
+
+
+def build_ndjson(canons: list[dict]) -> None:
+    """Generate /api/v1/errors.ndjson — newline-delimited JSON for streaming.
+
+    Each line is a complete error canon JSON object. AI agents can stream-process
+    this file without buffering the entire dataset into memory.
+    """
+    api_dir = SITE_DIR / "api" / "v1"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    lines = []
+    for canon in sorted(canons, key=lambda c: c["id"]):
+        lines.append(json.dumps(canon, ensure_ascii=False, separators=(",", ":")))
+    (api_dir / "errors.ndjson").write_text(
+        "\n".join(lines) + "\n", encoding="utf-8"
+    )
+    print(f"  Generated: /api/v1/errors.ndjson ({len(lines)} records)")
+
 
 def build_version_json(canons: list[dict]) -> None:
     """Generate /api/v1/version.json — service metadata for AI agents."""
@@ -1071,6 +1294,8 @@ def build_version_json(canons: list[dict]) -> None:
             "error_detail": f"{BASE_URL}/api/v1/{{domain}}/{{slug}}/{{env}}.json",
             "llms_txt": f"{BASE_URL}/llms.txt",
             "llms_full": f"{BASE_URL}/llms-full.txt",
+            "stats": f"{BASE_URL}/api/v1/stats.json",
+            "ndjson_stream": f"{BASE_URL}/api/v1/errors.ndjson",
         },
         "discovery": {
             "ai_plugin": f"{BASE_URL}/.well-known/ai-plugin.json",
@@ -1124,6 +1349,22 @@ def build_match_json(canons: list[dict]) -> None:
         encoding="utf-8",
     )
     print("  Generated: /api/v1/match.json")
+
+
+def build_ai_config_files() -> None:
+    """Copy AI agent config files (CLAUDE.md, .cursorrules, .windsurfrules) to site root.
+
+    These files are discovered by AI coding agents (Claude Code, Cursor, Windsurf)
+    when they visit the deployed site, enabling them to understand how to use the service.
+    """
+    config_files = ["CLAUDE.md", ".cursorrules", ".windsurfrules"]
+    copied = 0
+    for fname in config_files:
+        src = PROJECT_ROOT / fname
+        if src.exists():
+            shutil.copy2(src, SITE_DIR / fname)
+            copied += 1
+    print(f"  Copied {copied} AI config files to site/")
 
 
 def build_indexnow(canons: list[dict]) -> None:
@@ -1241,12 +1482,24 @@ def main():
     build_version_json(canons)
     print()
 
+    print("Generating stats.json...")
+    build_stats_json(canons)
+    print()
+
+    print("Generating errors.ndjson (streaming)...")
+    build_ndjson(canons)
+    print()
+
     print("Generating IndexNow support...")
     build_indexnow(canons)
     print()
 
     print("Generating favicon...")
     build_favicon()
+    print()
+
+    print("Copying AI agent config files...")
+    build_ai_config_files()
     print()
 
     print(f"Build complete! {len(canons)} error pages generated in site/")

@@ -14,13 +14,17 @@ pip install deadends-dev
 
 ## MCP Server
 
-The MCP server exposes 3 tools for AI coding agents:
+The MCP server exposes 7 tools for AI coding agents:
 
 | Tool | Description |
 |------|-------------|
-| `lookup_error` | Match an error message against 143 known patterns. Returns dead ends, workarounds, and error chains. |
+| `lookup_error` | Match an error message against 501 known patterns. Returns dead ends, workarounds, and error chains. |
 | `get_error_detail` | Get full details for a specific error by ID (e.g., `python/modulenotfounderror/py311-linux`). |
 | `list_error_domains` | List all 14 error domains and their counts. |
+| `search_errors` | Fuzzy keyword search across all domains (e.g., "memory limit", "permission denied"). |
+| `list_errors_by_domain` | List all errors in a specific domain, sorted by fix rate, name, or confidence. |
+| `batch_lookup` | Look up multiple error messages at once (max 10). |
+| `get_domain_stats` | Get quality metrics for a domain: avg fix rate, resolvability, confidence breakdown. |
 
 ### Local (Claude Desktop / Cursor)
 
@@ -61,8 +65,9 @@ Resolvable: true | Fix rate: 0.88
 ## Quick Start — Python SDK
 
 ```python
-from generator.lookup import lookup
+from generator.lookup import lookup, batch_lookup, search
 
+# Single error lookup
 result = lookup("ModuleNotFoundError: No module named 'torch'")
 
 # What NOT to try (saves tokens and time)
@@ -72,6 +77,16 @@ for d in result["dead_ends"]:
 # What actually works
 for w in result["workarounds"]:
     print(f"TRY: {w['action']} — works {int(w['success_rate']*100)}%")
+
+# Batch lookup (multiple errors at once)
+results = batch_lookup([
+    "ModuleNotFoundError: No module named 'torch'",
+    "CUDA error: out of memory",
+    "CrashLoopBackOff",
+])
+
+# Keyword search
+hits = search("memory limit", domain="docker", limit=5)
 ```
 
 ## Quick Start — CLI
@@ -89,10 +104,15 @@ deadends --list  # show all known errors
 | [`/api/v1/match.json`](https://deadends.dev/api/v1/match.json) | Lightweight regex matching (fits in context window) |
 | [`/api/v1/index.json`](https://deadends.dev/api/v1/index.json) | Full error index with all metadata |
 | `/api/v1/{domain}/{slug}/{env}.json` | Individual error canon |
-| [`/api/v1/openapi.json`](https://deadends.dev/api/v1/openapi.json) | OpenAPI 3.1 spec |
+| [`/api/v1/openapi.json`](https://deadends.dev/api/v1/openapi.json) | OpenAPI 3.1 spec with response examples |
+| [`/api/v1/stats.json`](https://deadends.dev/api/v1/stats.json) | Dataset quality metrics by domain |
+| [`/api/v1/errors.ndjson`](https://deadends.dev/api/v1/errors.ndjson) | NDJSON streaming (one error per line) |
+| [`/api/v1/version.json`](https://deadends.dev/api/v1/version.json) | Service metadata and endpoint directory |
 | [`/llms.txt`](https://deadends.dev/llms.txt) | LLM-optimized error listing ([llmstxt.org](https://llmstxt.org) standard) |
 | [`/llms-full.txt`](https://deadends.dev/llms-full.txt) | Complete database dump |
 | [`/.well-known/ai-plugin.json`](https://deadends.dev/.well-known/ai-plugin.json) | AI plugin manifest |
+| [`/.well-known/agent-card.json`](https://deadends.dev/.well-known/agent-card.json) | Google A2A agent card |
+| [`/.well-known/security.txt`](https://deadends.dev/.well-known/security.txt) | Security contact (RFC 9116) |
 
 ## Covered Domains (14)
 
@@ -127,18 +147,27 @@ Each error is a JSON file with:
 }
 ```
 
-## AI Agent Integration
+## AI Agent Integration — 15 Discovery Formats
 
-Every page on deadends.dev includes 8 machine-readable formats:
+Every page on deadends.dev includes machine-readable data in 15 formats:
 
-1. **JSON API** — RESTful error data at `/api/v1/{id}.json`
-2. **match.json** — Compact regex-only file (load entire DB into context)
-3. **JSON-LD** — Schema.org TechArticle + FAQPage in every `<head>`
-4. **ai-summary** — `<pre id="ai-summary">` with KEY=VALUE pairs
-5. **llms.txt** — [llmstxt.org](https://llmstxt.org) standard
-6. **OpenAPI** — Full API specification
-7. **ai-plugin.json** — Plugin discovery manifest
-8. **robots.txt** — All AI crawlers explicitly welcomed
+| Format | Location | Purpose |
+|--------|----------|---------|
+| JSON API | `/api/v1/{id}.json` | RESTful error data per canon |
+| match.json | `/api/v1/match.json` | Compact regex-only file (load entire DB into context) |
+| index.json | `/api/v1/index.json` | Master error index with metadata |
+| stats.json | `/api/v1/stats.json` | Dataset quality metrics per domain |
+| errors.ndjson | `/api/v1/errors.ndjson` | Streaming NDJSON for batch processing |
+| OpenAPI | `/api/v1/openapi.json` | Full API spec with response examples |
+| JSON-LD | Every `<head>` | Schema.org TechArticle + FAQPage |
+| ai-summary | Every page | `<pre id="ai-summary">` KEY=VALUE blocks |
+| llms.txt | `/llms.txt` | llmstxt.org standard |
+| llms-full.txt | `/llms-full.txt` | Complete database dump |
+| ai-plugin.json | `/.well-known/` | OpenAI plugin manifest |
+| agent-card.json | `/.well-known/` | Google A2A protocol |
+| security.txt | `/.well-known/` | RFC 9116 security contact |
+| robots.txt | `/robots.txt` | 34 AI crawlers explicitly welcomed |
+| CLAUDE.md | `/CLAUDE.md` | AI coding agent instructions |
 
 ## Development
 

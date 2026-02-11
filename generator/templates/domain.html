@@ -7,6 +7,20 @@
   <meta name="robots" content="index, follow, max-snippet:-1">
   <link rel="icon" href="{{ base_path }}/favicon.svg" type="image/svg+xml">
   <meta name="keywords" content="{{ domain }}, {{ domain }} error, {{ domain }} fix, troubleshooting, dead end, workaround{% for e in entries %}, {{ e.signature }}{% endfor %}">
+
+  <!-- AI agent discovery -->
+  <link rel="alternate" type="application/json" href="{{ base_path }}/api/v1/index.json" title="Error Index JSON API">
+  <link rel="alternate" type="text/plain" href="{{ base_path }}/llms.txt" title="LLM-optimized error listing">
+  <link rel="describedby" href="{{ base_path }}/api/v1/openapi.json" type="application/json">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ domain }} errors — Dead Ends & Fixes | deadends.dev">
+  <meta property="og:description" content="{{ total }} {{ domain }} error patterns with dead ends and verified workarounds.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ base_url }}/{{ domain }}/">
+  <meta property="og:site_name" content="deadends.dev">
+  <meta name="twitter:card" content="summary">
+
   <link rel="canonical" href="{{ base_url }}/{{ domain }}/">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }

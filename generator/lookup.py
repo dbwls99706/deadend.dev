@@ -123,6 +123,76 @@ def lookup(error_message: str) -> dict | None:
     return matches[0] if matches else None
 
 
+def batch_lookup(error_messages: list[str]) -> list[dict | None]:
+    """Look up multiple error messages at once.
+
+    Returns a list of best matches (or None) for each input message.
+    More efficient than calling lookup() in a loop because canon data
+    is loaded only once.
+
+    Usage:
+        from generator.lookup import batch_lookup
+
+        results = batch_lookup([
+            "ModuleNotFoundError: No module named 'torch'",
+            "CUDA error: out of memory",
+            "CrashLoopBackOff",
+        ])
+        for msg, result in zip(messages, results):
+            if result:
+                print(f"{msg} -> {result['signature']}")
+    """
+    _load_canons()  # ensure loaded once
+    return [lookup(msg) for msg in error_messages]
+
+
+def search(query: str, domain: str | None = None, limit: int = 10) -> list[dict]:
+    """Search errors by keyword across all domains.
+
+    Unlike lookup_all (regex matching), this does fuzzy keyword search
+    across signatures, summaries, dead ends, and workarounds.
+
+    Usage:
+        from generator.lookup import search
+
+        results = search("memory limit", domain="docker", limit=5)
+    """
+    canons = _load_canons()
+    q_words = set(query.lower().split())
+    scored = []
+
+    for canon in canons:
+        if domain and canon["error"]["domain"] != domain:
+            continue
+        score = 0
+        sig = canon["error"]["signature"].lower()
+        summary = canon["verdict"]["summary"].lower()
+        for w in q_words:
+            if w in sig:
+                score += 10
+            if w in summary:
+                score += 5
+            for de in canon["dead_ends"]:
+                if w in de["action"].lower() or w in de["why_fails"].lower():
+                    score += 3
+            for wa in canon.get("workarounds", []):
+                if w in wa["action"].lower():
+                    score += 3
+        if score > 0:
+            scored.append({
+                "score": score,
+                "id": canon["id"],
+                "signature": canon["error"]["signature"],
+                "domain": canon["error"]["domain"],
+                "resolvable": canon["verdict"]["resolvable"],
+                "fix_success_rate": canon["verdict"]["fix_success_rate"],
+                "summary": canon["verdict"]["summary"],
+            })
+
+    scored.sort(key=lambda m: m["score"], reverse=True)
+    return scored[:limit]
+
+
 def main():
     """CLI interface for error lookup."""
     if len(sys.argv) < 2:

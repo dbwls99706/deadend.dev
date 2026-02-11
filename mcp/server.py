@@ -221,6 +221,103 @@ TOOLS = [
             "properties": {},
         },
     },
+    {
+        "name": "search_errors",
+        "description": (
+            "Search errors by keyword across all domains. Unlike lookup_error "
+            "(which uses regex matching), this does fuzzy keyword search. "
+            "Use when you have a vague description like 'memory issues' or "
+            "'permission denied' rather than an exact error message."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": (
+                        "Search keywords (e.g., 'memory limit', 'timeout', "
+                        "'permission denied')"
+                    ),
+                },
+                "domain": {
+                    "type": "string",
+                    "description": (
+                        "Optional: filter to a specific domain "
+                        "(e.g., 'python', 'docker')"
+                    ),
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Max results to return (default: 10)",
+                },
+            },
+            "required": ["query"],
+        },
+    },
+    {
+        "name": "list_errors_by_domain",
+        "description": (
+            "List all errors in a specific domain with their fix rates. "
+            "Use this to understand coverage for a domain before relying on it."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string",
+                    "description": (
+                        "The domain to list errors for "
+                        "(e.g., 'python', 'kubernetes')"
+                    ),
+                },
+                "sort_by": {
+                    "type": "string",
+                    "description": (
+                        "Sort by: 'fix_rate' (default), 'name', or 'confidence'"
+                    ),
+                },
+            },
+            "required": ["domain"],
+        },
+    },
+    {
+        "name": "batch_lookup",
+        "description": (
+            "Look up multiple error messages at once. Returns the best match "
+            "for each error. Use when debugging a chain of errors or analyzing "
+            "a log with multiple failures."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "error_messages": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of error messages to look up (max 10)",
+                    "maxItems": 10,
+                }
+            },
+            "required": ["error_messages"],
+        },
+    },
+    {
+        "name": "get_domain_stats",
+        "description": (
+            "Get detailed statistics for a domain: error counts, average fix "
+            "rate, resolvability breakdown, top categories, and confidence levels. "
+            "Use this to assess how trustworthy deadends.dev data is for a domain."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string",
+                    "description": "The domain to get stats for",
+                }
+            },
+            "required": ["domain"],
+        },
+    },
 ]
 
 
@@ -333,6 +430,162 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
             return {
                 "content": [{"type": "text", "text": text}],
             }
+
+        elif tool_name == "search_errors":
+            query = args.get("query", "").lower()
+            domain_filter = args.get("domain", "")
+            limit = min(args.get("limit", 10), 20)
+            scored = []
+            for c in canons:
+                if domain_filter and c["error"]["domain"] != domain_filter:
+                    continue
+                # Score by keyword presence in signature, summary, dead ends
+                score = 0
+                sig = c["error"]["signature"].lower()
+                summary = c["verdict"]["summary"].lower()
+                q_words = set(query.split())
+                for w in q_words:
+                    if w in sig:
+                        score += 10
+                    if w in summary:
+                        score += 5
+                    for de in c["dead_ends"]:
+                        if w in de["action"].lower():
+                            score += 3
+                        if w in de["why_fails"].lower():
+                            score += 2
+                    for wa in c.get("workarounds", []):
+                        if w in wa["action"].lower():
+                            score += 3
+                if score > 0:
+                    scored.append((score, c))
+            scored.sort(key=lambda x: x[0], reverse=True)
+            if not scored:
+                text = f"No errors matching '{query}'"
+                if domain_filter:
+                    text += f" in domain '{domain_filter}'"
+                text += (
+                    ".\n\nTry broader keywords or use "
+                    "lookup_error with the exact error message."
+                )
+            else:
+                parts = [f"Found {min(len(scored), limit)} results for '{query}':\n"]
+                for score, c in scored[:limit]:
+                    parts.append(
+                        f"- **{c['error']['signature']}** [{c['error']['domain']}] "
+                        f"(fix rate: {int(c['verdict']['fix_success_rate']*100)}%) "
+                        f"— ID: {c['id']}"
+                    )
+                parts.append(
+                    "\nUse get_error_detail with the ID for full dead ends and workarounds."
+                )
+                text = "\n".join(parts)
+            return {"content": [{"type": "text", "text": text}]}
+
+        elif tool_name == "list_errors_by_domain":
+            domain = args.get("domain", "")
+            sort_by = args.get("sort_by", "fix_rate")
+            domain_canons = [c for c in canons if c["error"]["domain"] == domain]
+            if not domain_canons:
+                available = sorted({c["error"]["domain"] for c in canons})
+                text = (
+                    f"Unknown domain: '{domain}'\n\n"
+                    f"Available domains: {', '.join(available)}"
+                )
+            else:
+                if sort_by == "name":
+                    domain_canons.sort(key=lambda c: c["error"]["signature"])
+                elif sort_by == "confidence":
+                    domain_canons.sort(
+                        key=lambda c: c["verdict"]["confidence"], reverse=True
+                    )
+                else:
+                    domain_canons.sort(
+                        key=lambda c: c["verdict"]["fix_success_rate"], reverse=True
+                    )
+                parts = [f"## {domain} — {len(domain_canons)} errors\n"]
+                for c in domain_canons:
+                    res = c["verdict"]["resolvable"]
+                    rate = int(c["verdict"]["fix_success_rate"] * 100)
+                    parts.append(
+                        f"- [{res}] {c['error']['signature']} "
+                        f"(fix: {rate}%) — {c['id']}"
+                    )
+                text = "\n".join(parts)
+            return {"content": [{"type": "text", "text": text}]}
+
+        elif tool_name == "batch_lookup":
+            messages = args.get("error_messages", [])[:10]
+            parts = [f"Batch lookup: {len(messages)} errors\n"]
+            for i, msg in enumerate(messages):
+                matches = match_error(msg, canons)
+                parts.append(f"### Error {i+1}: {msg[:80]}")
+                if matches:
+                    m = matches[0]
+                    parts.append(
+                        f"Match: **{m['signature']}** "
+                        f"[{m['resolvable']}] fix rate: "
+                        f"{int(m['fix_success_rate']*100)}%"
+                    )
+                    if m["dead_ends"]:
+                        parts.append(
+                            f"Top dead end: {m['dead_ends'][0]['action']}"
+                        )
+                    if m["workarounds"]:
+                        parts.append(
+                            f"Top workaround: {m['workarounds'][0]['action']}"
+                        )
+                    parts.append(f"ID: {m['id']}")
+                else:
+                    parts.append("No match found.")
+                parts.append("")
+            text = "\n".join(parts)
+            return {"content": [{"type": "text", "text": text}]}
+
+        elif tool_name == "get_domain_stats":
+            domain = args.get("domain", "")
+            dc = [c for c in canons if c["error"]["domain"] == domain]
+            if not dc:
+                available = sorted({c["error"]["domain"] for c in canons})
+                text = (
+                    f"Unknown domain: '{domain}'\n"
+                    f"Available: {', '.join(available)}"
+                )
+            else:
+                rates = [c["verdict"]["fix_success_rate"] for c in dc]
+                avg_rate = sum(rates) / len(rates)
+                res_counts = {"true": 0, "partial": 0, "false": 0}
+                categories: dict[str, int] = {}
+                conf_levels = {"high": 0, "medium": 0, "low": 0}
+                for c in dc:
+                    res_counts[c["verdict"]["resolvable"]] = (
+                        res_counts.get(c["verdict"]["resolvable"], 0) + 1
+                    )
+                    cat = c["error"]["category"]
+                    categories[cat] = categories.get(cat, 0) + 1
+                    conf = c["verdict"]["confidence"]
+                    conf_levels[conf] = conf_levels.get(conf, 0) + 1
+                top_cats = sorted(
+                    categories.items(), key=lambda x: x[1], reverse=True
+                )[:5]
+                parts = [
+                    f"## {domain} — Domain Statistics\n",
+                    f"Total errors: {len(dc)}",
+                    f"Average fix rate: {int(avg_rate*100)}%\n",
+                    "Resolvability:",
+                    f"  - Resolvable: {res_counts['true']}",
+                    f"  - Partial: {res_counts['partial']}",
+                    f"  - Not resolvable: {res_counts['false']}\n",
+                    "Confidence:",
+                    f"  - High: {conf_levels.get('high', 0)}",
+                    f"  - Medium: {conf_levels.get('medium', 0)}",
+                    f"  - Low: {conf_levels.get('low', 0)}\n",
+                    "Top categories:",
+                ]
+                for cat, count in top_cats:
+                    parts.append(f"  - {cat}: {count}")
+                text = "\n".join(parts)
+            return {"content": [{"type": "text", "text": text}]}
 
         return {
             "content": [{"type": "text", "text": f"Unknown tool: {tool_name}"}],

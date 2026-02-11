@@ -170,6 +170,15 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
           search(input.value.trim());
         }, 150);
       });
+
+      // Support ?q= URL parameter for programmatic deep-linking
+      // AI agents can link to /search/?q=ModuleNotFoundError
+      var params = new URLSearchParams(window.location.search);
+      var q = params.get('q');
+      if (q) {
+        input.value = q;
+        search(q);
+      }
     })();
   </script>
 </body>
