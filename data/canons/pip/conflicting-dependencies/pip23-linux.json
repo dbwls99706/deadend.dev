@@ -30,14 +30,18 @@
       "action": "Running 'pip install --force-reinstall' on the conflicting packages",
       "why_fails": "Force-reinstall re-downloads and reinstalls packages but does NOT bypass the dependency resolver. The same conflict will be detected. If combined with --no-deps, it installs without checking dependencies, which leads to runtime ImportError or version-mismatch crashes.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-force-reinstall"
+      ],
       "common_misconception": "Developers often confuse --force-reinstall with forcing resolution. It only forces re-download and reinstall, not conflict override. The dependency conflict remains."
     },
     {
       "action": "Ignoring the error and proceeding with --no-deps",
       "why_fails": "Installing with --no-deps skips dependency checks entirely, allowing installation to succeed. However, this virtually guarantees runtime failures: wrong API versions, missing methods, or subtle data corruption when libraries assume specific dependency versions.",
       "fail_rate": 0.7,
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-deps"
+      ]
     }
   ],
   "workarounds": [
@@ -46,7 +50,9 @@
       "how": "python -m venv .venv && source .venv/bin/activate && pip install package-a==X.Y package-b==Z.W. Start from a clean venv to eliminate stale package interference. Use version constraints to find a compatible combination. Check each package's PyPI page for compatible version ranges.",
       "success_rate": 0.78,
       "tradeoff": "Requires manual research of compatible version combinations; may require downgrading one or more packages",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/user_guide/#requirements-files"
+      ]
     },
     {
       "action": "Use pip-compile from pip-tools to resolve dependencies",

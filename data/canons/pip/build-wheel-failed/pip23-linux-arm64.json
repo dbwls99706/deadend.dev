@@ -32,14 +32,18 @@
       "action": "Running 'pip install --no-cache-dir' to force a fresh download",
       "why_fails": "The cache is not the problem. The build fails because compilation dependencies (gcc, python3-dev, library headers) are missing from the system, or the package's C extension does not support ARM64. Re-downloading the same source distribution does not fix the build environment.",
       "fail_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-cache-dir"
+      ],
       "common_misconception": "Developers often conflate cached corrupted wheels with build failures. --no-cache-dir is for cache corruption, not missing build tools."
     },
     {
       "action": "Upgrading pip alone without installing build dependencies",
       "why_fails": "While an older pip may lack support for newer wheel formats (PEP 517/518 builds), the primary cause on ARM64 is missing system-level build tools. Upgrading pip does not install gcc, python3-dev, or library headers required by C extensions.",
       "fail_rate": 0.8,
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/installation/"
+      ]
     }
   ],
   "workarounds": [
@@ -48,7 +52,9 @@
       "how": "On Debian/Ubuntu: 'sudo apt-get install build-essential python3-dev libffi-dev libssl-dev'. On RHEL/Fedora: 'sudo dnf install gcc gcc-c++ python3-devel libffi-devel openssl-devel'. Then retry 'pip install <package>'. For specific packages, check their documentation for additional system dependencies (e.g., numpy needs BLAS: 'sudo apt-get install libopenblas-dev').",
       "success_rate": 0.82,
       "tradeoff": "Adds system-level build dependencies; compilation takes longer than downloading prebuilt wheels; Docker images become larger if build tools are included",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ]
     },
     {
       "action": "Use piwheels or find prebuilt ARM64 wheels",
@@ -66,7 +72,9 @@
       "success_rate": 0.85,
       "tradeoff": "More complex Dockerfile; build stage takes longer; requires Docker",
       "condition": "Deploying in containers where minimizing image size matters",
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/build/building/multi-stage/"
+      ]
     }
   ],
   "transition_graph": {

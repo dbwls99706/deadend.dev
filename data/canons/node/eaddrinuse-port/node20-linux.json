@@ -30,14 +30,18 @@
       "action": "Binding to port 0 to let the OS assign a random port",
       "why_fails": "While technically valid, port 0 makes the service unreachable at a predictable address. Other services, reverse proxies, and clients that depend on a known port will break. This avoids the symptom but creates a different problem.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/net.html#serverlistenport-host-backlog-callback"
+      ],
       "common_misconception": "Port 0 is useful for testing but is not a production solution. It shifts the problem from port conflict to service discovery."
     },
     {
       "action": "Running 'killall node' to kill all Node processes",
       "why_fails": "This kills every Node process on the system, including unrelated ones such as build watchers, other services, or VS Code extensions. It is a blunt instrument that causes collateral damage and does not address the root cause of why a stale process held the port.",
       "fail_rate": 0.4,
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/process.html#signal-events"
+      ]
     }
   ],
   "workarounds": [
@@ -46,7 +50,9 @@
       "how": "Run 'lsof -i :3000' (replace 3000 with the port from the error) to identify the PID. Then run 'kill <PID>'. If the process does not terminate, use 'kill -9 <PID>'. Alternative: 'fuser -k 3000/tcp' to kill the process directly.",
       "success_rate": 0.95,
       "tradeoff": "None significant; this is the standard approach",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/net.html#serveraddress"
+      ]
     },
     {
       "action": "Use a port-finding library to automatically select an available port",
@@ -63,7 +69,9 @@
       "how": "Handle SIGTERM and SIGINT in your Node process: process.on('SIGTERM', () => { server.close(() => process.exit(0)); }); This ensures the port is released when the process is stopped, preventing stale listeners.",
       "success_rate": 0.8,
       "tradeoff": "Preventive measure; does not fix the current occurrence but prevents future ones",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/process.html#signal-events"
+      ]
     }
   ],
   "transition_graph": {

@@ -49,7 +49,9 @@
       "action": "Wrapping the access in a try/except and defaulting to zero",
       "why_fails": "Silently replacing a missing gradient with zeros masks a real bug in the training pipeline. The model will appear to train but the affected parameters will never update, leading to degraded or nonsensical model performance that is extremely difficult to debug.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pytorch.org/docs/stable/autograd.html#torch.Tensor.grad"
+      ],
       "common_misconception": "Exception handling around gradient access is sometimes used as a defensive pattern, but it hides fundamental autograd configuration errors."
     }
   ],

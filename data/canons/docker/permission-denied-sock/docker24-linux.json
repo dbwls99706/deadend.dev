@@ -39,7 +39,9 @@
       "action": "Prefixing every Docker command with sudo",
       "why_fails": "Running Docker with sudo works as an immediate workaround but is not a long-term solution. It breaks IDE integrations, Docker Compose workflows, CI/CD scripts, and development tooling that expects Docker to work without sudo. It also trains users to run everything as root.",
       "fail_rate": 0.25,
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/engine/install/linux-postinstall/"
+      ]
     }
   ],
   "workarounds": [

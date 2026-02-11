@@ -30,13 +30,17 @@
       "action": "Trying 'git merge --force' (not a valid flag)",
       "why_fails": "Git merge does not accept a --force flag. This produces 'error: unknown option `force`'. Developers who use GUI clients may expect a force option that does not exist in the Git CLI. The correct flag is --allow-unrelated-histories.",
       "fail_rate": 1.0,
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-merge"
+      ]
     },
     {
       "action": "Deleting .git and reinitializing to start fresh",
       "why_fails": "This destroys all local history, branches, stashes, and configuration. After reinitializing, pulling from the remote will produce the exact same error because the new empty repository still has no common ancestor with the remote's history.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-init"
+      ],
       "common_misconception": "Developers believe that starting with a clean .git will somehow align histories. In reality, 'git init' creates a brand new empty history that is equally unrelated to the remote."
     }
   ],
@@ -56,7 +60,9 @@
       "success_rate": 0.9,
       "tradeoff": "Loses the local repository's commit history; only suitable when local history is expendable",
       "condition": "The local repository has minimal history worth preserving",
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-clone"
+      ]
     },
     {
       "action": "Use Xcode or GitHub Desktop GUI to perform the merge",
@@ -64,7 +70,9 @@
       "success_rate": 0.8,
       "tradeoff": "Depends on the specific GUI client version; behavior may vary between clients",
       "condition": "Using a macOS Git GUI client that supports this merge scenario",
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-merge"
+      ]
     }
   ],
   "transition_graph": {

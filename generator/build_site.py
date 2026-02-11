@@ -101,7 +101,7 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
             "dateModified": canon["verdict"]["last_updated"],
             "publisher": {
                 "@type": "Organization",
-                "name": "deadend.dev",
+                "name": "deadends.dev",
                 "url": BASE_URL,
             },
             "about": {
@@ -312,7 +312,7 @@ def build_sitemap(
 
 def build_robots_txt() -> None:
     """Generate robots.txt with explicit AI crawler allowances."""
-    content = f"""# deadend.dev - Structured failure knowledge for AI agents
+    content = f"""# deadends.dev - Structured failure knowledge for AI agents
 # All crawlers welcome — this site is BUILT for AI consumption
 
 User-agent: *
@@ -406,7 +406,7 @@ def build_404_page() -> None:
     html = (
         "<!DOCTYPE html>\n"
         '<html lang="en"><head>\n'
-        '<meta charset="utf-8"><title>404 | deadend.dev</title>\n'
+        '<meta charset="utf-8"><title>404 | deadends.dev</title>\n'
         "<style>\n"
         "body{font-family:system-ui;max-width:800px;margin:2rem auto;\n"
         "padding:0 1rem;color:#e0e0e0;background:#0d1117;}\n"
@@ -661,7 +661,7 @@ def build_llms_txt(canons: list[dict]) -> None:
 
     # llmstxt.org standard format
     lines = [
-        "# deadend.dev",
+        "# deadends.dev",
         "",
         "> Structured failure knowledge for AI coding agents. "
         f"{len(canons)} error entries across {len(by_domain)} domains. "
@@ -714,7 +714,7 @@ def build_llms_txt(canons: list[dict]) -> None:
 
     # llms-full.txt — complete data dump for AI context windows
     full_lines = [
-        "# deadend.dev — Complete Error Database",
+        "# deadends.dev — Complete Error Database",
         "",
         f"> {len(canons)} errors across {len(by_domain)} domains. "
         f"Generated {datetime.now(timezone.utc).strftime('%Y-%m-%d')}.",
@@ -799,7 +799,7 @@ def build_openapi_spec(canons: list[dict]) -> None:
     spec = {
         "openapi": "3.1.0",
         "info": {
-            "title": "deadend.dev API",
+            "title": "deadends.dev API",
             "description": (
                 "Structured failure knowledge for AI agents. "
                 "Query error signatures to find dead ends, workarounds, "
@@ -942,7 +942,7 @@ def build_well_known(canons: list[dict]) -> None:
     # ai-plugin.json (OpenAI legacy format)
     plugin = {
         "schema_version": "v1",
-        "name_for_human": "deadend.dev",
+        "name_for_human": "deadends.dev",
         "name_for_model": "deadend_error_knowledge",
         "description_for_human": (
             "Structured failure knowledge — check what NOT to try "
@@ -974,7 +974,7 @@ def build_well_known(canons: list[dict]) -> None:
 
     # agent-card.json (Google A2A protocol)
     agent_card = {
-        "name": "deadend.dev",
+        "name": "deadends.dev",
         "description": (
             f"Structured error knowledge database for AI coding agents. "
             f"{len(canons)} error patterns across {len(domains)} domains "
@@ -985,7 +985,7 @@ def build_well_known(canons: list[dict]) -> None:
         "version": "1.0.0",
         "url": BASE_URL,
         "provider": {
-            "organization": "deadend.dev",
+            "organization": "deadends.dev",
             "url": BASE_URL,
         },
         "capabilities": {
@@ -1051,7 +1051,7 @@ def build_version_json(canons: list[dict]) -> None:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     version_data = {
-        "service": "deadend.dev",
+        "service": "deadends.dev",
         "version": "1.1.0",
         "description": (
             "Structured failure knowledge for AI coding agents. "
@@ -1157,7 +1157,7 @@ def build_indexnow(canons: list[dict]) -> None:
 
 
 def main():
-    print("Building deadend.dev static site...\n")
+    print("Building deadends.dev static site...\n")
 
     # Clean and recreate site directory
     if SITE_DIR.exists():

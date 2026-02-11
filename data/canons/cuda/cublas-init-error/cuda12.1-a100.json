@@ -42,7 +42,7 @@
       "sources": [
         "https://github.com/pytorch/pytorch/issues/99673"
       ],
-      "common_misconception": "Users believe the cuBLAS library is corrupted when they see the init error. In reality, the library loads fine — it fails initialization because it detects a runtime version mismatch with the CUDA driver or toolkit."
+      "common_misconception": "Users believe the cuBLAS library is corrupted when they see the init error. In reality, the library loads fine \u2014 it fails initialization because it detects a runtime version mismatch with the CUDA driver or toolkit."
     },
     {
       "action": "Calling torch.cuda.init() manually before operations",
@@ -51,13 +51,15 @@
       "sources": [
         "https://pytorch.org/docs/stable/generated/torch.cuda.init.html"
       ],
-      "common_misconception": "Users assume torch.cuda.init() initializes all CUDA sub-libraries (cuBLAS, cuDNN, cuSOLVER, etc.). It only initializes the base CUDA runtime context — each library has its own initialization path."
+      "common_misconception": "Users assume torch.cuda.init() initializes all CUDA sub-libraries (cuBLAS, cuDNN, cuSOLVER, etc.). It only initializes the base CUDA runtime context \u2014 each library has its own initialization path."
     },
     {
       "action": "Setting CUDA_VISIBLE_DEVICES to a single GPU",
       "why_fails": "Restricting visible devices to a single GPU does not resolve library version mismatches. This workaround is sometimes suggested because multi-GPU setups can mask the root cause, but the cuBLAS init error is per-device and occurs regardless of how many GPUs are visible.",
       "fail_rate": 0.88,
-      "sources": []
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#env-vars"
+      ]
     }
   ],
   "workarounds": [

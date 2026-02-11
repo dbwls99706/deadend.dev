@@ -32,14 +32,18 @@
       "action": "Running npm cache clean --force",
       "why_fails": "ENOENT indicates a missing filesystem path, not npm cache corruption. Clearing the cache does not create missing files, fix broken symlinks, or correct path references in code.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html#common-system-errors"
+      ],
       "common_misconception": "npm cache clean is a common Stack Overflow suggestion for any npm error, but ENOENT is a filesystem issue unrelated to caching."
     },
     {
       "action": "Reinstalling Xcode Command Line Tools",
       "why_fails": "Unless the ENOENT involves a native module that requires compilation tools, reinstalling Xcode CLT has no effect on missing file paths. This conflates build errors with path resolution errors.",
       "fail_rate": 0.9,
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/errors.html#common-system-errors"
+      ]
     }
   ],
   "workarounds": [
@@ -48,7 +52,9 @@
       "how": "Extract the path from the error message. Run 'ls -la <path>' and 'file <path>' to check if the target exists or is a broken symlink. If a symlink, recreate it with 'ln -s <real_target> <link_name>'.",
       "success_rate": 0.7,
       "tradeoff": "Manual investigation required; must trace the origin of the path reference",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/fs.html#fsaccesspath-mode-callback"
+      ]
     },
     {
       "action": "Delete node_modules and package-lock.json, then reinstall",
@@ -56,7 +62,9 @@
       "success_rate": 0.65,
       "tradeoff": "Slow on large projects; may change resolved dependency versions",
       "condition": "Error occurs inside node_modules rather than in source code paths",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/errors.html#common-system-errors"
+      ]
     },
     {
       "action": "Check for case-sensitive volume if using APFS case-sensitive format",
@@ -64,7 +72,9 @@
       "success_rate": 0.5,
       "tradeoff": "Only relevant if the volume is explicitly formatted as case-sensitive APFS",
       "condition": "macOS volume is formatted as case-sensitive APFS",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/fs.html#file-system"
+      ]
     }
   ],
   "transition_graph": {

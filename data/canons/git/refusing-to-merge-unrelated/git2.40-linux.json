@@ -30,14 +30,18 @@
       "action": "Trying 'git merge --force' (not a valid flag)",
       "why_fails": "Git merge does not have a --force flag. This is a common misconception from conflating 'git push --force' with merge. Running this command produces an error: 'error: unknown option `force`'. The correct flag is --allow-unrelated-histories.",
       "fail_rate": 1.0,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-merge"
+      ],
       "common_misconception": "Developers familiar with 'git push --force' assume a similar flag exists for merge. It does not. The --force flag is specific to push and a few other subcommands."
     },
     {
       "action": "Deleting the .git directory and reinitializing the repository",
       "why_fails": "Deleting .git destroys the entire local history, all branches, stashes, and configuration. After reinitializing, the local repo has no history at all and attempting to pull from the remote will face the same 'unrelated histories' error because the new empty repo still has no common ancestor with the remote.",
       "fail_rate": 0.95,
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-init"
+      ]
     }
   ],
   "workarounds": [
@@ -55,7 +59,9 @@
       "how": "Run 'git log --oneline --all --graph' to visualize both histories. If you created a GitHub repo with a README/LICENSE and then ran 'git init' locally without cloning, the two repos have independent root commits. If the divergence was caused by filter-branch or BFG Repo Cleaner, the rewritten history created new commit hashes.",
       "success_rate": 0.85,
       "tradeoff": "Requires understanding of Git history; no direct fix, but guides the correct approach",
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-log"
+      ]
     },
     {
       "action": "Clone the remote and copy local files instead of merging",
@@ -63,7 +69,9 @@
       "success_rate": 0.9,
       "tradeoff": "Loses local commit history (suitable only when local history is minimal or unimportant)",
       "condition": "The local repository has very few commits and preserving its history is not important",
-      "sources": []
+      "sources": [
+        "https://git-scm.com/docs/git-clone"
+      ]
     }
   ],
   "transition_graph": {

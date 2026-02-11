@@ -38,7 +38,9 @@
       "action": "Downgrading or replacing the ssl module",
       "why_fails": "The ssl module is compiled into CPython and linked against a specific OpenSSL version. It cannot be independently downgraded via pip. Attempting to replace it with pyOpenSSL or other libraries does not change the default SSL context used by urllib, requests, and other standard libraries.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/ssl.html"
+      ],
       "common_misconception": "Users believe the SSL module itself is broken and try to replace it, when the actual issue is the missing CA certificate bundle."
     },
     {

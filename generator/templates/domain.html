@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{ domain }} errors — Dead Ends & Fixes ({{ total }} errors) | deadend.dev</title>
+  <title>{{ domain }} errors — Dead Ends & Fixes ({{ total }} errors) | deadends.dev</title>
   <meta name="description" content="All known {{ domain }} errors with dead ends and verified workarounds. {{ total }} error entries with fix success rates and what NOT to try.">
   <meta name="robots" content="index, follow, max-snippet:-1">
   <link rel="icon" href="{{ base_path }}/favicon.svg" type="image/svg+xml">
@@ -32,7 +32,7 @@ MATCH_API={{ base_url }}/api/v1/match.json
 {% endfor %}</pre>
   {% endautoescape %}
 
-  <nav><a href="{{ base_path }}/">deadend.dev</a></nav>
+  <nav><a href="{{ base_path }}/">deadends.dev</a></nav>
 
   <h1>{{ domain }} errors</h1>
   <p class="meta">{{ total }} error entr{{ 'ies' if total != 1 else 'y' }}</p>
@@ -46,7 +46,7 @@ MATCH_API={{ base_url }}/api/v1/match.json
   {% endfor %}
 
   <footer class="meta">
-    <p><a href="{{ base_path }}/">deadend.dev</a> · <a href="https://github.com/dbwls99706/deadend.dev">GitHub</a></p>
+    <p><a href="{{ base_path }}/">deadends.dev</a> · <a href="https://github.com/dbwls99706/deadend.dev">GitHub</a></p>
   </footer>
 </body>
 </html>

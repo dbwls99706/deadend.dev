@@ -47,7 +47,9 @@
       "action": "Clearing __pycache__ or .pyc files",
       "why_fails": ".pyc files are compiled bytecode caches, unrelated to pickle data serialization. Clearing them has no effect on pickle loading. This advice likely stems from confusion between Python's bytecode format and pickle's serialization format.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/pickle.html"
+      ],
       "common_misconception": "Some users conflate Python's internal bytecode caching with serialized data files."
     },
     {
@@ -55,7 +57,9 @@
       "why_fails": "If the file was never pickle format to begin with (e.g., it is a safetensors, GGUF, or HDF5 file), re-downloading it produces the same error. The issue is using the wrong deserialization function, not a corrupt download.",
       "fail_rate": 0.6,
       "condition": "When the file is intentionally in a non-pickle format",
-      "sources": []
+      "sources": [
+        "https://docs.python.org/3/library/pickle.html#restricting-globals"
+      ]
     }
   ],
   "workarounds": [

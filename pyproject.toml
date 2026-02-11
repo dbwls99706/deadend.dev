@@ -3,30 +3,63 @@ requires = ["setuptools>=69.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "deadend-dev"
+name = "deadends-dev"
 version = "0.1.0"
-description = "Structured failure knowledge infrastructure for AI agents"
+description = "Structured failure knowledge for AI agents — dead ends, workarounds, error chains"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
     {name = "YuJin Hong"}
 ]
+readme = "README.md"
+keywords = [
+    "error", "debugging", "dead-end", "workaround", "ai-agent",
+    "mcp", "error-handling", "troubleshooting",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Debuggers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://deadends.dev"
+Repository = "https://github.com/dbwls99706/deadend.dev"
+API = "https://deadends.dev/api/v1/index.json"
 
 dependencies = [
     "jinja2>=3.1",
-    "jsonschema>=4.20",
-    "requests>=2.31",
-    "anthropic>=0.25",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
     "ruff>=0.4",
+    "jsonschema>=4.20",
+]
+mcp = [
+    "jsonschema>=4.20",
+]
+pipeline = [
+    "jsonschema>=4.20",
+    "requests>=2.31",
+    "anthropic>=0.25",
 ]
 
+[project.scripts]
+deadends = "generator.lookup:main"
+deadends-mcp = "mcp.server:main"
+
 [tool.setuptools.packages.find]
-include = ["generator*"]
+include = ["generator*", "mcp*", "data*"]
+
+[tool.setuptools.package-data]
+data = ["canons/**/*.json"]
 
 [tool.ruff]
 line-length = 100

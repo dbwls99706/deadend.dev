@@ -30,14 +30,18 @@
       "action": "Running 'docker network rm' on the conflicting network alone",
       "why_fails": "If the conflicting network has running containers attached, 'docker network rm' fails with an error. Even if removal succeeds, recreating the network with the same docker-compose.yml will reassign the same overlapping subnet from Docker's default pool.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/network/rm/"
+      ],
       "common_misconception": "Removing and recreating the network does not change the subnet unless you explicitly specify a non-conflicting one in the compose file or daemon config."
     },
     {
       "action": "Restarting the Docker daemon without changing the network configuration",
       "why_fails": "Restarting Docker (systemctl restart docker) does not change subnet allocations. Docker persists network state and will reassign the same subnets upon restart. The overlap condition remains.",
       "fail_rate": 0.9,
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/engine/daemon/"
+      ]
     }
   ],
   "workarounds": [

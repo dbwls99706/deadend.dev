@@ -32,14 +32,18 @@
       "action": "Disconnecting the VPN to create Docker networks, then reconnecting",
       "why_fails": "While this allows network creation, the Docker network's subnet will still overlap with the VPN range. When the VPN reconnects, routing conflicts cause Docker containers to lose network connectivity or the VPN to malfunction. The overlap is not resolved, just deferred.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/network/"
+      ],
       "common_misconception": "Creating the Docker network while the VPN is down does not prevent routing conflicts when the VPN reconnects. Both Docker and the VPN add routes to the kernel routing table, and overlapping routes cause unpredictable packet delivery."
     },
     {
       "action": "Running 'docker network rm' followed by recreating without explicit subnet",
       "why_fails": "Docker will pick a new subnet from its default pool, which likely also overlaps with the VPN. Since VPNs typically claim large blocks of private IP space, most of Docker's default allocations will conflict.",
       "fail_rate": 0.8,
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/network/rm/"
+      ]
     }
   ],
   "workarounds": [
@@ -57,7 +61,9 @@
       "how": "networks:\n  app:\n    driver: bridge\n    ipam:\n      config:\n        - subnet: 172.28.0.0/16\nChoose a subnet that does not overlap with VPN routes. This is a per-project fix that does not require daemon configuration changes.",
       "success_rate": 0.82,
       "tradeoff": "Must be done for every docker-compose project individually; requires coordination across teams to avoid inter-project conflicts",
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/compose/how-tos/networking/"
+      ]
     },
     {
       "action": "Use Docker's macvlan or ipvlan network driver to avoid bridge subnet conflicts",

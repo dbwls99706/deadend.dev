@@ -51,7 +51,9 @@
       "action": "Upgrading pip and setuptools",
       "why_fails": "The segfault occurs inside numpy's compiled C/Fortran code (OpenBLAS), which has no dependency on pip or setuptools at runtime. Upgrading build tools has zero effect on the runtime behavior of already-compiled shared objects.",
       "fail_rate": 0.97,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/installation/"
+      ],
       "common_misconception": "Upgrading pip is a common first-response troubleshooting step, but it is irrelevant when the crash is in native compiled code."
     },
     {

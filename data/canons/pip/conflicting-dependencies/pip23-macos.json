@@ -30,13 +30,17 @@
       "action": "Running 'pip install --force-reinstall' on the conflicting packages",
       "why_fails": "Force-reinstall does not bypass the dependency resolver. The conflict is still detected and the installation fails. This flag only controls re-download behavior, not resolution logic.",
       "fail_rate": 0.85,
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-force-reinstall"
+      ]
     },
     {
       "action": "Using the macOS system Python (/usr/bin/python3) to avoid the conflict",
       "why_fails": "The macOS system Python is a minimal installation intended for system use. It has the same dependency resolution logic and will report the same conflicts. Additionally, installing packages into the system Python can break macOS system tools and is restricted on newer macOS versions.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/venv.html"
+      ],
       "common_misconception": "Some developers believe the system Python has different package resolution behavior. It uses the same pip resolver; the conflict is in the package metadata, not the Python installation."
     }
   ],
@@ -46,7 +50,9 @@
       "how": "python3 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install package-a==X.Y package-b==Z.W. On macOS, always ensure you are using a venv to avoid contamination from Homebrew or system Python site-packages.",
       "success_rate": 0.78,
       "tradeoff": "Requires finding compatible version combinations manually; may need to test multiple version pins",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/user_guide/#requirements-files"
+      ]
     },
     {
       "action": "Use pip-compile to find a consistent resolution",

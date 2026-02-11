@@ -32,14 +32,18 @@
       "action": "Running 'docker system prune' without --volumes",
       "why_fails": "Same as Linux: the default prune does not remove volumes, which are often the largest consumers of space. Additionally, on macOS, the VM disk image may not shrink even after pruning because the virtual disk does not automatically compact.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/system/prune/"
+      ],
       "common_misconception": "On macOS, even after a thorough prune, you may not see host disk space recovered because the VM's virtual disk file (~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw) does not automatically shrink."
     },
     {
       "action": "Deleting the Docker.raw file manually",
       "why_fails": "Deleting the VM disk image destroys all Docker data (images, containers, volumes) without recovery. Docker Desktop will recreate an empty disk on restart, but all data is permanently lost. This is equivalent to wiping the entire Docker installation.",
       "fail_rate": 0.2,
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/"
+      ]
     }
   ],
   "workarounds": [
@@ -67,7 +71,9 @@
       "how": "Docker Desktop > Troubleshoot > Reset to factory defaults. This deletes the VM disk image and recreates it empty. Alternatively, Docker Desktop > Troubleshoot > Clean / Purge data. All images and containers will need to be re-pulled/rebuilt.",
       "success_rate": 0.95,
       "tradeoff": "Destroys all Docker data; all images, containers, volumes, and configurations are lost",
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/desktop/settings-and-maintenance/settings/"
+      ]
     }
   ],
   "transition_graph": {

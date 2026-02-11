@@ -39,7 +39,9 @@
       "action": "Downgrading to Node 16 to get a different memory behavior",
       "why_fails": "Node 16 has a smaller default heap limit and an older V8 engine. Downgrading typically makes memory problems worse, not better, and Node 16 reached end-of-life in September 2023.",
       "fail_rate": 0.92,
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes"
+      ]
     }
   ],
   "workarounds": [
@@ -67,7 +69,9 @@
       "success_rate": 0.72,
       "tradeoff": "Requires code refactoring; streaming error handling is more complex than synchronous patterns",
       "condition": "Error occurs during large data processing or bundler builds",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/stream.html#stream"
+      ]
     }
   ],
   "transition_graph": {

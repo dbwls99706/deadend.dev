@@ -30,13 +30,17 @@
       "action": "Binding to port 0 to auto-assign a random port",
       "why_fails": "Using port 0 avoids the conflict but makes the service unreachable at a known address. Other tools, browser bookmarks, and reverse proxy configs that reference the original port will break.",
       "fail_rate": 0.7,
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/net.html#serverlistenport-host-backlog-callback"
+      ]
     },
     {
       "action": "Running 'killall node' to stop all Node processes",
       "why_fails": "On macOS, killall node terminates every Node process including Electron apps, VS Code helper processes, and other unrelated services. This causes disruption far beyond the intended scope.",
       "fail_rate": 0.4,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/process.html#signal-events"
+      ],
       "common_misconception": "Developers assume only their server is running Node, but macOS often has multiple Node processes from Electron-based apps like VS Code, Slack, or Discord."
     }
   ],
@@ -46,7 +50,9 @@
       "how": "Run 'lsof -i :3000 -P -n' to find the PID holding the port (the -P and -n flags speed up the lookup by skipping name resolution). Then 'kill <PID>'. On macOS, 'lsof' is the primary tool since 'fuser' has limited functionality compared to Linux.",
       "success_rate": 0.95,
       "tradeoff": "None significant; this is the standard approach on macOS",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/net.html#serveraddress"
+      ]
     },
     {
       "action": "Disable AirPlay Receiver if it conflicts with port 5000",

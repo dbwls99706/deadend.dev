@@ -32,14 +32,18 @@
       "action": "Running chmod 777 /var/run/docker.sock inside WSL2",
       "why_fails": "The Docker socket in WSL2 is managed by Docker Desktop's WSL integration. Changing permissions is overridden whenever Docker Desktop restarts or the WSL distro is restarted. This also poses the same security risks as on native Linux.",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/install/linux-postinstall/"
+      ],
       "common_misconception": "The socket in WSL2 is not a regular Linux socket; it is a proxy managed by Docker Desktop. Permission changes do not persist and do not address the root cause."
     },
     {
       "action": "Installing Docker Engine natively inside WSL2 alongside Docker Desktop",
       "why_fails": "Running both Docker Desktop's WSL integration and a native Docker Engine inside the same WSL2 distro causes socket conflicts, iptables collisions, and unpredictable behavior. The two Docker daemons compete for the same resources.",
       "fail_rate": 0.75,
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/desktop/features/wsl/"
+      ]
     }
   ],
   "workarounds": [
@@ -57,7 +61,9 @@
       "how": "Inside WSL2: 'sudo usermod -aG docker $USER'. Then from Windows PowerShell: 'wsl --shutdown'. Reopen your WSL terminal. Verify with 'docker ps'.",
       "success_rate": 0.78,
       "tradeoff": "Requires a full WSL restart (wsl --shutdown), which closes all WSL terminals and running processes",
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/desktop/features/wsl/"
+      ]
     },
     {
       "action": "Use Docker Engine natively in WSL2 without Docker Desktop",

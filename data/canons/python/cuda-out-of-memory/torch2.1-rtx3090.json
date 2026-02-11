@@ -28,7 +28,7 @@
     "fix_success_rate": 0.28,
     "confidence": 0.75,
     "last_updated": "2025-04-10",
-    "summary": "RTX 3090 has 24GB VRAM — significantly less than A100-40GB. Models above 7B parameters in FP16 will frequently OOM. batch_size reduction has lower success rate here due to tighter memory margins."
+    "summary": "RTX 3090 has 24GB VRAM \u2014 significantly less than A100-40GB. Models above 7B parameters in FP16 will frequently OOM. batch_size reduction has lower success rate here due to tighter memory margins."
   },
   "dead_ends": [
     {
@@ -38,14 +38,16 @@
       "sources": [
         "https://github.com/pytorch/pytorch/issues/16417"
       ],
-      "common_misconception": "empty_cache only returns cached unused blocks — no effect on active tensors."
+      "common_misconception": "empty_cache only returns cached unused blocks \u2014 no effect on active tensors."
     },
     {
       "action": "Reducing batch_size to 1",
       "why_fails": "With only 24GB VRAM, models above 7B parameters exceed memory even at batch_size=1 in FP16. 7B model ~14GB params + optimizer states + activations > 24GB.",
       "fail_rate": 0.68,
       "condition": "model_params >= 7B",
-      "sources": []
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html#memory-management"
+      ]
     },
     {
       "action": "Using torch.compile() for memory optimization",
@@ -83,7 +85,9 @@
       "success_rate": 0.45,
       "tradeoff": "RTX 3090 supports BF16 but with lower throughput than A100. Numerical instability possible.",
       "condition": "Model must be FP16-stable",
-      "sources": []
+      "sources": [
+        "https://pytorch.org/docs/stable/amp.html"
+      ]
     }
   ],
   "transition_graph": {

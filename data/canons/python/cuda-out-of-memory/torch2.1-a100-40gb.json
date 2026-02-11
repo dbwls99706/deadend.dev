@@ -38,18 +38,20 @@
       "sources": [
         "https://github.com/pytorch/pytorch/issues/16417"
       ],
-      "common_misconception": "Many believe empty_cache 'cleans up' GPU memory, but it only returns cached unused blocks to the allocator — it has no effect on active tensors."
+      "common_misconception": "Many believe empty_cache 'cleans up' GPU memory, but it only returns cached unused blocks to the allocator \u2014 it has no effect on active tensors."
     },
     {
       "action": "Reducing batch_size to 1",
       "why_fails": "If model parameters themselves exceed VRAM, OOM occurs even at batch_size=1. On A100-40GB, 13B+ parameter models require 26GB+ in FP16 for parameters alone.",
       "fail_rate": 0.52,
       "condition": "model_params >= 13B",
-      "sources": []
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html#memory-management"
+      ]
     },
     {
       "action": "Setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True",
-      "why_fails": "Introduced in PyTorch 2.1 but does not work in A100 MIG partition environments. Only effective for fragmentation — useless for absolute memory shortage.",
+      "why_fails": "Introduced in PyTorch 2.1 but does not work in A100 MIG partition environments. Only effective for fragmentation \u2014 useless for absolute memory shortage.",
       "fail_rate": 0.61,
       "condition": "A100 MIG mode or absolute memory shortage",
       "sources": [
@@ -74,7 +76,9 @@
       "success_rate": 0.58,
       "tradeoff": "Possible numerical instability in some operations",
       "condition": "Model must be FP16-stable. BF16 is natively supported on A100.",
-      "sources": []
+      "sources": [
+        "https://pytorch.org/docs/stable/amp.html"
+      ]
     },
     {
       "action": "Apply DeepSpeed ZeRO Stage 2/3",

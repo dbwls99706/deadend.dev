@@ -69,7 +69,9 @@
       "how": "Add to crontab: '0 2 * * 0 docker system prune -af --filter \"until=168h\"' (weekly prune of resources older than 7 days). For log rotation, add to /etc/docker/daemon.json: {\"log-driver\": \"json-file\", \"log-opts\": {\"max-size\": \"10m\", \"max-file\": \"3\"}}.",
       "success_rate": 0.8,
       "tradeoff": "Preventive measure; does not immediately free space but prevents recurrence. Log rotation requires daemon restart.",
-      "sources": []
+      "sources": [
+        "https://docs.docker.com/engine/logging/configure/"
+      ]
     }
   ],
   "transition_graph": {

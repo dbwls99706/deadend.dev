@@ -33,13 +33,17 @@
       "action": "Running 'pip install --no-cache-dir' to bypass cached artifacts",
       "why_fails": "The issue is not cache corruption but missing native ARM64 support or build tools. Re-downloading the same source distribution does not change whether the C extension can compile for arm64.",
       "fail_rate": 0.92,
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-cache-dir"
+      ]
     },
     {
       "action": "Upgrading pip without addressing the underlying architecture mismatch",
       "why_fails": "Upgrading pip helps if the issue is wheel tag compatibility (newer pip understands newer macOS ARM64 wheel tags), but it does not fix packages that genuinely lack ARM64 build support or require specific compiler flags.",
       "fail_rate": 0.75,
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/installation/"
+      ]
     }
   ],
   "workarounds": [
@@ -48,7 +52,9 @@
       "how": "Run 'xcode-select --install' to install Apple's C/C++ build tools. For packages that need Fortran (scipy, numpy from source), install gfortran via Homebrew: 'brew install gcc'. Then retry 'pip install <package>'.",
       "success_rate": 0.75,
       "tradeoff": "Xcode CLT is a large download (~1-2GB); gfortran via Homebrew adds another dependency. Build from source is slower than using prebuilt wheels.",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ]
     },
     {
       "action": "Install the x86_64 version of Python under Rosetta 2",
@@ -56,7 +62,9 @@
       "success_rate": 0.85,
       "tradeoff": "Runs Python under Rosetta 2 translation, which has a ~20-30% performance overhead. Does not take advantage of Apple Silicon's native performance. Long-term maintenance burden of maintaining an x86_64 Python.",
       "condition": "The package has x86_64 wheels but no ARM64 wheels and performance is not critical",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ]
     },
     {
       "action": "Set architecture-specific compiler flags for the build",
@@ -73,7 +81,9 @@
       "how": "pip install --upgrade <package> --only-binary :all:. Many packages have added ARM64 macOS wheels since 2022. If the pinned version is old, upgrading may find a prebuilt wheel. Check the package's PyPI page under 'Download files' for 'macosx_11_0_arm64' wheels.",
       "success_rate": 0.68,
       "tradeoff": "Upgrading may introduce breaking API changes; requires testing after upgrade",
-      "sources": []
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ]
     }
   ],
   "transition_graph": {

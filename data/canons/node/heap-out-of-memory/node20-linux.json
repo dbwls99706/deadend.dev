@@ -39,7 +39,9 @@
       "action": "Upgrading Node.js version alone",
       "why_fails": "While newer Node versions may have slightly different default heap limits and improved GC, upgrading does not fix application-level memory leaks or fundamentally undersized heaps for legitimate workloads.",
       "fail_rate": 0.85,
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes"
+      ]
     }
   ],
   "workarounds": [
@@ -67,7 +69,9 @@
       "success_rate": 0.75,
       "tradeoff": "Requires refactoring code to use streaming patterns; adds complexity to error handling",
       "condition": "Error occurs when processing large files or datasets",
-      "sources": []
+      "sources": [
+        "https://nodejs.org/api/stream.html#stream"
+      ]
     }
   ],
   "transition_graph": {
