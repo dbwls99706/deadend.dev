@@ -24,17 +24,15 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "jinja2>=3.1",
 ]
 
 [project.urls]
 Homepage = "https://deadends.dev"
 Repository = "https://github.com/dbwls99706/deadend.dev"
 API = "https://deadends.dev/api/v1/index.json"
-
-dependencies = [
-    "jinja2>=3.1",
-]
 
 [project.optional-dependencies]
 dev = [
