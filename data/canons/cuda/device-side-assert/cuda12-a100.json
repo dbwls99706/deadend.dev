@@ -8,7 +8,7 @@
     "domain": "cuda",
     "category": "runtime_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -25,7 +25,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.6,
     "confidence": 0.78,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Illegal operation on GPU, often index out of bounds in a kernel. Error message is unhelpful by default."
   },
   "dead_ends": [
@@ -33,14 +33,18 @@
       "action": "Set CUDA_LAUNCH_BLOCKING=0 and ignore",
       "why_fails": "Async errors will appear later in wrong places, making debugging impossible",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution"
+      ],
       "condition": ""
     },
     {
       "action": "Increase GPU memory",
       "why_fails": "This is a logic error, not a memory error",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html"
+      ],
       "condition": ""
     }
   ],
@@ -49,26 +53,47 @@
       "action": "Set CUDA_LAUNCH_BLOCKING=1 to get the actual error location",
       "success_rate": 0.82,
       "how": "CUDA_LAUNCH_BLOCKING=1 python train.py",
-      "sources": [],
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution"
+      ],
       "condition": ""
     },
     {
       "action": "Check tensor shapes and label ranges (num_classes must match output dim)",
       "success_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "cuda/nvidia-smi-failed/cuda12-linux",
+        "probability": 0.1,
+        "condition": "Repeated CUDA errors may indicate driver instability"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+        "probability": 0.15,
+        "condition": "Installed CUDA-enabled PyTorch but model code has shape bugs"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "distinction": "OOMKilled is about memory limits; device-side assert is about illegal GPU operations like out-of-bounds indexing"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

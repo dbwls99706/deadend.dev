@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "io_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.9,
     "confidence": 0.92,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "File path does not exist. Common in scripts with hardcoded paths or relative path assumptions."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Create empty file at the path",
       "why_fails": "May not contain expected content, causing downstream errors",
       "fail_rate": 0.58,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#FileNotFoundError"
+      ],
       "condition": ""
     },
     {
       "action": "Hardcode absolute path",
       "why_fails": "Breaks portability across machines and environments",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://stackoverflow.com/questions/3430372/how-do-i-get-the-full-path-of-the-current-files-directory"
+      ],
       "condition": ""
     }
   ],
@@ -46,26 +50,52 @@
       "action": "Use pathlib.Path and resolve relative to __file__ or project root",
       "success_rate": 0.92,
       "how": "Path(__file__).parent / 'data' / 'config.json'",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/pathlib.html"
+      ],
       "condition": ""
     },
     {
       "action": "Check path existence before access with Path.exists()",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/pathlib.html#pathlib.Path.exists"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "probability": 0.25,
+        "condition": "File exists but has wrong permissions"
+      },
+      {
+        "error_id": "python/unicodedecodeerror/py311-linux",
+        "probability": 0.15,
+        "condition": "File found but has unexpected encoding"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "probability": 0.1,
+        "condition": "Changed path to avoid permission issue but new path doesn't exist"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "distinction": "PermissionError means file exists but access is denied; FileNotFoundError means file does not exist"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

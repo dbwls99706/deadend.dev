@@ -8,7 +8,7 @@
     "domain": "typescript",
     "category": "type_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.95,
     "confidence": 0.92,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "TypeScript strict mode requires explicit types. Very common when enabling strict for the first time."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Disable strict mode in tsconfig.json",
       "why_fails": "Loses all the safety benefits of TypeScript strict mode",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig#strict"
+      ],
       "condition": ""
     },
     {
       "action": "Add : any to every parameter",
       "why_fails": "Removes type safety, making TypeScript equivalent to JavaScript",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig#noImplicitAny"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,52 @@
       "action": "Add proper type annotations to function parameters",
       "success_rate": 0.95,
       "how": "function greet(name: string): void { }",
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#parameter-type-annotations"
+      ],
       "condition": ""
     },
     {
       "action": "Use type inference where possible (let TypeScript infer from usage)",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/type-inference.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "probability": 0.3,
+        "condition": "Adding types reveals existing type mismatches"
+      },
+      {
+        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
+        "probability": 0.25,
+        "condition": "Adding parameter types reveals argument mismatches"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
+        "probability": 0.1,
+        "condition": "Fixing argument errors leads to enabling stricter settings"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
+        "distinction": "TS2345 is about wrong argument types; TS7006 is about missing type annotations entirely"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

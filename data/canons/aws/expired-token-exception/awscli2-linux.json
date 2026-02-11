@@ -8,7 +8,7 @@
     "domain": "aws",
     "category": "auth_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.9,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "AWS session token has expired. Common with STS temporary credentials and SSO sessions."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Hardcode long-lived access keys",
       "why_fails": "Security anti-pattern, keys can leak and don't rotate",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#rotate-credentials"
+      ],
       "condition": ""
     },
     {
       "action": "Extend token lifetime to maximum",
       "why_fails": "Only delays the problem, tokens still expire",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,47 @@
       "action": "Refresh credentials with aws sso login or aws sts assume-role",
       "success_rate": 0.92,
       "how": "aws sso login --profile my-profile",
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use credential_process or credential helpers for automatic refresh",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.2,
+        "condition": "Refreshed credentials may have different/fewer permissions"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "Assumed role with temporary credentials that later expire"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "distinction": "AccessDenied means wrong permissions; ExpiredToken means right permissions but session has timed out"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

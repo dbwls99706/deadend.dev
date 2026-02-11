@@ -8,7 +8,7 @@
     "domain": "typescript",
     "category": "module_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.85,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "TypeScript cannot resolve the import. Either the module or its @types/ package is missing."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add // @ts-ignore above the import",
       "why_fails": "Silences the error but you lose all type safety for that module",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
       "condition": ""
     },
     {
       "action": "Create an empty .d.ts file",
       "why_fails": "Gives wrong types (everything becomes any), causing runtime bugs",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,56 @@
       "action": "Install the @types/ package for the module",
       "success_rate": 0.9,
       "how": "npm install --save-dev @types/module-name",
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/type-declarations.html"
+      ],
       "condition": ""
     },
     {
       "action": "Check tsconfig.json paths and moduleResolution settings",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig#moduleResolution"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "probability": 0.2,
+        "condition": "After adding types, type mismatches become visible"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "probability": 0.15,
+        "condition": "Runtime module error leads to checking TypeScript config"
+      },
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "probability": 0.2,
+        "condition": "npm module missing causes both runtime and compile errors"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "distinction": "ERR_MODULE_NOT_FOUND is a runtime error; TS2307 is a compile-time type resolution error"
+      },
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "distinction": "Cannot find module is runtime; TS2307 is TypeScript compiler unable to find type declarations"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

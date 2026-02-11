@@ -8,7 +8,7 @@
     "domain": "kubernetes",
     "category": "resource_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.55,
     "confidence": 0.8,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Container exceeded its memory limit and was killed by the kernel OOM killer."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Remove memory limits entirely",
       "why_fails": "Pod can consume all node memory and affect other pods",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
       "condition": ""
     },
     {
       "action": "Set memory limit to maximum node capacity",
       "why_fails": "Still kills if it exceeds, and starves other pods",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,51 @@
       "action": "Profile actual memory usage and set limits 20-30% above normal usage",
       "success_rate": 0.8,
       "how": "kubectl top pod pod-name",
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/"
+      ],
       "condition": ""
     },
     {
       "action": "Fix memory leaks in the application or reduce batch sizes",
       "success_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.35,
+        "condition": "OOMKilled container restarts and enters crash loop"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.25,
+        "condition": "Investigating crash loop reveals OOM as the root cause"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/memoryerror/py311-linux",
+        "distinction": "Python MemoryError is process-level; OOMKilled is container-level enforced by the kernel"
+      },
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "distinction": "CrashLoopBackOff is the symptom; OOMKilled is a specific cause of the crash"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

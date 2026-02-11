@@ -8,7 +8,7 @@
     "domain": "cuda",
     "category": "driver_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.6,
     "confidence": 0.82,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "NVIDIA driver is not loaded or is incompatible. Common after kernel updates."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Reinstall CUDA toolkit",
       "why_fails": "CUDA toolkit and NVIDIA driver are separate; toolkit doesn't fix driver",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/"
+      ],
       "condition": ""
     },
     {
       "action": "Reboot without investigating",
       "why_fails": "May work temporarily but doesn't fix driver/kernel mismatch",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#driver-installation"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
       "action": "Reinstall NVIDIA driver matching your kernel version",
       "success_rate": 0.8,
       "how": "sudo apt install nvidia-driver-535",
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#driver-installation"
+      ],
       "condition": ""
     },
     {
       "action": "Use DKMS to auto-rebuild driver module on kernel updates",
       "success_rate": 0.75,
       "how": "sudo apt install nvidia-dkms-535",
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+        "probability": 0.25,
+        "condition": "Driver failure causes PyTorch to report no CUDA support"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/device-side-assert/cuda12-a100",
+        "probability": 0.1,
+        "condition": "Repeated CUDA errors destabilize the driver"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+        "distinction": "torch-not-compiled-cuda is about PyTorch build; nvidia-smi failure is about the system driver"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

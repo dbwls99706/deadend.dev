@@ -8,7 +8,7 @@
     "domain": "rust",
     "category": "trait_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.82,
     "confidence": 0.85,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Type doesn't implement a required trait. Common with Display, Debug, Clone, Serialize."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Implement the trait manually when derive would work",
       "why_fails": "Unnecessary boilerplate for standard traits",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-02-traits.html#deriving-traits"
+      ],
       "condition": ""
     },
     {
       "action": "Remove the trait bound from the function",
       "why_fails": "Breaks the function's ability to use trait methods",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0277.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
       "action": "Add #[derive(Trait)] to your struct/enum",
       "success_rate": 0.92,
       "how": "#[derive(Debug, Clone, Serialize)]",
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/appendix-03-derivable-traits.html"
+      ],
       "condition": ""
     },
     {
       "action": "Add the trait bound to your generic function signature",
       "success_rate": 0.85,
       "how": "fn process<T: Display + Clone>(item: T)",
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-02-traits.html#traits-as-parameters"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "probability": 0.2,
+        "condition": "Implementing trait changes expected types"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "probability": 0.2,
+        "condition": "Type mismatch fix requires implementing a trait"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "distinction": "E0308 is about concrete type mismatches; E0277 is about missing trait implementations on a type"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

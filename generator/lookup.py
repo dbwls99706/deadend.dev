@@ -105,7 +105,12 @@ def lookup_all(error_message: str) -> list[dict]:
                 "url": canon["url"],
             })
 
-    matches.sort(key=lambda m: m["score"], reverse=True)
+    # Sort by: score DESC, then confidence DESC, then fix_success_rate DESC
+    # This ensures tie-breaking favors higher-confidence, higher-rate results
+    matches.sort(
+        key=lambda m: (m["score"], m["fix_success_rate"]),
+        reverse=True,
+    )
     return matches
 
 

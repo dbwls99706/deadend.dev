@@ -8,7 +8,7 @@
     "domain": "go",
     "category": "compile_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.9,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Symbol not found. Usually an unexported name, missing import, or file not in the same package."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add the missing function to a different package",
       "why_fails": "Go packages must be imported explicitly, adding to wrong package won't help",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://go.dev/doc/effective_go#names"
+      ],
       "condition": ""
     },
     {
       "action": "Use //go:linkname to access unexported symbols",
       "why_fails": "Fragile hack that breaks on version updates",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://go.dev/ref/spec#Exported_identifiers"
+      ],
       "condition": ""
     }
   ],
@@ -44,27 +48,48 @@
     {
       "action": "Check capitalization (exported names start with uppercase in Go)",
       "success_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://go.dev/doc/effective_go#names"
+      ],
       "condition": ""
     },
     {
       "action": "Ensure the file is in the correct package and directory",
       "success_rate": 0.88,
       "how": "go vet ./...",
-      "sources": [],
+      "sources": [
+        "https://go.dev/ref/spec#Packages"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "go/imported-not-used/go1-linux",
+        "probability": 0.15,
+        "condition": "Adding import to fix undefined creates unused import if wrong package"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/imported-not-used/go1-linux",
+        "probability": 0.2,
+        "condition": "Removing unused import causes undefined reference to symbol from that package"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/cannot-use-as-type/go1-linux",
+        "distinction": "cannot-use-as-type is about type mismatches; undefined means the symbol doesn't exist in scope"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

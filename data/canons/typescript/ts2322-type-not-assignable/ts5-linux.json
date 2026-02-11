@@ -8,7 +8,7 @@
     "domain": "typescript",
     "category": "type_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Type mismatch in assignment. The most common TypeScript error."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Cast with 'as any'",
       "why_fails": "Removes all type safety, defeats the purpose of TypeScript",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+      ],
       "condition": ""
     },
     {
       "action": "Add @ts-expect-error",
       "why_fails": "Silences the error without fixing the type issue",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-9.html#-ts-expect-error-comments"
+      ],
       "condition": ""
     }
   ],
@@ -44,27 +48,48 @@
     {
       "action": "Fix the type at the source (function return type, API response type, etc.)",
       "success_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use type guards or narrowing to handle union types properly",
       "success_rate": 0.88,
       "how": "if ('field' in obj) { /* obj is narrowed */ }",
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
+        "probability": 0.25,
+        "condition": "Fixing assignment types reveals argument type mismatches"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "typescript/ts2307-cannot-find-module/ts5-linux",
+        "probability": 0.2,
+        "condition": "After adding type declarations, type mismatches become visible"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
+        "distinction": "TS2345 is about function arguments; TS2322 is about variable/property assignments"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

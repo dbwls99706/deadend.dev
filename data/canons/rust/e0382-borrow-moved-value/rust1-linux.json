@@ -8,7 +8,7 @@
     "domain": "rust",
     "category": "ownership_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.85,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Value was moved to a new owner and can no longer be used. Core Rust ownership concept."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Clone everything to avoid moves",
       "why_fails": "Unnecessary allocations, poor performance, doesn't teach ownership",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use unsafe to bypass borrow checker",
       "why_fails": "Undefined behavior risk, completely wrong approach",
       "fail_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch19-01-unsafe-rust.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,52 @@
       "action": "Use references (&T or &mut T) instead of moving ownership",
       "success_rate": 0.9,
       "how": "fn process(data: &Vec<i32>) instead of fn process(data: Vec<i32>)",
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html"
+      ],
       "condition": ""
     },
     {
       "action": "Clone only when genuinely needed and restructure to minimize moves",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0382.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "probability": 0.2,
+        "condition": "Using references changes types causing mismatches"
+      },
+      {
+        "error_id": "rust/e0277-trait-bound/rust1-linux",
+        "probability": 0.15,
+        "condition": "Borrowed types may not implement required traits"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "probability": 0.15,
+        "condition": "Type fix changes ownership semantics"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0308-mismatched-types/rust1-linux",
+        "distinction": "E0308 is about type mismatches; E0382 is specifically about use-after-move ownership violations"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

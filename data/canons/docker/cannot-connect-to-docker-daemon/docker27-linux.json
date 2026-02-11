@@ -8,7 +8,7 @@
     "domain": "docker",
     "category": "daemon_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Docker daemon is not running or socket permissions are wrong."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Reinstall Docker",
       "why_fails": "Daemon just needs to be started, not reinstalled",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/install/"
+      ],
       "condition": ""
     },
     {
       "action": "Run with sudo every time",
       "why_fails": "Doesn't fix the underlying group permission issue",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/install/linux-postinstall/"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,53 @@
       "action": "Start the Docker daemon",
       "success_rate": 0.92,
       "how": "sudo systemctl start docker",
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/config/daemon/start/"
+      ],
       "condition": ""
     },
     {
       "action": "Add user to docker group",
       "success_rate": 0.88,
       "how": "sudo usermod -aG docker $USER && newgrp docker",
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "docker/bind-address-already-in-use/docker27-linux",
+        "probability": 0.15,
+        "condition": "Daemon starts but previous containers left ports allocated"
+      },
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "probability": 0.2,
+        "condition": "Daemon running but container fails to start"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/bind-address-already-in-use/docker27-linux",
+        "probability": 0.1,
+        "condition": "Restarted daemon to fix port issue but daemon didn't come back up"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/connectionrefusederror/py311-linux",
+        "distinction": "ConnectionRefused is about app-level network; Cannot connect to Docker daemon is about Docker socket access"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

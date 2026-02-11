@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "io_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.87,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Insufficient file system permissions. Common with system paths, Docker volumes, or pip installs."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Run with sudo",
       "why_fails": "Creates root-owned files causing more permission issues later",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#PermissionError"
+      ],
       "condition": ""
     },
     {
       "action": "chmod 777 the directory",
       "why_fails": "Security vulnerability, doesn't fix the ownership issue",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://stackoverflow.com/questions/22071853/permission-denied-error-errno-13"
+      ],
       "condition": ""
     }
   ],
@@ -46,27 +50,57 @@
       "action": "Fix ownership with chown and use appropriate user permissions",
       "success_rate": 0.9,
       "how": "chown -R $(whoami) /path/to/dir",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/os.html#os.chown"
+      ],
       "condition": ""
     },
     {
       "action": "Use virtual environments or user-local paths",
       "success_rate": 0.88,
       "how": "pip install --user or python -m venv .venv",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/venv.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/filenotfounderror/py311-linux",
+        "probability": 0.15,
+        "condition": "Changed path to user directory but file doesn't exist there"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/filenotfounderror/py311-linux",
+        "probability": 0.1,
+        "condition": "File found but access denied"
+      },
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "probability": 0.15,
+        "condition": "pip install fails with permission error on system Python"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/eacces-permission-denied/node20-linux",
+        "distinction": "EACCES is Node.js file permission error; PermissionError is Python's equivalent"
+      },
+      {
+        "error_id": "python/filenotfounderror/py311-linux",
+        "distinction": "FileNotFoundError means path doesn't exist; PermissionError means it exists but access is denied"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

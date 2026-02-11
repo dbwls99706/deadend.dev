@@ -8,7 +8,7 @@
     "domain": "pip",
     "category": "resolution_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.82,
     "confidence": 0.85,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Package doesn't exist for this Python version/platform or has a different name on PyPI."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Keep retrying pip install",
       "why_fails": "If the package doesn't exist for your platform, retrying won't help",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
       "condition": ""
     },
     {
       "action": "Install from a random GitHub URL",
       "why_fails": "May get an untrusted or incompatible version",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/vcs-support/"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
     {
       "action": "Check the correct package name on PyPI and verify Python version compatibility",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#requirement-specifiers"
+      ],
       "condition": ""
     },
     {
       "action": "Use a different Python version that the package supports",
       "success_rate": 0.82,
       "how": "pyenv install 3.11 && pyenv local 3.11",
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "pip/dependency-resolver-conflict/pip24-linux",
+        "probability": 0.25,
+        "condition": "Found the package but it conflicts with existing dependencies"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/modulenotfounderror/py311-linux",
+        "probability": 0.35,
+        "condition": "Module import failed so user tries pip install"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/dependency-resolver-conflict/pip24-linux",
+        "distinction": "Dependency conflict means packages exist but versions clash; no matching distribution means package not found at all"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

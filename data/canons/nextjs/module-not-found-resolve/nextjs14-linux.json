@@ -8,7 +8,7 @@
     "domain": "nextjs",
     "category": "build_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Webpack/Turbopack cannot find the module. Usually a missing dependency or wrong import path."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add the module to webpack externals",
       "why_fails": "Makes the module unavailable at runtime",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/next-config-js/webpack"
+      ],
       "condition": ""
     },
     {
       "action": "Use require() instead of import",
       "why_fails": "Doesn't fix the missing module, just changes the error format",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/package-bundling"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,51 @@
       "action": "Install the missing dependency",
       "success_rate": 0.92,
       "how": "npm install missing-package",
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/getting-started/installation"
+      ],
       "condition": ""
     },
     {
       "action": "Check for typos in the import path and use correct relative/absolute paths",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/absolute-imports-and-module-aliases"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.15,
+        "condition": "Installed module uses hooks requiring Client Component"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "probability": 0.2,
+        "condition": "npm module issue surfaces as Next.js build error"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "distinction": "ERR_MODULE_NOT_FOUND is a Node.js runtime error; Next.js Module not found is a webpack/turbopack build error"
+      },
+      {
+        "error_id": "typescript/ts2307-cannot-find-module/ts5-linux",
+        "distinction": "TS2307 is TypeScript compile error; Next.js Module not found is bundler resolution error"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "key_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.92,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Dictionary key access fails. Common in config parsing, API responses, and data pipelines."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Wrap in try/except KeyError",
       "why_fails": "Silences the error but doesn't fix missing data",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html#handling-exceptions"
+      ],
       "condition": ""
     },
     {
       "action": "Add the missing key to the dict manually",
       "why_fails": "Key may be dynamically generated or come from external source",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#KeyError"
+      ],
       "condition": ""
     }
   ],
@@ -46,26 +50,52 @@
       "action": "Use dict.get(key, default) instead of dict[key]",
       "success_rate": 0.95,
       "how": "response.get('data', {}).get('items', [])",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#dict.get"
+      ],
       "condition": ""
     },
     {
       "action": "Validate dict structure before access using schema validation",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#dict"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.2,
+        "condition": "dict.get() returns None which may be subscripted"
+      },
+      {
+        "error_id": "python/valueerror-invalid-literal/py311-linux",
+        "probability": 0.15,
+        "condition": "Retrieved value has unexpected type"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.2,
+        "condition": "Fixing NoneType error reveals missing keys in data"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/valueerror-invalid-literal/py311-linux",
+        "distinction": "ValueError is about wrong value format; KeyError is about missing dictionary keys"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

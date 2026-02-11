@@ -8,7 +8,7 @@
     "domain": "git",
     "category": "push_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Remote has commits not in local branch. Most common git push error."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Force push with git push --force",
       "why_fails": "Overwrites remote history, can destroy teammates' work",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-push#Documentation/git-push.txt---force"
+      ],
       "condition": ""
     },
     {
       "action": "Delete remote branch and push again",
       "why_fails": "Loses remote-only commits permanently",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-push"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
       "action": "Pull and rebase before pushing",
       "success_rate": 0.92,
       "how": "git pull --rebase origin main && git push",
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebase"
+      ],
       "condition": ""
     },
     {
       "action": "Fetch and merge remote changes first",
       "success_rate": 0.88,
       "how": "git fetch origin && git merge origin/main",
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-fetch"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "probability": 0.3,
+        "condition": "Pulling remote changes conflicts with local uncommitted work"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "probability": 0.2,
+        "condition": "Stashed changes and pulled but push still fails"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "distinction": "local-changes-overwritten is about uncommitted changes; failed-to-push is about committed but unpushed changes vs remote"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

@@ -8,7 +8,7 @@
     "domain": "git",
     "category": "init_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.95,
     "confidence": 0.92,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Current directory is not inside a git repository."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Run git init in the wrong directory",
       "why_fails": "Creates a new repo instead of finding the existing one",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-init"
+      ],
       "condition": ""
     },
     {
       "action": "Clone the repo again into a nested directory",
       "why_fails": "Creates duplicate repos",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-clone"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
       "action": "Navigate to the correct project directory",
       "success_rate": 0.95,
       "how": "cd /path/to/project && git status",
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs/git-status"
+      ],
       "condition": ""
     },
     {
       "action": "Initialize a new repo if starting fresh",
       "success_rate": 0.9,
       "how": "git init && git remote add origin URL",
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/book/en/v2/Git-Basics-Getting-a-Git-Repository"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "git/pathspec-no-match/git2-linux",
+        "probability": 0.15,
+        "condition": "Initialized new repo but expected files are not tracked"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "git/pathspec-no-match/git2-linux",
+        "probability": 0.1,
+        "condition": "Wrong directory led to pathspec failure then this error"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/pathspec-no-match/git2-linux",
+        "distinction": "pathspec error means file/branch not found in git; not-a-git-repository means no git repo at all"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

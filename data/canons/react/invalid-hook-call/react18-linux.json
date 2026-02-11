@@ -8,7 +8,7 @@
     "domain": "react",
     "category": "hook_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.85,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Hook called outside a component, in a class component, or with multiple React copies."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Convert class component to function component just for hooks",
       "why_fails": "If the class has complex lifecycle, conversion may introduce bugs",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
       "condition": ""
     },
     {
       "action": "Call hooks inside event handlers or callbacks",
       "why_fails": "Hooks must be at the top level, not inside conditions or callbacks",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning"
+      ],
       "condition": ""
     }
   ],
@@ -44,27 +48,53 @@
     {
       "action": "Ensure hooks are called at the top level of a function component",
       "success_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
       "condition": ""
     },
     {
       "action": "Check for duplicate React versions in node_modules",
       "success_rate": 0.85,
       "how": "npm ls react",
-      "sources": [],
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "probability": 0.15,
+        "condition": "Fixing hook placement may introduce render loop if dependencies wrong"
+      },
+      {
+        "error_id": "react/cannot-update-while-rendering/react18-linux",
+        "probability": 0.1,
+        "condition": "Moved hook call but placed state update in render body"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.2,
+        "condition": "Next.js Server Component hook error leads to investigating hook rules"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "distinction": "Server Component error is about component type; invalid hook call is about hook placement rules"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

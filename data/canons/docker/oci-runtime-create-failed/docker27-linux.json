@@ -8,7 +8,7 @@
     "domain": "docker",
     "category": "runtime_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.65,
     "confidence": 0.8,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Container entrypoint or command cannot be executed. Often wrong binary path or missing executable."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Rebuild the image from scratch",
       "why_fails": "If the Dockerfile is wrong, rebuilding reproduces the same error",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/reference/builder/#entrypoint"
+      ],
       "condition": ""
     },
     {
       "action": "Set --privileged flag",
       "why_fails": "Security risk and usually not related to the actual issue",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,52 @@
       "action": "Check that the entrypoint/CMD binary exists inside the container",
       "success_rate": 0.85,
       "how": "docker run --entrypoint sh image -c 'which myapp'",
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/reference/builder/#cmd"
+      ],
       "condition": ""
     },
     {
       "action": "Verify exec format matches the container architecture (amd64 vs arm64)",
       "success_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/build/building/multi-platform/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.3,
+        "condition": "Container fails to start in Kubernetes pod"
+      },
+      {
+        "error_id": "docker/exec-format-error/docker27-linux",
+        "probability": 0.2,
+        "condition": "Issue is actually architecture mismatch"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/exec-format-error/docker27-linux",
+        "probability": 0.2,
+        "condition": "Exec format error is a common cause of OCI runtime failure"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/exec-format-error/docker27-linux",
+        "distinction": "exec format error is specifically about binary architecture mismatch; OCI runtime create is a broader container start failure"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

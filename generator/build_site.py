@@ -315,32 +315,44 @@ def build_robots_txt() -> None:
 User-agent: *
 Allow: /
 
-# AI crawlers explicitly welcome — full access to all content
+# AI training crawlers — full access
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
 Allow: /
 
 User-agent: Claude-Web
 Allow: /
 
-User-agent: Bingbot
+User-agent: Google-Extended
 Allow: /
 
 User-agent: Googlebot
+Allow: /
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
 User-agent: Applebot-Extended
-Allow: /
-
-User-agent: GoogleOther
 Allow: /
 
 User-agent: cohere-ai
@@ -352,15 +364,35 @@ Allow: /
 User-agent: Meta-ExternalAgent
 Allow: /
 
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: iaskspider
+Allow: /
+
 Sitemap: https://deadend.dev/sitemap.xml
 
-# AI-specific endpoints:
-# Lightweight matching: https://deadend.dev/api/v1/match.json
-# Error index (JSON): https://deadend.dev/api/v1/index.json
-# OpenAPI spec: https://deadend.dev/api/v1/openapi.json
-# LLM-optimized: https://deadend.dev/llms.txt
-# Full data dump: https://deadend.dev/llms-full.txt
+# AI agent discovery:
+# Match errors:    https://deadend.dev/api/v1/match.json
+# Error index:     https://deadend.dev/api/v1/index.json
+# OpenAPI spec:    https://deadend.dev/api/v1/openapi.json
+# Version info:    https://deadend.dev/api/v1/version.json
+# LLM-optimized:   https://deadend.dev/llms.txt
+# Full data dump:  https://deadend.dev/llms-full.txt
 # Plugin manifest: https://deadend.dev/.well-known/ai-plugin.json
+# A2A agent card:  https://deadend.dev/.well-known/agent-card.json
 """
     (SITE_DIR / "robots.txt").write_text(content, encoding="utf-8")
     print("  Generated: robots.txt")
@@ -883,10 +915,13 @@ def build_openapi_spec(canons: list[dict]) -> None:
 
 
 def build_well_known(canons: list[dict]) -> None:
-    """Generate .well-known/ai-plugin.json for AI agent discovery."""
+    """Generate .well-known/ discovery files for AI agents."""
     well_known_dir = SITE_DIR / ".well-known"
     well_known_dir.mkdir(parents=True, exist_ok=True)
 
+    domains = sorted({c["error"]["domain"] for c in canons})
+
+    # ai-plugin.json (OpenAI legacy format)
     plugin = {
         "schema_version": "v1",
         "name_for_human": "deadend.dev",
@@ -918,6 +953,120 @@ def build_well_known(canons: list[dict]) -> None:
         json.dumps(plugin, indent=2, ensure_ascii=False), encoding="utf-8"
     )
     print("  Generated: .well-known/ai-plugin.json")
+
+    # agent-card.json (Google A2A protocol)
+    agent_card = {
+        "name": "deadend.dev",
+        "description": (
+            f"Structured error knowledge database for AI coding agents. "
+            f"{len(canons)} error patterns across {len(domains)} domains "
+            f"({', '.join(domains)}). Query error messages to get dead ends "
+            f"(what NOT to try), workarounds (what works with success rates), "
+            f"and error transition graphs (what error comes next)."
+        ),
+        "version": "1.0.0",
+        "url": "https://deadend.dev",
+        "provider": {
+            "organization": "deadend.dev",
+            "url": "https://deadend.dev",
+        },
+        "capabilities": {
+            "streaming": False,
+            "pushNotifications": False,
+        },
+        "defaultInputModes": ["text"],
+        "defaultOutputModes": ["text"],
+        "skills": [
+            {
+                "id": "match-error",
+                "name": "Match Error Message",
+                "description": (
+                    f"Match an error message against {len(canons)} known "
+                    f"patterns across {len(domains)} domains. Returns dead "
+                    f"ends, workarounds with success rates, and error chains."
+                ),
+                "tags": [
+                    "errors",
+                    "debugging",
+                    "troubleshooting",
+                    "dead-ends",
+                    "workarounds",
+                ],
+                "examples": [
+                    "ModuleNotFoundError: No module named 'torch'",
+                    "CUDA error: out of memory",
+                    "CrashLoopBackOff",
+                    "TS2307: Cannot find module",
+                ],
+            },
+            {
+                "id": "get-error-detail",
+                "name": "Get Error Details",
+                "description": (
+                    "Get full structured failure knowledge for a specific "
+                    "error by its ID. Returns complete dead ends, workarounds, "
+                    "transition graphs, and source evidence."
+                ),
+                "tags": ["errors", "lookup", "api"],
+            },
+            {
+                "id": "list-domains",
+                "name": "List Error Domains",
+                "description": (
+                    f"List all {len(domains)} error domains with counts."
+                ),
+                "tags": ["domains", "index"],
+            },
+        ],
+        "auth": {"type": "none"},
+    }
+
+    (well_known_dir / "agent-card.json").write_text(
+        json.dumps(agent_card, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print("  Generated: .well-known/agent-card.json")
+
+
+def build_version_json(canons: list[dict]) -> None:
+    """Generate /api/v1/version.json — service metadata for AI agents."""
+    domains = sorted({c["error"]["domain"] for c in canons})
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    version_data = {
+        "service": "deadend.dev",
+        "version": "1.1.0",
+        "description": (
+            "Structured failure knowledge for AI coding agents. "
+            "Dead ends, workarounds, and error chains."
+        ),
+        "last_updated": now,
+        "stats": {
+            "total_errors": len(canons),
+            "domains": len(domains),
+            "domain_list": domains,
+        },
+        "endpoints": {
+            "match": f"{BASE_URL}/api/v1/match.json",
+            "index": f"{BASE_URL}/api/v1/index.json",
+            "openapi": f"{BASE_URL}/api/v1/openapi.json",
+            "version": f"{BASE_URL}/api/v1/version.json",
+            "error_detail": f"{BASE_URL}/api/v1/{{domain}}/{{slug}}/{{env}}.json",
+            "llms_txt": f"{BASE_URL}/llms.txt",
+            "llms_full": f"{BASE_URL}/llms-full.txt",
+        },
+        "discovery": {
+            "ai_plugin": f"{BASE_URL}/.well-known/ai-plugin.json",
+            "agent_card": f"{BASE_URL}/.well-known/agent-card.json",
+            "mcp_server": "pip install deadend-dev && python -m mcp.server",
+        },
+    }
+
+    api_dir = SITE_DIR / "api" / "v1"
+    api_dir.mkdir(parents=True, exist_ok=True)
+    (api_dir / "version.json").write_text(
+        json.dumps(version_data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    print("  Generated: /api/v1/version.json")
 
 
 def build_match_json(canons: list[dict]) -> None:
@@ -1066,6 +1215,10 @@ def main():
 
     print("Generating match.json (lightweight AI matching)...")
     build_match_json(canons)
+    print()
+
+    print("Generating version.json...")
+    build_version_json(canons)
     print()
 
     print("Generating IndexNow support...")

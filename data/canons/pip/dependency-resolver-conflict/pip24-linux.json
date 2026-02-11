@@ -8,7 +8,7 @@
     "domain": "pip",
     "category": "resolution_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.55,
     "confidence": 0.75,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Dependency version constraints are mutually exclusive across installed packages."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Use --force-reinstall",
       "why_fails": "Forces installation but doesn't resolve the underlying conflict",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-force-reinstall"
+      ],
       "condition": ""
     },
     {
       "action": "Pin all packages to exact versions from a working machine",
       "why_fails": "Breaks on different platforms or Python versions",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ],
       "condition": ""
     }
   ],
@@ -46,27 +50,48 @@
       "action": "Use pip-compile from pip-tools to find a compatible resolution",
       "success_rate": 0.78,
       "how": "pip-compile requirements.in",
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
+      ],
       "condition": ""
     },
     {
       "action": "Create a fresh virtual environment and install from scratch",
       "success_rate": 0.75,
       "how": "python -m venv .venv --clear && pip install -r requirements.txt",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/venv.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/modulenotfounderror/py311-linux",
+        "probability": 0.2,
+        "condition": "Conflict prevents installation so module remains missing"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "probability": 0.2,
+        "condition": "Tried alternative package that conflicts with existing deps"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "distinction": "No matching distribution means package not found; dependency conflict means packages found but versions are incompatible"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

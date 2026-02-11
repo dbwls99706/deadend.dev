@@ -8,7 +8,7 @@
     "domain": "docker",
     "category": "platform_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.82,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Binary architecture mismatch. Common when running amd64 images on arm64 (Apple Silicon) or vice versa."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Reinstall Docker",
       "why_fails": "Architecture mismatch is not a Docker installation issue",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/install/"
+      ],
       "condition": ""
     },
     {
       "action": "Add #!/bin/bash shebang to script",
       "why_fails": "Only helps if the entrypoint is a script without shebang, not for binary mismatch",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/engine/reference/builder/#entrypoint"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,48 @@
       "action": "Build or pull the correct platform image",
       "success_rate": 0.9,
       "how": "docker build --platform linux/amd64 .",
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/build/building/multi-platform/"
+      ],
       "condition": ""
     },
     {
       "action": "Use multi-platform builds with docker buildx",
       "success_rate": 0.85,
       "how": "docker buildx build --platform linux/amd64,linux/arm64 .",
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/build/builders/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "probability": 0.3,
+        "condition": "Architecture mismatch causes OCI runtime failure"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "probability": 0.2,
+        "condition": "Investigating OCI failure reveals architecture mismatch"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "distinction": "OCI runtime create failed is a broader error; exec format error specifically means wrong CPU architecture"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

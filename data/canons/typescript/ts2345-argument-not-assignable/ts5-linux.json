@@ -8,7 +8,7 @@
     "domain": "typescript",
     "category": "type_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.87,
     "confidence": 0.89,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Function argument doesn't match the expected parameter type."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Cast the argument with 'as ExpectedType'",
       "why_fails": "Type assertion can hide real bugs if the runtime value doesn't match",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+      ],
       "condition": ""
     },
     {
       "action": "Change the function parameter to accept any",
       "why_fails": "Removes type safety for all callers",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/functions.html"
+      ],
       "condition": ""
     }
   ],
@@ -44,26 +48,47 @@
     {
       "action": "Transform the argument to match the expected type before passing",
       "success_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use function overloads or generics to accept multiple types safely",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/generics.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts7006-implicitly-any/ts5-linux",
+        "probability": 0.15,
+        "condition": "Fixing argument types leads to discovering untyped parameters"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "probability": 0.25,
+        "condition": "Fixing assignment types reveals argument mismatches in function calls"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "distinction": "TS2322 is about assignment to variables/properties; TS2345 is specifically about function call arguments"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

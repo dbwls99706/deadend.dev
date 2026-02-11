@@ -8,7 +8,7 @@
     "domain": "kubernetes",
     "category": "pod_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.6,
     "confidence": 0.82,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Container starts and crashes repeatedly. K8s backs off restart attempts exponentially."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Delete and recreate the pod",
       "why_fails": "Pod will crash again with the same config",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy"
+      ],
       "condition": ""
     },
     {
       "action": "Increase restart limit",
       "why_fails": "There is no restart limit in K8s; the issue is in the container itself",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,53 @@
       "action": "Check container logs for the crash reason",
       "success_rate": 0.85,
       "how": "kubectl logs pod-name --previous",
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-application/debug-running-pod/#examine-pod-logs"
+      ],
       "condition": ""
     },
     {
       "action": "Check if the container needs environment variables, secrets, or config maps",
       "success_rate": 0.8,
       "how": "kubectl describe pod pod-name",
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.2,
+        "condition": "Container starts but consumes too much memory and gets OOMKilled"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "probability": 0.25,
+        "condition": "Container image has startup issues that cause crash loop in K8s"
+      },
+      {
+        "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
+        "probability": 0.15,
+        "condition": "Fixed image pull but container itself crashes"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
+        "distinction": "ImagePullBackOff is about pulling the image; CrashLoopBackOff means image pulled successfully but container crashes"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

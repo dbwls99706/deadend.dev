@@ -8,7 +8,7 @@
     "domain": "rust",
     "category": "type_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.9,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Expected one type but got another. Very common with String vs &str, Option<T> vs T, etc."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Use as to cast between incompatible types",
       "why_fails": "as is for numeric casts, not type conversions",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/reference/expressions/operator-expr.html#type-cast-expressions"
+      ],
       "condition": ""
     },
     {
       "action": "Use unsafe transmute",
       "why_fails": "Undefined behavior, never correct for type mismatches",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/std/mem/fn.transmute.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,52 @@
       "action": "Use .into(), .as_ref(), .to_string(), or .as_str() for standard conversions",
       "success_rate": 0.92,
       "how": "let s: String = my_str.into();",
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/E0308.html"
+      ],
       "condition": ""
     },
     {
       "action": "Handle Option/Result with unwrap_or, map, or pattern matching",
       "success_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/book/ch06-02-match.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "rust/e0277-trait-bound/rust1-linux",
+        "probability": 0.25,
+        "condition": "Converted type may not implement required traits"
+      },
+      {
+        "error_id": "rust/e0382-borrow-moved-value/rust1-linux",
+        "probability": 0.15,
+        "condition": "Conversion moves value causing use-after-move"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "rust/e0382-borrow-moved-value/rust1-linux",
+        "probability": 0.2,
+        "condition": "Fixing ownership changes variable types"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0277-trait-bound/rust1-linux",
+        "distinction": "E0277 is about missing trait implementations; E0308 is about concrete type mismatches"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "network_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.65,
     "confidence": 0.8,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Target service is not running or not listening on the expected port."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Retry the connection immediately in a loop",
       "why_fails": "If the service is down, retrying won't help and wastes time",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#ConnectionRefusedError"
+      ],
       "condition": ""
     },
     {
       "action": "Change the port number",
       "why_fails": "The port is usually correct; the service itself is not running",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/socket.html"
+      ],
       "condition": ""
     }
   ],
@@ -46,26 +50,52 @@
       "action": "Verify the target service is running and listening on the correct port",
       "success_rate": 0.85,
       "how": "ss -tlnp | grep :PORT or docker ps",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/socket.html#socket.socket.connect"
+      ],
       "condition": ""
     },
     {
       "action": "Add exponential backoff retry with a health check endpoint",
       "success_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/urllib.request.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "probability": 0.1,
+        "condition": "Service starts but file access is denied"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/bind-address-already-in-use/docker27-linux",
+        "probability": 0.2,
+        "condition": "Changed port but service not yet running on new port"
+      },
+      {
+        "error_id": "docker/cannot-connect-to-docker-daemon/docker27-linux",
+        "probability": 0.15,
+        "condition": "Docker daemon not running so containerized service is unavailable"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "distinction": "PermissionError is about file access; ConnectionRefusedError is about network connections"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

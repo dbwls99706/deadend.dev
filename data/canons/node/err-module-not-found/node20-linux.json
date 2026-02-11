@@ -8,7 +8,7 @@
     "domain": "node",
     "category": "module_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.87,
     "confidence": 0.89,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Node.js cannot resolve the specified module. Common with ESM/CJS conflicts or missing dependencies."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add .js extension to import",
       "why_fails": "Only works for local files, not for node_modules",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/esm.html#mandatory-file-extensions"
+      ],
       "condition": ""
     },
     {
       "action": "Switch type in package.json between module and commonjs",
       "why_fails": "May break other imports throughout the project",
       "fail_rate": 0.68,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/packages.html#type"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,56 @@
       "action": "Run npm install to ensure all dependencies are installed",
       "success_rate": 0.92,
       "how": "rm -rf node_modules && npm install",
-      "sources": [],
+      "sources": [
+        "https://docs.npmjs.com/cli/v10/commands/npm-install"
+      ],
       "condition": ""
     },
     {
       "action": "Check package.json exports field matches the import path",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/packages.html#package-entry-points"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/syntaxerror-unexpected-token/node20-linux",
+        "probability": 0.2,
+        "condition": "Found module but it has ESM/CJS format mismatch"
+      },
+      {
+        "error_id": "node/err-require-esm/node20-linux",
+        "probability": 0.15,
+        "condition": "Module found but it is ESM-only and code uses require()"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "probability": 0.25,
+        "condition": "npm module installed but ESM resolution fails"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "distinction": "cannot-find-module is CJS require() failure; ERR_MODULE_NOT_FOUND is ESM import failure"
+      },
+      {
+        "error_id": "node/err-require-esm/node20-linux",
+        "distinction": "ERR_REQUIRE_ESM is about CJS requiring ESM; ERR_MODULE_NOT_FOUND is about missing modules entirely"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

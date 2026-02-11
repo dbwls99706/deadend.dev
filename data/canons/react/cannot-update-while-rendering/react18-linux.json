@@ -8,7 +8,7 @@
     "domain": "react",
     "category": "render_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.82,
     "confidence": 0.85,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "State update triggered during render phase of another component. Usually setState in render body."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Wrap the update in setTimeout",
       "why_fails": "Hacky fix that can cause flickering and race conditions",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useState#ive-updated-the-state-but-the-screen-doesnt-update"
+      ],
       "condition": ""
     },
     {
       "action": "Use useLayoutEffect for the update",
       "why_fails": "May cause the same issue if the update triggers a re-render",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useLayoutEffect"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,47 @@
       "action": "Move the state update into useEffect",
       "success_rate": 0.9,
       "how": "useEffect(() => { setState(value); }, [dependency]);",
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
       "condition": ""
     },
     {
       "action": "Restructure to lift state up or use a shared context",
       "success_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "probability": 0.25,
+        "condition": "Moving update to useEffect with wrong deps causes infinite loop"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "probability": 0.2,
+        "condition": "Fixed infinite loop but state update now happens during render"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "distinction": "Too many re-renders is about infinite loops; cannot-update-while-rendering is about timing of state updates"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

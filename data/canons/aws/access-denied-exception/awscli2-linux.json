@@ -8,7 +8,7 @@
     "domain": "aws",
     "category": "auth_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.82,
     "confidence": 0.85,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "IAM permissions insufficient for the requested operation."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add AdministratorAccess policy",
       "why_fails": "Severe security risk, violates least-privilege principle",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege"
+      ],
       "condition": ""
     },
     {
       "action": "Use root account credentials",
       "why_fails": "Root should never be used for API calls, critical security issue",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#lock-away-credentials"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,56 @@
       "action": "Check which specific permission is needed using CloudTrail or IAM Access Analyzer",
       "success_rate": 0.85,
       "how": "aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=OperationName",
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-getting-started.html"
+      ],
       "condition": ""
     },
     {
       "action": "Add the minimum required IAM policy for the specific action and resource",
       "success_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "aws/expired-token-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "Created temporary credentials that expire"
+      },
+      {
+        "error_id": "aws/resource-not-found/awscli2-linux",
+        "probability": 0.2,
+        "condition": "Has permissions but wrong region or resource name"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "aws/expired-token-exception/awscli2-linux",
+        "probability": 0.25,
+        "condition": "Refreshed token but new role has insufficient permissions"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/expired-token-exception/awscli2-linux",
+        "distinction": "ExpiredToken means valid permissions but expired session; AccessDenied means active session but insufficient permissions"
+      },
+      {
+        "error_id": "aws/resource-not-found/awscli2-linux",
+        "distinction": "ResourceNotFound means resource doesn't exist; AccessDenied means it may exist but you can't access it"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

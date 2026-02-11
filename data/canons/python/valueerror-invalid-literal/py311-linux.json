@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "value_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.93,
     "confidence": 0.91,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "String-to-int conversion fails on non-numeric input. Common in CLI args, CSV parsing, form data."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Wrap every int() call in try/except",
       "why_fails": "Masks data quality issues upstream",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html#handling-exceptions"
+      ],
       "condition": ""
     },
     {
       "action": "Use regex to strip non-digits before converting",
       "why_fails": "May silently produce wrong numbers",
       "fail_rate": 0.62,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/re.html"
+      ],
       "condition": ""
     }
   ],
@@ -45,27 +49,53 @@
     {
       "action": "Validate and sanitize input at the entry point (argparse, form validation)",
       "success_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/argparse.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use str.strip() and check str.isdigit() before conversion",
       "success_rate": 0.9,
       "how": "value.strip().isdigit() and int(value.strip())",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/stdtypes.html#str.isdigit"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.15,
+        "condition": "Conversion returns None or fails silently"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/unicodedecodeerror/py311-linux",
+        "probability": 0.2,
+        "condition": "Decoded text contains non-numeric characters"
+      },
+      {
+        "error_id": "python/keyerror/py311-linux",
+        "probability": 0.15,
+        "condition": "Retrieved dict value is not a valid integer string"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "distinction": "TypeError is about wrong type operations; ValueError is about correct type but invalid value"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

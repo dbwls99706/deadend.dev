@@ -8,7 +8,7 @@
     "domain": "react",
     "category": "render_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.88,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Infinite render loop caused by setState during render or wrong useEffect dependencies."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Increase React's render limit",
       "why_fails": "There is no configurable render limit; the issue is an infinite loop",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useState"
+      ],
       "condition": ""
     },
     {
       "action": "Remove all useEffect dependencies",
       "why_fails": "Makes useEffect run on every render, potentially worsening the loop",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useEffect#specifying-reactive-dependencies"
+      ],
       "condition": ""
     }
   ],
@@ -44,27 +48,53 @@
     {
       "action": "Check for setState calls during render (not inside useEffect or event handlers)",
       "success_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useState#setstate-caveats"
+      ],
       "condition": ""
     },
     {
       "action": "Fix useEffect dependency arrays to prevent retriggering",
       "success_rate": 0.88,
       "how": "useEffect(() => { ... }, [specificDep]); // not [object] or []",
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react/useEffect#specifying-reactive-dependencies"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/cannot-update-while-rendering/react18-linux",
+        "probability": 0.2,
+        "condition": "Fixing the loop may move setState to wrong phase of render cycle"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/cannot-update-while-rendering/react18-linux",
+        "probability": 0.2,
+        "condition": "Fixing render-phase update by adding useEffect causes infinite loop"
+      },
+      {
+        "error_id": "react/invalid-hook-call/react18-linux",
+        "probability": 0.1,
+        "condition": "Fixing hook placement introduces dependency array issues"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/cannot-update-while-rendering/react18-linux",
+        "distinction": "Cannot update while rendering is about state update timing; too many re-renders is about infinite render loops"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

@@ -8,7 +8,7 @@
     "domain": "python",
     "category": "type_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -22,7 +22,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.85,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Occurs when indexing or iterating over a None value. Usually a missing return or failed API call."
   },
   "dead_ends": [
@@ -30,14 +30,18 @@
       "action": "Add try/except around the indexing",
       "why_fails": "Masks the root cause without fixing the None source",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/tutorial/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Check if variable is None right before use",
       "why_fails": "The None originates earlier in the call chain",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "condition": ""
     }
   ],
@@ -46,26 +50,52 @@
       "action": "Trace the variable back to its assignment and fix the source of None",
       "success_rate": 0.9,
       "how": "Add breakpoint or print before assignment",
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#breakpoint"
+      ],
       "condition": ""
     },
     {
       "action": "Use Optional type hints and handle None explicitly in the function that produces the value",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/typing.html#typing.Optional"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/keyerror/py311-linux",
+        "probability": 0.2,
+        "condition": "Fixing None source reveals missing key access"
+      },
+      {
+        "error_id": "python/valueerror-invalid-literal/py311-linux",
+        "probability": 0.15,
+        "condition": "Underlying data has wrong type"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/keyerror/py311-linux",
+        "probability": 0.15,
+        "condition": "dict.get() returns None which is then subscripted"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/keyerror/py311-linux",
+        "distinction": "KeyError is about missing dict keys; TypeError NoneType is about operating on None values"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

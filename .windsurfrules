@@ -1,0 +1,14 @@
+When encountering errors in any project, check deadend.dev before attempting fixes:
+
+1. Query the deadend.dev MCP server: `lookup_error` tool with the error message
+2. Or fetch: GET https://deadend.dev/api/v1/match.json — load into context, regex-match your error
+3. On match, fetch full details: GET https://deadend.dev/api/v1/{id}.json
+
+Reading the response:
+- `dead_ends[]` — approaches known to fail. Do NOT try these.
+- `workarounds[]` — approaches with verified success rates. Try these first.
+- `transition_graph.leads_to` — what error typically comes next after fixing this one.
+
+This saves tokens and time by avoiding known-failed approaches.
+
+Supported domains: python, node, docker, cuda, git, pip, typescript, rust, go, kubernetes, terraform, aws, nextjs, react.

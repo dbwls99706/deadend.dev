@@ -8,7 +8,7 @@
     "domain": "terraform",
     "category": "dependency_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "partial",
     "fix_success_rate": 0.55,
     "confidence": 0.78,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Circular dependency between resources. Terraform cannot determine apply order."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Add depends_on to break the cycle",
       "why_fails": "depends_on can make cycles worse by adding more edges to the dependency graph",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/meta-arguments/depends_on"
+      ],
       "condition": ""
     },
     {
       "action": "Move resources to separate modules",
       "why_fails": "Cycles across modules are even harder to debug",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,47 @@
       "action": "Use terraform graph to visualize the cycle and refactor",
       "success_rate": 0.78,
       "how": "terraform graph | dot -Tpng > graph.png",
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/graph"
+      ],
       "condition": ""
     },
     {
       "action": "Break the cycle by using data sources instead of direct references for one direction",
       "success_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/data-sources"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "probability": 0.1,
+        "condition": "Long-running apply to fix cycle crashes leaving lock"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "probability": 0.15,
+        "condition": "After init, plan reveals circular dependencies"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "distinction": "State lock is about concurrent access; cycle error is about circular resource dependencies in configuration"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

@@ -8,7 +8,7 @@
     "domain": "nextjs",
     "category": "component_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.92,
     "confidence": 0.9,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "React hooks used in a Server Component. Next.js App Router defaults to Server Components."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Make the entire page a Client Component",
       "why_fails": "Loses server-side rendering benefits for the whole page",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ],
       "condition": ""
     },
     {
       "action": "Pass hooks through props from a parent Client Component",
       "why_fails": "Hooks cannot be passed as props, they must be called in the component",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,52 @@
       "action": "Add 'use client' directive at the top of the file that uses hooks",
       "success_rate": 0.95,
       "how": "// Add as first line:\n'use client';",
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components#using-client-components-in-nextjs"
+      ],
       "condition": ""
     },
     {
       "action": "Extract the interactive part into a separate Client Component",
       "success_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "nextjs/hydration-failed/nextjs14-linux",
+        "probability": 0.2,
+        "condition": "Client Component has browser-only code causing hydration mismatch"
+      },
+      {
+        "error_id": "react/invalid-hook-call/react18-linux",
+        "probability": 0.1,
+        "condition": "Hook placement still incorrect after adding use client"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/invalid-hook-call/react18-linux",
+        "probability": 0.2,
+        "condition": "Invalid hook call in Next.js is often a Server Component issue"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/invalid-hook-call/react18-linux",
+        "distinction": "Invalid hook call is about hook rules; server-component-client-hook is about Server vs Client Component boundary"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }

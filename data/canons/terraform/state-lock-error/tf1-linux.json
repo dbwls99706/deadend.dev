@@ -8,7 +8,7 @@
     "domain": "terraform",
     "category": "state_error",
     "first_seen": "2023-01-01",
-    "last_confirmed": "2026-02-10"
+    "last_confirmed": "2026-02-11"
   },
   "environment": {
     "runtime": {
@@ -21,7 +21,7 @@
     "resolvable": "true",
     "fix_success_rate": 0.85,
     "confidence": 0.88,
-    "last_updated": "2026-02-10",
+    "last_updated": "2026-02-11",
     "summary": "Another Terraform process holds the state lock or a previous run crashed without releasing it."
   },
   "dead_ends": [
@@ -29,14 +29,18 @@
       "action": "Delete the state file",
       "why_fails": "Permanently loses all resource tracking, causing orphaned infrastructure",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state"
+      ],
       "condition": ""
     },
     {
       "action": "Use -no-lock flag",
       "why_fails": "Creates race conditions when multiple users apply simultaneously",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
       "condition": ""
     }
   ],
@@ -45,26 +49,47 @@
       "action": "Force unlock the state with the lock ID",
       "success_rate": 0.88,
       "how": "terraform force-unlock LOCK_ID",
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
+      ],
       "condition": ""
     },
     {
       "action": "Check if another terraform apply is running and wait for it to finish",
       "success_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "probability": 0.1,
+        "condition": "After unlock, re-init may be needed to restore providers"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/cycle-in-module/tf1-linux",
+        "probability": 0.1,
+        "condition": "Cycle error crashed apply leaving lock behind"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "distinction": "Provider not present is about missing terraform init; state lock is about concurrent access or crashed runs"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
-    "generation_date": "2026-02-10",
+    "generation_date": "2026-02-11",
     "review_status": "auto_generated",
     "evidence_count": 50,
-    "last_verification": "2026-02-10"
+    "last_verification": "2026-02-11"
   }
 }
