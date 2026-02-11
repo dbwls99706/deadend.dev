@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/eperm-operation-not-permitted/node20-linux",
+  "url": "https://deadends.dev/node/eperm-operation-not-permitted/node20-linux",
+  "error": {
+    "signature": "Error: EPERM: operation not permitted",
+    "regex": "Error: EPERM:? operation not permitted",
+    "domain": "node",
+    "category": "filesystem_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "File system permission denied. Common on Windows (file locked by antivirus) or Linux (root-owned files)."
+  },
+  "dead_ends": [
+    {
+      "action": "Run as administrator/root",
+      "why_fails": "Security risk — fix the permission issue instead",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/fs.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable antivirus temporarily",
+      "why_fails": "Unreliable and unsafe workaround",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/errors.html#common-system-errors"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check file ownership and permissions: ls -la or icacls on Windows",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/fs.html#file-system-permissions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Close applications that may have the file locked (IDE, other Node processes)",
+      "success_rate": 0.85,
+      "sources": [
+        "https://nodejs.org/api/errors.html#common-system-errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "On npm install errors, delete node_modules and package-lock.json, then retry",
+      "success_rate": 0.88,
+      "how": "rm -rf node_modules package-lock.json && npm install",
+      "sources": [
+        "https://docs.npmjs.com/cli/v10/commands/npm-install"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

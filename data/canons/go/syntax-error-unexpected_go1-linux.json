@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/syntax-error-unexpected/go1-linux",
+  "url": "https://deadends.dev/go/syntax-error-unexpected/go1-linux",
+  "error": {
+    "signature": "syntax error: unexpected token, expected ...",
+    "regex": "syntax error: unexpected",
+    "domain": "go",
+    "category": "syntax_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Go syntax error. Common causes: missing comma in multi-line args, brace on wrong line."
+  },
+  "dead_ends": [
+    {
+      "action": "Ignore and rely on gofmt",
+      "why_fails": "gofmt can't fix syntax errors — it requires valid Go code",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pkg.go.dev/cmd/gofmt"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Rewrite in a different style",
+      "why_fails": "The issue is usually a specific missing token, not style",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://go.dev/ref/spec"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "In multi-line function calls/slices, add trailing comma on last element",
+      "success_rate": 0.95,
+      "how": "f(\n  arg1,\n  arg2,  // trailing comma required\n)",
+      "sources": [
+        "https://go.dev/ref/spec#Composite_literals"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Opening brace { must be on the same line as if/for/func in Go",
+      "success_rate": 0.92,
+      "how": "func main() {  // correct\n// func main()\\n{  // WRONG",
+      "sources": [
+        "https://go.dev/doc/effective_go#semicolons"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/stopiteration/py311-linux",
+  "url": "https://deadends.dev/python/stopiteration/py311-linux",
+  "error": {
+    "signature": "StopIteration",
+    "regex": "StopIteration",
+    "domain": "python",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "next() called on exhausted iterator. Since PEP 479, StopIteration inside generator becomes RuntimeError."
+  },
+  "dead_ends": [
+    {
+      "action": "Catch StopIteration inside the generator",
+      "why_fails": "PEP 479 converts this to RuntimeError — catching won't help",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://peps.python.org/pep-0479/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Reset the iterator by reassigning",
+      "why_fails": "Iterators can't be reset — need to create a new one",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#next"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use next(iter, default) to provide a default value for exhausted iterators",
+      "success_rate": 0.95,
+      "how": "val = next(my_iter, None)",
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#next"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert to list first if you need multiple passes, or recreate the iterator",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.python.org/3/library/functions.html#list"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

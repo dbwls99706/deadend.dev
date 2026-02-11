@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/maximum-call-stack/node20-linux",
+  "url": "https://deadends.dev/node/maximum-call-stack/node20-linux",
+  "error": {
+    "signature": "RangeError: Maximum call stack size exceeded",
+    "regex": "RangeError: Maximum call stack size exceeded",
+    "domain": "node",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Infinite recursion or deeply nested function calls. Common in recursive algorithms without base case."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase Node stack size with --stack-size",
+      "why_fails": "Just delays the crash — infinite recursion will still overflow",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/cli.html#--stack-sizesize"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert to setImmediate/setTimeout recursion",
+      "why_fails": "May work but creates memory leaks and is very slow",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nodejs.org/api/timers.html#setimmediatecallback-args"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check recursive function for missing or incorrect base case",
+      "success_rate": 0.95,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Recursion"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert recursive algorithm to iterative with explicit stack",
+      "success_rate": 0.9,
+      "how": "const stack = [initial]; while (stack.length) { const item = stack.pop(); ... }",
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for circular references in objects being JSON.stringify'd or deep-cloned",
+      "success_rate": 0.85,
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

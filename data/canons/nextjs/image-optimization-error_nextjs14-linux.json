@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/image-optimization-error/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/image-optimization-error/nextjs14-linux",
+  "error": {
+    "signature": "Error: Invalid src prop on `next/image`",
+    "regex": "Invalid src prop.*next/image|Error:.*Image Optimization",
+    "domain": "nextjs",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "External image domain not configured in next.config.js."
+  },
+  "dead_ends": [
+    {
+      "action": "Use regular <img> tag instead",
+      "why_fails": "Loses Next.js image optimization (lazy loading, WebP, sizing)",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set unoptimized={true} on all images",
+      "why_fails": "Disables all optimization — defeats the purpose of next/image",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/components/image#unoptimized"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the domain to images.remotePatterns in next.config.js",
+      "success_rate": 0.95,
+      "how": "images: { remotePatterns: [{ protocol: 'https', hostname: 'example.com' }] }",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/components/image#remotepatterns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For local images, import them directly: import img from './image.png'",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/images#local-images"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

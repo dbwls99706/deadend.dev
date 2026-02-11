@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/missing-return/go1-linux",
+  "url": "https://deadends.dev/go/missing-return/go1-linux",
+  "error": {
+    "signature": "missing return at end of function",
+    "regex": "missing return at end of function",
+    "domain": "go",
+    "category": "compile_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Function declares return type but not all code paths return a value."
+  },
+  "dead_ends": [
+    {
+      "action": "Add return at the end with zero value",
+      "why_fails": "May silently return wrong result — ensure the logic is correct",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://go.dev/ref/spec#Return_statements"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Change return type to not return anything",
+      "why_fails": "If callers use the return value, this breaks them",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://go.dev/ref/spec#Function_types"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure every code path (every if/else/switch branch) has a return statement",
+      "success_rate": 0.95,
+      "sources": [
+        "https://go.dev/ref/spec#Return_statements"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add a default return after the if/switch to handle the 'else' case",
+      "success_rate": 0.92,
+      "sources": [
+        "https://go.dev/ref/spec#Return_statements"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

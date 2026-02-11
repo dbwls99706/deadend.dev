@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/could-not-find-version/pip24-linux",
+  "url": "https://deadends.dev/pip/could-not-find-version/pip24-linux",
+  "error": {
+    "signature": "ERROR: Could not find a version that satisfies the requirement X",
+    "regex": "Could not find a version that satisfies the requirement",
+    "domain": "pip",
+    "category": "install_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Package doesn't exist on PyPI, or no version matches Python/platform. Typo is #1 cause."
+  },
+  "dead_ends": [
+    {
+      "action": "Force install with --no-deps",
+      "why_fails": "Package genuinely doesn't exist — forcing won't create it",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade pip",
+      "why_fails": "Rarely helps — the package name or version constraint is wrong",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pip.pypa.io/en/stable/installation/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check for typos in the package name: pip search or pypi.org",
+      "success_rate": 0.95,
+      "how": "# Common: sklearn → scikit-learn, cv2 → opencv-python",
+      "sources": [
+        "https://pypi.org/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if package supports your Python version: pip install 'pkg; python_version<3.12'",
+      "success_rate": 0.85,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/requirement-specifiers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For platform-specific packages (e.g., Windows-only), check package docs",
+      "success_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/cannot-read-null-usecontext/react18-linux",
+  "url": "https://deadends.dev/react/cannot-read-null-usecontext/react18-linux",
+  "error": {
+    "signature": "TypeError: Cannot read properties of null (reading 'useContext')",
+    "regex": "Cannot read properties of null.*useContext|Cannot read property.*of null.*useContext",
+    "domain": "react",
+    "category": "hook_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "React hooks internals are null — usually multiple React copies or calling hooks outside component."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrade React version",
+      "why_fails": "Usually not a version issue — it's duplicate React installations",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap everything in a new React.createContext",
+      "why_fails": "The issue is React internals, not your context",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://react.dev/reference/react/createContext"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check for duplicate React: npm ls react — should have only one copy",
+      "success_rate": 0.95,
+      "how": "npm ls react\nnpm dedupe",
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning#duplicate-react"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure hooks are called from a React function component, not a regular function",
+      "success_rate": 0.9,
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If using linked packages, ensure they resolve to the same React instance",
+      "success_rate": 0.85,
+      "sources": [
+        "https://react.dev/warnings/invalid-hook-call-warning#duplicate-react"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

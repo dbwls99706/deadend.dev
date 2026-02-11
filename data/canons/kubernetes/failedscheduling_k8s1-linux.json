@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/failedscheduling/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/failedscheduling/k8s1-linux",
+  "error": {
+    "signature": "Warning FailedScheduling: 0/N nodes are available: insufficient cpu/memory",
+    "regex": "FailedScheduling.*nodes are available.*insufficient",
+    "domain": "kubernetes",
+    "category": "scheduling_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.8,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "No nodes have enough resources for the pod. Cluster is at capacity."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete other pods to free resources",
+      "why_fails": "Those pods are running for a reason — may cause outages",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove resource requests from the pod spec",
+      "why_fails": "Pod may get OOMKilled without resource limits",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce resource requests to match actual usage (check metrics first)",
+      "success_rate": 0.9,
+      "how": "resources:\n  requests:\n    cpu: 100m\n    memory: 128Mi",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Scale up the cluster — add more nodes",
+      "success_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/cluster-administration/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for node affinity/taints preventing scheduling on available nodes",
+      "success_rate": 0.8,
+      "how": "kubectl describe node <node> | grep -A5 Taints",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

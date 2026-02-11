@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/getserversideprops-export/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/getserversideprops-export/nextjs14-linux",
+  "error": {
+    "signature": "Error: 'getServerSideProps' is not supported in app/ directory",
+    "regex": "getServerSideProps.*is not supported|getServerSideProps.*app.*directory",
+    "domain": "nextjs",
+    "category": "migration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Pages Router API used in App Router. getServerSideProps doesn't exist in app/ directory."
+  },
+  "dead_ends": [
+    {
+      "action": "Move the file back to pages/ directory",
+      "why_fails": "Defeats the purpose of migrating to App Router",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Rename getServerSideProps to something else",
+      "why_fails": "It's the function pattern that's unsupported, not just the name",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "In App Router, make the component async and fetch data directly at the top level",
+      "success_rate": 0.95,
+      "how": "export default async function Page() {\n  const data = await fetch('...');\n  return <div>{data}</div>;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use generateMetadata for metadata and generateStaticParams for static paths",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

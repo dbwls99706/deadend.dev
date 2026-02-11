@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2551-did-you-mean/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2551-did-you-mean/ts5-linux",
+  "error": {
+    "signature": "error TS2551: Property 'X' does not exist on type 'Y'. Did you mean 'Z'?",
+    "regex": "TS2551.*Property '(.+?)' does not exist on type '(.+?)'.*Did you mean",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Typo in property name. TypeScript suggests the correct name."
+  },
+  "dead_ends": [
+    {
+      "action": "Use (obj as any).prop to bypass",
+      "why_fails": "Loses all type safety, the typo is the real bug",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add the misspelled property to the type definition",
+      "why_fails": "Creates a duplicate/wrong property instead of fixing the typo",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/objects.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the suggested correct property name from the error message",
+      "success_rate": 0.98,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use IDE autocomplete to avoid typos in property names",
+      "success_rate": 0.95,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/objects.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

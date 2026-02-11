@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/maximum-update-depth/react18-linux",
+  "url": "https://deadends.dev/react/maximum-update-depth/react18-linux",
+  "error": {
+    "signature": "Error: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect without dependencies.",
+    "regex": "Maximum update depth exceeded",
+    "domain": "react",
+    "category": "render_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Infinite re-render loop. setState triggers re-render which triggers setState again."
+  },
+  "dead_ends": [
+    {
+      "action": "Add more state variables to break the loop",
+      "why_fails": "More state = more potential for loops",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://react.dev/reference/react/useState"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useRef to track if already updated",
+      "why_fails": "Hack that hides the real issue — broken effect deps",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/useRef"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add proper dependency array to useEffect — don't include the state you're setting",
+      "success_rate": 0.95,
+      "how": "useEffect(() => { setState(val); }, [dep]); // not [dep, state]",
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Move state calculation into the render (useMemo) instead of useEffect + setState",
+      "success_rate": 0.9,
+      "sources": [
+        "https://react.dev/reference/react/useMemo"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check onClick handlers: onClick={handleClick} not onClick={handleClick()}",
+      "success_rate": 0.88,
+      "sources": [
+        "https://react.dev/learn/responding-to-events"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

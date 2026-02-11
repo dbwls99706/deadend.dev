@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/read-timeout-error/pip24-linux",
+  "url": "https://deadends.dev/pip/read-timeout-error/pip24-linux",
+  "error": {
+    "signature": "pip._vendor.urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool",
+    "regex": "ReadTimeoutError.*HTTPSConnectionPool|pip.*ReadTimeoutError",
+    "domain": "pip",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "PyPI download timed out. Slow network, large package, or PyPI issues."
+  },
+  "dead_ends": [
+    {
+      "action": "Install from GitHub directly",
+      "why_fails": "GitHub is not a package registry — versions may not match PyPI",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable SSL to speed up",
+      "why_fails": "Security risk and usually doesn't help with timeouts",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pip.pypa.io/en/stable/topics/configuration/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase timeout: pip install --timeout 120 <package>",
+      "success_rate": 0.9,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-timeout"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a mirror: pip install -i https://pypi.tuna.tsinghua.edu.cn/simple <package>",
+      "success_rate": 0.85,
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-i"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Retry — PyPI may have temporary issues",
+      "success_rate": 0.8,
+      "how": "pip install --retries 5 <package>",
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

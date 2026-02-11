@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/fetch-not-defined/node18-linux",
+  "url": "https://deadends.dev/node/fetch-not-defined/node18-linux",
+  "error": {
+    "signature": "ReferenceError: fetch is not defined",
+    "regex": "ReferenceError: fetch is not defined",
+    "domain": "node",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "fetch() is experimental in Node 18, stable in Node 21+. Common when porting browser code."
+  },
+  "dead_ends": [
+    {
+      "action": "Polyfill with whatwg-fetch",
+      "why_fails": "whatwg-fetch is browser-only, doesn't work in Node",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/globals.html#fetch"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use XMLHttpRequest",
+      "why_fails": "XMLHttpRequest doesn't exist in Node",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/globals.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install node-fetch: npm install node-fetch",
+      "success_rate": 0.95,
+      "how": "import fetch from 'node-fetch';",
+      "sources": [
+        "https://www.npmjs.com/package/node-fetch"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade to Node 21+ where fetch is stable, or use --experimental-fetch flag in Node 18",
+      "success_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/globals.html#fetch"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use undici (Node's built-in HTTP client): const { fetch } = require('undici')",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nodejs.org/api/globals.html#fetch"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

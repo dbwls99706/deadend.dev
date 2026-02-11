@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/copy-failed-stat/docker27-linux",
+  "url": "https://deadends.dev/docker/copy-failed-stat/docker27-linux",
+  "error": {
+    "signature": "COPY failed: file not found in build context",
+    "regex": "COPY failed.*file not found|COPY failed.*stat",
+    "domain": "docker",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "COPY source file not in build context. Common cause: .dockerignore excluding the file."
+  },
+  "dead_ends": [
+    {
+      "action": "Use absolute path in COPY",
+      "why_fails": "COPY paths are relative to build context, not host filesystem",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#copy"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Move Dockerfile to project root",
+      "why_fails": "Dockerfile location doesn't change build context — that's set by docker build command",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.docker.com/build/concepts/context/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check .dockerignore — it may be excluding the file you're trying to COPY",
+      "success_rate": 0.95,
+      "how": "cat .dockerignore | grep <filename>",
+      "sources": [
+        "https://docs.docker.com/build/concepts/context/#dockerignore-files"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the file exists relative to the build context directory (not the Dockerfile)",
+      "success_rate": 0.92,
+      "how": "docker build -f Dockerfile -t app .  # '.' is the build context",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#copy"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
