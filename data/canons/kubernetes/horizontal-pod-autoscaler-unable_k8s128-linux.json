@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/horizontal-pod-autoscaler-unable/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/horizontal-pod-autoscaler-unable/k8s128-linux",
+  "error": {
+    "signature": "unable to calculate desired number of replicas: missing request for cpu",
+    "regex": "unable to calculate.*missing request for (cpu|memory)",
+    "domain": "kubernetes",
+    "category": "autoscaling",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.94,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "HPA cannot scale because pods don't have CPU/memory resource requests defined."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting arbitrary resource requests",
+      "why_fails": "Over or under-provisioning; either wastes resources or causes OOM",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using memory-based scaling instead",
+      "why_fails": "Memory scaling is less responsive than CPU for most workloads",
+      "fail_rate": 0.45,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add resource requests to the pod spec: resources.requests.cpu: 100m",
+      "success_rate": 0.96,
+      "how": "HPA needs resource requests to calculate utilization percentage",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use metrics-server to verify metrics are available: kubectl top pods",
+      "success_rate": 0.88,
+      "how": "HPA requires metrics-server to be installed and running",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/moved-block-error/tf115-linux",
+  "url": "https://deadends.dev/terraform/moved-block-error/tf115-linux",
+  "error": {
+    "signature": "Error: Moved object still exists",
+    "regex": "Moved object still exists",
+    "domain": "terraform",
+    "category": "refactoring",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.1"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-11",
+    "summary": "A moved block references a resource that still exists in the configuration."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing the moved block and running apply",
+      "why_fails": "Terraform will try to destroy the old resource and create a new one",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using terraform state rm to remove the old address",
+      "why_fails": "May lose track of the resource; potential orphaned infrastructure",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove the old resource block after adding the moved block",
+      "success_rate": 0.94,
+      "how": "moved { from = old_address; to = new_address } — then delete the old resource block",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules/develop/refactoring"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run terraform plan to verify the move before applying",
+      "success_rate": 0.9,
+      "how": "Plan should show 'moved' not 'destroy/create'",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

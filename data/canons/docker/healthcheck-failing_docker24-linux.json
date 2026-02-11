@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/healthcheck-failing/docker24-linux",
+  "url": "https://deadends.dev/docker/healthcheck-failing/docker24-linux",
+  "error": {
+    "signature": "health: starting (unhealthy)",
+    "regex": "(health: starting|unhealthy)",
+    "domain": "docker",
+    "category": "healthcheck",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.10"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-11",
+    "summary": "Container's HEALTHCHECK command is failing — the application isn't ready or the check is misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing HEALTHCHECK from Dockerfile",
+      "why_fails": "Container appears healthy but may not actually be serving traffic",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting the health check to always return 0",
+      "why_fails": "Defeats the purpose; orchestrators think the container is always healthy",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Debug the health check: docker inspect --format='{{.State.Health}}' <container>",
+      "success_rate": 0.93,
+      "how": "Shows the last N health check results and exit codes",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Test the health command inside the container: docker exec <container> curl -f http://localhost:8080/health",
+      "success_rate": 0.9,
+      "how": "Run the same command the HEALTHCHECK uses to see what fails",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

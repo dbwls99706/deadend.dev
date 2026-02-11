@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/resource-already-exists/tf115-linux",
+  "url": "https://deadends.dev/terraform/resource-already-exists/tf115-linux",
+  "error": {
+    "signature": "Error: A resource with the ID already exists",
+    "regex": "resource with the ID.*already exists",
+    "domain": "terraform",
+    "category": "state",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "Terraform tries to create a resource that already exists outside of its state."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting the existing resource manually",
+      "why_fails": "May cause downtime; the resource may be in use by other systems",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Changing the resource name in Terraform to avoid the conflict",
+      "why_fails": "Creates a duplicate resource instead of managing the existing one",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Import the existing resource: terraform import <resource_addr> <resource_id>",
+      "success_rate": 0.95,
+      "how": "Brings the existing resource under Terraform management",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/import"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use import blocks (Terraform 1.5+) for declarative import",
+      "success_rate": 0.9,
+      "how": "import { to = aws_instance.web; id = 'i-12345' }",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

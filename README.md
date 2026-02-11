@@ -2,7 +2,7 @@
 
 **Structured failure knowledge for AI coding agents.**
 
-143 error entries across 14 domains. When AI agents encounter errors, they waste tokens on approaches that are known to fail. deadends.dev tells agents what NOT to try, what actually works, and what error comes next.
+501 error entries across 14 domains. When AI agents encounter errors, they waste tokens on approaches that are known to fail. deadends.dev tells agents what NOT to try, what actually works, and what error comes next.
 
 ## Installation
 
@@ -98,20 +98,20 @@ deadends --list  # show all known errors
 
 | Domain | Errors | Examples |
 |--------|--------|----------|
-| python | 33 | ModuleNotFoundError, TypeError, KeyError, MemoryError, AttributeError |
-| node | 17 | ERR_MODULE_NOT_FOUND, EACCES, EADDRINUSE, ECONNREFUSED, heap OOM |
-| docker | 14 | permission denied, no space left, exec format error, context too large |
-| cuda | 11 | OOM, version mismatch, device-side assert, NCCL timeout, cuDNN |
-| git | 10 | failed to push, merge conflicts, detached HEAD, cannot lock ref |
-| pip | 8 | build wheel failed, conflicting deps, externally-managed-environment |
-| go | 7 | undefined reference, declared not used, cannot convert, nil pointer |
-| kubernetes | 7 | CrashLoopBackOff, ImagePullBackOff, OOMKilled, Evicted, ConfigError |
-| typescript | 7 | TS2307, TS2322, TS2339, TS2304, TS2741, TS2345, TS7006 |
-| aws | 6 | AccessDenied, ExpiredToken, NoCredentials, InvalidClientTokenId |
-| react | 6 | invalid hook call, too many re-renders, unique key, objects not valid |
-| rust | 6 | E0382 borrow, E0308 mismatch, E0277 trait, E0502, E0425, E0599 |
-| terraform | 6 | state lock, provider not present, cycle, plugin crashed, invalid ref |
-| nextjs | 5 | hydration failed, module not found, dynamic server, searchParams |
+| python | 86 | ModuleNotFoundError, TypeError, KeyError, MemoryError, RecursionError |
+| node | 61 | ERR_MODULE_NOT_FOUND, EACCES, EADDRINUSE, heap OOM, ERR_REQUIRE_ESM |
+| docker | 43 | no space left, exec format error, bind address in use, healthcheck |
+| git | 34 | failed to push, merge conflicts, detached HEAD, stash apply, tags |
+| kubernetes | 34 | CrashLoopBackOff, ImagePullBackOff, OOMKilled, RBAC forbidden, HPA |
+| go | 32 | nil pointer, unused import, interface conversion, slice out of range |
+| nextjs | 30 | hydration failed, dynamic server, searchParams, metadata, Suspense |
+| aws | 29 | AccessDenied, S3 NoSuchBucket, Lambda timeout, SQS, Secrets Manager |
+| react | 28 | invalid hook call, too many re-renders, unique key, context, act() |
+| terraform | 27 | state lock, cycle, provider not found, moved block, backend init |
+| cuda | 25 | OOM, device-side assert, NCCL, cuDNN, nvcc not found, kernel image |
+| typescript | 25 | TS2307, TS2322, TS2345, TS2532, TS7053, TS2769, TS18048 |
+| pip | 24 | build wheel failed, conflicting deps, externally-managed, hash mismatch |
+| rust | 23 | E0382 borrow, E0308 mismatch, E0277 trait, E0106 lifetime, E0507 |
 
 ## ErrorCanon Data Format
 

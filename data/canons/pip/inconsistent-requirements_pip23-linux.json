@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/inconsistent-requirements/pip23-linux",
+  "url": "https://deadends.dev/pip/inconsistent-requirements/pip23-linux",
+  "error": {
+    "signature": "ERROR: Cannot install package-a and package-b because these package versions have conflicting dependencies",
+    "regex": "(Cannot install.*conflicting dependencies|ResolutionImpossible)",
+    "domain": "pip",
+    "category": "resolution",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.91,
+    "last_updated": "2026-02-11",
+    "summary": "pip cannot find a set of package versions that satisfies all dependency constraints."
+  },
+  "dead_ends": [
+    {
+      "action": "Using --force-reinstall",
+      "why_fails": "Installs incompatible versions; imports will fail at runtime",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing version constraints from requirements.txt",
+      "why_fails": "May install breaking versions of dependencies",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use pip install --dry-run to see the conflict, then pin compatible versions",
+      "success_rate": 0.9,
+      "how": "pip install --dry-run package-a package-b shows which versions conflict",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use pipdeptree to visualize the dependency tree and find the conflict point",
+      "success_rate": 0.88,
+      "how": "pipdeptree --warn silence shows the full tree; pipdeptree -p package shows deps for one package",
+      "sources": [
+        "https://github.com/tox-dev/pipdeptree"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

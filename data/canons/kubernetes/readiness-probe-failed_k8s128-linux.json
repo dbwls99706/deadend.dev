@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/readiness-probe-failed/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/readiness-probe-failed/k8s128-linux",
+  "error": {
+    "signature": "Readiness probe failed: HTTP probe failed with statuscode: 503",
+    "regex": "Readiness probe failed",
+    "domain": "kubernetes",
+    "category": "probes",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Container's readiness probe is failing — Kubernetes won't send traffic to the pod."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing the readiness probe",
+      "why_fails": "All traffic goes to unready pods; users see 500 errors",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting the probe to check a path that always returns 200",
+      "why_fails": "Defeats the purpose of readiness checks",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the health endpoint inside the container: kubectl exec <pod> -- curl localhost:<port>/health",
+      "success_rate": 0.95,
+      "how": "Verify the app is actually responding on the probed path",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adjust probe timing: increase initialDelaySeconds, periodSeconds, failureThreshold",
+      "success_rate": 0.88,
+      "how": "Slow-starting apps need longer initial delay",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

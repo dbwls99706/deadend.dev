@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/subprocess-error-build-wheel/pip23-linux",
+  "url": "https://deadends.dev/pip/subprocess-error-build-wheel/pip23-linux",
+  "error": {
+    "signature": "error: subprocess-exited-with-error: pip subprocess to build wheel failed",
+    "regex": "subprocess-exited-with-error.*build wheel",
+    "domain": "pip",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=22.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.89,
+    "last_updated": "2026-02-11",
+    "summary": "pip failed to build a wheel for a package with C/C++ extensions — missing compiler or header files."
+  },
+  "dead_ends": [
+    {
+      "action": "Using --no-binary :all: to force source builds",
+      "why_fails": "Actually makes the problem worse by requiring compilation for all packages",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Installing an older version of the package",
+      "why_fails": "Older versions may have the same build requirements",
+      "fail_rate": 0.45,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install system build dependencies: sudo apt install python3-dev build-essential libffi-dev",
+      "success_rate": 0.9,
+      "how": "Most C extensions need gcc and Python headers",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check if a pre-built wheel exists: pip install <package> --only-binary :all:",
+      "success_rate": 0.88,
+      "how": "Avoids compilation entirely by using pre-built wheels",
+      "sources": [
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-only-binary"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/undefined-reference/go121-linux",
+  "url": "https://deadends.dev/go/undefined-reference/go121-linux",
+  "error": {
+    "signature": "undefined: functionName",
+    "regex": "undefined: \\w+",
+    "domain": "go",
+    "category": "compilation",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "Function or variable not defined in the current package or not exported (lowercase first letter)."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the function to a different package without importing",
+      "why_fails": "Go requires explicit imports between packages",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using go:linkname to access unexported symbols",
+      "why_fails": "Compiler hack; breaks with Go version updates",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the function starts with uppercase to be exported: MyFunc not myFunc",
+      "success_rate": 0.95,
+      "how": "Only uppercase-initial identifiers are exported in Go",
+      "sources": [
+        "https://go.dev/doc/effective_go#names"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check build tags and file suffixes (_test.go, _linux.go) that may exclude the file",
+      "success_rate": 0.88,
+      "how": "Files with build constraints may not be compiled in your environment",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/oomkilled/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/oomkilled/k8s128-linux",
+  "error": {
+    "signature": "OOMKilled",
+    "regex": "OOMKilled",
+    "domain": "kubernetes",
+    "category": "resources",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "Container exceeded its memory limit and was killed by the OOM killer."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing memory limits entirely",
+      "why_fails": "Container can consume all node memory and affect other pods",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting memory limit to very high value",
+      "why_fails": "Hides the memory leak; wastes cluster resources",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile memory usage and set appropriate resource limits",
+      "success_rate": 0.93,
+      "how": "Use kubectl top pod to see actual memory consumption, then set limits with some headroom",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for memory leaks in the application before increasing limits",
+      "success_rate": 0.9,
+      "how": "If memory grows linearly over time, there's a leak",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

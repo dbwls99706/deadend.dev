@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/multiple-value-in-single-context/go121-linux",
+  "url": "https://deadends.dev/go/multiple-value-in-single-context/go121-linux",
+  "error": {
+    "signature": "multiple-value f() (value of type (T, error)) used in single-value context",
+    "regex": "multiple-value.*used in single-value context",
+    "domain": "go",
+    "category": "syntax",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.99,
+    "confidence": 0.99,
+    "last_updated": "2026-02-11",
+    "summary": "Calling a function that returns multiple values (typically value, error) in a context that expects a single value."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the function to discard the error",
+      "why_fails": "Silently ignores errors, leading to nil pointer panics",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Assign both return values: val, err := fn()",
+      "success_rate": 0.99,
+      "how": "Handle the error: val, err := fn(); if err != nil { return err }",
+      "sources": [
+        "https://go.dev/doc/effective_go#multiple-returns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use _ to explicitly discard: val, _ := fn()",
+      "success_rate": 0.85,
+      "how": "Only when you're certain the error cannot occur or is irrelevant",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

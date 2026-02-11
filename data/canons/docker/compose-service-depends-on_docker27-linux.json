@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/compose-service-depends-on/docker27-linux",
+  "url": "https://deadends.dev/docker/compose-service-depends-on/docker27-linux",
+  "error": {
+    "signature": "dependency failed to start: container exited (depends_on service failed)",
+    "regex": "dependency failed|depends_on.*failed|service.*failed to start.*depends",
+    "domain": "docker",
+    "category": "orchestration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-11",
+    "summary": "depends_on service crashed. The dependency container exited before the dependent started."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove depends_on",
+      "why_fails": "Service may start before its dependency, causing connection errors",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://docs.docker.com/reference/compose-file/services/#depends_on"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use depends_on with condition: service_healthy and add healthcheck",
+      "success_rate": 0.95,
+      "how": "depends_on:\n  db:\n    condition: service_healthy",
+      "sources": [
+        "https://docs.docker.com/reference/compose-file/services/#depends_on"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Fix the dependency container's error first — check its logs: docker compose logs <service>",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/compose/logs/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

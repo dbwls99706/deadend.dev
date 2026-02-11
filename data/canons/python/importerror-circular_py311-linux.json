@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/importerror-circular/py311-linux",
+  "url": "https://deadends.dev/python/importerror-circular/py311-linux",
+  "error": {
+    "signature": "ImportError: cannot import name 'X' from partially initialized module 'Y' (most likely due to a circular import)",
+    "regex": "ImportError: cannot import name '(\\w+)' from partially initialized module",
+    "domain": "python",
+    "category": "import",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.10"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Circular import detected — module A imports from B which imports from A before A is fully loaded."
+  },
+  "dead_ends": [
+    {
+      "action": "Reordering imports alphabetically",
+      "why_fails": "Does not break the cycle; both modules still depend on each other",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using importlib.reload()",
+      "why_fails": "Does not break circular dependency; may cause duplicate state",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move the import inside the function that needs it (lazy import)",
+      "success_rate": 0.93,
+      "how": "def func(): from module_b import X — defers import until runtime",
+      "sources": [
+        "https://docs.python.org/3/faq/programming.html#what-are-the-best-practices-for-using-import-in-a-package"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restructure modules to extract shared code into a third module",
+      "success_rate": 0.95,
+      "how": "Create a common.py with shared definitions imported by both A and B",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

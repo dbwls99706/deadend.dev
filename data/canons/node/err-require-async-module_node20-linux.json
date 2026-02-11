@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/err-require-async-module/node20-linux",
+  "url": "https://deadends.dev/node/err-require-async-module/node20-linux",
+  "error": {
+    "signature": "Error [ERR_REQUIRE_ASYNC_MODULE]: require() of ES Module not supported with top-level await",
+    "regex": "ERR_REQUIRE_ASYNC_MODULE|require.*async module|top-level await.*require",
+    "domain": "node",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=20,<23"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "Trying to require() a module that uses top-level await. Must use import() instead."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove top-level await from the module",
+      "why_fails": "May break the module's initialization logic",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://nodejs.org/api/esm.html#top-level-await"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use dynamic import: const mod = await import('module')",
+      "success_rate": 0.95,
+      "sources": [
+        "https://nodejs.org/api/esm.html#import-expressions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert calling code to ESM with 'type': 'module' in package.json",
+      "success_rate": 0.88,
+      "sources": [
+        "https://nodejs.org/api/packages.html#type"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

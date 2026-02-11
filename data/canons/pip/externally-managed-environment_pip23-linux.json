@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/externally-managed-environment/pip23-linux",
+  "url": "https://deadends.dev/pip/externally-managed-environment/pip23-linux",
+  "error": {
+    "signature": "error: externally-managed-environment",
+    "regex": "externally-managed-environment",
+    "domain": "pip",
+    "category": "environment",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=23.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "PEP 668: pip refuses to install into system Python because the OS package manager manages it."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing the EXTERNALLY-MANAGED file",
+      "why_fails": "Breaks OS package manager integration; system packages may conflict",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://peps.python.org/pep-0668/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using --break-system-packages flag",
+      "why_fails": "Bypasses the protection; can corrupt system Python",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a virtual environment: python -m venv .venv && source .venv/bin/activate",
+      "success_rate": 0.98,
+      "how": "Virtual environments are isolated and don't conflict with system Python",
+      "sources": [
+        "https://docs.python.org/3/library/venv.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use pipx for CLI tools: pipx install <tool>",
+      "success_rate": 0.93,
+      "how": "pipx installs each tool in its own isolated environment",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

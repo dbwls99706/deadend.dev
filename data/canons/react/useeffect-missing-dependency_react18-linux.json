@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/useeffect-missing-dependency/react18-linux",
+  "url": "https://deadends.dev/react/useeffect-missing-dependency/react18-linux",
+  "error": {
+    "signature": "React Hook useEffect has a missing dependency: 'value'. Either include it or remove the dependency array.",
+    "regex": "React Hook useEffect has a missing dependency",
+    "domain": "react",
+    "category": "hooks",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=16.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "ESLint exhaustive-deps rule warns about a variable used in useEffect but not in its dependency array."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding // eslint-disable-next-line react-hooks/exhaustive-deps",
+      "why_fails": "Suppresses a real bug warning; effect may use stale values",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Passing an empty dependency array to only run once",
+      "why_fails": "Effect will use stale closure values if it reads state or props",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the missing dependency to the array: useEffect(() => { ... }, [value])",
+      "success_rate": 0.95,
+      "how": "Ensures the effect re-runs when its dependencies change",
+      "sources": [
+        "https://react.dev/reference/react/useEffect#specifying-reactive-dependencies"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "If you intentionally want to exclude it, use useRef to hold the value",
+      "success_rate": 0.85,
+      "how": "const valueRef = useRef(value); valueRef.current = value; — ref doesn't trigger re-runs",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

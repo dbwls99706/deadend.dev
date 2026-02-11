@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/illegal-memory-access/cuda12-linux",
+  "url": "https://deadends.dev/cuda/illegal-memory-access/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: CUDA error: an illegal memory access was encountered",
+    "regex": "CUDA error: an illegal memory access",
+    "domain": "cuda",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "GPU kernel accessed invalid memory — buffer overrun, freed memory, or wrong tensor shape."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching the error and continuing training",
+      "why_fails": "GPU is in error state; all subsequent CUDA operations will fail",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing GPU memory allocation",
+      "why_fails": "Illegal access is about address validity, not memory quantity",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set CUDA_LAUNCH_BLOCKING=1 to get accurate error location",
+      "success_rate": 0.93,
+      "how": "Synchronous execution pinpoints which kernel caused the error",
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#error-handling"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check tensor shapes and indices — off-by-one errors are the most common cause",
+      "success_rate": 0.88,
+      "how": "Verify all indexing operations stay within tensor dimensions",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

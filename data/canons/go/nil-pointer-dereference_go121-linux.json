@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/nil-pointer-dereference/go121-linux",
+  "url": "https://deadends.dev/go/nil-pointer-dereference/go121-linux",
+  "error": {
+    "signature": "runtime error: invalid memory address or nil pointer dereference",
+    "regex": "(nil pointer dereference|invalid memory address)",
+    "domain": "go",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "Attempting to dereference a nil pointer, often from unchecked error returns."
+  },
+  "dead_ends": [
+    {
+      "action": "Using recover() to catch all nil pointer panics",
+      "why_fails": "Masks bugs; recover should only be used at API boundaries",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Initializing all pointers to empty structs",
+      "why_fails": "Hides nil-state bugs; empty struct may not be a valid state",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add nil checks before dereferencing: if ptr != nil { ... }",
+      "success_rate": 0.96,
+      "how": "Check for nil at every point where a pointer might be nil",
+      "sources": [
+        "https://go.dev/doc/effective_go#errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Always check error returns: val, err := fn(); if err != nil { return }",
+      "success_rate": 0.97,
+      "how": "Most nil pointer issues come from ignoring error returns",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

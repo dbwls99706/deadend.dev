@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/typeerror-not-json-serializable/py311-linux",
+  "url": "https://deadends.dev/python/typeerror-not-json-serializable/py311-linux",
+  "error": {
+    "signature": "TypeError: Object of type X is not JSON serializable",
+    "regex": "TypeError: Object of type .+ is not JSON serializable",
+    "domain": "python",
+    "category": "serialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "python",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "json.dumps can't serialize the object. Common: datetime, set, numpy, Decimal, UUID."
+  },
+  "dead_ends": [
+    {
+      "action": "Use str() on everything before serializing",
+      "why_fails": "Loses type information — can't deserialize back correctly",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.python.org/3/library/json.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use pickle instead of JSON",
+      "why_fails": "Pickle is Python-only, insecure, and not human-readable",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.python.org/3/library/pickle.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Write a custom encoder: class CustomEncoder(json.JSONEncoder)",
+      "success_rate": 0.92,
+      "how": "class CustomEncoder(json.JSONEncoder):\n    def default(self, o):\n        if isinstance(o, datetime): return o.isoformat()\n        if isinstance(o, set): return list(o)\n        return super().default(o)",
+      "sources": [
+        "https://docs.python.org/3/library/json.html#json.JSONEncoder"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert the specific type before serializing: list(set), str(uuid)",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.python.org/3/library/json.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

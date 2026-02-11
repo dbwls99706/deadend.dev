@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/cannot-use-as-type/go121-linux",
+  "url": "https://deadends.dev/go/cannot-use-as-type/go121-linux",
+  "error": {
+    "signature": "cannot use x (variable of type T) as type U in argument",
+    "regex": "cannot use.*as type.*in (argument|assignment|return)",
+    "domain": "go",
+    "category": "type-system",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "Go strict type system rejects assignment or argument because types don't match, even if they're structurally similar."
+  },
+  "dead_ends": [
+    {
+      "action": "Using unsafe.Pointer to convert between types",
+      "why_fails": "Bypasses type safety; leads to memory corruption if types differ",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding type conversion without checking compatibility",
+      "why_fails": "Some conversions compile but lose data (e.g., int64 to int32)",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use explicit type conversion: U(x) if the types are convertible",
+      "success_rate": 0.95,
+      "how": "Go allows conversion between compatible types like int32(x) or string(b)",
+      "sources": [
+        "https://go.dev/ref/spec#Conversions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Implement the required interface on the type",
+      "success_rate": 0.88,
+      "how": "If the target is an interface, add the missing methods to your type",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

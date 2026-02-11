@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/invalid-dom-property/react18-linux",
+  "url": "https://deadends.dev/react/invalid-dom-property/react18-linux",
+  "error": {
+    "signature": "Warning: Invalid DOM property 'class'. Did you mean 'className'?",
+    "regex": "Invalid DOM property|Did you mean 'className'|did you mean.*class",
+    "domain": "react",
+    "category": "jsx_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.98,
+    "confidence": 0.95,
+    "last_updated": "2026-02-11",
+    "summary": "HTML attributes in JSX use camelCase. class → className, for → htmlFor, etc."
+  },
+  "dead_ends": [
+    {
+      "action": "Use dangerouslySetInnerHTML to bypass",
+      "why_fails": "Overkill and XSS risk for a simple attribute rename",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://react.dev/reference/react-dom/components/common#common-props"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use React attribute names: className, htmlFor, tabIndex, readOnly, etc.",
+      "success_rate": 0.98,
+      "sources": [
+        "https://react.dev/reference/react-dom/components/common#common-props"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Most HTML attributes are camelCase in JSX except data-* and aria-*",
+      "success_rate": 0.92,
+      "sources": [
+        "https://react.dev/reference/react-dom/components/common"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

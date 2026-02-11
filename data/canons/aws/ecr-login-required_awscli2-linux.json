@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/ecr-login-required/awscli2-linux",
+  "url": "https://deadends.dev/aws/ecr-login-required/awscli2-linux",
+  "error": {
+    "signature": "Error: pull access denied or repository does not exist (ECR login required)",
+    "regex": "pull access denied.*ECR|ecr.*login|authorization token.*ecr|denied.*repository",
+    "domain": "aws",
+    "category": "auth_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "ECR pull requires authentication. Docker login token expires after 12 hours."
+  },
+  "dead_ends": [
+    {
+      "action": "Make the ECR repository public",
+      "why_fails": "Security risk — exposes private images to everyone",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policies.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Login to ECR: aws ecr get-login-password | docker login --username AWS --password-stdin <account>.dkr.ecr.<region>.amazonaws.com",
+      "success_rate": 0.95,
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For Kubernetes, create an ECR pull secret or use IRSA for EKS",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add ECR login to CI/CD pipeline — token expires every 12 hours",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

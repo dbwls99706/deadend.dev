@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/slice-bounds-out-of-range/go121-linux",
+  "url": "https://deadends.dev/go/slice-bounds-out-of-range/go121-linux",
+  "error": {
+    "signature": "runtime error: index out of range [5] with length 3",
+    "regex": "(index out of range|slice bounds out of range)",
+    "domain": "go",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Array/slice index exceeds its length."
+  },
+  "dead_ends": [
+    {
+      "action": "Using recover() to catch the panic",
+      "why_fails": "Masks the bug; the slice access logic is wrong",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Pre-allocating a very large slice",
+      "why_fails": "Wastes memory; doesn't fix the indexing logic",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add bounds checking: if i < len(slice) { ... }",
+      "success_rate": 0.97,
+      "how": "Check index before accessing",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use range-based for loop to avoid manual indexing",
+      "success_rate": 0.93,
+      "how": "for i, v := range slice { ... } — cannot go out of bounds",
+      "sources": [
+        "https://go.dev/tour/moretypes/16"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

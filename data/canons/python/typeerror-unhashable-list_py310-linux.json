@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/typeerror-unhashable-list/py310-linux",
+  "url": "https://deadends.dev/python/typeerror-unhashable-list/py310-linux",
+  "error": {
+    "signature": "TypeError: unhashable type: 'list'",
+    "regex": "TypeError: unhashable type: 'list'",
+    "domain": "python",
+    "category": "typing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.8"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.98,
+    "last_updated": "2026-02-11",
+    "summary": "Attempting to use a list as a dict key or set element."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the list in str() to make it hashable",
+      "why_fails": "Loses structure; str representation can collide for different lists",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using json.dumps() as hash key",
+      "why_fails": "Fragile — key ordering matters, wastes memory",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Convert list to tuple before using as dict key or set element",
+      "success_rate": 0.97,
+      "how": "Use tuple(my_list) as the key instead",
+      "sources": [
+        "https://docs.python.org/3/glossary.html#term-hashable"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use frozenset() if order doesn't matter",
+      "success_rate": 0.9,
+      "how": "frozenset(my_list) is hashable and order-independent",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

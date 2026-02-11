@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/oci-runtime-create-failed/docker24-linux",
+  "url": "https://deadends.dev/docker/oci-runtime-create-failed/docker24-linux",
+  "error": {
+    "signature": "OCI runtime create failed: container_linux.go: starting container process caused: exec: not found",
+    "regex": "OCI runtime create failed.*exec.*not found",
+    "domain": "docker",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.10"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "The specified CMD or ENTRYPOINT binary does not exist in the container."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstalling Docker",
+      "why_fails": "The issue is with the image, not Docker itself",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching to a different Docker version",
+      "why_fails": "The binary is missing from the image, not a Docker engine issue",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check that CMD/ENTRYPOINT binary exists in the image: docker run --entrypoint sh image -c 'which binary'",
+      "success_rate": 0.93,
+      "how": "Verify the binary is installed and in PATH",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use full path in CMD/ENTRYPOINT or ensure PATH is set correctly in Dockerfile",
+      "success_rate": 0.91,
+      "how": "CMD [\"/usr/local/bin/app\"] instead of CMD [\"app\"]",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

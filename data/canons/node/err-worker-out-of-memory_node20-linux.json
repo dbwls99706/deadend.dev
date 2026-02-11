@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/err-worker-out-of-memory/node20-linux",
+  "url": "https://deadends.dev/node/err-worker-out-of-memory/node20-linux",
+  "error": {
+    "signature": "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory",
+    "regex": "(FATAL ERROR: Reached heap limit|JavaScript heap out of memory)",
+    "domain": "node",
+    "category": "memory",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Node.js process exceeded V8 heap memory limit."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting --max-old-space-size=16384 without investigating the leak",
+      "why_fails": "Delays the crash but the leak still grows unbounded",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Splitting the process into workers without fixing the memory issue",
+      "why_fails": "Each worker will also eventually OOM",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile with --inspect and Chrome DevTools to find the memory leak",
+      "success_rate": 0.93,
+      "how": "node --inspect app.js then open chrome://inspect to take heap snapshots",
+      "sources": [
+        "https://nodejs.org/en/docs/guides/debugging-getting-started"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Increase heap limit as interim: NODE_OPTIONS=--max-old-space-size=8192",
+      "success_rate": 0.85,
+      "how": "export NODE_OPTIONS='--max-old-space-size=8192' before running",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

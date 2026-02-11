@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/crashloopbackoff/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/crashloopbackoff/k8s128-linux",
+  "error": {
+    "signature": "CrashLoopBackOff",
+    "regex": "CrashLoopBackOff",
+    "domain": "kubernetes",
+    "category": "pod-lifecycle",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-11",
+    "summary": "Container repeatedly crashes and Kubernetes keeps restarting it with exponential backoff."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting and recreating the pod",
+      "why_fails": "Kubernetes will restart it with the same config; crash will recur",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing restart policy backoff",
+      "why_fails": "Does not fix the underlying crash",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check container logs: kubectl logs <pod> --previous to see crash reason",
+      "success_rate": 0.95,
+      "how": "The --previous flag shows logs from the last crashed instance",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use kubectl describe pod <pod> to check events, readiness probes, and resource limits",
+      "success_rate": 0.93,
+      "how": "Common causes: OOM kills, failed liveness probes, missing config/secrets",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

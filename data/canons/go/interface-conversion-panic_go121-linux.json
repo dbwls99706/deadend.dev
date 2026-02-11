@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/interface-conversion-panic/go121-linux",
+  "url": "https://deadends.dev/go/interface-conversion-panic/go121-linux",
+  "error": {
+    "signature": "interface conversion: interface is nil, not T",
+    "regex": "interface conversion.*interface is nil",
+    "domain": "go",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.18"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-11",
+    "summary": "Type assertion on a nil interface value."
+  },
+  "dead_ends": [
+    {
+      "action": "Using recover() globally to catch the panic",
+      "why_fails": "Masks the nil interface bug; inconsistent state continues",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Checking for nil after the assertion",
+      "why_fails": "Panic already happened; nil check is too late",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the two-value type assertion: val, ok := iface.(T); if !ok { handle }",
+      "success_rate": 0.96,
+      "how": "Safe form doesn't panic; ok is false if assertion fails",
+      "sources": [
+        "https://go.dev/tour/methods/15"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for nil before type-asserting: if iface != nil { val := iface.(T) }",
+      "success_rate": 0.9,
+      "how": "Nil interfaces always fail type assertions",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

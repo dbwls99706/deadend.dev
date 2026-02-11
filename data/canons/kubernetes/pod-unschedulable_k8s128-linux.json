@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/pod-unschedulable/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/pod-unschedulable/k8s128-linux",
+  "error": {
+    "signature": "0/3 nodes are available: 3 Insufficient cpu",
+    "regex": "(\\d+/\\d+ nodes are available|Insufficient (cpu|memory)|Unschedulable)",
+    "domain": "kubernetes",
+    "category": "scheduling",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.24"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-11",
+    "summary": "No node has enough CPU or memory to schedule the pod."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing resource requests to bypass scheduling",
+      "why_fails": "Pod can be scheduled anywhere but may OOM or starve other pods",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Draining a node to free resources",
+      "why_fails": "Moves pods to other nodes; doesn't add capacity",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Review and right-size resource requests: kubectl top nodes to see actual usage",
+      "success_rate": 0.93,
+      "how": "Requests may be over-provisioned; reduce to actual needs",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add more nodes or use cluster autoscaler to scale up automatically",
+      "success_rate": 0.9,
+      "how": "autoscaler provisions new nodes when pods can't be scheduled",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

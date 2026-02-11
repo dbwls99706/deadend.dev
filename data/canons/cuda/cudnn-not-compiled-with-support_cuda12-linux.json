@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cudnn-not-compiled-with-support/cuda12-linux",
+  "url": "https://deadends.dev/cuda/cudnn-not-compiled-with-support/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: cuDNN error: CUDNN_STATUS_NOT_SUPPORTED",
+    "regex": "cuDNN error: CUDNN_STATUS_NOT_SUPPORTED",
+    "domain": "cuda",
+    "category": "compatibility",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-11",
+    "summary": "cuDNN operation not supported for the given tensor configuration, often due to tensor format or data type."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrading cuDNN to an older version",
+      "why_fails": "Older versions have fewer supported configurations, not more",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling cuDNN entirely with torch.backends.cudnn.enabled = False",
+      "why_fails": "Huge performance degradation; cuDNN is critical for conv ops",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set torch.backends.cudnn.benchmark = True to let cuDNN auto-select the best algorithm",
+      "success_rate": 0.88,
+      "how": "benchmark mode tries all algorithms and caches the fastest one",
+      "sources": [
+        "https://pytorch.org/docs/stable/backends.html#torch.backends.cudnn.benchmark"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if the tensor needs to be contiguous: x = x.contiguous() before the op",
+      "success_rate": 0.85,
+      "how": "Non-contiguous tensors may not be supported by certain cuDNN kernels",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

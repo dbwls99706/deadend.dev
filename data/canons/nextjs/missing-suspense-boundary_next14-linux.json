@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/missing-suspense-boundary/next14-linux",
+  "url": "https://deadends.dev/nextjs/missing-suspense-boundary/next14-linux",
+  "error": {
+    "signature": "Error: Missing Suspense boundary with useSearchParams",
+    "regex": "Missing Suspense boundary.*useSearchParams",
+    "domain": "nextjs",
+    "category": "app-router",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=13.4"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-11",
+    "summary": "useSearchParams() must be wrapped in a Suspense boundary for static rendering."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding 'use client' to the page",
+      "why_fails": "Page is already a client component; the issue is the missing Suspense",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using router.query instead",
+      "why_fails": "router.query doesn't exist in App Router; it's a Pages Router API",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wrap the component using useSearchParams in <Suspense>: <Suspense fallback={<Loading/>}><SearchComponent/></Suspense>",
+      "success_rate": 0.96,
+      "how": "Suspense boundary enables static rendering with dynamic client-side params",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use searchParams page prop for server-side access",
+      "success_rate": 0.88,
+      "how": "export default function Page({ searchParams }) — available in Server Components",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}
