@@ -1,8 +1,16 @@
 # deadends.dev
 
+[![Errors](https://img.shields.io/badge/errors-501-blue)](https://deadends.dev)
+[![Domains](https://img.shields.io/badge/domains-14-green)](https://deadends.dev)
+[![MCP Tools](https://img.shields.io/badge/MCP_tools-7-purple)](https://smithery.ai/server/deadend/deadends-dev)
+[![PyPI](https://img.shields.io/pypi/v/deadends-dev)](https://pypi.org/project/deadends-dev/)
+[![License](https://img.shields.io/badge/license-MIT%20%2F%20CC%20BY%204.0-lightgrey)](LICENSE)
+
 **Structured failure knowledge for AI coding agents.**
 
 501 error entries across 14 domains. When AI agents encounter errors, they waste tokens on approaches that are known to fail. deadends.dev tells agents what NOT to try, what actually works, and what error comes next.
+
+> **Website:** [deadends.dev](https://deadends.dev) · **MCP Server:** [Smithery](https://smithery.ai/server/deadend/deadends-dev) · **PyPI:** [deadends-dev](https://pypi.org/project/deadends-dev/) · **API:** [/api/v1/index.json](https://deadends.dev/api/v1/index.json)
 
 ## Installation
 
@@ -42,9 +50,19 @@ Add to `~/.claude/claude_desktop_config.json`:
 }
 ```
 
-### Hosted (Smithery)
+### Hosted (Smithery — no local setup)
 
-Available on [Smithery](https://smithery.ai/server/deadend/deadends-dev) — no local setup required.
+Install via [Smithery](https://smithery.ai/server/deadend/deadends-dev):
+
+```bash
+# Claude Code
+npx -y @smithery/cli@latest install deadend/deadends-dev --client claude
+
+# Cursor
+npx -y @smithery/cli@latest install deadend/deadends-dev --client cursor
+```
+
+Or connect directly: `https://server.smithery.ai/deadend/deadends-dev`
 
 ### Example Response
 
@@ -103,7 +121,7 @@ deadends --list  # show all known errors
 |----------|-------------|
 | [`/api/v1/match.json`](https://deadends.dev/api/v1/match.json) | Lightweight regex matching (fits in context window) |
 | [`/api/v1/index.json`](https://deadends.dev/api/v1/index.json) | Full error index with all metadata |
-| `/api/v1/{domain}/{slug}/{env}.json` | Individual error canon |
+| [`/api/v1/{domain}/{slug}/{env}.json`](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json) | Individual error canon ([example](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json)) |
 | [`/api/v1/openapi.json`](https://deadends.dev/api/v1/openapi.json) | OpenAPI 3.1 spec with response examples |
 | [`/api/v1/stats.json`](https://deadends.dev/api/v1/stats.json) | Dataset quality metrics by domain |
 | [`/api/v1/errors.ndjson`](https://deadends.dev/api/v1/errors.ndjson) | NDJSON streaming (one error per line) |
