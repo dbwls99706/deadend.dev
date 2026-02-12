@@ -59,9 +59,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts6133-declared-not-read/ts5-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "typescript/ts2352-conversion-may-be-mistake/ts5-linux",
+        "probability": 0.21
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "typescript/ts2564-no-initializer/ts5-linux",
+        "probability": 0.16
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "distinction": "'TS2532' indicates a possibly undefined value access, while 'TS2322' indicates a type assignment incompatibility."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

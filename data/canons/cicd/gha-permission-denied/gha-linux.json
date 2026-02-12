@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-permission-denied/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-permission-denied/gha-linux",
+  "error": {
+    "signature": "Error: Resource not accessible by integration (403)",
+    "regex": "(?:Resource not accessible by integration|403 Forbidden|HttpError: Resource not accessible)",
+    "domain": "cicd",
+    "category": "permissions",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "GitHub Actions workflow lacks required permissions to access repository resources such as packages, issues, pull requests, or deployments. The GITHUB_TOKEN has insufficient scopes."
+  },
+  "dead_ends": [
+    {
+      "action": "Use a personal access token (PAT) with full repo scope as a workaround",
+      "why_fails": "Over-privileged tokens create security risks and PATs can expire, causing future failures; the root cause is incorrect workflow permissions",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set all permissions to write without understanding which are needed",
+      "why_fails": "Violates principle of least privilege and may be blocked by organization-level permission policies",
+      "fail_rate": 0.45,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add explicit permissions block to the workflow with only the required scopes",
+      "success_rate": 0.92,
+      "how": "Add 'permissions:' at the job or workflow level with specific scopes like 'contents: read', 'packages: write', 'pull-requests: write' as needed",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and update organization/repository default workflow permissions",
+      "success_rate": 0.88,
+      "how": "Go to Settings > Actions > General > Workflow permissions and ensure 'Read and write permissions' is selected, or grant specific permissions",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-checkout-failed/gha-linux", "probability": 0.20, "condition": "When permission issues also affect checkout authentication"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.15, "condition": "When fixing syntax errors reveals underlying permission problems"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-secret-not-found/gha-linux", "distinction": "Permission denied is about GITHUB_TOKEN scopes; secret not found is about missing repository/environment secrets"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

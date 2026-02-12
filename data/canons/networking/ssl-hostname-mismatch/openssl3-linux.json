@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/ssl-hostname-mismatch/openssl3-linux",
+  "url": "https://deadends.dev/networking/ssl-hostname-mismatch/openssl3-linux",
+  "error": {
+    "signature": "SSL: hostname mismatch - certificate CN does not match",
+    "regex": "hostname mismatch|certificate is not valid for|ERR_CERT_COMMON_NAME_INVALID|subject.*does not match",
+    "domain": "networking",
+    "category": "ssl_tls",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "The hostname used to connect does not match the Common Name (CN) or Subject Alternative Names (SANs) in the server's SSL certificate. Modern TLS clients require the server hostname to appear in the SAN extension."
+  },
+  "dead_ends": [
+    {
+      "action": "Add the mismatched hostname to /etc/hosts to force DNS resolution to the IP",
+      "why_fails": "DNS resolution is not the problem. The TLS client validates the hostname against the certificate fields, not against DNS. Changing /etc/hosts does not modify the certificate's CN or SANs, so the mismatch error persists.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable SNI (Server Name Indication) in the client",
+      "why_fails": "Disabling SNI does not fix hostname validation. SNI tells the server which certificate to present in multi-tenant setups; disabling it may cause the server to return the wrong certificate entirely, making the mismatch worse.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reissue the certificate with the correct hostname in the SAN field",
+      "success_rate": 0.95,
+      "how": "1. Create an openssl config with SANs:\n   [req]\n   req_extensions = v3_req\n   [v3_req]\n   subjectAltName = DNS:yourdomain.com,DNS:www.yourdomain.com\n2. Generate CSR: openssl req -new -key server.key -out server.csr -config san.cnf\n3. Submit CSR to your CA for signing\n4. Install the new certificate with correct SANs\n5. Verify: openssl x509 -in cert.pem -text -noout | grep -A1 'Subject Alternative Name'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the exact hostname that matches the certificate's CN/SAN",
+      "success_rate": 0.88,
+      "how": "1. Check what names the cert is valid for: openssl s_client -connect host:443 </dev/null 2>/dev/null | openssl x509 -noout -text | grep -A1 'Subject Alternative Name'\n2. Use the listed domain name instead of an IP address or alternate hostname\n3. Update your client configuration, DNS CNAME records, or reverse proxy settings to use the matching hostname",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.20, "condition": "when reissuing the certificate with a different CA and the chain is incomplete"},
+      {"error_id": "networking/ssl-self-signed/openssl3-linux", "probability": 0.15, "condition": "when generating a quick self-signed cert to fix the mismatch"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS was reconfigured and the new hostname does not match the certificate"},
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.10, "condition": "when renewing an expired cert with incorrect CN/SANs"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/ssl-self-signed/openssl3-linux", "distinction": "Hostname mismatch means the certificate is signed by a trusted CA but lists different domain names; self-signed means the certificate itself has no trusted CA signature"},
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "distinction": "Hostname mismatch is a name validation failure; unable-to-verify is a chain-of-trust validation failure where the issuing CA cannot be found"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

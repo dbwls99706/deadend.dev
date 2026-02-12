@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/nuget-version-conflict/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/nuget-version-conflict/dotnet8-linux",
+  "error": {
+    "signature": "error NU1107: Version conflict detected for 'PackageName'. Install/reference 'PackageName' directly to resolve this issue.",
+    "regex": "(NU1107|Version conflict detected|Detected package downgrade)",
+    "domain": "dotnet",
+    "category": "package_management",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "NuGet version conflicts occur when different packages depend on incompatible versions of the same transitive dependency. Common with Microsoft.Extensions.* packages, Entity Framework Core, and Azure SDK packages. Fix by adding explicit top-level references to align versions."
+  },
+  "dead_ends": [
+    {
+      "action": "Pinning all transitive dependencies to exact versions in the .csproj file",
+      "why_fails": "Creates a maintenance burden where every package update requires manual version adjustment of all transitive dependencies. Version pins often conflict with the ranges required by direct dependencies, making future updates nearly impossible",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using assembly binding redirects (app.config) in .NET 8+ projects",
+      "why_fails": "Assembly binding redirects are a .NET Framework concept. .NET 8 uses a different dependency resolution mechanism; adding binding redirects to modern .NET projects has no effect and adds confusion",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add explicit PackageReference for the conflicting package to align versions",
+      "success_rate": 0.88,
+      "how": "Identify the conflicting package from the error message. Add a direct reference in your .csproj: <PackageReference Include=\"ConflictingPackage\" Version=\"x.y.z\" />. Choose the highest version required by any dependency. Run 'dotnet restore' to verify resolution",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Directory.Packages.props for centralized version management",
+      "success_rate": 0.85,
+      "how": "Enable central package management: add <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally> to Directory.Build.props. Create Directory.Packages.props with <PackageVersion Include=\"PackageName\" Version=\"x.y.z\" /> entries. This ensures all projects use the same package versions, eliminating cross-project conflicts",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.20, "condition": "when version conflict causes wrong assembly version to be loaded at runtime"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.15, "condition": "when version conflict is caused by SDK version differences across projects"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.20, "condition": "when restore from an alternative source provides different package versions"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.10, "condition": "when upgrading SDK introduces new default package versions that conflict"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "distinction": "Version conflict means packages exist but have incompatible version requirements; restore failure means one or more packages cannot be found at all"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

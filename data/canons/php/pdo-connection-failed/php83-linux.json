@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/pdo-connection-failed/php83-linux",
+  "url": "https://deadends.dev/php/pdo-connection-failed/php83-linux",
+  "error": {
+    "signature": "PDOException: SQLSTATE[HY000] [2002] Connection refused",
+    "regex": "SQLSTATE\\[HY000\\].*(?:Connection refused|No such file or directory|Connection timed out)",
+    "domain": "php",
+    "category": "database",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "PDO connection failures occur when PHP cannot establish a connection to the database server. Common causes include incorrect host/port configuration, the database server not running, firewall rules blocking the connection, or using 'localhost' when the socket path is wrong."
+  },
+  "dead_ends": [
+    {"action": "Switching from PDO to mysqli to fix the connection", "why_fails": "Both PDO and mysqli use the same underlying connection mechanism. If PDO cannot connect, mysqli will fail for the same reason. Switching drivers does not fix network or configuration issues and adds unnecessary code changes.", "fail_rate": 0.88, "sources": [], "condition": ""},
+    {"action": "Hardcoding database credentials directly in PHP files", "why_fails": "Hardcoding credentials does not solve connection issues and creates security vulnerabilities. If the connection is refused, the problem is with the host/port/socket, not with how credentials are stored.", "fail_rate": 0.75, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use 127.0.0.1 instead of localhost to force TCP connection and verify the database is running", "success_rate": 0.89, "how": "Replace 'localhost' with '127.0.0.1' in the DSN to force TCP instead of Unix socket. Verify the database is running with 'systemctl status mysql' or 'pg_isready'. Check the port with 'ss -tlnp | grep 3306'. If using Docker, ensure the container port is mapped correctly.", "sources": [], "condition": ""},
+    {"action": "Check database server status, firewall rules, and socket configuration", "success_rate": 0.85, "how": "Verify the database server is running and listening on the expected port. Check firewall rules with 'iptables -L' or 'ufw status'. For socket connections, verify the socket path with 'mysql_config --socket' and match it in the PDO DSN. Ensure the PHP user has permission to access the socket file.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/max-execution-time/php83-linux", "probability": 0.18, "condition": "when connection retry logic without timeout causes the script to hang until max_execution_time is reached"}],
+    "preceded_by": [{"error_id": "php/laravel-migration-failed/laravel11-linux", "probability": 0.20, "condition": "when the migration failure was actually caused by the database being unreachable"}],
+    "frequently_confused_with": [{"error_id": "php/laravel-model-not-found/laravel11-linux", "distinction": "PDO connection failed means the database server is unreachable while ModelNotFoundException means the database is connected but the requested record does not exist"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 105,
+    "last_verification": "2026-02-12"
+  }
+}

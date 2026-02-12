@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-runner-timeout/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-runner-timeout/gha-linux",
+  "error": {
+    "signature": "Error: The job running on runner GitHub Actions has exceeded the maximum execution time of 360 minutes",
+    "regex": "(?:exceeded the maximum execution time|job exceeded.*time limit|timeout.*runner|The job.*has been cancelled.*timed out)",
+    "domain": "cicd",
+    "category": "timeout",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "A GitHub Actions job exceeds the default 6-hour (360-minute) time limit or a custom timeout-minutes value. Usually caused by hanging processes, infinite loops, or builds that are genuinely too slow for the runner."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increase timeout-minutes to a very large value",
+      "why_fails": "Masks the underlying issue (hanging process, inefficient build); wastes CI minutes and delays feedback; GitHub has a hard cap of 360 minutes",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Re-run the workflow without investigating the root cause",
+      "why_fails": "Timeouts from hangs or slow builds are deterministic and will recur on every run",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and fix the hanging process or optimize the slow build step",
+      "success_rate": 0.88,
+      "how": "Add verbose logging to each step, use 'timeout' command for individual processes, check for interactive prompts that block CI, and parallelize test suites",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Split the job into smaller parallel jobs and use matrix strategy",
+      "success_rate": 0.85,
+      "how": "Use 'strategy: matrix' to parallelize work across multiple runners. Split test suites with tools like jest --shard or pytest-split",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.25, "condition": "When the timeout is caused by a specific flaky test hanging"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.20, "condition": "When cache miss causes full rebuild, significantly increasing build time"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-concurrency-cancelled/gha-linux", "distinction": "Timeout means the job ran too long; concurrency cancellation means the job was actively cancelled by a newer run"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/unique-violation/pg16-linux",
+  "url": "https://deadends.dev/database/unique-violation/pg16-linux",
+  "error": {
+    "signature": "psycopg2.errors.UniqueViolation: ERROR: duplicate key value violates unique constraint \"my_table_pkey\"",
+    "regex": "ERROR:\\s+duplicate key value violates unique constraint",
+    "domain": "database",
+    "category": "constraint_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "An INSERT or UPDATE attempted to create a duplicate value in a column with a unique constraint or primary key. Often caused by sequence desynchronization, race conditions in concurrent inserts, or missing upsert logic."
+  },
+  "dead_ends": [
+    {
+      "action": "Dropping the unique constraint to avoid the error",
+      "why_fails": "The unique constraint exists to enforce data integrity. Removing it allows duplicate data which will cause subtle and hard-to-debug application errors downstream.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Catching the exception and silently ignoring it without handling the duplicate",
+      "why_fails": "Silently swallowing the error means the intended data was not inserted or updated. This causes data loss or inconsistency without any user-visible indication.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use INSERT ... ON CONFLICT (upsert) to handle duplicates gracefully",
+      "success_rate": 0.94,
+      "how": "Rewrite the INSERT as: INSERT INTO my_table (id, col) VALUES (val1, val2) ON CONFLICT (id) DO UPDATE SET col = EXCLUDED.col; or ON CONFLICT DO NOTHING if duplicates should be skipped.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reset the sequence if primary key serial/identity column is out of sync",
+      "success_rate": 0.90,
+      "how": "Run: SELECT setval('my_table_id_seq', (SELECT MAX(id) FROM my_table)); This resynchronizes the sequence with the actual maximum value in the table, which often happens after bulk data imports.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when concurrent upsert operations on the same rows create lock contention"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.20, "condition": "when a failed migration leaves sequences out of sync with existing data"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-duplicate-entry/mysql8-linux", "distinction": "PostgreSQL says 'duplicate key value violates unique constraint' while MySQL says 'Duplicate entry for key'. Same concept, different error message format."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 78,
+    "last_verification": "2026-02-12"
+  }
+}

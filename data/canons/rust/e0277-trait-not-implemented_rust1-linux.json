@@ -59,9 +59,36 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "rust/e0425-unresolved-name/rust1-linux",
+        "probability": 0.18
+      },
+      {
+        "error_id": "rust/e0412-type-not-found/rust1-linux",
+        "probability": 0.22
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "rust/e0412-type-not-found/rust1-linux",
+        "probability": 0.17
+      },
+      {
+        "error_id": "rust/e0015-cannot-call-non-const-fn/rust1-linux",
+        "probability": 0.16
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
+        "distinction": "'[E0277]' indicates an unsatisfied trait bound, while '[E0507]' indicates moving out of borrowed content."
+      },
+      {
+        "error_id": "rust/e0277-trait-bound/rust1-linux",
+        "distinction": "Both produce similar messages, but 'e0277-trait-not-implemented' and 'e0277-trait-bound' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

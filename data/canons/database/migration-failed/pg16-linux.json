@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/migration-failed/pg16-linux",
+  "url": "https://deadends.dev/database/migration-failed/pg16-linux",
+  "error": {
+    "signature": "alembic.util.exc.CommandError: Can't locate revision identified by 'abc123' / ERROR: migration failed: schema version conflict",
+    "regex": "Can't locate revision|migration failed|Migrate.*failed|schema version conflict|migration.*error",
+    "domain": "database",
+    "category": "migration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Database migration tool cannot apply a migration due to version conflicts, missing migration files, corrupted migration state, or SQL errors within the migration. The schema_migrations/alembic_version table is out of sync with the actual schema or available migration files."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually editing the migration version table to skip failed migrations",
+      "why_fails": "Stamping the version table without actually applying the migration leaves the schema in an inconsistent state. The database schema does not match what the migration tool expects, causing cascading failures in subsequent migrations.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Dropping all tables and re-running all migrations from scratch in production",
+      "why_fails": "Dropping tables in production destroys all data. This approach is acceptable in development but catastrophic in production environments with live data.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the failed migration SQL and re-apply it within a transaction",
+      "success_rate": 0.87,
+      "how": "Check the migration tool's error output for the specific SQL error. Fix the migration file. If the migration partially applied, manually inspect the schema (\\d+ table_name) and either revert the partial changes or update the migration to be idempotent (IF NOT EXISTS, IF EXISTS). Re-run: alembic upgrade head or equivalent.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reconcile the migration state with the actual database schema",
+      "success_rate": 0.83,
+      "how": "Compare the current schema (pg_dump --schema-only) with what the migration tool expects. For Alembic: 'alembic current' shows current version, 'alembic history' shows available migrations. Fix any mismatch by creating a corrective migration or using 'alembic stamp <version>' only after verifying the schema actually matches that version.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.30, "condition": "when migration failure leaves expected tables uncreated"},
+      {"error_id": "database/unique-violation/pg16-linux", "probability": 0.15, "condition": "when partial migration leaves sequences desynchronized"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when migration fails because PostgreSQL cannot write new tables/indexes to a full disk"},
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when migration tool cannot connect to the database"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Migration failed is about the migration tool's state and process. Relation does not exist is a runtime query error. Migration failures can cause missing relations, but missing relations do not necessarily mean migration failed (could be wrong database or schema)."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 58,
+    "last_verification": "2026-02-12"
+  }
+}

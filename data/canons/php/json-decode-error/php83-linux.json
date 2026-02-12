@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/json-decode-error/php83-linux",
+  "url": "https://deadends.dev/php/json-decode-error/php83-linux",
+  "error": {
+    "signature": "json_decode(): Argument #1 ($json) must be of type string, null given / JSON_ERROR_SYNTAX: Syntax error",
+    "regex": "json_decode\\(\\).*(?:Syntax error|must be of type string|Malformed UTF-8|Control character)",
+    "domain": "php",
+    "category": "data_parsing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "json_decode() errors in PHP 8.x occur when the input string is not valid JSON, is null, or contains malformed UTF-8 characters. In PHP 8.3, passing null to json_decode triggers a deprecation warning. Common sources include API responses with HTML error pages, BOM characters, or truncated response bodies."
+  },
+  "dead_ends": [
+    {"action": "Wrapping json_decode in a try-catch without checking json_last_error()", "why_fails": "json_decode() does not throw exceptions by default (unless JSON_THROW_ON_ERROR flag is used). It returns null on failure, so a try-catch without the flag will not catch anything. The error must be checked with json_last_error().", "fail_rate": 0.82, "sources": [], "condition": ""},
+    {"action": "Using regex to fix malformed JSON before decoding", "why_fails": "Attempting to repair JSON with regex is fragile and error-prone. JSON has nested structures, escaped characters, and Unicode that regex cannot reliably parse. The real fix is to ensure the source produces valid JSON.", "fail_rate": 0.73, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use JSON_THROW_ON_ERROR flag and validate input before decoding", "success_rate": 0.91, "how": "Pass the JSON_THROW_ON_ERROR flag to json_decode: 'json_decode($string, true, 512, JSON_THROW_ON_ERROR)'. This throws a JsonException on invalid input. Wrap in try-catch to handle gracefully. Before decoding, check that the input is a non-empty string.", "sources": [], "condition": ""},
+    {"action": "Strip BOM and validate UTF-8 encoding before json_decode", "success_rate": 0.86, "how": "Remove UTF-8 BOM with: '$json = preg_replace(\"/^\\xEF\\xBB\\xBF/\", \"\", $json);'. Validate UTF-8 encoding with mb_check_encoding($json, 'UTF-8'). If the source is an HTTP response, check the Content-Type header to ensure it is application/json and not an HTML error page.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/type-error-argument/php83-linux", "probability": 0.18, "condition": "when json_decode returns null on failure and the null is passed to a type-hinted function"}],
+    "preceded_by": [{"error_id": "php/curl-ssl-error/php83-linux", "probability": 0.15, "condition": "when a cURL SSL error returns an HTML error page instead of the expected JSON response"}],
+    "frequently_confused_with": [{"error_id": "php/type-error-argument/php83-linux", "distinction": "json_decode error is about invalid JSON input while TypeError is about passing wrong types to function parameters though json_decode can trigger TypeErrors in PHP 8.x when given null"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

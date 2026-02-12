@@ -64,9 +64,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/valueerror-too-many-values-unpack/py311-linux",
+        "probability": 0.22
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/valueerror-invalid-literal/py311-linux",
+        "probability": 0.11
+      },
+      {
+        "error_id": "python/celery-task-not-registered/py311-linux",
+        "probability": 0.13
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/subprocess-calledprocesserror/py311-linux",
+        "distinction": "'TimeoutError' indicates a network or operation timeout, while 'subprocess.CalledProcessError' indicates a subprocess command failure."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

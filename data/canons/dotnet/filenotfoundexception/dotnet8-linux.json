@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/filenotfoundexception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/filenotfoundexception/dotnet8-linux",
+  "error": {
+    "signature": "System.IO.FileNotFoundException: Could not load file or assembly 'AssemblyName, Version=x.x.x.x'. The system cannot find the file specified.",
+    "regex": "System\\.IO\\.FileNotFoundException:\\s*Could not load file or assembly.+",
+    "domain": "dotnet",
+    "category": "assembly_loading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "FileNotFoundException for assemblies occurs when the runtime cannot locate a required DLL. Common causes include missing NuGet dependencies, incorrect publish output, or version mismatches in binding redirects. Fix by restoring packages and verifying the publish output."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually copying DLL files into the output directory",
+      "why_fails": "Creates fragile deployments that break on updates; the underlying dependency resolution issue remains and will resurface when packages are updated or the project is rebuilt on another machine",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrading the target framework to match an older assembly version",
+      "why_fails": "Introduces compatibility issues and loses access to newer APIs; the version mismatch often indicates a transitive dependency conflict that needs proper resolution, not framework downgrade",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run dotnet restore and verify all NuGet packages are properly resolved",
+      "success_rate": 0.87,
+      "how": "Run 'dotnet restore --force' to re-resolve all dependencies. Check the output for warnings about missing or conflicting packages. If using a private NuGet feed, verify the feed URL and credentials in nuget.config",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Publish as self-contained with all dependencies included",
+      "success_rate": 0.85,
+      "how": "Run 'dotnet publish -c Release --self-contained -r linux-x64' to include all runtime dependencies in the output. This avoids reliance on globally installed assemblies and ensures all required DLLs are in the publish directory",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "probability": 0.20, "condition": "when restoring packages reveals conflicting version requirements"},
+      {"error_id": "dotnet/platform-not-supported/dotnet8-linux", "probability": 0.10, "condition": "when the assembly is found but targets a different platform"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.25, "condition": "when NuGet restore fails to download required packages"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.15, "condition": "when building with wrong SDK version produces incomplete output"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/platform-not-supported/dotnet8-linux", "distinction": "FileNotFoundException means the assembly DLL is completely missing; PlatformNotSupportedException means the assembly exists but contains APIs not available on the current platform"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

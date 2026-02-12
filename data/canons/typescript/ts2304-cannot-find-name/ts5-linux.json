@@ -64,9 +64,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "typescript/ts2339-property-not-exist/ts5-linux",
+        "probability": 0.24
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "probability": 0.14
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2742-inferred-type-not-portable/ts5-linux",
+        "distinction": "'TS2304' indicates a reference to an undeclared identifier, while 'TS2742' indicates a non-portable inferred type."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

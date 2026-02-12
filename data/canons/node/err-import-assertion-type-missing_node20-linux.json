@@ -59,9 +59,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/syntaxerror-unexpected-token/node20-linux",
+        "probability": 0.23
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/err-fs-eisdir/node20-linux",
+        "probability": 0.12
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-use-after-close/node20-linux",
+        "distinction": "'[ERR_IMPORT_ASSERTION_TYPE_MISSING]' indicates a missing import attribute for JSON modules, while '[ERR_USE_AFTER_CLOSE]' indicates use of a socket after it was closed."
+      },
+      {
+        "error_id": "node/memory-leak-warning/node20-linux",
+        "distinction": "'[ERR_IMPORT_ASSERTION_TYPE_MISSING]' indicates a missing import attribute for JSON modules, while 'MaxListenersExceededWarning' indicates a potential EventEmitter memory leak."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

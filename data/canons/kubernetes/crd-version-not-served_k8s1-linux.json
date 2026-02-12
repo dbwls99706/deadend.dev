@@ -72,9 +72,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "kubernetes/invalid-value-metadata-name/k8s128-linux",
+        "probability": 0.18
+      },
+      {
+        "error_id": "kubernetes/configmap-not-found/k8s128-linux",
+        "probability": 0.18
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/namespace-terminating/k8s128-linux",
+        "probability": 0.11
+      },
+      {
+        "error_id": "kubernetes/invalid-value-metadata-name/k8s128-linux",
+        "probability": 0.15
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/pod-pending/k8s1-linux",
+        "distinction": "'error' indicates an unrecognized CRD kind or API version, while 'Pod status' indicates insufficient cluster resources to schedule a pod."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

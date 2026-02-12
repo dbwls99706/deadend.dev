@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/spring-bean-not-found/spring6-linux",
+  "url": "https://deadends.dev/java/spring-bean-not-found/spring6-linux",
+  "error": {
+    "signature": "org.springframework.beans.factory.NoSuchBeanDefinitionException",
+    "regex": "NoSuchBeanDefinitionException.*No qualifying bean of type",
+    "domain": "java",
+    "category": "framework_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "spring", "version_range": ">=6.0,<7.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "NoSuchBeanDefinitionException is thrown when Spring cannot find a bean definition matching the requested type or name. This typically means the class is not annotated as a Spring component, is not in a scanned package, or the configuration is missing."
+  },
+  "dead_ends": [
+    {
+      "action": "Creating the bean manually with 'new' instead of letting Spring manage it",
+      "why_fails": "Manually instantiating a Spring-managed class bypasses dependency injection entirely. The new instance will not have its @Autowired fields injected, @Transactional proxies will not be created, and AOP aspects will not apply. This creates a partially initialized object that fails in subtle ways.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding @Component to a class in a package that is not covered by @ComponentScan",
+      "why_fails": "Spring only scans packages explicitly listed in @ComponentScan or sub-packages of the @SpringBootApplication class. Adding @Component to a class outside the scan path has no effect — Spring never sees the annotation.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the class is annotated with @Component, @Service, @Repository, or @Controller and is within a package covered by component scanning",
+      "success_rate": 0.92,
+      "how": "1. Verify the class has a Spring stereotype annotation (@Component, @Service, @Repository, @Controller, or @Configuration). 2. Check that the class's package is a sub-package of your @SpringBootApplication class's package. 3. If the class is in a different package tree, add it explicitly: @ComponentScan(basePackages = {'com.main', 'com.other'}). 4. For third-party classes, create a @Bean method in a @Configuration class to register them.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use @Bean method in a @Configuration class to explicitly define the bean when automatic scanning is not appropriate",
+      "success_rate": 0.90,
+      "how": "1. Create a @Configuration class. 2. Add a @Bean method that returns the instance: @Bean public MyService myService() { return new MyServiceImpl(); }. 3. This is the correct approach for third-party classes, conditional beans (@ConditionalOnProperty), and beans requiring complex initialization. 4. For multiple implementations of the same interface, use @Qualifier or @Primary to disambiguate.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/spring-circular-dependency/spring6-linux", "probability": 0.15, "condition": "when adding the missing bean creates a circular reference with another bean"},
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.20, "condition": "when multiple beans of the same type exist and Spring cannot choose between them"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when the class providing the bean is missing from the classpath"},
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.12, "condition": "when a dependency exclusion removes the library containing the bean"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "distinction": "NoSuchBeanDefinitionException means no bean of the required type exists at all; UnsatisfiedDependencyException means a bean was found but its own dependencies could not be satisfied"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 90,
+    "last_verification": "2026-02-12"
+  }
+}

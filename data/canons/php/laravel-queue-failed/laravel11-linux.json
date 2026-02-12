@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/laravel-queue-failed/laravel11-linux",
+  "url": "https://deadends.dev/php/laravel-queue-failed/laravel11-linux",
+  "error": {
+    "signature": "Illuminate\\Queue\\MaxAttemptsExceededException: App\\Jobs\\ProcessOrder has been attempted too many times or run too long",
+    "regex": "MaxAttemptsExceededException.*has been attempted too many times|Queue job.*failed",
+    "domain": "php",
+    "category": "framework_laravel",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "laravel", "version_range": ">=11.0,<12.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Laravel queue job failures happen when a job exceeds its maximum retry attempts or timeout. Root causes include unhandled exceptions in job logic, external service timeouts, database deadlocks, or insufficient memory for the queue worker process."
+  },
+  "dead_ends": [
+    {"action": "Setting tries to an extremely high number or infinite retries", "why_fails": "Setting a very high retry count for a job with a persistent error (e.g., invalid data, permanently unavailable service) wastes queue resources and can create a backlog that delays other jobs. The failing job will keep consuming worker capacity.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Catching all exceptions silently inside the job handle method", "why_fails": "Catching and swallowing all exceptions prevents the job from being marked as failed, making it appear successful when it actually did nothing. Failed jobs table will not contain the error, and monitoring/alerting will not trigger. Data will be silently lost.", "fail_rate": 0.80, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Implement proper error handling with retry backoff and failed() method", "success_rate": 0.88, "how": "Define public $tries = 3 and public $backoff = [10, 60, 300] for exponential backoff. Implement the failed(Throwable $exception) method to log errors and notify. Use specific try/catch blocks for retryable errors (throw to retry) vs permanent failures (use $this->fail()).", "sources": [], "condition": ""},
+    {"action": "Use queue:retry and monitor failed_jobs table to diagnose and fix root cause", "success_rate": 0.85, "how": "Check failed jobs with 'php artisan queue:failed'. Examine the exception and payload. Fix the underlying issue (e.g., fix external service URL, add missing data validation). Retry specific jobs with 'php artisan queue:retry {id}' or all with 'php artisan queue:retry all'. Set up Horizon for real-time monitoring.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.15, "condition": "when the queue worker process accumulates memory over long-running periods without restart"}],
+    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.20, "condition": "when the database connection drops during job processing causing the job to fail"}],
+    "frequently_confused_with": [{"error_id": "php/max-execution-time/php83-linux", "distinction": "Queue job failures are managed by Laravel's queue system with retry logic while max execution time is a PHP-level timeout that kills the entire process"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

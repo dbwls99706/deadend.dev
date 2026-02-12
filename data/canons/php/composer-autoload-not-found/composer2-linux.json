@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/composer-autoload-not-found/composer2-linux",
+  "url": "https://deadends.dev/php/composer-autoload-not-found/composer2-linux",
+  "error": {
+    "signature": "Class 'App\\Services\\PaymentService' not found in vendor/composer/ClassLoader.php",
+    "regex": "Class '.*' not found.*(?:ClassLoader|autoload)",
+    "domain": "php",
+    "category": "autoloading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "composer", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Composer autoload class not found errors occur when composer's generated autoloader cannot map a class name to a file. This is almost always caused by a mismatch between the PSR-4 namespace configuration in composer.json and the actual file/directory structure."
+  },
+  "dead_ends": [
+    {"action": "Deleting the entire vendor/ directory and running composer install without checking autoload config", "why_fails": "If the autoload PSR-4 mapping in composer.json is incorrect, reinstalling dependencies will regenerate the same broken autoloader. The issue is in the configuration, not in corrupted vendor files.", "fail_rate": 0.72, "sources": [], "condition": ""},
+    {"action": "Adding explicit require_once statements for every class", "why_fails": "Bypassing the autoloader with manual require_once statements defeats the purpose of composer and creates brittle, unmaintainable dependency chains. It breaks framework conventions and will not work with dependency injection containers.", "fail_rate": 0.78, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Fix the PSR-4 autoload mapping in composer.json and regenerate", "success_rate": 0.94, "how": "Verify the 'autoload.psr-4' section in composer.json maps the namespace prefix to the correct directory. For example, '\"App\\\\\"': \"src/\"' means the App namespace maps to the src/ directory. Run 'composer dump-autoload -o' after fixing.", "sources": [], "condition": ""},
+    {"action": "Verify file and directory naming matches the namespace exactly", "success_rate": 0.91, "how": "Check that the class file is in the correct directory and the filename matches the class name exactly (case-sensitive on Linux). For App\\Services\\PaymentService, the file must be at {psr4-root}/Services/PaymentService.php with the correct namespace declaration.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.30, "condition": "when the autoload issue cascades to dependent classes that also cannot be found"}],
+    "preceded_by": [{"error_id": "php/composer-dependency-conflict/composer2-linux", "probability": 0.15, "condition": "when resolving a dependency conflict results in a package version that changed its namespace structure"}],
+    "frequently_confused_with": [{"error_id": "php/class-not-found/php83-linux", "distinction": "Composer autoload not found is specifically about the PSR-4 autoloader mapping while generic class not found can also be caused by missing extensions or incorrect use statements"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

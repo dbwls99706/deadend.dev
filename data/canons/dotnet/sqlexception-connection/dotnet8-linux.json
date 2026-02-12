@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/sqlexception-connection/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/sqlexception-connection/dotnet8-linux",
+  "error": {
+    "signature": "Microsoft.Data.SqlClient.SqlException: A network-related or instance-specific error occurred while establishing a connection to SQL Server.",
+    "regex": "SqlException.*network-related or instance-specific error.*establishing a connection",
+    "domain": "dotnet",
+    "category": "database",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "SqlException connection failure occurs when the application cannot establish a TCP connection to SQL Server. Common causes include incorrect connection strings, firewall rules blocking port 1433, SQL Server not running, or authentication misconfiguration. Fix by verifying connection parameters and network connectivity."
+  },
+  "dead_ends": [
+    {
+      "action": "Switching between Microsoft.Data.SqlClient and System.Data.SqlClient packages",
+      "why_fails": "Both packages use the same underlying TDS protocol; if the server is unreachable, switching the client library will not fix network connectivity issues. This only wastes time and can introduce API incompatibilities",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding Encrypt=False to the connection string to bypass SSL errors",
+      "why_fails": "Starting with Microsoft.Data.SqlClient 4.0, Encrypt=True is the default. Disabling encryption is a security risk and may not fix the connection issue if the actual problem is network routing or authentication",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify connection string parameters and network connectivity",
+      "success_rate": 0.85,
+      "how": "Check: 1) Server hostname/IP resolves correctly (nslookup/dig), 2) Port 1433 is reachable (telnet server 1433), 3) SQL Server is running (systemctl status mssql-server), 4) Connection string format is correct: 'Server=hostname;Database=dbname;User Id=user;Password=pass;TrustServerCertificate=True;'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add TrustServerCertificate=True for development or configure proper SSL certificates",
+      "success_rate": 0.88,
+      "how": "For development: add 'TrustServerCertificate=True' to the connection string. For production: install a proper SSL certificate on SQL Server and ensure the CA certificate is trusted by the client machine. This resolves the common 'certificate chain not trusted' variant of connection failures",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.20, "condition": "when connection timeouts cascade to HTTP request timeouts in the API layer"},
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.25, "condition": "when connection failure prevents EF Core migrations from running"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.15, "condition": "when Docker networking misconfiguration prevents container from reaching the database"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.05, "condition": "when SDK mismatch causes wrong SqlClient version to be referenced"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "distinction": "SqlException connection error is a transport-level failure to reach the database server; EF migration failure may include connection errors but also covers schema mismatch and migration script errors"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

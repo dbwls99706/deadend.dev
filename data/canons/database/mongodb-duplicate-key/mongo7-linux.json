@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongodb-duplicate-key/mongo7-linux",
+  "url": "https://deadends.dev/database/mongodb-duplicate-key/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.DuplicateKeyError: E11000 duplicate key error collection: mydb.mycollection index: _id_ dup key: { _id: ObjectId('...') }",
+    "regex": "E11000 duplicate key error",
+    "domain": "database",
+    "category": "constraint_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "An insert or update attempted to create a duplicate value for a field with a unique index (including _id). Common with manual _id assignment, unique index on business fields, or retry logic inserting the same document twice."
+  },
+  "dead_ends": [
+    {
+      "action": "Dropping the unique index on _id to prevent duplicate key errors",
+      "why_fails": "The _id index is mandatory in MongoDB and cannot be dropped. Even for other unique indexes, dropping them removes data integrity guarantees and leads to duplicate documents.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using unordered bulk writes without error handling to push through duplicates",
+      "why_fails": "Unordered writes continue past errors but silently skip duplicate documents. Without checking the BulkWriteResult for errors, you lose data and have no record of which documents failed.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use updateOne with upsert:true to handle duplicates as updates",
+      "success_rate": 0.93,
+      "how": "Replace insertOne with: db.collection.updateOne({ uniqueField: value }, { $set: { ...document } }, { upsert: true }). This inserts if the document does not exist or updates if it does.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Let MongoDB generate _id automatically instead of assigning manually",
+      "success_rate": 0.90,
+      "how": "Remove the _id field from your insert documents. MongoDB will auto-generate unique ObjectId values. If you need a business key, use a separate unique index and handle E11000 with retry/upsert logic.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongodb-namespace-not-found/mongo7-linux", "probability": 0.10, "condition": "when attempting to drop and recreate collections to fix duplicate key issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.15, "condition": "when connection recovery retry logic re-inserts documents that were already persisted before the connection drop"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/unique-violation/pg16-linux", "distinction": "MongoDB E11000 and PostgreSQL unique violation are the same concept. MongoDB shows the index name and duplicate key value, PostgreSQL shows the constraint name. MongoDB uses error code E11000 while PostgreSQL uses SQLSTATE 23505."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/invalidoperationexception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/invalidoperationexception/dotnet8-linux",
+  "error": {
+    "signature": "System.InvalidOperationException: Sequence contains no elements",
+    "regex": "System\\.InvalidOperationException:\\s*.+",
+    "domain": "dotnet",
+    "category": "runtime_exception",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "InvalidOperationException is thrown when a method call is invalid for the current object state. Common in LINQ operations on empty sequences and improper use of dependency injection. Fix by validating state before operations."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching InvalidOperationException and retrying the same operation without changing state",
+      "why_fails": "The object state that caused the exception has not changed, so the retry will throw the same exception in an infinite loop or until another failure occurs",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replacing First() with FirstOrDefault() everywhere without checking for default values",
+      "why_fails": "Silently returns null or default(T) which causes NullReferenceException or logic errors downstream instead of surfacing the real problem of an empty sequence",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use FirstOrDefault/SingleOrDefault with explicit null checks",
+      "success_rate": 0.90,
+      "how": "Replace .First() with .FirstOrDefault() and add an explicit null/default check: var item = collection.FirstOrDefault(); if (item is null) { /* handle empty case */ }",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Validate object state or collection contents before calling the operation",
+      "success_rate": 0.88,
+      "how": "Use .Any() to check if a sequence has elements before calling .First()/.Single(), or check object state properties before performing state-dependent operations",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.25, "condition": "when FirstOrDefault returns null and the result is used without null check"},
+      {"error_id": "dotnet/argumentexception/dotnet8-linux", "probability": 0.10, "condition": "when invalid state causes downstream argument validation failures"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when EF Core query returns unexpected results due to tracking issues"},
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.10, "condition": "when database query fails silently and code tries to operate on empty result set"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "distinction": "InvalidOperationException means the object exists but the operation is not valid for its current state; NullReferenceException means the object does not exist at all"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

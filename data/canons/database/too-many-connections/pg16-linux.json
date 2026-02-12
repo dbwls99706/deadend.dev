@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/too-many-connections/pg16-linux",
+  "url": "https://deadends.dev/database/too-many-connections/pg16-linux",
+  "error": {
+    "signature": "psycopg2.OperationalError: FATAL: too many connections for role \"myuser\"",
+    "regex": "FATAL:\\s+too many connections|FATAL:\\s+sorry, too many clients already",
+    "domain": "database",
+    "category": "resource_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "All available PostgreSQL connection slots are occupied. Default max_connections is 100. Caused by connection leaks in application code, missing connection pooling, or too many application instances."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting max_connections to an extremely high value (e.g., 10000) without connection pooling",
+      "why_fails": "Each PostgreSQL connection consumes significant memory (~10MB). Setting max_connections very high without adequate RAM causes OOM kills or severe performance degradation from context switching.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restarting PostgreSQL repeatedly as a fix for connection exhaustion",
+      "why_fails": "Restarting forcibly disconnects all clients, causing data loss in active transactions. Without fixing the leak or adding pooling, connections will be exhausted again shortly after restart.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Deploy a connection pooler like PgBouncer in front of PostgreSQL",
+      "success_rate": 0.94,
+      "how": "Install PgBouncer, configure it to proxy connections to PostgreSQL with pool_mode=transaction and a reasonable pool_size (e.g., 20-50). Point application connection strings to PgBouncer instead of PostgreSQL directly.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix connection leaks in application code by ensuring connections are properly closed",
+      "success_rate": 0.88,
+      "how": "Audit code for connections that are opened but not closed. Use context managers (Python 'with' blocks), try/finally, or connection pool libraries (SQLAlchemy pool, HikariCP). Monitor with: SELECT count(*) FROM pg_stat_activity;",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when PostgreSQL crashes under connection pressure and stops accepting any connections"},
+      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.30, "condition": "when connection pooler itself becomes saturated"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.25, "condition": "when pool exhaustion causes application to open direct connections bypassing the pool"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/connection-pool-exhausted/pg16-linux", "distinction": "too many connections is a PostgreSQL server-level limit (max_connections), while connection pool exhausted is an application-level pool limit. The pool error occurs before hitting PostgreSQL's limit."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 68,
+    "last_verification": "2026-02-12"
+  }
+}

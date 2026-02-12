@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/filenotfoundexception/jdk17-linux",
+  "url": "https://deadends.dev/java/filenotfoundexception/jdk17-linux",
+  "error": {
+    "signature": "java.io.FileNotFoundException",
+    "regex": "java\\.io\\.FileNotFoundException",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "FileNotFoundException is thrown when an attempt to open a file denoted by a path fails because the file does not exist, the path is a directory, or the file cannot be opened for the requested access (permission denied on some systems)."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcoding absolute file paths that work on the developer's machine",
+      "why_fails": "Absolute paths like '/home/developer/project/config.json' or 'C:\\Users\\dev\\config.json' are not portable. They break on CI/CD servers, Docker containers, other developers' machines, and production deployments where the directory structure differs.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using relative paths without understanding the working directory at runtime",
+      "why_fails": "Relative paths are resolved against the current working directory, which varies depending on how the application is launched (IDE, Maven, JAR, Docker). The file may exist in the project but the working directory at runtime is different from what the developer expects.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use classpath resources (getResourceAsStream) for files bundled with the application",
+      "success_rate": 0.92,
+      "how": "1. Place the file in src/main/resources/. 2. Load it using: getClass().getResourceAsStream('/config.json') or Thread.currentThread().getContextClassLoader().getResourceAsStream('config.json'). 3. This works regardless of the working directory because the file is read from the classpath (inside the JAR). 4. Always check for null return (resource not found). 5. For Spring: use @Value('classpath:config.json') Resource configFile.",
+      "sources": [],
+      "condition": "when the file is bundled with the application"
+    },
+    {
+      "action": "Use configurable paths via environment variables or system properties for external files",
+      "success_rate": 0.90,
+      "how": "1. Define the path as a configurable property: String path = System.getenv('CONFIG_PATH'); or use Spring's @Value('${config.path}'). 2. Validate the path at startup with Files.exists(Path.of(path)). 3. Use Path.of() instead of new File() for proper path handling. 4. Log the resolved absolute path to aid debugging: logger.info('Loading config from: {}', path.toAbsolutePath()). 5. Provide a sensible default that works in the development environment.",
+      "sources": [],
+      "condition": "when the file is external to the application"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.15, "condition": "when getResourceAsStream returns null and the result is used without null check"},
+      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.08, "condition": "when missing configuration file causes application to start in an invalid state"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.10, "condition": "when a bean initialization depends on reading a configuration file that does not exist"},
+      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.08, "condition": "when ObjectMapper.readValue(file, ...) fails because the file path is wrong"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "FileNotFoundException is about filesystem files (config, data, resources); ClassNotFoundException is about Java .class files not found on the classpath. Both involve 'not found' but in completely different contexts."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

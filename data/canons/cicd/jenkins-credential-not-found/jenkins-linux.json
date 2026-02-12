@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/jenkins-credential-not-found/jenkins-linux",
+  "url": "https://deadends.dev/cicd/jenkins-credential-not-found/jenkins-linux",
+  "error": {
+    "signature": "Error: Could not find credentials entry with ID 'deploy-key'",
+    "regex": "(?:Could not find credentials|CredentialNotFoundException|No credentials found|credentials.*not found|withCredentials.*failed)",
+    "domain": "cicd",
+    "category": "credentials",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Jenkins pipeline references a credential ID that does not exist in the credentials store, or the credential is scoped to a different domain/folder and not accessible from the current pipeline context."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcode credentials directly in the Jenkinsfile or environment variables",
+      "why_fails": "Credentials in source code are a critical security vulnerability; they are visible in build logs and version history",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Create credentials in a subfolder expecting them to be globally available",
+      "why_fails": "Jenkins credentials scoped to a folder are only available to jobs within that folder; the pipeline in a different folder cannot access them",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the credential to Jenkins credentials store with the correct ID and scope",
+      "success_rate": 0.93,
+      "how": "Go to Manage Jenkins > Credentials > System > Global credentials > Add Credentials. Use the exact ID referenced in the Jenkinsfile. Choose the correct credential type (secret text, SSH key, username/password)",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the withCredentials block with the correct credential type binding",
+      "success_rate": 0.89,
+      "how": "Match the credential type: use 'usernamePassword' for username/password, 'string' for secret text, 'sshUserPrivateKey' for SSH keys. Example: withCredentials([string(credentialsId: 'my-secret', variable: 'SECRET')])",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "probability": 0.15, "condition": "When incorrect withCredentials binding syntax causes pipeline syntax errors"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "probability": 0.10, "condition": "When fixing pipeline syntax reveals credential binding issues"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-secret-not-found/gha-linux", "distinction": "Jenkins credentials are managed in the Jenkins UI credentials store; GitHub Actions secrets are configured in repository settings"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

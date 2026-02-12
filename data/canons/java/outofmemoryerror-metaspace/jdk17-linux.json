@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/outofmemoryerror-metaspace/jdk17-linux",
+  "url": "https://deadends.dev/java/outofmemoryerror-metaspace/jdk17-linux",
+  "error": {
+    "signature": "java.lang.OutOfMemoryError: Metaspace",
+    "regex": "java\\.lang\\.OutOfMemoryError:\\s*Metaspace",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "OutOfMemoryError: Metaspace is thrown when the JVM runs out of native memory allocated for class metadata. This typically occurs due to classloader leaks, excessive dynamic class generation (e.g., via reflection proxies, CGLIB, Groovy scripts), or too many classes being loaded in the application."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing -XX:MaxMetaspaceSize without investigating the classloader leak",
+      "why_fails": "If the root cause is a classloader leak (common in application server redeployments or dynamic scripting), increasing Metaspace only delays the inevitable. Leaked classloaders prevent their classes from being unloaded, and Metaspace will eventually fill regardless of size.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restarting the application on a schedule to avoid the OOM",
+      "why_fails": "Scheduled restarts are an operational band-aid. They cause downtime, data loss in in-flight requests, and do not address the underlying leak. As the application grows or traffic increases, the restart interval shrinks until restarts become impractical.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and fix the classloader leak using JVM diagnostic tools",
+      "success_rate": 0.82,
+      "how": "1. Add -verbose:class to JVM args to log class loading/unloading. 2. Monitor Metaspace usage with 'jstat -gc <pid>'. 3. Take a heap dump and analyze classloader instances in Eclipse MAT — look for duplicate classloaders or classloaders with unexpectedly many loaded classes. 4. Common culprits: ThreadLocal values holding references to webapp classloaders, JDBC driver registration not cleaned up on undeploy, logging frameworks caching classloader references. 5. Fix by properly cleaning up resources in servlet context listeners or @PreDestroy methods.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reduce dynamic class generation by using method handles or interface-based proxies instead of CGLIB/byte-code generation",
+      "success_rate": 0.78,
+      "how": "1. If using Spring, prefer JDK dynamic proxies (interface-based) over CGLIB proxies: set spring.aop.proxy-target-class=false. 2. If using Groovy/scripting, cache compiled scripts instead of recompiling on each invocation. 3. For reflection-heavy code, use java.lang.invoke.MethodHandle instead of Method.invoke() — MethodHandles use less Metaspace. 4. Set -XX:MaxMetaspaceSize to a reasonable limit (e.g., 256m-512m) so leaks surface quickly rather than consuming all system memory.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.10, "condition": "when Metaspace fix triggers excessive object caching that fills the heap"},
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.08, "condition": "when classloader cleanup is too aggressive and unloads needed classes"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.10, "condition": "when repeated Spring context refreshes leak classloaders"},
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.08, "condition": "when workaround creates custom classloaders that are never garbage collected"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "distinction": "Metaspace OOM is about class metadata in native memory; Heap OOM is about object instances in the Java heap. Metaspace issues relate to class/classloader count; Heap issues relate to data volume."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

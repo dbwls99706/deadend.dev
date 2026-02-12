@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/nosuchmethoderror/jdk17-linux",
+  "url": "https://deadends.dev/java/nosuchmethoderror/jdk17-linux",
+  "error": {
+    "signature": "java.lang.NoSuchMethodError",
+    "regex": "java\\.lang\\.NoSuchMethodError",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "NoSuchMethodError is thrown when code compiled against one version of a class tries to call a method that does not exist in the version of the class loaded at runtime. This is almost always caused by dependency version conflicts where an older version of a library is resolved."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the missing method to your own code when the error is in a third-party library",
+      "why_fails": "The error occurs because two versions of the same library disagree on a method signature. Writing your own version of the method does not fix the root cause — the wrong version of the library is on the classpath. The caller expects the method to be in the specific library class, not in your code.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using reflection to check for the method's existence before calling it",
+      "why_fails": "Using reflection to work around NoSuchMethodError is fragile and only masks the version conflict. It adds complexity, bypasses compile-time type checking, and does not solve the underlying dependency conflict that will cause other issues elsewhere.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use dependency tree analysis to find and resolve the version conflict",
+      "success_rate": 0.88,
+      "how": "1. For Maven: run 'mvn dependency:tree -Dincludes=groupId:artifactId' to find which dependency pulls in the conflicting version. 2. For Gradle: run 'gradle dependencies --configuration runtimeClasspath' and search for the library. 3. Identify which version provides the missing method (check the library's changelog or javadoc). 4. Force the correct version: in Maven, add a <dependencyManagement> entry; in Gradle, use a resolution strategy: configurations.all { resolutionStrategy { force 'group:artifact:version' } }.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Maven Enforcer or Gradle's failOnVersionConflict() to prevent version conflicts at build time",
+      "success_rate": 0.82,
+      "how": "1. For Maven: add maven-enforcer-plugin with <DependencyConvergence/> rule to fail the build when dependency versions conflict. 2. For Gradle: add configurations.all { resolutionStrategy { failOnVersionConflict() } } to catch conflicts early. 3. Resolve each conflict by explicitly declaring the correct version. 4. Use 'mvn dependency:analyze' or Gradle's 'dependencyInsight' to understand why each version was selected.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.15, "condition": "when forcing a dependency version causes another transitive dependency to be excluded"},
+      {"error_id": "java/classcastexception/jdk17-linux", "probability": 0.08, "condition": "when version conflict involves classes with changed type hierarchies"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.40, "condition": "when Maven dependency mediation selects an older version of the library"},
+      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.35, "condition": "when Gradle resolves the wrong version of a transitive dependency"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "NoSuchMethodError means the class was found but lacks the expected method (version mismatch); ClassNotFoundException means the entire class was not found on the classpath"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

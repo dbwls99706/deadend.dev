@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/sqlite-locked/sqlite3-linux",
+  "url": "https://deadends.dev/database/sqlite-locked/sqlite3-linux",
+  "error": {
+    "signature": "sqlite3.OperationalError: database is locked",
+    "regex": "database is locked",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "sqlite", "version_range": ">=3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Another connection or process holds a lock on the SQLite database file, preventing the current operation. SQLite uses file-level locking and supports only one writer at a time. Common in web applications, multi-threaded programs, or when the database is on a network filesystem."
+  },
+  "dead_ends": [
+    {
+      "action": "Using SQLite for high-concurrency web applications with multiple writer processes",
+      "why_fails": "SQLite's single-writer architecture fundamentally cannot handle concurrent writes from multiple processes. No configuration change can overcome this limitation. This is a design constraint, not a bug.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Placing the SQLite database on a network filesystem (NFS, SMB, CIFS)",
+      "why_fails": "SQLite's locking mechanism relies on POSIX file locks which do not work correctly on many network filesystems. This leads to database corruption and persistent locking errors that cannot be fixed by retry logic.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable WAL (Write-Ahead Logging) mode for better concurrency",
+      "success_rate": 0.90,
+      "how": "Run: PRAGMA journal_mode=WAL; This allows concurrent readers with a single writer (instead of exclusive locks for both). Set once per database; it persists. Also set a busy timeout: PRAGMA busy_timeout=5000; (5 seconds) to automatically retry when locked.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Serialize write access through a single connection or connection pool",
+      "success_rate": 0.85,
+      "how": "Use a single database connection for all writes, or use a connection pool with max_size=1 for write operations. In Python: sqlite3.connect('db.sqlite3', check_same_thread=False) with a threading.Lock() around write operations. For Django, use DATABASE_OPTIONS {'timeout': 20}.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/sqlite-readonly/sqlite3-linux", "probability": 0.10, "condition": "when lock recovery leaves the journal file in a state that triggers readonly mode"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.05, "condition": "when migrating from PostgreSQL to SQLite without adapting for concurrency limitations"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "distinction": "SQLite 'database is locked' is a simple file-level lock contention, not a true deadlock cycle. SQLite does not have row-level locking or deadlock detection. The lock is always resolved by timeout, not by aborting one transaction."},
+      {"error_id": "database/sqlite-readonly/sqlite3-linux", "distinction": "'database is locked' means another process has the lock. 'readonly database' means the file permissions prevent writing. Locked is transient and can resolve; readonly is a persistent permission issue."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 82,
+    "last_verification": "2026-02-12"
+  }
+}

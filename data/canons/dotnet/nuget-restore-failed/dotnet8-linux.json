@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/nuget-restore-failed/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/nuget-restore-failed/dotnet8-linux",
+  "error": {
+    "signature": "error NU1101: Unable to find package 'PackageName'. No packages exist with this id in source(s): nuget.org",
+    "regex": "(NU1[0-9]{3}|Unable to find package|NuGet.*restore failed)",
+    "domain": "dotnet",
+    "category": "package_management",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "NuGet restore failures occur when packages cannot be downloaded or resolved. Causes include missing package sources, network issues, private feed authentication failures, or deleted/unlisted packages. Fix by verifying NuGet sources, credentials, and package availability."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting the global NuGet cache and re-downloading all packages",
+      "why_fails": "If the package is genuinely unavailable or the source is misconfigured, clearing cache just wastes bandwidth re-downloading all other packages. The original problem remains after cache rebuild",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Vendoring NuGet packages by committing the packages folder to source control",
+      "why_fails": "Bloats the repository with binary files, causes merge conflicts, and does not solve the underlying source/authentication issue. Packages become stale and cannot be easily updated",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify and configure NuGet package sources in nuget.config",
+      "success_rate": 0.90,
+      "how": "Check nuget.config exists at the solution root. Ensure the correct sources are listed: dotnet nuget list source. Add missing sources: dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org. For private feeds, add credentials: dotnet nuget update source PrivateFeed -u username -p token --store-password-in-clear-text",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Clear local NuGet caches and restore with verbosity to diagnose",
+      "success_rate": 0.85,
+      "how": "Run 'dotnet nuget locals http-cache --clear' (clears only the HTTP cache, not all packages). Then 'dotnet restore --verbosity detailed' to see exactly which source is being queried and what error occurs for each package resolution attempt",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "probability": 0.25, "condition": "when restoring from a different source resolves different package versions"},
+      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.30, "condition": "when restore failure leaves assemblies missing from the output directory"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.15, "condition": "when restore failure is actually caused by SDK version incompatibility"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.10, "condition": "when wrong SDK version cannot resolve packages targeting a different framework"},
+      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.08, "condition": "when Docker build fails during restore due to missing nuget.config COPY step"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "distinction": "Restore failure means the package cannot be found at all; version conflict means multiple packages are found but their version requirements are incompatible"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

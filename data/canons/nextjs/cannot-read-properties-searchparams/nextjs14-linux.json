@@ -64,9 +64,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "nextjs/getserversideprops-export/nextjs14-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "nextjs/err-next-api-write-after-end/next14-linux",
+        "probability": 0.22
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/image-optimization-error/nextjs14-linux",
+        "distinction": "'TypeError' indicates undefined searchParams access, while 'Error' indicates an invalid next/image src prop."
+      },
+      {
+        "error_id": "nextjs/metadata-client-component/nextjs14-linux",
+        "distinction": "'TypeError' indicates undefined searchParams access, while 'Error' indicates exporting metadata from a 'use client' component."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

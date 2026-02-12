@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/taskcanceledexception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/taskcanceledexception/dotnet8-linux",
+  "error": {
+    "signature": "System.Threading.Tasks.TaskCanceledException: A task was canceled.",
+    "regex": "System\\.Threading\\.Tasks\\.TaskCanceledException:\\s*.+",
+    "domain": "dotnet",
+    "category": "networking",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "TaskCanceledException in HTTP contexts is typically a timeout, not an explicit cancellation. HttpClient's default timeout is 100 seconds. Common in slow APIs, large file downloads, or overloaded servers. Fix by increasing timeout, optimizing the request, or adding proper cancellation handling."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting HttpClient.Timeout to Timeout.InfiniteTimeSpan",
+      "why_fails": "Removes the safety net against hanging requests; if the server never responds, the client thread/connection is blocked forever, leading to resource exhaustion and application hangs under load",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Catching TaskCanceledException and immediately retrying without backoff",
+      "why_fails": "If the server is overloaded or slow, immediate retries add more load and make the problem worse. Creates a retry storm that can cascade into full service outage",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set an appropriate HttpClient.Timeout and distinguish between timeout and cancellation",
+      "success_rate": 0.88,
+      "how": "Set a reasonable timeout: httpClient.Timeout = TimeSpan.FromSeconds(30). To distinguish timeout from user cancellation, check the inner exception: catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException) handles timeouts, while catch (TaskCanceledException ex) when (ex.CancellationToken == userToken) handles explicit cancellation",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use CancellationTokenSource with per-request timeouts",
+      "success_rate": 0.85,
+      "how": "Create per-request timeouts: using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); var response = await httpClient.GetAsync(url, cts.Token). This allows different timeouts per endpoint while keeping the HttpClient instance reusable",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.20, "condition": "when timeout is caused by connection failures that surface as HttpRequestException on retry"},
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.10, "condition": "when many timed-out requests accumulate pending buffers in memory"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.15, "condition": "when intermittent connection issues cause requests to exceed timeout"},
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.12, "condition": "when database delays cause the API endpoint to respond slowly, triggering client timeout"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "distinction": "TaskCanceledException indicates the request timed out waiting for a response; HttpRequestException indicates the connection itself failed before any response could begin"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

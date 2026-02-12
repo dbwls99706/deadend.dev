@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/httprequestexception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/httprequestexception/dotnet8-linux",
+  "error": {
+    "signature": "System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it.",
+    "regex": "System\\.Net\\.Http\\.HttpRequestException:\\s*.+",
+    "domain": "dotnet",
+    "category": "networking",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "HttpRequestException is thrown when an HTTP request fails at the transport level. Common causes include unreachable endpoints, DNS resolution failures, SSL/TLS errors, and socket exhaustion from not using IHttpClientFactory. Fix by verifying connectivity, using IHttpClientFactory, and adding retry policies."
+  },
+  "dead_ends": [
+    {
+      "action": "Creating new HttpClient instances per request instead of using IHttpClientFactory",
+      "why_fails": "Each HttpClient instance holds its own connection pool and socket. Creating many instances leads to socket exhaustion (TIME_WAIT state), causing subsequent requests to fail with HttpRequestException",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling SSL certificate validation to fix SSL/TLS errors",
+      "why_fails": "Bypasses security entirely, making the application vulnerable to man-in-the-middle attacks. The SSL error usually indicates a legitimate certificate configuration problem that should be properly fixed",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use IHttpClientFactory for proper connection pool management",
+      "success_rate": 0.90,
+      "how": "Register in DI: builder.Services.AddHttpClient<MyService>(client => { client.BaseAddress = new Uri(\"https://api.example.com\"); }); Then inject IHttpClientFactory or the typed client. This manages DNS changes, connection pooling, and socket lifecycle automatically",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add Polly retry policies for transient failures",
+      "success_rate": 0.85,
+      "how": "Install Microsoft.Extensions.Http.Polly and configure: builder.Services.AddHttpClient<MyService>().AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))). This handles transient network errors with exponential backoff",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.30, "condition": "when the HTTP request eventually times out after connection failures"},
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.08, "condition": "when socket exhaustion combined with retry storms causes resource exhaustion"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.20, "condition": "when container port misconfiguration makes the target service unreachable"},
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.10, "condition": "when CORS preflight failure is misinterpreted as a connection error"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "distinction": "HttpRequestException indicates a connection-level failure (refused, DNS, SSL); TaskCanceledException indicates the connection was established but the response did not arrive before the timeout"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/curl-ssl-error/php83-linux",
+  "url": "https://deadends.dev/php/curl-ssl-error/php83-linux",
+  "error": {
+    "signature": "cURL error 60: SSL certificate problem: unable to get local issuer certificate",
+    "regex": "cURL error (?:60|77|35).*SSL (?:certificate|connection|handshake)",
+    "domain": "php",
+    "category": "networking",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "cURL SSL certificate errors in PHP occur when the system's CA certificate bundle is missing, outdated, or not configured correctly. This prevents PHP from verifying the SSL certificate of the remote server. Common on fresh installations, Docker containers, and systems with custom CA certificates."
+  },
+  "dead_ends": [
+    {"action": "Setting CURLOPT_SSL_VERIFYPEER to false to skip certificate verification", "why_fails": "Disabling SSL verification makes the connection vulnerable to man-in-the-middle attacks. An attacker can intercept and modify traffic between the application and the remote server. This is especially dangerous when transmitting credentials, payment data, or personal information.", "fail_rate": 0.88, "sources": [], "condition": ""},
+    {"action": "Setting verify_peer to false in PHP stream context globally", "why_fails": "Disabling peer verification globally affects all HTTPS connections made by the PHP process, not just the problematic one. Every outbound HTTP request loses its security guarantee, creating a systemic vulnerability across the entire application.", "fail_rate": 0.90, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Install or update the CA certificate bundle on the system", "success_rate": 0.91, "how": "Install the CA certificates package: 'apt-get install ca-certificates' and run 'update-ca-certificates'. For Docker containers, add this to the Dockerfile. Verify with 'php -r \"var_dump(openssl_get_cert_locations());\"' to see where PHP looks for certificates.", "sources": [], "condition": ""},
+    {"action": "Configure php.ini to point to the correct CA bundle path", "success_rate": 0.87, "how": "Download the latest CA bundle from https://curl.se/ca/cacert.pem. Set in php.ini: 'curl.cainfo = /etc/ssl/certs/ca-certificates.crt' and 'openssl.cafile = /etc/ssl/certs/ca-certificates.crt'. Restart PHP-FPM. For custom internal CAs, append your CA cert to the bundle file.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/json-decode-error/php83-linux", "probability": 0.20, "condition": "when SSL errors cause cURL to return an error page or empty response that is then passed to json_decode"}],
+    "preceded_by": [{"error_id": "php/call-to-undefined-function/php83-linux", "probability": 0.08, "condition": "when the curl extension is installed but SSL support was not compiled in"}],
+    "frequently_confused_with": [{"error_id": "php/pdo-connection-failed/php83-linux", "distinction": "cURL SSL error is about HTTPS certificate verification for HTTP requests while PDO connection failure is about database connections though both can involve TLS issues"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

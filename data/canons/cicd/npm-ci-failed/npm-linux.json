@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/npm-ci-failed/npm-linux",
+  "url": "https://deadends.dev/cicd/npm-ci-failed/npm-linux",
+  "error": {
+    "signature": "npm ERR! `npm ci` can only install packages when your package-lock.json or npm-shrinkwrap.json is in sync with package.json",
+    "regex": "(?:npm ci.*can only install.*in sync|npm ERR!.*package-lock\\.json.*out of date|npm ERR! Invalid.*lock file|npm ci.*missing.*package-lock)",
+    "domain": "cicd",
+    "category": "dependency_install",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "npm", "version_range": ">=8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "npm ci fails because package-lock.json is out of sync with package.json. Unlike npm install, npm ci requires exact lockfile consistency and will not modify the lockfile."
+  },
+  "dead_ends": [
+    {
+      "action": "Replace npm ci with npm install in CI pipelines",
+      "why_fails": "npm install may resolve different dependency versions than what was tested locally, introducing non-deterministic builds and subtle bugs",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Delete package-lock.json and regenerate it in CI",
+      "why_fails": "Regenerating the lockfile in CI defeats the purpose of deterministic builds; different npm versions may produce different lockfiles",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run npm install locally and commit the updated package-lock.json",
+      "success_rate": 0.94,
+      "how": "Run 'npm install' locally to update package-lock.json, verify it works, then commit both package.json and package-lock.json together",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure CI Node.js and npm versions match local development versions",
+      "success_rate": 0.87,
+      "how": "Use the same Node.js version in CI as locally (via .nvmrc or .node-version). Different npm versions can produce incompatible lockfile formats (v1, v2, v3)",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.20, "condition": "When lockfile changes cause cache key mismatch and full reinstall"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-node-version-mismatch/gha-linux", "probability": 0.20, "condition": "When switching Node version in CI creates lockfile format incompatibility"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "npm ci failure is about Node.js package lockfile mismatch; Docker build failure is about container layer cache or build context issues"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

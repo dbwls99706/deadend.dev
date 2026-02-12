@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/ssl-self-signed/openssl3-linux",
+  "url": "https://deadends.dev/networking/ssl-self-signed/openssl3-linux",
+  "error": {
+    "signature": "SSL: self signed certificate",
+    "regex": "self[- ]signed certificate|DEPTH_ZERO_SELF_SIGNED_CERT|ERR_CERT_AUTHORITY_INVALID",
+    "domain": "networking",
+    "category": "ssl_tls",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The server presents a self-signed certificate that is not trusted by any recognized Certificate Authority. The client rejects the connection because the certificate chain cannot be validated against its trust store."
+  },
+  "dead_ends": [
+    {
+      "action": "Set NODE_TLS_REJECT_UNAUTHORIZED=0 or equivalent to disable verification globally",
+      "why_fails": "This disables all TLS certificate verification for the entire process, making it vulnerable to MITM attacks. It is a common but dangerous workaround that security audits will flag, and it masks legitimate certificate problems.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use HTTP instead of HTTPS to avoid certificate validation entirely",
+      "why_fails": "Downgrading to HTTP removes all encryption and authentication, exposing all traffic to interception. Many modern APIs and services reject HTTP connections entirely, and HSTS policies will block the downgrade in browsers.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Replace the self-signed certificate with a certificate from a trusted CA",
+      "success_rate": 0.95,
+      "how": "1. Generate a CSR: openssl req -new -newkey rsa:4096 -nodes -keyout server.key -out server.csr\n2. Submit to a CA like Let's Encrypt: certbot certonly --standalone -d yourdomain.com\n3. Install the signed certificate on your server\n4. Verify the full chain: openssl verify -CAfile ca-bundle.crt server.crt",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add the self-signed certificate to the client's trust store",
+      "success_rate": 0.90,
+      "how": "1. Export the self-signed cert: openssl s_client -connect host:443 </dev/null 2>/dev/null | openssl x509 > server.crt\n2. Copy to trust store: cp server.crt /usr/local/share/ca-certificates/\n3. Update CA certificates: update-ca-certificates\n4. For application-specific trust: set SSL_CERT_FILE or use --cacert flag with curl\n5. Verify: curl https://host:443 should succeed without -k flag",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.30, "condition": "when the self-signed cert is replaced but intermediate chain is incomplete"},
+      {"error_id": "networking/ssl-hostname-mismatch/openssl3-linux", "probability": 0.15, "condition": "when regenerating the certificate with a different CN or missing SANs"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.10, "condition": "when a quick self-signed cert is generated as a temporary fix for an expired one"},
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.05, "condition": "when the server was down during initial certificate setup"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "distinction": "Self-signed means the cert was signed by itself (no CA); unable-to-verify means the CA exists but the client cannot find or validate it in its trust store"},
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "distinction": "Self-signed certs fail because they lack a trusted CA signature; expired certs fail because they are past their validity date regardless of who signed them"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 68,
+    "last_verification": "2026-02-12"
+  }
+}

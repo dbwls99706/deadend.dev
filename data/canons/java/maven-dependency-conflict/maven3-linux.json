@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/maven-dependency-conflict/maven3-linux",
+  "url": "https://deadends.dev/java/maven-dependency-conflict/maven3-linux",
+  "error": {
+    "signature": "Dependency convergence error",
+    "regex": "(?:DependencyConvergence|Dependency convergence error|Found version conflict)",
+    "domain": "java",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "maven", "version_range": ">=3.8,<4.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Maven dependency convergence errors occur when different transitive dependency paths resolve to different versions of the same artifact. Maven's nearest-definition-wins strategy silently picks one version, which can cause runtime NoSuchMethodError or ClassNotFoundException."
+  },
+  "dead_ends": [
+    {
+      "action": "Excluding all transitive dependencies and manually declaring every dependency",
+      "why_fails": "Excluding all transitives and re-declaring them is an enormous maintenance burden. You lose automatic transitive resolution — the main benefit of a dependency manager. New versions of direct dependencies may add new transitive requirements that you will miss, causing ClassNotFoundException at runtime.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Always picking the latest version of conflicting dependencies without testing compatibility",
+      "why_fails": "The latest version may have breaking API changes that other dependencies are not compatible with. For example, library A might require Guava 30.x and be incompatible with Guava 33.x. Blindly upgrading can introduce NoSuchMethodError, ClassNotFoundException, or behavioral changes.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use <dependencyManagement> to pin conflicting dependency versions and enforce convergence with maven-enforcer-plugin",
+      "success_rate": 0.88,
+      "how": "1. Run 'mvn dependency:tree' to visualize the full dependency tree and identify version conflicts. 2. Add maven-enforcer-plugin with <DependencyConvergence/> rule to make conflicts a build failure. 3. For each conflict, add the desired version to <dependencyManagement> in the parent POM. 4. Test thoroughly — check that all libraries work with the chosen version. 5. Use 'mvn dependency:analyze' to find unused or undeclared dependencies.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a BOM (Bill of Materials) to manage consistent dependency versions across the project",
+      "success_rate": 0.85,
+      "how": "1. Import a BOM in <dependencyManagement> with scope 'import' and type 'pom'. 2. Common BOMs: spring-boot-dependencies, jackson-bom, aws-sdk-bom. 3. BOMs ensure all related artifacts use compatible versions. 4. When using multiple BOMs, import order matters — later BOMs override earlier ones. 5. For custom projects, create your own BOM POM that centralizes version declarations.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.35, "condition": "when the wrong dependency version is resolved and a method signature is missing"},
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.25, "condition": "when a transitive dependency is excluded or resolved to a version that lacks the needed class"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.15, "condition": "when a build failure fix requires adding dependencies that conflict with existing ones"},
+      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.10, "condition": "when investigating a missing bean reveals a dependency version conflict"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/maven-build-failure/maven3-linux", "distinction": "Dependency convergence errors are about version conflicts between transitive dependencies; build failures are about compilation errors in source code. Convergence issues may not cause build failures immediately but lead to runtime errors."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

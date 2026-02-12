@@ -55,9 +55,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/objects-not-valid-as-child/react18-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "react/context-value-undefined/react18-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/each-child-unique-key/react18-linux",
+        "probability": 0.14
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
+        "distinction": "'Type 'Element | undefined' is not assignable to type 'ReactElement' (JSX return ' indicates a JSX return type incompatibility, while 'Warning' indicates a potential EventEmitter memory leak."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

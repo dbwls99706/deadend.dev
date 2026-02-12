@@ -72,9 +72,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/for-each-sensitive/tf1-linux",
+        "probability": 0.23
+      },
+      {
+        "error_id": "terraform/module-not-installed/tf1-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/invalid-provider-config/tf115-linux",
+        "probability": 0.16
+      },
+      {
+        "error_id": "terraform/invalid-count-argument/tf115-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/output-not-found/tf1-linux",
+        "distinction": "Both produce similar messages, but 'unsupported-attribute' and 'output-not-found' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

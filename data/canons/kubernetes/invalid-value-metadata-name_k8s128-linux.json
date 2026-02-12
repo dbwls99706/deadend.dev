@@ -59,9 +59,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
+        "probability": 0.17
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/forbidden-user/k8s128-linux",
+        "probability": 0.14
+      },
+      {
+        "error_id": "kubernetes/pod-terminating-stuck/k8s1-linux",
+        "probability": 0.13
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/readiness-probe-failed/k8s1-linux",
+        "distinction": "'Invalid value' indicates an invalid Kubernetes resource name, while 'Unhealthy' indicates a failing readiness probe."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

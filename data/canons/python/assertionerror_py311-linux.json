@@ -64,9 +64,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/recursionerror/py311-linux",
+        "probability": 0.18
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/typeerror-missing-argument/py311-linux",
+        "probability": 0.11
+      },
+      {
+        "error_id": "python/lookuperror-unknown-encoding/py311-linux",
+        "probability": 0.17
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/typeerror-takes-positional-args/py311-linux",
+        "distinction": "'AssertionError' indicates a failed assertion check, while 'TypeError' indicates too many positional arguments passed to a function."
+      },
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "distinction": "'AssertionError' indicates a failed assertion check, while 'TypeError' indicates an indexing operation on a non-subscriptable object."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

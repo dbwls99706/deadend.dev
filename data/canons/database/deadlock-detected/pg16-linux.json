@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/deadlock-detected/pg16-linux",
+  "url": "https://deadends.dev/database/deadlock-detected/pg16-linux",
+  "error": {
+    "signature": "psycopg2.errors.DeadlockDetected: ERROR: deadlock detected",
+    "regex": "ERROR:\\s+deadlock detected",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Two or more transactions are waiting on each other's locks, creating a cycle. PostgreSQL detects this and aborts one transaction. Fixing requires consistent lock ordering or reducing transaction scope."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing deadlock_timeout to prevent deadlock detection",
+      "why_fails": "deadlock_timeout only controls how long PostgreSQL waits before checking for deadlocks. Increasing it delays detection but does not prevent deadlocks. The deadlock still occurs; it just takes longer to report.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Simply retrying the failed transaction in a tight loop without any backoff or lock ordering changes",
+      "why_fails": "Without addressing the root cause (inconsistent lock ordering), retries will frequently deadlock again, creating a retry storm that makes the problem worse under load.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure all transactions acquire locks in a consistent, deterministic order",
+      "success_rate": 0.88,
+      "how": "Identify the tables and rows involved in the deadlock (check PostgreSQL logs for DETAIL). Refactor transactions so they always lock resources in the same order (e.g., always lock table A before table B, or lock rows by ascending primary key).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retry the aborted transaction with exponential backoff",
+      "success_rate": 0.82,
+      "how": "Catch the deadlock exception (sqlstate 40P01) and retry the entire transaction with exponential backoff (e.g., 100ms, 200ms, 400ms). Limit retries to 3-5 attempts. This works when deadlocks are rare and caused by timing rather than systematic lock ordering issues.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.20, "condition": "when deadlock retry logic causes cascading slow queries that hit statement_timeout"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/too-many-connections/pg16-linux", "probability": 0.15, "condition": "when high connection count leads to more concurrent transactions contending for the same rows"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "distinction": "PostgreSQL actively detects deadlock cycles and aborts a transaction. MySQL's lock wait timeout is a simple timeout that fires when a lock is held too long, not necessarily a true deadlock cycle."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

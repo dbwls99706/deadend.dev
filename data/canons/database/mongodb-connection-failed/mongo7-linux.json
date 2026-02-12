@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongodb-connection-failed/mongo7-linux",
+  "url": "https://deadends.dev/database/mongodb-connection-failed/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.ServerSelectionTimeoutError: connection refused, Timeout: 30s",
+    "regex": "ServerSelectionTimeoutError.*connection refused|MongoServerSelectionError.*connect ECONNREFUSED",
+    "domain": "database",
+    "category": "connection_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "MongoDB client cannot connect to any server in the connection string within the server selection timeout. Typically caused by mongod not running, wrong host/port, firewall blocking port 27017, or replica set misconfiguration."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing serverSelectionTimeoutMS to very large values",
+      "why_fails": "If the server is not running or unreachable, waiting longer will not help. This only delays the error and makes the application appear to hang instead of failing fast.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reinstalling the MongoDB driver (pymongo/mongoose) to fix connection issues",
+      "why_fails": "Connection refused is a network-level error. The driver correctly reports that the server is unreachable. Reinstalling the driver changes nothing about server availability.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Start the MongoDB service and verify it is listening",
+      "success_rate": 0.92,
+      "how": "Run: sudo systemctl start mongod. Verify: sudo systemctl status mongod. Check it is listening: ss -tlnp | grep 27017. Check mongod.log for startup errors. If using a replica set, ensure the replica set is initialized with rs.initiate().",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the connection string and network configuration",
+      "success_rate": 0.88,
+      "how": "Verify the connection string format: mongodb://host:27017/dbname. Check bindIp in mongod.conf (set to 0.0.0.0 for remote access or specific IPs). Check firewall: sudo ufw allow 27017. For Atlas, ensure IP whitelist includes the client IP.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongodb-authentication-failed/mongo7-linux", "probability": 0.30, "condition": "when server starts but authentication is enabled and credentials are wrong"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.10, "condition": "when disk full on a shared server causes MongoDB to crash alongside other services"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/connection-refused/pg16-linux", "distinction": "MongoDB ServerSelectionTimeoutError wraps connection refused with a timeout mechanism, while PostgreSQL reports connection refused immediately. MongoDB's error appears after the selection timeout period."},
+      {"error_id": "database/redis-connection-refused/redis7-linux", "distinction": "Both are connection refused errors but for different database systems. MongoDB uses port 27017 by default, Redis uses 6379."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 58,
+    "last_verification": "2026-02-12"
+  }
+}

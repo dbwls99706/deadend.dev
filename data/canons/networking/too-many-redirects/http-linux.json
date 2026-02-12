@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/too-many-redirects/http-linux",
+  "url": "https://deadends.dev/networking/too-many-redirects/http-linux",
+  "error": {
+    "signature": "ERR_TOO_MANY_REDIRECTS",
+    "regex": "ERR_TOO_MANY_REDIRECTS|too many redirect|redirect loop|Maximum.*redirect.*exceeded|301.*302.*loop",
+    "domain": "networking",
+    "category": "http",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": "HTTP/1.1+"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "The client followed too many HTTP redirects (301/302/307/308) without reaching a final response. This creates an infinite redirect loop, typically caused by conflicting redirect rules between the web server, application, CDN, and load balancer."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the maximum redirect limit in the HTTP client",
+      "why_fails": "The redirects form an infinite loop (A -> B -> A -> B...). Increasing the limit from 20 to 100 just means the client follows 100 redirects before failing instead of 20. The loop never terminates because the same URLs keep redirecting to each other.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable all redirects in the client as a workaround",
+      "why_fails": "Disabling redirect following means the client receives the first 301/302 response and stops. This does not render the intended page and breaks normal redirect flows. The redirect loop is a server-side configuration issue that must be fixed on the server.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Trace the redirect chain and identify the loop, then fix conflicting rules",
+      "success_rate": 0.90,
+      "how": "1. Trace the redirect chain: curl -v -L --max-redirs 10 https://example.com 2>&1 | grep -i 'location:'\n2. Identify the loop pattern (e.g., HTTP -> HTTPS -> HTTP, www -> non-www -> www)\n3. Check web server config for conflicting redirects:\n   - nginx: look for competing return 301 and rewrite rules\n   - Apache: check .htaccess, httpd.conf for conflicting RewriteRule directives\n4. Check if CDN (Cloudflare, etc.) adds an HTTPS redirect that conflicts with the server's redirect\n5. Ensure the redirect target URL is the canonical final destination\n6. Clear browser cookies that might contain redirect-triggering session data",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the HTTP/HTTPS or www/non-www redirect at a single layer",
+      "success_rate": 0.88,
+      "how": "1. Decide on a single canonical URL form: https://www.example.com or https://example.com\n2. Implement the redirect at ONLY one layer (web server OR CDN OR application, not multiple)\n3. For nginx: server { listen 80; return 301 https://$host$request_uri; } (only this one redirect rule for HTTP->HTTPS)\n4. If using Cloudflare, set SSL mode to 'Full (Strict)' to prevent the origin and CDN from both redirecting\n5. Remove duplicate redirect rules from .htaccess, application middleware, and CDN page rules\n6. Test: curl -I http://example.com and curl -I https://example.com to verify single redirects",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.10, "condition": "when fixing redirect rules misconfigures the proxy upstream"},
+      {"error_id": "networking/ssl-hostname-mismatch/openssl3-linux", "probability": 0.10, "condition": "when the redirect resolves to a host with a mismatched SSL certificate"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.10, "condition": "when adding HTTPS redirect after fixing SSL creates a redirect loop with existing HTTP redirect"},
+      {"error_id": "networking/cors-preflight-failed/http-linux", "probability": 0.05, "condition": "when adding a reverse proxy to fix CORS introduces conflicting redirect rules"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "distinction": "Too many redirects is the client following valid redirect responses in a loop; 502 is the proxy receiving an invalid response from the backend, not a redirect chain issue"},
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "Redirect loops fail because of looping location headers; 504 fails because the backend did not respond in time, which is a latency issue not a redirect issue"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

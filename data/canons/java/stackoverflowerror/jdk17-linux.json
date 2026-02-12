@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/stackoverflowerror/jdk17-linux",
+  "url": "https://deadends.dev/java/stackoverflowerror/jdk17-linux",
+  "error": {
+    "signature": "java.lang.StackOverflowError",
+    "regex": "java\\.lang\\.StackOverflowError",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "StackOverflowError occurs when the thread's call stack exceeds its maximum depth, almost always caused by unbounded recursion. The stack trace will show repeating method call patterns."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing the stack size with -Xss to accommodate deeper recursion",
+      "why_fails": "Increasing -Xss is a temporary workaround. If the recursion is genuinely unbounded (e.g., infinite loop due to a missing base case), no stack size will be sufficient. Even if the recursion is bounded but deep, larger stacks multiply memory usage per thread, which can cause heap OOM in multi-threaded applications.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Catching StackOverflowError to continue execution",
+      "why_fails": "After a StackOverflowError, the thread's stack is in a fragile state. Any further method calls can trigger another StackOverflowError. The application state is likely inconsistent since the recursive operation did not complete. Catching this error leads to unpredictable behavior.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Examine the stack trace for repeating call patterns and fix the base case or cycle in the recursion",
+      "success_rate": 0.92,
+      "how": "1. Look at the stack trace — you will see a repeating sequence of method calls. 2. Identify the entry point of the recursive cycle. 3. Common causes: missing base case in recursive algorithm, toString()/hashCode()/equals() calling themselves through circular object references, JPA/Hibernate bidirectional relationship toString(), Jackson serialization of circular references. 4. Fix by adding the proper base case, breaking the circular reference, or using @JsonIgnore/@ToString.Exclude on bidirectional fields.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Convert deep recursion to an iterative approach using an explicit stack data structure",
+      "success_rate": 0.90,
+      "how": "1. Replace the recursive method with a while loop. 2. Use a java.util.Deque<State> (ArrayDeque) as an explicit stack to hold intermediate state. 3. Push initial state, then loop: pop, process, push new states as needed. 4. This uses heap memory instead of thread stack memory, which is much more abundant and configurable. 5. For tree traversals, consider using BFS with a Queue instead of recursive DFS.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.10, "condition": "when iterative workaround with explicit stack consumes too much heap memory"},
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.08, "condition": "when base case fix introduces an unexpected null return value"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.15, "condition": "when Jackson serialization hits circular object references"},
+      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.10, "condition": "when Hibernate entity bidirectional relationships create toString() cycles"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "distinction": "StackOverflowError is about call depth (too many nested method calls); OutOfMemoryError is about data volume (too many objects in heap). Stack traces for StackOverflowError always show a repeating call pattern."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

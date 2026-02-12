@@ -24,6 +24,23 @@
   <meta name="twitter:card" content="summary">
 
   <link rel="canonical" href="{{ base_url }}">
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "deadends.dev",
+    "url": "{{ base_url }}",
+    "description": "Structured failure knowledge for AI agents — dead ends, workarounds, error chains. {{ total_errors }} errors across {{ domains | length }} domains.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ base_url }}/search/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
     a { color: #58a6ff; }

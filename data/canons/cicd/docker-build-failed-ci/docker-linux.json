@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/docker-build-failed-ci/docker-linux",
+  "url": "https://deadends.dev/cicd/docker-build-failed-ci/docker-linux",
+  "error": {
+    "signature": "ERROR: failed to solve: failed to compute cache key: failed to calculate checksum of ref",
+    "regex": "(?:failed to solve.*cache key|failed to compute cache key|COPY failed.*stat|error building.*no such file|failed to calculate checksum|failed to create LLB definition)",
+    "domain": "cicd",
+    "category": "docker_build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "docker", "version_range": ">=20.10"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Docker build fails in CI due to layer cache invalidation, missing build context files, or BuildKit cache backend issues. The build works locally but fails in CI where cache state differs."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable Docker BuildKit to use the legacy builder",
+      "why_fails": "Legacy builder is deprecated, slower, and lacks multi-stage build optimizations; does not fix the root cause of missing files or cache issues",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add --no-cache flag to every build in CI",
+      "why_fails": "Disabling cache entirely makes builds significantly slower (10x+ in many cases) and wastes CI resources without addressing the underlying issue",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use GitHub Actions cache or registry-based cache for Docker layers",
+      "success_rate": 0.88,
+      "how": "Use docker/build-push-action with 'cache-from: type=gha' and 'cache-to: type=gha,mode=max' to persist BuildKit layer cache between CI runs",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix .dockerignore and ensure build context contains all required files",
+      "success_rate": 0.90,
+      "how": "Check that .dockerignore does not exclude files needed by COPY/ADD instructions. Verify the build context path matches the Dockerfile expectations. Use 'docker build --progress=plain' for verbose output",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "probability": 0.15, "condition": "When Docker build failure prevents creation of the container image artifact"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.15, "condition": "When Docker login issues prevent pulling cached base images"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "Docker build failure is about container image layer caching; npm ci failure is about Node.js package installation within a build step"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

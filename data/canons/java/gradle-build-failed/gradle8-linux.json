@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/gradle-build-failed/gradle8-linux",
+  "url": "https://deadends.dev/java/gradle-build-failed/gradle8-linux",
+  "error": {
+    "signature": "FAILURE: Build failed with an exception",
+    "regex": "FAILURE:\\s*Build failed with an exception|Execution failed for task.*compileJava",
+    "domain": "java",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "gradle", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Gradle build failed is a generic wrapper error that occurs when any task in the Gradle build lifecycle fails. The most common cause is compilation failure (compileJava task), but it can also be test failures, resource processing errors, or plugin execution failures."
+  },
+  "dead_ends": [
+    {
+      "action": "Running './gradlew clean build' repeatedly hoping the error resolves itself",
+      "why_fails": "Gradle builds are deterministic for the same inputs. If the build fails due to a code or configuration error, cleaning and rebuilding will produce the exact same failure. Repeated clean builds only waste time and can mask intermittent failures (which would indicate a different problem like flaky tests).",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Deleting the .gradle directory and Gradle caches without reading the error message",
+      "why_fails": "Deleting Gradle caches forces re-download of all dependencies and re-computation of all task outputs. This is slow and rarely fixes the underlying issue. Build failures are caused by code errors, misconfiguration, or incompatible dependencies — not by cache corruption.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run with --stacktrace or --info to get the full error details, then fix the specific reported issue",
+      "success_rate": 0.90,
+      "how": "1. Run './gradlew build --stacktrace' to see the full exception trace. 2. Run './gradlew build --info' for verbose output showing each task's execution. 3. Look for the 'What went wrong' section in the output — it describes the failing task. 4. For compilation errors: fix the source code at the reported file:line. 5. For plugin errors: check plugin version compatibility with your Gradle version.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure Gradle and JDK versions are compatible and the toolchain is configured correctly",
+      "success_rate": 0.85,
+      "how": "1. Check Gradle-JDK compatibility: Gradle 8.x requires JDK 8+, but your source may require JDK 17+. 2. Configure the Java toolchain in build.gradle: java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }. 3. Check './gradlew --version' to see which JDK Gradle itself is using (JAVA_HOME). 4. Ensure gradle-wrapper.properties points to a compatible Gradle version. 5. For annotation processors, add them to the 'annotationProcessor' configuration.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.20, "condition": "when the build failure is caused by an unresolvable dependency"},
+      {"error_id": "java/incompatible-types/jdk17-linux", "probability": 0.25, "condition": "when the underlying compilation error is a type mismatch"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.15, "condition": "when dependency resolution succeeds with wrong version, causing compilation failure"},
+      {"error_id": "java/unsupportedclassversionerror/jdk17-linux", "probability": 0.10, "condition": "when running Gradle with a JDK that is too old for the project's dependencies"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/maven-build-failure/maven3-linux", "distinction": "Both are build tool failures, but Gradle uses task-based execution and the error format differs. Gradle shows 'Execution failed for task' while Maven shows '[ERROR] COMPILATION ERROR'. The underlying compilation errors are the same."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

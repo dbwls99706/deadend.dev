@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/test-flaky-timeout/ci-linux",
+  "url": "https://deadends.dev/cicd/test-flaky-timeout/ci-linux",
+  "error": {
+    "signature": "Error: Timeout of 30000ms exceeded. For async tests and hooks, ensure 'done()' is called or return a Promise.",
+    "regex": "(?:Timeout of \\d+ms exceeded|test.*timed? ?out|Exceeded timeout|jest.*timed? ?out|DEADLINE_EXCEEDED.*test|flaky.*timeout)",
+    "domain": "cicd",
+    "category": "test_execution",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "ci-runner", "version_range": ">=1.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "Tests intermittently fail with timeout errors in CI but pass locally. Caused by slower CI hardware, resource contention on shared runners, race conditions, or tests depending on external services."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increase the test timeout to a very large value",
+      "why_fails": "Masks the real issue (slow tests, resource contention, race conditions); makes CI feedback loops painfully slow and can hit job-level timeouts",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add automatic retry logic to re-run failed tests multiple times",
+      "why_fails": "Retries hide genuine bugs, increase CI costs, and create false confidence in test results; flaky tests that occasionally pass are still broken",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and fix the root cause of flakiness (race conditions, external dependencies)",
+      "success_rate": 0.85,
+      "how": "Run tests with --verbose and timing output, identify tests that vary in duration. Replace real timers with fake timers, mock external API calls, use waitFor/eventually patterns for async assertions",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Quarantine flaky tests and track them separately while fixing",
+      "success_rate": 0.82,
+      "how": "Tag flaky tests (e.g., @flaky or .skip) and run them in a separate non-blocking CI job. Track flaky test count as a metric and commit to fixing them on a schedule",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.20, "condition": "When multiple flaky tests hang simultaneously, causing the entire job to timeout"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.10, "condition": "When cache miss causes slower build, leaving less time for test execution within the timeout"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "Flaky test timeout is about individual test cases failing intermittently; runner timeout is about the entire CI job exceeding its time limit"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

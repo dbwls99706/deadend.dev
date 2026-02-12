@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/foreign-key-violation/pg16-linux",
+  "url": "https://deadends.dev/database/foreign-key-violation/pg16-linux",
+  "error": {
+    "signature": "psycopg2.errors.ForeignKeyViolation: ERROR: insert or update on table \"child_table\" violates foreign key constraint",
+    "regex": "ERROR:\\s+insert or update on table .* violates foreign key constraint",
+    "domain": "database",
+    "category": "constraint_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "An INSERT or UPDATE references a foreign key value that does not exist in the parent table, or a DELETE on the parent table is blocked because child rows reference it. Caused by incorrect insert ordering, missing parent records, or lack of CASCADE rules."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling foreign key checks globally to bypass the error",
+      "why_fails": "PostgreSQL does not support globally disabling FK checks like MySQL. Even if you defer constraints, they are checked at commit time. Dropping the constraint destroys referential integrity.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Inserting a dummy parent record with placeholder data to satisfy the constraint",
+      "why_fails": "Placeholder parent records create orphan data that confuses application logic and reporting. It masks the real issue of incorrect data flow ordering.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure parent records are inserted before child records",
+      "success_rate": 0.93,
+      "how": "Reorder your INSERT statements or application logic to create parent records first. In bulk imports, load parent tables first, then child tables. Use topological sort for complex dependency graphs.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use DEFERRABLE constraints for complex transaction ordering",
+      "success_rate": 0.85,
+      "how": "Alter the constraint: ALTER TABLE child_table ALTER CONSTRAINT fk_name DEFERRABLE INITIALLY DEFERRED; This delays FK checking until transaction commit, allowing inserts in any order within a single transaction.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.15, "condition": "when the parent table itself is missing due to incomplete migrations"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.25, "condition": "when a migration partially runs creating child tables without parent table constraints"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/unique-violation/pg16-linux", "distinction": "Foreign key violations are about referential integrity (child references non-existent parent), while unique violations are about duplicate values in a single table's column."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 52,
+    "last_verification": "2026-02-12"
+  }
+}

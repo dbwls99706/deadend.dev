@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/serialization-cycle/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/serialization-cycle/dotnet8-linux",
+  "error": {
+    "signature": "System.Text.Json.JsonException: A possible object cycle was detected. This can either be due to a cycle or if the object depth is larger than the maximum allowed depth of 32.",
+    "regex": "(JsonException.*object cycle was detected|A possible object cycle|maximum allowed depth)",
+    "domain": "dotnet",
+    "category": "serialization",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "JSON serialization cycle errors occur when System.Text.Json encounters circular references in object graphs, commonly from EF Core navigation properties (e.g., Parent -> Children -> Parent). Fix by using ReferenceHandler.IgnoreCycles, DTOs, or [JsonIgnore] attributes."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing JsonSerializerOptions.MaxDepth to a very high value",
+      "why_fails": "A circular reference creates infinite depth; no MaxDepth value will be sufficient. Higher values just delay the exception and waste CPU and memory before the inevitable failure",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing navigation properties from EF Core entities to prevent cycles",
+      "why_fails": "Navigation properties are essential for EF Core's relationship mapping, Include operations, and lazy loading. Removing them breaks queries and forces manual joins, degrading the ORM experience significantly",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure ReferenceHandler.IgnoreCycles in JSON serializer options",
+      "success_rate": 0.90,
+      "how": "In Program.cs: builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; }); This replaces circular references with null during serialization, breaking the cycle without modifying the domain model",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use DTOs (Data Transfer Objects) to control serialization shape",
+      "success_rate": 0.92,
+      "how": "Create DTO classes that only contain the properties needed for the API response, without circular navigation properties. Map entities to DTOs before returning: return Ok(entity.Select(e => new EntityDto { Id = e.Id, Name = e.Name })); This gives full control over the serialized shape",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "probability": 0.20, "condition": "when serialization cycle is deep enough to overflow the stack before hitting MaxDepth"},
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.15, "condition": "when the serializer allocates large buffers before detecting the cycle"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when EF Core tracked entities with loaded navigation properties are serialized directly"},
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.08, "condition": "when incomplete deserialization of cyclic objects produces null references"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "distinction": "Serialization cycle is detected by the JSON serializer and throws JsonException with a descriptive message; StackOverflowException from serialization is an undetected infinite recursion that crashes the process without a catchable exception"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

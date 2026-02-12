@@ -1,7 +1,7 @@
 # deadends.dev
 
 Structured failure knowledge database for AI coding agents.
-501 error entries across 14 domains (python, node, docker, cuda, git, pip, typescript, rust, go, kubernetes, terraform, aws, nextjs, react).
+631 error entries across 20 domains (python, node, docker, cuda, git, pip, typescript, rust, go, kubernetes, terraform, aws, nextjs, react, java, database, cicd, php, dotnet, networking).
 
 ## Architecture
 

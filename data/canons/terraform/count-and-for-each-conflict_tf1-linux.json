@@ -54,9 +54,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/module-not-installed/tf1-linux",
+        "probability": 0.15
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/output-not-found/tf1-linux",
+        "probability": 0.15
+      },
+      {
+        "error_id": "terraform/invalid-provider-config/tf115-linux",
+        "probability": 0.12
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/error-loading-state/tf115-linux",
+        "distinction": "'Error' indicates conflicting count and for_each usage, while 'loading state' indicates a state file version incompatibility."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

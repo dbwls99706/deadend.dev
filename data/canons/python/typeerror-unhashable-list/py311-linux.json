@@ -65,9 +65,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/typeerror-no-len/py311-linux",
+        "probability": 0.2
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/unboundlocalerror/py311-linux",
+        "probability": 0.14
+      },
+      {
+        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
+        "probability": 0.12
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/recursionerror/py311-linux",
+        "distinction": "'TypeError' indicates use of an unhashable type as a dict key or set element, while 'RecursionError' indicates infinite recursion exceeding the stack depth limit."
+      },
+      {
+        "error_id": "python/valueerror-invalid-literal/py311-linux",
+        "distinction": "'TypeError' indicates use of an unhashable type as a dict key or set element, while 'ValueError' indicates an invalid string-to-number conversion."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

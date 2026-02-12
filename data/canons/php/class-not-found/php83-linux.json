@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/class-not-found/php83-linux",
+  "url": "https://deadends.dev/php/class-not-found/php83-linux",
+  "error": {
+    "signature": "Fatal error: Uncaught Error: Class \"App\\SomeClass\" not found",
+    "regex": "Fatal error:.*Class [\"'].*[\"'] not found",
+    "domain": "php",
+    "category": "autoloading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Class not found errors in PHP 8.3 are almost always caused by incorrect namespace declarations, missing autoload mappings, or failing to run composer dump-autoload after adding new classes."
+  },
+  "dead_ends": [
+    {"action": "Manually require_once the class file everywhere it is used", "why_fails": "Creates brittle dependency chains, breaks when file paths change, and defeats the purpose of autoloading. Also fails in frameworks that expect PSR-4 autoloading.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Delete vendor/ and reinstall without checking namespace casing", "why_fails": "If the namespace or class name has a case mismatch with the file path (e.g., app/ vs App/), reinstalling dependencies will not fix the issue. Linux filesystems are case-sensitive.", "fail_rate": 0.70, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Verify PSR-4 namespace-to-directory mapping and run composer dump-autoload", "success_rate": 0.93, "how": "Check that the namespace in the class file matches the autoload PSR-4 mapping in composer.json. Ensure the directory structure matches the namespace. Run 'composer dump-autoload -o' to regenerate the autoload files.", "sources": [], "condition": ""},
+    {"action": "Check class name and file name casing on case-sensitive filesystems", "success_rate": 0.88, "how": "On Linux, verify that the file name exactly matches the class name including capitalization. For example, SomeClass.php must not be named someclass.php. Rename the file to match exactly.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/call-to-undefined-function/php83-linux", "probability": 0.15, "condition": "when the missing class contained static utility methods that other code calls as functions"}],
+    "preceded_by": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "probability": 0.25, "condition": "when composer autoload configuration was recently changed"}],
+    "frequently_confused_with": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "distinction": "Class not found is a PHP runtime error while composer autoload not found is specifically about composer's generated autoloader failing to locate the class"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

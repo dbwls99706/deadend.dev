@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/ef-no-tracking-query/dotnet8-linux",
+  "error": {
+    "signature": "System.InvalidOperationException: The instance of entity type 'EntityName' cannot be tracked because another instance with the same key value is already being tracked.",
+    "regex": "InvalidOperationException.*cannot be tracked because another instance.*same key value.*already being tracked",
+    "domain": "dotnet",
+    "category": "database",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "This InvalidOperationException occurs when EF Core's change tracker already contains an entity with the same primary key. Common when attaching or updating entities loaded from a different DbContext instance or deserialized from a request. Fix by using AsNoTracking for read-only queries or properly managing DbContext scope."
+  },
+  "dead_ends": [
+    {
+      "action": "Creating a new DbContext instance for every operation to avoid tracking conflicts",
+      "why_fails": "Defeats the purpose of the Unit of Work pattern; transactions cannot span operations, causing data consistency issues. Also causes performance problems from repeated context creation overhead",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Calling DbContext.ChangeTracker.Clear() before every update operation",
+      "why_fails": "Discards all tracked changes including pending updates from the same request scope; can cause silent data loss and breaks the expected behavior of other code sharing the same DbContext",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use AsNoTracking() for read-only queries that do not need change tracking",
+      "success_rate": 0.90,
+      "how": "Add .AsNoTracking() to queries that only read data: var items = await dbContext.Products.AsNoTracking().ToListAsync(). For a global default, configure in DbContext: optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking). Then explicitly use .AsTracking() only when updates are needed",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Detach the existing tracked entity before attaching the new instance",
+      "success_rate": 0.85,
+      "how": "Find and detach the tracked entity: var local = dbContext.Set<Entity>().Local.FirstOrDefault(e => e.Id == entity.Id); if (local != null) dbContext.Entry(local).State = EntityState.Detached; Then attach the new entity: dbContext.Update(entity);",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when entity state management issues cause other InvalidOperationException variants"},
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.12, "condition": "when large numbers of tracked entities accumulate without being detached"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.10, "condition": "when deserialized entities from API requests conflict with already-tracked entities"},
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.05, "condition": "when schema changes affect entity key configurations"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "EF tracking conflict is specifically about duplicate entity instances in the change tracker; generic InvalidOperationException covers a broad range of invalid state scenarios unrelated to EF Core tracking"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

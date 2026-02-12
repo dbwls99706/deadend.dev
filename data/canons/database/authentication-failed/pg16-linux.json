@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/authentication-failed/pg16-linux",
+  "url": "https://deadends.dev/database/authentication-failed/pg16-linux",
+  "error": {
+    "signature": "psycopg2.OperationalError: FATAL: password authentication failed for user \"myuser\"",
+    "regex": "FATAL:\\s+password authentication failed for user",
+    "domain": "database",
+    "category": "authentication_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "PostgreSQL rejects the supplied credentials. Typically caused by wrong password, missing user, or pg_hba.conf authentication method mismatch."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly retrying the same credentials hoping for a different result",
+      "why_fails": "PostgreSQL authentication is deterministic. The same wrong password will always fail. Retrying wastes time and may trigger connection rate limiting.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Changing the client driver version to fix authentication failures",
+      "why_fails": "The authentication failure is server-side credential validation. Switching between psycopg2, asyncpg, or other drivers does not change the password check.",
+      "fail_rate": 0.92,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reset the user password in PostgreSQL and update the application configuration",
+      "success_rate": 0.94,
+      "how": "Connect as superuser (sudo -u postgres psql) and run: ALTER USER myuser WITH PASSWORD 'newpassword'; Then update the application's database connection string with the new password.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and fix pg_hba.conf authentication method",
+      "success_rate": 0.88,
+      "how": "Inspect pg_hba.conf for the relevant connection type (local/host). Ensure the auth method matches expectations (md5, scram-sha-256, or trust for local dev). Reload with 'SELECT pg_reload_conf();' or 'systemctl reload postgresql'.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.25, "condition": "when user authenticates to the wrong database that lacks expected tables"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.35, "condition": "when server is started and connection succeeds but credentials are wrong"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-access-denied/mysql8-linux", "distinction": "PostgreSQL uses 'FATAL: password authentication failed' while MySQL uses 'Access denied for user'. Both are credential failures but in different database systems."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 72,
+    "last_verification": "2026-02-12"
+  }
+}

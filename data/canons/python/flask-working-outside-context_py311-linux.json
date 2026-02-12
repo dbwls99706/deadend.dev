@@ -65,9 +65,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/oserror-errno98-address-in-use/py310-linux",
+        "probability": 0.23
+      },
+      {
+        "error_id": "python/unboundlocalerror/py311-linux",
+        "probability": 0.15
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/runtimeerror-event-loop-running/py311-linux",
+        "probability": 0.17
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/unboundlocalerror/py311-linux",
+        "distinction": "'RuntimeError' indicates a Flask application context error, while 'UnboundLocalError' indicates a variable referenced before assignment in local scope."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

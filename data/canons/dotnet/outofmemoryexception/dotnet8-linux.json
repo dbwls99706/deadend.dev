@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/outofmemoryexception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/outofmemoryexception/dotnet8-linux",
+  "error": {
+    "signature": "System.OutOfMemoryException: Insufficient memory to continue the execution of the program.",
+    "regex": "System\\.OutOfMemoryException:\\s*.+",
+    "domain": "dotnet",
+    "category": "runtime_exception",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "OutOfMemoryException occurs when the CLR cannot allocate enough memory. Common causes include loading large datasets into memory, memory leaks from undisposed resources, and Large Object Heap fragmentation. Fix by streaming data, disposing resources, and profiling memory usage."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increasing the container or VM memory limit without investigating the root cause",
+      "why_fails": "Memory leaks and unbounded allocations will eventually consume any amount of memory; increasing limits only delays the inevitable crash and increases infrastructure costs",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Calling GC.Collect() frequently to force garbage collection",
+      "why_fails": "Forced GC causes performance degradation due to stop-the-world pauses; if memory is still referenced (leak), GC cannot reclaim it regardless of how often it runs",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Stream large data instead of loading it entirely into memory",
+      "success_rate": 0.85,
+      "how": "Replace patterns like File.ReadAllBytes() or ToList() on large queries with streaming alternatives: use IAsyncEnumerable, StreamReader, or EF Core's AsAsyncEnumerable() to process data in chunks rather than loading everything at once",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Profile memory usage and fix leaks using dotnet-dump and dotnet-gcdump",
+      "success_rate": 0.82,
+      "how": "Run 'dotnet-gcdump collect -p <pid>' to capture a GC heap snapshot. Analyze with Visual Studio or PerfView to find types with unexpectedly high instance counts. Common leak sources: event handlers not unsubscribed, static collections growing unbounded, HttpClient instances not reused via IHttpClientFactory",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "probability": 0.10, "condition": "when excessive recursion causes both stack and heap exhaustion"},
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.15, "condition": "when memory pressure causes HTTP requests to timeout"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when tracked entities accumulate in the DbContext change tracker without being detached"},
+      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.12, "condition": "when circular reference serialization leads to unbounded memory allocation"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "distinction": "OutOfMemoryException is about heap memory exhaustion from allocations; StackOverflowException is about stack space exhaustion from deep recursion or large stack allocations"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

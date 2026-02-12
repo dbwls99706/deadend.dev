@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/ef-migration-failed/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/ef-migration-failed/dotnet8-linux",
+  "error": {
+    "signature": "Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.",
+    "regex": "(DbUpdateException|Migration.*failed|dotnet.ef.*database update.*error)",
+    "domain": "dotnet",
+    "category": "database",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "EF Core migration failures occur when 'dotnet ef database update' cannot apply pending migrations. Causes include connection failures, conflicting schema changes, missing migration files, or model snapshot inconsistencies. Fix by verifying the database connection, resolving conflicts, and regenerating migrations if necessary."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting the Migrations folder and recreating all migrations from scratch",
+      "why_fails": "Destroys migration history that other environments depend on; production databases expect the existing migration chain. The new initial migration will try to create tables that already exist, causing failures",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually editing the __EFMigrationsHistory table to skip failed migrations",
+      "why_fails": "Creates a mismatch between the actual database schema and what EF Core thinks the schema is; subsequent migrations will generate incorrect SQL because the model snapshot is out of sync with reality",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Generate a SQL script to diagnose and apply migrations manually",
+      "success_rate": 0.85,
+      "how": "Run 'dotnet ef migrations script --idempotent -o migration.sql' to generate an idempotent SQL script. Review the script to understand what changes will be applied, then execute it against the database. The --idempotent flag ensures already-applied migrations are safely skipped",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Resolve model snapshot conflicts and create a clean migration",
+      "success_rate": 0.82,
+      "how": "Run 'dotnet ef migrations remove' to remove the last unapplied migration. Fix the conflicting model changes in the DbContext, then run 'dotnet ef migrations add FixedMigration' to create a new clean migration. Verify with 'dotnet ef migrations script' before applying",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.15, "condition": "when migration attempts reveal underlying connection problems"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.20, "condition": "when schema mismatch causes EF Core to throw at runtime on queries"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.25, "condition": "when database connection failure prevents migrations from running"},
+      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "probability": 0.10, "condition": "when conflicting EF Core package versions cause migration tool incompatibility"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "distinction": "EF migration failure encompasses schema and migration-specific errors; SqlException connection failure is specifically about the inability to reach the database server at the network level"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

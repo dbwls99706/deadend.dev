@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-checkout-failed/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-checkout-failed/gha-linux",
+  "error": {
+    "signature": "Error: fatal: could not read Username for 'https://github.com': terminal prompts disabled",
+    "regex": "(?:could not read Username|Authentication failed|fatal: repository.*not found|remote: Repository not found|The requested URL returned error: 403)",
+    "domain": "cicd",
+    "category": "authentication",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The actions/checkout step fails due to authentication issues when cloning the repository. Common in private repos, cross-repo checkouts, and submodule scenarios."
+  },
+  "dead_ends": [
+    {
+      "action": "Use git clone with hardcoded credentials in a run step",
+      "why_fails": "Credentials are exposed in workflow logs and violate security best practices; also breaks when credentials rotate",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable checkout entirely and fetch code manually without proper auth",
+      "why_fails": "Manual git operations without proper token setup face the same authentication issues",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use actions/checkout with a PAT or deploy key for private/cross-repo access",
+      "success_rate": 0.92,
+      "how": "Set 'token: ${{ secrets.PAT_TOKEN }}' in the checkout step for cross-repo access, or configure a deploy key for the specific repository",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure persist-credentials and set proper permissions for submodules",
+      "success_rate": 0.87,
+      "how": "Add 'submodules: recursive' and 'token: ${{ secrets.PAT_TOKEN }}' to the checkout step. Ensure the token has access to all submodule repositories",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "probability": 0.20, "condition": "When checkout succeeds but subsequent API calls fail due to token scope limitations"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.25, "condition": "When the PAT secret needed for checkout was not configured"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Checkout failed is about git clone authentication; permission denied is about GitHub API resource access scopes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

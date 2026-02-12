@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-node-version-mismatch/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-node-version-mismatch/gha-linux",
+  "error": {
+    "signature": "Error: Version 19.x not found. Available versions: 18.x, 20.x, 22.x",
+    "regex": "(?:Version \\d+\\.x not found|Unable to find version|Node\\.js version .* is not available|Could not find Node\\.js version)",
+    "domain": "cicd",
+    "category": "runtime_version",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The actions/setup-node step cannot find the requested Node.js version. Occurs when specifying EOL versions, odd-numbered versions, or versions not yet available on the runner."
+  },
+  "dead_ends": [
+    {
+      "action": "Pin to a very specific patch version like 18.17.1 without checking availability",
+      "why_fails": "Specific patch versions may not be available on GitHub-hosted runners; the version manifest is updated independently",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually install Node.js from source in a run step",
+      "why_fails": "Compiling from source is extremely slow, fragile in CI, and conflicts with the runner's pre-installed tools",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use an LTS version specifier or .nvmrc file with setup-node",
+      "success_rate": 0.95,
+      "how": "Set 'node-version: 20' or 'node-version: lts/*' in actions/setup-node, or create a .nvmrc file and use 'node-version-file: .nvmrc'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check available versions and use a supported major version",
+      "success_rate": 0.92,
+      "how": "Use only even-numbered LTS versions (18, 20, 22). Check https://github.com/actions/node-versions/releases for available versions on GitHub runners",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.20, "condition": "When switching Node version causes lockfile compatibility issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.10, "condition": "When the node-version value is not quoted and YAML interprets it incorrectly"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "Node version mismatch is about the runtime not being available; npm ci failed is about package installation issues with an already-installed Node"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

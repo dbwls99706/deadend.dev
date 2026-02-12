@@ -115,6 +115,7 @@ class TestSeedSignatures:
         valid_domains = {
             "python", "cuda", "node", "pip", "docker",
             "git", "mcp", "http", "auth", "db", "rust", "llm",
+            "java", "database", "cicd", "php", "dotnet", "networking",
         }
         for seed in SEED_SIGNATURES:
             assert seed["domain"] in valid_domains, (
