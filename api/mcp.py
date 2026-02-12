@@ -135,6 +135,13 @@ TOOLS = [
             },
             "required": ["error_message"],
         },
+        "annotations": {
+            "title": "Look up error",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
     {
         "name": "get_error_detail",
@@ -154,6 +161,13 @@ TOOLS = [
             },
             "required": ["error_id"],
         },
+        "annotations": {
+            "title": "Get error details",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
     {
         "name": "list_error_domains",
@@ -165,6 +179,13 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {},
+        },
+        "annotations": {
+            "title": "List domains",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
         },
     },
     {
@@ -199,6 +220,13 @@ TOOLS = [
             },
             "required": ["query"],
         },
+        "annotations": {
+            "title": "Search errors",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
     {
         "name": "list_errors_by_domain",
@@ -225,6 +253,13 @@ TOOLS = [
             },
             "required": ["domain"],
         },
+        "annotations": {
+            "title": "List domain errors",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
     {
         "name": "batch_lookup",
@@ -245,6 +280,13 @@ TOOLS = [
             },
             "required": ["error_messages"],
         },
+        "annotations": {
+            "title": "Batch lookup",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
     {
         "name": "get_domain_stats",
@@ -264,6 +306,13 @@ TOOLS = [
             },
             "required": ["domain"],
         },
+        "annotations": {
+            "title": "Domain statistics",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
     },
 ]
 
@@ -272,9 +321,19 @@ def handle_mcp(method, params, canons):
     if method == "initialize":
         return {
             "protocolVersion": "2024-11-05",
-            "capabilities": {"tools": {}},
+            "capabilities": {
+                "tools": {},
+                "resources": {},
+                "prompts": {},
+            },
             "serverInfo": {"name": "deadends-dev", "version": "1.3.0"},
         }
+    elif method == "ping":
+        return {}
+    elif method == "resources/list":
+        return {"resources": []}
+    elif method == "prompts/list":
+        return {"prompts": []}
     elif method == "tools/list":
         return {"tools": TOOLS}
     elif method == "tools/call":
