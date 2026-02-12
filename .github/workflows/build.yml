@@ -37,6 +37,8 @@ jobs:
           cp -f CLAUDE.md site/CLAUDE.md 2>/dev/null || true
           cp -f .cursorrules site/.cursorrules 2>/dev/null || true
           cp -f .windsurfrules site/.windsurfrules 2>/dev/null || true
+          cp -f AGENTS.md site/AGENTS.md 2>/dev/null || true
+          cp -f .clinerules site/.clinerules 2>/dev/null || true
 
       - name: Validate generated HTML
         run: python -m generator.validate --site-only

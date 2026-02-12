@@ -1352,12 +1352,16 @@ def build_match_json(canons: list[dict]) -> None:
 
 
 def build_ai_config_files() -> None:
-    """Copy AI agent config files (CLAUDE.md, .cursorrules, .windsurfrules) to site root.
+    """Copy AI agent config files to site root.
 
-    These files are discovered by AI coding agents (Claude Code, Cursor, Windsurf)
-    when they visit the deployed site, enabling them to understand how to use the service.
+    These files are auto-discovered by AI coding agents:
+    CLAUDE.md (Claude Code), .cursorrules (Cursor), .windsurfrules (Windsurf),
+    AGENTS.md (OpenAI Codex CLI), .clinerules (Cline).
     """
-    config_files = ["CLAUDE.md", ".cursorrules", ".windsurfrules"]
+    config_files = [
+        "CLAUDE.md", ".cursorrules", ".windsurfrules",
+        "AGENTS.md", ".clinerules",
+    ]
     copied = 0
     for fname in config_files:
         src = PROJECT_ROOT / fname
