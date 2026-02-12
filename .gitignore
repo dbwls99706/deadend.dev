@@ -211,3 +211,4 @@ __marimo__/
 
 # deadend.dev specific
 .env
+.mcpregistry_*
