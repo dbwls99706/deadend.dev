@@ -215,3 +215,5 @@ python -m generator.validate --data-only  # Validate before submitting
 ## License
 
 MIT (code) · CC BY 4.0 (data)
+
+<!-- mcp-name: io.github.dbwls99706/deadends-dev -->
