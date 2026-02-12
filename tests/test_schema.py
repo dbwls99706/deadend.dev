@@ -14,6 +14,8 @@ class TestSchemaEdgeCases:
         valid_domains = [
             "python", "cuda", "node", "pip", "docker",
             "git", "mcp", "http", "auth", "db", "rust", "llm",
+            "typescript", "go", "kubernetes", "terraform",
+            "aws", "nextjs", "react",
         ]
         for domain in valid_domains:
             canon = make_canon()

@@ -105,8 +105,7 @@ def lookup_all(error_message: str) -> list[dict]:
                 "url": canon["url"],
             })
 
-    # Sort by: score DESC, then confidence DESC, then fix_success_rate DESC
-    # This ensures tie-breaking favors higher-confidence, higher-rate results
+    # Sort by: score DESC, then fix_success_rate DESC
     matches.sort(
         key=lambda m: (m["score"], m["fix_success_rate"]),
         reverse=True,
@@ -138,7 +137,7 @@ def batch_lookup(error_messages: list[str]) -> list[dict | None]:
             "CUDA error: out of memory",
             "CrashLoopBackOff",
         ])
-        for msg, result in zip(messages, results):
+        for msg, result in zip(error_messages, results):
             if result:
                 print(f"{msg} -> {result['signature']}")
     """
