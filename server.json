@@ -1,19 +1,19 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.dbwls99706/deadends-dev",
+  "name": "dev.deadends/deadends-dev",
   "description": "Structured failure knowledge for AI agents — dead ends, workarounds, error chains",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "title": "deadends.dev",
   "websiteUrl": "https://deadends.dev",
   "repository": {
-    "url": "https://github.com/dbwls99706/deadend.dev",
+    "url": "https://github.com/dbwls99706/deadends.dev",
     "source": "github"
   },
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "deadends-dev",
-      "version": "0.3.1",
+      "version": "0.4.0",
       "transport": {
         "type": "stdio"
       }

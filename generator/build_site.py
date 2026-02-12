@@ -1205,6 +1205,12 @@ def build_well_known(canons: list[dict]) -> None:
     (well_known_dir / "security.txt").write_text(security_txt, encoding="utf-8")
     print("  Generated: .well-known/security.txt")
 
+    # Copy MCP Registry domain verification file if it exists
+    mcp_auth_src = PROJECT_ROOT / ".well-known" / "mcp-registry-auth"
+    if mcp_auth_src.exists():
+        shutil.copy2(mcp_auth_src, well_known_dir / "mcp-registry-auth")
+        print("  Generated: .well-known/mcp-registry-auth")
+
 
 def build_stats_json(canons: list[dict]) -> None:
     """Generate /api/v1/stats.json — detailed dataset statistics for AI agents."""
@@ -1369,14 +1375,16 @@ def build_ai_config_files() -> None:
             shutil.copy2(src, SITE_DIR / fname)
             copied += 1
 
-    # Copy .well-known directory (MCP Registry domain verification, etc.)
+    # Copy .well-known files from project root (MCP Registry domain verification, etc.)
+    # Merge into existing .well-known/ dir (don't destroy files from build_well_known())
     wellknown_src = PROJECT_ROOT / ".well-known"
     if wellknown_src.is_dir():
         wellknown_dst = SITE_DIR / ".well-known"
-        if wellknown_dst.exists():
-            shutil.rmtree(wellknown_dst)
-        shutil.copytree(wellknown_src, wellknown_dst)
-        copied += len(list(wellknown_src.iterdir()))
+        wellknown_dst.mkdir(parents=True, exist_ok=True)
+        for src_file in wellknown_src.iterdir():
+            if src_file.is_file():
+                shutil.copy2(src_file, wellknown_dst / src_file.name)
+                copied += 1
 
     print(f"  Copied {copied} AI config files to site/")
 
