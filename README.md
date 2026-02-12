@@ -1,5 +1,7 @@
 # deadends.dev
 
+<!-- mcp-name: dev.deadends/deadends-dev -->
+
 [![Errors](https://img.shields.io/badge/errors-501-blue)](https://deadends.dev)
 [![Domains](https://img.shields.io/badge/domains-14-green)](https://deadends.dev)
 [![MCP Tools](https://img.shields.io/badge/MCP_tools-7-purple)](https://smithery.ai/server/deadend/deadends-dev)
