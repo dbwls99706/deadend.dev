@@ -1368,6 +1368,16 @@ def build_ai_config_files() -> None:
         if src.exists():
             shutil.copy2(src, SITE_DIR / fname)
             copied += 1
+
+    # Copy .well-known directory (MCP Registry domain verification, etc.)
+    wellknown_src = PROJECT_ROOT / ".well-known"
+    if wellknown_src.is_dir():
+        wellknown_dst = SITE_DIR / ".well-known"
+        if wellknown_dst.exists():
+            shutil.rmtree(wellknown_dst)
+        shutil.copytree(wellknown_src, wellknown_dst)
+        copied += len(list(wellknown_src.iterdir()))
+
     print(f"  Copied {copied} AI config files to site/")
 
 
