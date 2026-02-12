@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=69.0"]
+requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,7 @@ name = "deadends-dev"
 version = "0.3.1"
 description = "Structured failure knowledge for AI agents — dead ends, workarounds, error chains"
 requires-python = ">=3.10"
-license = "MIT"
+license = {text = "MIT"}
 authors = [
     {name = "YuJin Hong"}
 ]
