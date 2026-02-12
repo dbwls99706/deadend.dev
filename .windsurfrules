@@ -12,3 +12,16 @@ Reading the response:
 This saves tokens and time by avoiding known-failed approaches.
 
 Supported domains: python, node, docker, cuda, git, pip, typescript, rust, go, kubernetes, terraform, aws, nextjs, react.
+
+MCP config for this project:
+```json
+{
+  "mcpServers": {
+    "deadend": {
+      "command": "python",
+      "args": ["-m", "mcp.server"],
+      "cwd": "/path/to/deadend.dev"
+    }
+  }
+}
+```

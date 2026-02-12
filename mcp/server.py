@@ -329,7 +329,7 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
             "capabilities": {"tools": {}},
             "serverInfo": {
                 "name": "deadends-dev",
-                "version": "1.2.0",
+                "version": "1.3.0",
             },
         }
     elif method == "tools/list":

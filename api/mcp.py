@@ -101,7 +101,7 @@ def _suggest_domains(error_message):
         "kubernetes": ["kubernetes", "k8s", "kubectl", "pod", "deploy"],
         "terraform": ["terraform", "tf ", "state", "provider", "hcl"],
         "aws": ["aws", "s3", "ec2", "iam", "lambda", "cloudformation"],
-        "nextjs": ["next.js", "nextjs", "next/", "getserverside"],
+        "nextjs": ["next.js", "nextjs", "next/", "getserverside", "getstaticprops"],
         "react": ["react", "usestate", "useeffect", "jsx", "component"],
         "pip": ["pip install", "pip3", "pypi", "wheel", "sdist"],
     }
@@ -308,7 +308,8 @@ def handle_mcp(method, params, canons):
                         f"Resolvable: {m['resolvable']} | "
                         f"Fix rate: {m['fix_success_rate']}"
                     )
-                    parts.append(f"Summary: {m['summary']}\n")
+                    parts.append(f"Summary: {m['summary']}")
+                    parts.append("")
                     parts.append("### Dead Ends (DO NOT TRY):")
                     for d in m["dead_ends"]:
                         parts.append(
@@ -316,7 +317,8 @@ def handle_mcp(method, params, canons):
                             f"(fails {int(d['fail_rate']*100)}%): "
                             f"{d['why_fails']}"
                         )
-                    parts.append("\n### Workarounds (TRY THESE):")
+                    parts.append("")
+                    parts.append("### Workarounds (TRY THESE):")
                     for w in m["workarounds"]:
                         how = f" — `{w['how']}`" if w["how"] else ""
                         parts.append(
@@ -325,10 +327,14 @@ def handle_mcp(method, params, canons):
                             f"{how}"
                         )
                     if m.get("leads_to"):
-                        parts.append("\n### Next Errors:")
+                        parts.append("")
+                        parts.append(
+                            "### Next Errors (after fixing this):"
+                        )
                         for lt in m["leads_to"]:
                             parts.append(f"- {lt}")
-                    parts.append(f"\nFull details: {m['url']}\n")
+                    parts.append(f"\nFull details: {m['url']}")
+                    parts.append("")
                 text = "\n".join(parts)
             return {"content": [{"type": "text", "text": text}]}
 
@@ -343,14 +349,18 @@ def handle_mcp(method, params, canons):
                     if error_id in c["id"] or c["id"] in error_id
                 ]
                 if partial:
+                    suggestions = [c["id"] for c in partial[:5]]
                     text = (
-                        f"Not found: {error_id}\nDid you mean:\n"
-                        + "\n".join(f"- {c['id']}" for c in partial[:5])
+                        f"Error ID not found: {error_id}\n\n"
+                        f"Did you mean one of these?\n"
+                        + "\n".join(f"- {s}" for s in suggestions)
                     )
                 else:
                     text = (
-                        f"Not found: {error_id}. "
-                        "Use list_error_domains to see available domains."
+                        f"Error ID not found: {error_id}\n\n"
+                        f"Use list_error_domains to see available "
+                        f"domains, or lookup_error to search by "
+                        f"error message."
                     )
             return {"content": [{"type": "text", "text": text}]}
 
