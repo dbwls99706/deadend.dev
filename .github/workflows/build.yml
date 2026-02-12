@@ -40,6 +40,7 @@ jobs:
           cp -f AGENTS.md site/AGENTS.md 2>/dev/null || true
           cp -f .clinerules site/.clinerules 2>/dev/null || true
           cp -rf .well-known site/.well-known 2>/dev/null || true
+          touch site/.nojekyll
 
       - name: Validate generated HTML
         run: python -m generator.validate --site-only
