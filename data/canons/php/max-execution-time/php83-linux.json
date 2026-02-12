@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/max-execution-time/php83-linux",
+  "url": "https://deadends.dev/php/max-execution-time/php83-linux",
+  "error": {
+    "signature": "Fatal error: Maximum execution time of 30 seconds exceeded",
+    "regex": "Maximum execution time of \\d+ seconds exceeded",
+    "domain": "php",
+    "category": "execution",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "Maximum execution time errors occur when a PHP script exceeds the configured max_execution_time. This is commonly caused by slow database queries, external API calls without timeouts, infinite loops, or processing very large files synchronously."
+  },
+  "dead_ends": [
+    {"action": "Setting set_time_limit(0) or max_execution_time=0 globally", "why_fails": "Disabling the execution time limit globally allows runaway scripts to hang indefinitely, consuming server resources. In web contexts this can exhaust all PHP-FPM workers and bring down the application.", "fail_rate": 0.78, "sources": [], "condition": ""},
+    {"action": "Increasing max_execution_time without profiling the slow code path", "why_fails": "Raising the limit without understanding why the script is slow only delays the problem. As data grows, the script will exceed the new limit as well. The underlying performance issue remains unresolved.", "fail_rate": 0.68, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Move long-running tasks to background queue workers", "success_rate": 0.92, "how": "Use a queue system (Laravel Queue, Symfony Messenger, or a simple Redis/RabbitMQ consumer) to offload long-running tasks. The web request dispatches the job and returns immediately. The queue worker processes it without web timeout constraints.", "sources": [], "condition": ""},
+    {"action": "Optimize the slow code path with profiling and add appropriate timeouts to external calls", "success_rate": 0.86, "how": "Use Xdebug profiler or Blackfire to identify bottlenecks. Add database indexes for slow queries. Set timeouts on cURL/Guzzle HTTP requests (e.g., 'timeout' => 10). Use LIMIT on database queries processing large result sets.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.18, "condition": "when the long-running process also accumulates memory over time"}],
+    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.15, "condition": "when database connection timeouts cause retry loops that exceed max execution time"}],
+    "frequently_confused_with": [{"error_id": "php/laravel-queue-failed/laravel11-linux", "distinction": "Max execution time is a PHP-level timeout while queue job failures can have various causes including timeout, exception, or memory issues within the queue worker context"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

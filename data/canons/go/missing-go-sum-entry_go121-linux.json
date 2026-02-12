@@ -59,9 +59,36 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "go/cannot-convert-type/go1-linux",
+        "probability": 0.21
+      },
+      {
+        "error_id": "go/unused-import/go121-linux",
+        "probability": 0.24
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/syntax-error-unexpected/go1-linux",
+        "probability": 0.14
+      },
+      {
+        "error_id": "go/cannot-convert-type/go1-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/race-condition-detected/go1-linux",
+        "distinction": "'missing go.sum entry for module' indicates a missing go.sum entry for a dependency, while 'WARNING' indicates a data race detected by the race detector."
+      },
+      {
+        "error_id": "go/undefined-reference/go1-linux",
+        "distinction": "'missing go.sum entry for module' indicates a missing go.sum entry for a dependency, while 'undefined' indicates a reference to an undefined identifier."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

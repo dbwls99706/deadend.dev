@@ -59,9 +59,24 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "rust/e0382-borrow-moved-value/rust1-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "rust/e0308-match-arms-different-types/rust1-linux",
+        "probability": 0.15
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0106-missing-lifetime/rust1-linux",
+        "distinction": "'[E0502]' indicates a bad gateway from Ingress (backend not ready), while '[E0106]' indicates a missing lifetime specifier."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

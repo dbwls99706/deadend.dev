@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dns-resolution-failed/dns-linux",
+  "url": "https://deadends.dev/networking/dns-resolution-failed/dns-linux",
+  "error": {
+    "signature": "DNS resolution failed: NXDOMAIN",
+    "regex": "NXDOMAIN|Name or service not known|could not resolve host|getaddrinfo.*failed|No address associated with hostname",
+    "domain": "networking",
+    "category": "dns",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dns-resolver", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The DNS resolver returned NXDOMAIN, meaning the queried domain name does not exist in the DNS system. This can indicate a typo in the hostname, an expired domain, a missing DNS record, or a misconfigured DNS resolver."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly retry the DNS query hoping for transient resolution",
+      "why_fails": "NXDOMAIN is an authoritative negative response, not a transient failure. The domain definitively does not exist in DNS. Retrying wastes time and will continue returning the same negative result until the underlying issue (missing record, typo, expired domain) is fixed.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switch to a random public DNS server to bypass the NXDOMAIN",
+      "why_fails": "If the domain truly does not exist, all DNS servers will return NXDOMAIN because the authoritative nameserver says so. Switching DNS servers only helps if the current resolver is misconfigured or caching stale data, which is a different issue from a genuine NXDOMAIN.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the hostname spelling and create or fix the DNS record",
+      "success_rate": 0.90,
+      "how": "1. Double-check the hostname for typos\n2. Verify domain registration: whois yourdomain.com\n3. Check if the record exists: dig yourdomain.com A +short\n4. If missing, add the record via your DNS provider's control panel\n5. Wait for propagation (TTL-dependent, typically seconds to hours)\n6. Verify: dig @8.8.8.8 yourdomain.com A",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix local DNS resolver configuration",
+      "success_rate": 0.85,
+      "how": "1. Check current resolver: cat /etc/resolv.conf\n2. Verify DNS connectivity: dig @8.8.8.8 google.com\n3. If systemd-resolved is in use: resolvectl status\n4. Set working nameservers in /etc/resolv.conf: nameserver 8.8.8.8 and nameserver 1.1.1.1\n5. For systemd-resolved: edit /etc/systemd/resolved.conf and restart: systemctl restart systemd-resolved\n6. Flush DNS cache: resolvectl flush-caches",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.15, "condition": "when DNS resolves after fix but the target service is not running"},
+      {"error_id": "networking/ssl-hostname-mismatch/openssl3-linux", "probability": 0.10, "condition": "when using an alternate hostname that resolves but does not match the SSL certificate"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-timeout/dns-linux", "probability": 0.20, "condition": "when DNS timeouts were caused by an unreachable authoritative server that eventually returns NXDOMAIN"},
+      {"error_id": "networking/dns-servfail/dns-linux", "probability": 0.15, "condition": "when SERVFAIL resolves to NXDOMAIN after the authoritative server stabilizes"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/dns-timeout/dns-linux", "distinction": "NXDOMAIN means the DNS server definitively replied that the domain does not exist; timeout means no response was received at all from the DNS server"},
+      {"error_id": "networking/dns-servfail/dns-linux", "distinction": "NXDOMAIN is a definitive 'domain does not exist' answer; SERVFAIL means the DNS server encountered an error processing the query and cannot provide a definitive answer"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

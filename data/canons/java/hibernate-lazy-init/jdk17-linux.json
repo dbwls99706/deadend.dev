@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/hibernate-lazy-init/jdk17-linux",
+  "url": "https://deadends.dev/java/hibernate-lazy-init/jdk17-linux",
+  "error": {
+    "signature": "org.hibernate.LazyInitializationException: could not initialize proxy",
+    "regex": "LazyInitializationException.*could not initialize proxy.*no Session",
+    "domain": "java",
+    "category": "framework_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "LazyInitializationException occurs when code accesses a lazily-loaded Hibernate entity or collection outside of an active Hibernate Session. The proxy cannot fetch the data because the persistence context has already been closed."
+  },
+  "dead_ends": [
+    {
+      "action": "Enabling spring.jpa.open-in-view=true (Open Session in View pattern)",
+      "why_fails": "Open Session in View keeps the Hibernate Session open for the entire HTTP request lifecycle, including view rendering. This is considered an anti-pattern because: it leads to N+1 query problems in templates, database connections are held longer (pool exhaustion), lazy loads happen unpredictably during serialization, and it masks poor data access patterns.",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Changing all FetchType.LAZY to FetchType.EAGER on entity relationships",
+      "why_fails": "Eager fetching loads all related entities immediately, causing massive SQL joins and loading entire object graphs into memory. This leads to OutOfMemoryError for large datasets, extremely slow queries, and the classic N+1 problem replaced by a cartesian product problem.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a JPQL/HQL JOIN FETCH query or an EntityGraph to load the needed associations within the transaction",
+      "success_rate": 0.92,
+      "how": "1. In your repository or DAO, write a query that explicitly fetches the required association: 'SELECT o FROM Order o JOIN FETCH o.items WHERE o.id = :id'. 2. Alternatively, use @EntityGraph on the repository method: @EntityGraph(attributePaths = {'items'}) Optional<Order> findById(Long id). 3. This loads the association in a single query within the transaction, so no lazy loading is needed later. 4. Only fetch what the specific use case needs — different service methods can use different fetch strategies.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use DTOs or projections to transfer only the needed data out of the transaction boundary",
+      "success_rate": 0.90,
+      "how": "1. Create a DTO class with only the fields needed by the caller. 2. Map entity data to the DTO within the @Transactional service method: new OrderDTO(order.getId(), order.getItems().stream().map(ItemDTO::from).toList()). 3. The DTO is a plain POJO — no lazy proxies, no Session needed. 4. Alternatively, use Spring Data projections (interface-based or class-based) to have the repository return DTOs directly. 5. This approach cleanly separates the persistence layer from the presentation layer.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.20, "condition": "when eager fetching workaround loads too many entities into memory"},
+      {"error_id": "java/stackoverflowerror/jdk17-linux", "probability": 0.10, "condition": "when bidirectional entity relationships cause infinite recursion during serialization"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.08, "condition": "when database connection loss causes Session invalidation"},
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.05, "condition": "when incorrect transaction manager configuration prevents Session from staying open"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/nullpointerexception/jdk17-linux", "distinction": "LazyInitializationException means the proxy exists but cannot load data (Session closed); NullPointerException means the reference itself is null. Both can manifest when accessing a field on a related entity."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

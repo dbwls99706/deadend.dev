@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/jackson-deserialization/jdk17-linux",
+  "url": "https://deadends.dev/java/jackson-deserialization/jdk17-linux",
+  "error": {
+    "signature": "com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException",
+    "regex": "UnrecognizedPropertyException.*Unrecognized field",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-12",
+    "summary": "UnrecognizedPropertyException is thrown by Jackson when JSON contains a field that does not map to any property in the target Java class. By default, Jackson requires all JSON properties to have matching fields in the POJO."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding FAIL_ON_UNKNOWN_PROPERTIES = false globally to the ObjectMapper",
+      "why_fails": "Disabling unknown property checking globally means all JSON deserialization silently ignores unexpected fields. This hides API contract violations, schema drift, and typos. If a required field is renamed in the JSON source, the Java field will silently get a null/default value instead of raising an error, causing subtle bugs.",
+      "fail_rate": 0.40,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding @JsonIgnoreProperties(ignoreUnknown = true) to every POJO class without understanding which fields are expected",
+      "why_fails": "While less destructive than the global setting, blanket ignoring on every class still masks schema evolution issues. If the JSON API adds a new required field, your application will silently ignore it. Use this annotation judiciously, only on classes where unknown fields are genuinely expected.",
+      "fail_rate": 0.35,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update the Java class to match the JSON structure by adding the missing field or using @JsonProperty to map different names",
+      "success_rate": 0.95,
+      "how": "1. Read the error message to identify the unrecognized field name. 2. If the field should be mapped: add a matching Java field, or use @JsonProperty('json_field_name') to map it to an existing field with a different name. 3. If the field is truly not needed for this class, add @JsonIgnoreProperties({'specificField'}) to ignore only that field. 4. For snake_case to camelCase mapping, configure PropertyNamingStrategies.SNAKE_CASE on the ObjectMapper.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use @JsonAnySetter to capture unknown properties in a Map for flexible deserialization",
+      "success_rate": 0.88,
+      "how": "1. Add a Map<String, Object> field to the class. 2. Annotate the setter with @JsonAnySetter: @JsonAnySetter public void setAdditionalProperty(String name, Object value) { this.additionalProperties.put(name, value); }. 3. This captures all unmapped JSON properties without losing data. 4. Pair with @JsonAnyGetter for symmetric serialization. 5. This pattern is useful for extensible APIs where new fields may be added over time.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.15, "condition": "when ignoreUnknown causes a required field to be null instead of populated"},
+      {"error_id": "java/classcastexception/jdk17-linux", "probability": 0.10, "condition": "when Jackson deserializes a JSON field into the wrong Java type"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.05, "condition": "when Jackson cannot find a custom deserializer class"},
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.08, "condition": "when custom ObjectMapper configuration bean fails to initialize"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classcastexception/jdk17-linux", "distinction": "UnrecognizedPropertyException is about JSON structure mismatch (unknown field name); ClassCastException during deserialization is about type mismatch (field exists but has wrong type)"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -59,9 +59,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/cycle-in-module/tf1-linux",
+        "probability": 0.16
+      },
+      {
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/state-lock-dynamodb/tf1-linux",
+        "probability": 0.12
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/cycle-in-module/tf1-linux",
+        "distinction": "Both produce similar messages, but 'backend-initialization-required' and 'cycle-in-module' differ in root cause and environment context."
+      },
+      {
+        "error_id": "terraform/invalid-provider-config/tf115-linux",
+        "distinction": "Both produce similar messages, but 'backend-initialization-required' and 'invalid-provider-config' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

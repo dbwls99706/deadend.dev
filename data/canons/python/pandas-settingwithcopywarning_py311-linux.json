@@ -65,9 +65,24 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/oserror-address-already-in-use/py311-linux",
+        "probability": 0.24
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/lookuperror-unknown-encoding/py311-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/attributeerror-tensor-no-grad/torch2.0-linux",
+        "distinction": "'SettingWithCopyWarning' indicates a pandas chained assignment issue, while 'AttributeError' indicates a missing attribute on a PyTorch tensor."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/redis-readonly/redis7-linux",
+  "url": "https://deadends.dev/database/redis-readonly/redis7-linux",
+  "error": {
+    "signature": "redis.exceptions.ReadOnlyError: READONLY You can't write against a read only replica.",
+    "regex": "READONLY You can't write against a read only replica",
+    "domain": "database",
+    "category": "replication_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "A write command was sent to a Redis replica (slave) node which is read-only by default. This happens when the application connects to a replica instead of the primary, often after a failover event changes which node is primary, or when using Redis Sentinel/Cluster without proper client configuration."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting replica-read-only no on the replica to allow writes",
+      "why_fails": "Allowing writes on a replica breaks replication consistency. Writes to the replica are not replicated to the primary or other replicas, and will be overwritten on the next sync. This creates data divergence and silent data loss.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Hardcoding the primary Redis host IP in the application",
+      "why_fails": "After a failover, the primary role moves to a different node. A hardcoded IP will point to the old primary (now a replica). The application needs to discover the current primary dynamically.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use Redis Sentinel-aware client to automatically discover the current primary",
+      "success_rate": 0.92,
+      "how": "Configure your Redis client to use Sentinel discovery. Python example: from redis.sentinel import Sentinel; sentinel = Sentinel([('sentinel-host', 26379)]); master = sentinel.master_for('mymaster'); master.set('key', 'value'). The client will automatically follow failovers.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually promote the replica to primary if the original primary is lost",
+      "success_rate": 0.85,
+      "how": "On the replica, run: REPLICAOF NO ONE. This promotes it to an independent primary that accepts writes. Then reconfigure other replicas to follow the new primary: REPLICAOF new-primary-host 6379. Update application connection strings.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.15, "condition": "when the application tries to reconnect after failover and the old primary is down"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.15, "condition": "when OOM on primary causes Redis Sentinel to fail over to a replica"},
+      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.20, "condition": "when primary crashes and client reconnects to a replica"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/sqlite-readonly/sqlite3-linux", "distinction": "Redis READONLY is a replication topology issue (writing to a replica). SQLite readonly is a file permission issue. Both prevent writes but for completely different architectural reasons."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 48,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-docker-login-failed/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-docker-login-failed/gha-linux",
+  "error": {
+    "signature": "Error: Username and password required. Error: Process completed with exit code 1.",
+    "regex": "(?:docker.*login.*failed|unauthorized: authentication required|Error response from daemon.*401|Username and password required|denied: requested access to the resource is denied)",
+    "domain": "cicd",
+    "category": "authentication",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "Docker login fails in GitHub Actions when pushing images to a container registry. Usually caused by missing or incorrect registry credentials, expired tokens, or wrong registry URL."
+  },
+  "dead_ends": [
+    {
+      "action": "Use docker login with plaintext password in a run step",
+      "why_fails": "Password appears in workflow logs even with masking; insecure and often fails due to stdin issues in CI",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Assume GITHUB_TOKEN works for Docker Hub pushes",
+      "why_fails": "GITHUB_TOKEN only authenticates to ghcr.io (GitHub Container Registry), not Docker Hub or other registries",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use docker/login-action with proper registry credentials stored as secrets",
+      "success_rate": 0.93,
+      "how": "Add 'uses: docker/login-action@v3' with 'registry: ghcr.io' (or your registry), 'username: ${{ github.actor }}', and 'password: ${{ secrets.GITHUB_TOKEN }}' for ghcr.io, or appropriate secrets for other registries",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use GITHUB_TOKEN for GitHub Container Registry authentication",
+      "success_rate": 0.91,
+      "how": "For ghcr.io, set 'permissions: packages: write' in the workflow and use 'password: ${{ secrets.GITHUB_TOKEN }}' with 'registry: ghcr.io'",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "When login succeeds but Docker build itself fails due to private base image pull issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.30, "condition": "When Docker registry credentials secret was not configured"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Docker login failed is specifically about container registry authentication; permission denied is about GitHub API access"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

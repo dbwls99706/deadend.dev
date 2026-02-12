@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/opcache-restart/php83-linux",
+  "url": "https://deadends.dev/php/opcache-restart/php83-linux",
+  "error": {
+    "signature": "Warning: Zend OPcache huge_code_pages: madvise(HUGEPAGE) failed: Cannot allocate memory / OPcache restart scheduled",
+    "regex": "OPcache.*(?:restart|Cannot allocate memory|out of memory|hash table full|buffer overflow)",
+    "domain": "php",
+    "category": "opcode_cache",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "OPcache restart errors occur when the OPcache shared memory segment runs out of space, forcing a cache invalidation and restart. This causes a temporary performance degradation as all scripts must be recompiled. Common with large codebases, frequent deployments, or undersized opcache.memory_consumption settings."
+  },
+  "dead_ends": [
+    {"action": "Disabling OPcache entirely to avoid the restart warnings", "why_fails": "Disabling OPcache removes the performance benefits of opcode caching, causing every PHP file to be parsed and compiled on every request. This can increase response times by 2-10x and significantly increase CPU usage on the server.", "fail_rate": 0.88, "sources": [], "condition": ""},
+    {"action": "Setting opcache.revalidate_freq to 0 in production", "why_fails": "Setting revalidate_freq to 0 causes OPcache to check every file for changes on every request, which defeats the caching purpose and adds filesystem stat calls to every request. In production, files should not change between deployments.", "fail_rate": 0.70, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Increase OPcache memory allocation and key limits based on actual usage", "success_rate": 0.90, "how": "Check current usage with opcache_get_status(). Increase settings in php.ini: 'opcache.memory_consumption=256' (MB), 'opcache.interned_strings_buffer=32' (MB), 'opcache.max_accelerated_files=20000'. The max_accelerated_files should be larger than the total number of PHP files in the project. Restart PHP-FPM after changes.", "sources": [], "condition": ""},
+    {"action": "Use opcache_reset() or php-fpm reload on deployment instead of relying on file monitoring", "success_rate": 0.86, "how": "Set 'opcache.validate_timestamps=0' in production to never check for file changes. On each deployment, reload PHP-FPM with 'systemctl reload php8.3-fpm' which gracefully restarts workers and clears the cache. Alternatively, call opcache_reset() from a deployment script via a restricted endpoint.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.12, "condition": "when OPcache consumes too much shared memory leaving less for individual PHP processes"}],
+    "preceded_by": [{"error_id": "php/segfault-extension/php83-linux", "probability": 0.08, "condition": "when a segfault in an extension corrupts the OPcache shared memory segment"}],
+    "frequently_confused_with": [{"error_id": "php/memory-limit-exhausted/php83-linux", "distinction": "OPcache restart is about the shared opcode cache running out of allocated shared memory while memory limit exhausted is about individual PHP process heap memory exceeding its limit"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

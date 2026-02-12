@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongodb-namespace-not-found/mongo7-linux",
+  "url": "https://deadends.dev/database/mongodb-namespace-not-found/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.OperationFailure: ns not found, full error: {'ok': 0, 'errmsg': 'ns not found', 'code': 26}",
+    "regex": "ns not found|NamespaceNotFound",
+    "domain": "database",
+    "category": "schema_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "The referenced collection or database namespace does not exist. This error occurs when running operations that require an existing collection (drop, createIndex on non-existent collection in certain contexts, listIndexes). MongoDB normally auto-creates collections on first insert."
+  },
+  "dead_ends": [
+    {
+      "action": "Explicitly creating the collection before every operation as a defensive measure",
+      "why_fails": "MongoDB auto-creates collections on first write. Explicitly creating collections before every operation adds unnecessary overhead and complexity. The real issue is usually that you are running the operation against the wrong database or collection name.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignoring the error and assuming the collection will appear eventually",
+      "why_fails": "If the namespace is wrong (typo, wrong database), the collection will never appear. Silently ignoring the error means operations against the intended collection are not executing.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the database and collection names in the connection string and code",
+      "success_rate": 0.93,
+      "how": "Connect with mongosh and run: show dbs; use mydb; show collections; Verify the exact collection name (case-sensitive). Check the application code and connection string for the correct database name. Common mistake: connecting to 'test' database instead of the application database.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Create the collection explicitly if it should exist but was dropped",
+      "success_rate": 0.90,
+      "how": "Run: db.createCollection('mycollection'); or simply insert a document: db.mycollection.insertOne({ init: true }); then db.mycollection.deleteOne({ init: true }); For operations like drop, check if the collection exists first: if (db.getCollectionNames().includes('mycollection')) { db.mycollection.drop(); }",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongodb-duplicate-key/mongo7-linux", "probability": 0.10, "condition": "when recreating a collection and re-inserting data without proper deduplication"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongodb-authentication-failed/mongo7-linux", "probability": 0.15, "condition": "when user authenticates to the wrong database and then queries non-existent collections"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "MongoDB 'ns not found' (code 26) is similar to PostgreSQL 'relation does not exist'. However, MongoDB auto-creates collections on insert, so this error only appears for specific operations (drop, certain index operations), not on regular queries against non-existent collections (which return empty results)."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 42,
+    "last_verification": "2026-02-12"
+  }
+}

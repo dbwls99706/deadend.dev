@@ -64,9 +64,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/err-unknown-file-extension/node20-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/next-dev-port-conflict/node20-linux",
+        "probability": 0.17
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-fs-eisdir/node20-linux",
+        "distinction": "Both produce similar messages, but 'enospc-watchers' and 'err-fs-eisdir' differ in root cause and environment context."
+      },
+      {
+        "error_id": "node/econnrefused/node20-linux",
+        "distinction": "Both produce similar messages, but 'enospc-watchers' and 'econnrefused' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

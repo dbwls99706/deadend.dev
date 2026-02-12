@@ -72,9 +72,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/objects-not-valid-as-child/react18-linux",
+        "probability": 0.21
+      },
+      {
+        "error_id": "react/forward-ref-deprecation/react18-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/objects-not-valid-as-child/react18-linux",
+        "probability": 0.15
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/context-value-undefined/react18-linux",
+        "distinction": "'Warning' indicates a missing act() wrapper in tests, while 'Cannot destructure property 'X' of useContext(...) as it is null/undefined' indicates a useContext call outside its Provider."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

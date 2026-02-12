@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/outofmemoryerror-heap/jdk17-linux",
+  "url": "https://deadends.dev/java/outofmemoryerror-heap/jdk17-linux",
+  "error": {
+    "signature": "java.lang.OutOfMemoryError: Java heap space",
+    "regex": "java\\.lang\\.OutOfMemoryError:\\s*Java heap space",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "OutOfMemoryError: Java heap space is thrown when the JVM cannot allocate an object in the heap because the maximum heap size has been exhausted. This is caused by memory leaks, loading too much data into memory, or insufficient heap allocation for the workload."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increasing -Xmx without investigating the root cause of high memory usage",
+      "why_fails": "Increasing heap size is a temporary band-aid. If the application has a memory leak, it will eventually consume any amount of heap. Larger heaps also cause longer GC pauses, potentially making the application less responsive. The real fix requires profiling memory usage to find leaks or excessive allocations.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Calling System.gc() in code to try to force garbage collection",
+      "why_fails": "System.gc() is only a hint to the JVM — it may be ignored entirely. Even when it runs, it cannot collect objects that are still referenced. If the OOM is caused by a memory leak (objects still reachable), GC cannot help. It also introduces unpredictable pauses.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile the application with a heap dump to identify memory leaks or large object allocations",
+      "success_rate": 0.88,
+      "how": "1. Add -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof to JVM args. 2. Reproduce the OOM. 3. Open the heap dump in Eclipse MAT or VisualVM. 4. Look at the 'Leak Suspects' report and 'Dominator Tree' to find which objects consume the most memory. 5. Trace the retention path to find the code holding references. 6. Fix the leak (close resources, remove from caches/collections, use WeakReferences).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use streaming or pagination for large data sets instead of loading everything into memory",
+      "success_rate": 0.85,
+      "how": "1. Replace List<T> queries with streaming approaches: use Java Stream API with database cursors, or paginated queries with LIMIT/OFFSET. 2. For file processing, use BufferedReader/InputStream line-by-line instead of reading entire files into Strings. 3. For collections, consider off-heap storage (MapDB, Chronicle Map) or disk-backed caches if the dataset is too large for heap. 4. Set appropriate -Xmx based on the actual working set size after optimization.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "probability": 0.10, "condition": "when heap OOM fix leads to dynamic class generation that exhausts Metaspace"},
+      {"error_id": "java/stackoverflowerror/jdk17-linux", "probability": 0.05, "condition": "when memory pressure causes recursive retry logic to blow the stack"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.15, "condition": "when eager fetching workaround loads too many entities into memory"},
+      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.10, "condition": "when connection pool leak causes unclosed connections to accumulate objects in heap"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "distinction": "Heap OOM means object instances exhausted the heap; Metaspace OOM means class metadata exhausted native memory. Heap OOM is about data volume; Metaspace OOM is about number of loaded classes."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

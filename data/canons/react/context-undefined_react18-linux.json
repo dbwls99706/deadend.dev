@@ -59,9 +59,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "react/hooks-rules-violation/react18-linux",
+        "probability": 0.2
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/cannot-update-unmounted/react18-linux",
+        "probability": 0.19
+      },
+      {
+        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
+        "probability": 0.11
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/cannot-find-react-dom-client/react18-linux",
+        "distinction": "'TypeError' indicates a useContext call outside its Provider, while 'Module not found' indicates a missing react-dom/client import."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

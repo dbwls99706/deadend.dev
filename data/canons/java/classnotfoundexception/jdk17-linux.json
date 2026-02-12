@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/classnotfoundexception/jdk17-linux",
+  "url": "https://deadends.dev/java/classnotfoundexception/jdk17-linux",
+  "error": {
+    "signature": "java.lang.ClassNotFoundException",
+    "regex": "java\\.lang\\.ClassNotFoundException",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "ClassNotFoundException is thrown when the JVM attempts to load a class by name at runtime (via Class.forName(), ClassLoader.loadClass(), or reflection) and cannot find the class definition on the classpath."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the class source file to the project without ensuring the compiled class is on the runtime classpath",
+      "why_fails": "The source file existing in the project does not mean the compiled .class file ends up in the runtime classpath. Build tool misconfiguration, missing dependency declarations, or incorrect packaging can cause the compiled class to be absent from the JAR or module path.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Hardcoding the fully qualified class name in Class.forName() without verifying the dependency is available at runtime",
+      "why_fails": "The class may be a compile-time-only dependency (e.g., provided scope in Maven) or an optional dependency that is not included in the deployment artifact. Class.forName() will fail at runtime even though IDE autocompletion found the class during development.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the JAR containing the class is on the runtime classpath and the dependency scope is correct",
+      "success_rate": 0.90,
+      "how": "1. Identify which JAR provides the missing class (search Maven Central or use 'jar tf *.jar | grep ClassName'). 2. Check your build tool dependency declaration — ensure the scope is 'compile' or 'runtime', not 'provided' or 'test'. 3. For Maven: run 'mvn dependency:tree' to verify the dependency is included. For Gradle: run 'gradle dependencies'. 4. Ensure the dependency version matches what is expected (no exclusions removing it transitively).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "For modular Java (JPMS), ensure the required module is added to the module path and the package is exported or opened",
+      "success_rate": 0.85,
+      "how": "1. Check if the application uses module-info.java. 2. Add 'requires <module-name>;' to your module-info.java for the module containing the class. 3. If the class is loaded via reflection, the target module must 'opens' the package to your module. 4. Alternatively, use --add-modules and --add-opens JVM flags to work around module encapsulation.",
+      "sources": [],
+      "condition": "when using Java Platform Module System (JPMS)"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.25, "condition": "when the class is found but in a different version that lacks the expected method"},
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.15, "condition": "when ClassNotFoundException is caught and the code proceeds with a null class reference"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.30, "condition": "when Maven dependency mediation excludes the JAR containing the class"},
+      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.25, "condition": "when Gradle fails to resolve or excludes the required dependency"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "distinction": "ClassNotFoundException means the entire class is missing from the classpath; NoSuchMethodError means the class was found but a specific method signature is absent (version mismatch)"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

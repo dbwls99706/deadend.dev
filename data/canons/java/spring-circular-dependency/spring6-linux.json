@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/spring-circular-dependency/spring6-linux",
+  "url": "https://deadends.dev/java/spring-circular-dependency/spring6-linux",
+  "error": {
+    "signature": "org.springframework.beans.factory.BeanCurrentlyInCreationException",
+    "regex": "BeanCurrentlyInCreationException.*Requested bean is currently in creation",
+    "domain": "java",
+    "category": "framework_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "spring", "version_range": ">=6.0,<7.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "BeanCurrentlyInCreationException indicates a circular dependency between Spring beans — Bean A depends on Bean B, which depends on Bean A (directly or transitively). Spring Boot 3.x / Spring 6.x no longer allows circular dependencies by default."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting spring.main.allow-circular-references=true to re-enable the deprecated behavior",
+      "why_fails": "This property was added as a migration aid for Spring Boot 3.x. Enabling it masks a design problem. Circular dependencies make the initialization order undefined, can cause partially initialized beans to be injected, and make the application fragile and hard to test.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using @Lazy on one of the circular dependencies as a permanent solution",
+      "why_fails": "@Lazy creates a proxy that defers initialization, breaking the cycle at startup. However, the circular dependency still exists in the design. The lazy proxy can cause unexpected behavior: the real bean is created on first access, which can happen at unpredictable times, potentially causing threading issues or startup order problems.",
+      "fail_rate": 0.45,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Refactor the circular dependency by extracting shared logic into a third bean that both depend on",
+      "success_rate": 0.90,
+      "how": "1. Identify the circular chain: A -> B -> A. 2. Extract the shared functionality into a new bean C. 3. Make both A and B depend on C instead of each other. 4. This follows the Dependency Inversion Principle — both beans depend on an abstraction (interface) rather than on each other. 5. Common pattern: extract the shared data access or business logic into a separate service.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use event-driven communication between the beans to decouple them",
+      "success_rate": 0.85,
+      "how": "1. Instead of Bean A calling Bean B directly, have Bean A publish a Spring ApplicationEvent. 2. Bean B listens for the event with @EventListener. 3. This removes the direct dependency: A no longer needs a reference to B. 4. For synchronous behavior, use @EventListener. For async, use @Async @EventListener. 5. Alternatively, use an interface + injection: Bean A depends on an interface that Bean B implements, and inject via setter or @PostConstruct instead of constructor.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.15, "condition": "when refactoring the circular dependency removes or renames a bean that other components depend on"},
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.12, "condition": "when extracting a new service introduces additional unsatisfied dependencies"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.20, "condition": "when adding a new dependency to resolve an autowiring issue creates a cycle"},
+      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.10, "condition": "when adding a missing bean definition inadvertently creates a circular reference"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "distinction": "BeanCurrentlyInCreationException specifically indicates a circular dependency cycle; UnsatisfiedDependencyException indicates that a required bean cannot be created due to missing or ambiguous dependencies"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

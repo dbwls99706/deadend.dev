@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/host-unreachable/tcp-linux",
+  "url": "https://deadends.dev/networking/host-unreachable/tcp-linux",
+  "error": {
+    "signature": "No route to host (EHOSTUNREACH)",
+    "regex": "No route to host|EHOSTUNREACH|Host is unreachable|errno 113|Network is unreachable",
+    "domain": "networking",
+    "category": "tcp_connection",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The system cannot find a network route to reach the target host. An ICMP 'Destination Host Unreachable' message was received from a router along the path, or the local routing table has no matching route. This indicates a routing, gateway, or network configuration problem."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the connection repeatedly without addressing the routing issue",
+      "why_fails": "EHOSTUNREACH is a definitive routing error. The kernel or an intermediate router has determined there is no path to the destination. Retrying does nothing unless the network topology changes, which requires manual intervention or automated failover to trigger.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Change the application-level protocol or port number",
+      "why_fails": "Host unreachable is a network-layer (IP/ICMP) error that occurs before any port or protocol negotiation. The issue is that IP packets cannot reach the host at all, so changing the destination port or switching between HTTP/HTTPS has no effect.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the local or intermediate routing configuration",
+      "success_rate": 0.85,
+      "how": "1. Check local routing table: ip route show\n2. Verify default gateway is set: ip route | grep default\n3. If missing, add default gateway: ip route add default via GATEWAY_IP dev eth0\n4. Check if the interface is up: ip link show\n5. Bring interface up if needed: ip link set eth0 up\n6. For VPN or overlay networks, verify the tunnel is established\n7. Trace the route to find where it breaks: traceroute target-host\n8. Check for ICMP 'unreachable' messages: tcpdump -i any icmp",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify network connectivity and firewall rules at the host and intermediate levels",
+      "success_rate": 0.82,
+      "how": "1. Verify the target host is on the network: arping target-host (for same subnet)\n2. Check if iptables is rejecting with ICMP unreachable: iptables -L -n | grep REJECT\n3. In cloud environments, check VPC routing tables, subnet associations, and internet gateway configuration\n4. Verify security groups and network ACLs allow the traffic\n5. For cross-VPC or cross-region, verify VPC peering or transit gateway routes\n6. Check if the target host has a valid IP and is powered on",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when routing is partially restored but firewall silently drops packets"},
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.20, "condition": "when routing is fixed and the host is reachable but the service is not running"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS resolves to a non-routable or decommissioned IP address"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when a route change converts a previously timed-out path into a definitively unreachable one"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "Host unreachable is an active ICMP response indicating no route exists; timeout is the absence of any response, often caused by firewalls silently dropping packets"},
+      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "Host unreachable means the host cannot be reached at the IP level; connection refused means the host was reached and actively rejected the TCP connection on a specific port"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

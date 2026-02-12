@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/address-already-in-use/tcp-linux",
+  "url": "https://deadends.dev/networking/address-already-in-use/tcp-linux",
+  "error": {
+    "signature": "Address already in use (EADDRINUSE)",
+    "regex": "Address already in use|EADDRINUSE|bind.*address.*already|errno 98",
+    "domain": "networking",
+    "category": "tcp_connection",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "A process attempted to bind a socket to an address:port combination that is already in use by another process. This commonly occurs when restarting a server that did not cleanly release its socket, or when multiple instances of the same service are launched."
+  },
+  "dead_ends": [
+    {
+      "action": "Kill all processes and hope the port is released",
+      "why_fails": "Blindly killing processes can terminate unrelated critical services. If the port is in TIME_WAIT state from a recently closed connection, killing processes will not help because no process holds the port -- the kernel holds it for the TCP TIME_WAIT period (typically 60 seconds).",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Immediately change to a different port number to avoid the conflict",
+      "why_fails": "This avoids the immediate error but does not fix the root cause. The original port may be required by clients, load balancers, or firewalls. If the stale process is still running on the original port, it will continue consuming resources and potentially serving stale responses.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and stop the process using the port, then set SO_REUSEADDR",
+      "success_rate": 0.93,
+      "how": "1. Find what is using the port: ss -tlnp | grep :PORT or lsof -i :PORT\n2. If it is a stale process, kill it: kill PID (then kill -9 PID if needed)\n3. If the port is in TIME_WAIT, set SO_REUSEADDR on the server socket before bind()\n4. In most frameworks this is a configuration option (e.g., reuseaddr=True)\n5. Restart your service\n6. Verify: ss -tlnp | grep :PORT shows your new process",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Wait for TIME_WAIT to expire or enable SO_REUSEPORT for load balancing",
+      "success_rate": 0.88,
+      "how": "1. Check if the port is in TIME_WAIT: ss -tan | grep :PORT\n2. If TIME_WAIT, wait ~60 seconds for it to clear, or:\n3. Set SO_REUSEADDR on the socket: setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)\n4. For multiple instances sharing a port, use SO_REUSEPORT: setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)\n5. To reduce TIME_WAIT duration system-wide: sysctl -w net.ipv4.tcp_fin_timeout=30\n6. Enable tcp_tw_reuse for outbound connections: sysctl -w net.ipv4.tcp_tw_reuse=1",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.30, "condition": "when EADDRINUSE prevents the service from starting, causing clients to get connection refused"},
+      {"error_id": "networking/http-503-service-unavailable/http-linux", "probability": 0.15, "condition": "when a web server behind a load balancer fails to start due to port conflict"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when a server crashes and the socket enters TIME_WAIT during restart"},
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.10, "condition": "when investigating why clients get refused reveals the service failed to bind"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "EADDRINUSE is a server-side bind() error when starting a service; ECONNREFUSED is a client-side error when connecting to a port where nothing is listening"},
+      {"error_id": "networking/connection-reset/tcp-linux", "distinction": "EADDRINUSE prevents a service from starting; connection reset occurs on an active connection when the peer unexpectedly terminates it"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -59,9 +59,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/error-loading-state/tf115-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "terraform/resource-already-exists/tf1-linux",
+        "probability": 0.16
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/invalid-count-argument/tf115-linux",
+        "probability": 0.17
+      },
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "probability": 0.2
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/invalid-reference/tf1-linux",
+        "distinction": "Both produce similar messages, but 'unsupported-attribute' and 'invalid-reference' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

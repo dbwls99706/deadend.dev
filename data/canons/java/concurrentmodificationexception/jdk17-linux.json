@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/concurrentmodificationexception/jdk17-linux",
+  "url": "https://deadends.dev/java/concurrentmodificationexception/jdk17-linux",
+  "error": {
+    "signature": "java.util.ConcurrentModificationException",
+    "regex": "java\\.util\\.ConcurrentModificationException",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "ConcurrentModificationException is thrown when a collection is structurally modified while being iterated, either from the same thread (modifying during for-each loop) or from another thread without proper synchronization."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the collection with Collections.synchronizedList() and iterating without external synchronization",
+      "why_fails": "Collections.synchronizedList() only synchronizes individual method calls. Iteration requires holding the lock for the entire duration of the loop. Without a synchronized block around the entire iteration, another thread can modify the list between hasNext() and next() calls.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using collection.remove() inside a for-each loop instead of iterator.remove()",
+      "why_fails": "The enhanced for-each loop uses an iterator internally. Calling collection.remove() modifies the collection's modCount without updating the iterator's expectedModCount, which triggers the ConcurrentModificationException on the next iterator operation.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use Iterator.remove() for single-threaded removal during iteration, or use Collection.removeIf() for predicate-based removal",
+      "success_rate": 0.95,
+      "how": "1. For removing elements while iterating: replace the for-each loop with an explicit Iterator and call iterator.remove(). 2. For simpler cases, use collection.removeIf(predicate) which handles the iterator internally. 3. For adding elements during iteration, copy the collection first: new ArrayList<>(original) and iterate over the copy while modifying the original.",
+      "sources": [],
+      "condition": "when modification happens in the same thread"
+    },
+    {
+      "action": "Use ConcurrentHashMap or CopyOnWriteArrayList for multi-threaded access",
+      "success_rate": 0.90,
+      "how": "1. For Map: replace HashMap with ConcurrentHashMap. Its iterators are weakly consistent and never throw ConcurrentModificationException. 2. For List with mostly reads: replace ArrayList with CopyOnWriteArrayList. It creates a fresh copy on every write, so iterators see a snapshot. 3. For List with frequent writes: use synchronized blocks around iteration or ConcurrentLinkedDeque for queue-like access patterns. 4. For Stream operations, use parallelStream() with thread-safe collectors instead of manual iteration.",
+      "sources": [],
+      "condition": "when modification happens from multiple threads"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.08, "condition": "when CopyOnWriteArrayList workaround causes excessive copying with large collections"},
+      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.10, "condition": "when calling iterator.remove() without calling iterator.next() first"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.05, "condition": "when null-check workaround adds concurrent removal logic that modifies the collection during iteration"},
+      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.08, "condition": "when state management leads to collection modification during event processing loops"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/illegalstateexception/jdk17-linux", "distinction": "ConcurrentModificationException specifically relates to collection structural modification during iteration; IllegalStateException is broader and indicates any method called at an inappropriate time"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

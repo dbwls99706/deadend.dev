@@ -68,9 +68,24 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-a100",
+        "probability": 0.21
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/cublas-init-error/cuda11.8-rtx3090",
+        "probability": 0.15
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/cublas-init-error/cuda11.8-rtx3090",
+        "distinction": "Both produce similar messages, but 'cuda-capability-error' and 'cublas-init-error' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

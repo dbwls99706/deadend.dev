@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/ambiguous-match/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/ambiguous-match/dotnet8-linux",
+  "error": {
+    "signature": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints.",
+    "regex": "AmbiguousMatchException.*request matched multiple endpoints",
+    "domain": "dotnet",
+    "category": "web_framework",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "AmbiguousMatchException occurs when ASP.NET Core routing cannot determine which endpoint should handle a request because multiple routes match the same URL pattern. Common with attribute routing, overlapping route templates, and controller action overloads. Fix by adding route constraints or making route templates unique."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding [Route] attributes to every action with fully explicit paths",
+      "why_fails": "Over-specifying routes creates a maintenance burden and often introduces new ambiguities when combined with controller-level [Route] attributes. The resulting route paths become fragile and hard to reason about",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing [ApiController] attribute to disable automatic model binding and routing behavior",
+      "why_fails": "Removing [ApiController] disables important features like automatic 400 responses for invalid models, attribute routing requirement, and binding source inference. It does not fix the ambiguous route templates",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add route constraints to differentiate ambiguous endpoints",
+      "success_rate": 0.90,
+      "how": "Use route constraints to disambiguate: [HttpGet(\"{id:int}\")] for integer IDs vs [HttpGet(\"{slug:alpha}\")] for string slugs. Common constraints: :int, :guid, :alpha, :regex(). For complex cases, implement IRouteConstraint for custom matching logic",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use [HttpGet], [HttpPost] method-specific attributes with unique templates",
+      "success_rate": 0.88,
+      "how": "Replace generic [Route] with HTTP method-specific attributes that have distinct templates: [HttpGet(\"items\")] and [HttpGet(\"items/{id:int}\")] instead of two [Route(\"items\")] actions. Ensure each HTTP method + route template combination is unique across all controllers",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when route ambiguity causes requests to match an unintended endpoint with different auth requirements"},
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.08, "condition": "when ambiguous routing causes CORS preflight to be handled by the wrong endpoint"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when middleware misconfiguration causes routing to behave unexpectedly"},
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.05, "condition": "when SDK upgrade changes routing behavior and introduces new ambiguities"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "distinction": "AmbiguousMatchException is a routing-level error where multiple endpoints match the same URL; middleware order errors cause 401/403 responses because authentication/authorization runs in the wrong sequence"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

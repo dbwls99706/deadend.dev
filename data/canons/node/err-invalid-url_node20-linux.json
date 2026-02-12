@@ -63,9 +63,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/memory-leak-warning/node20-linux",
+        "probability": 0.22
+      },
+      {
+        "error_id": "node/err-stream-premature-close/node20-linux",
+        "probability": 0.21
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/npm-peer-deps-conflict/node20-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/syntax-error-unexpected-token-import/node20-linux",
+        "distinction": "'[ERR_INVALID_URL]' indicates an invalid URL format, while 'SyntaxError' indicates an import statement in a CommonJS context."
+      },
+      {
+        "error_id": "node/err-http-headers-sent/node20-linux",
+        "distinction": "'[ERR_INVALID_URL]' indicates an invalid URL format, while '[ERR_HTTP_HEADERS_SENT]' indicates headers sent after response already started."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

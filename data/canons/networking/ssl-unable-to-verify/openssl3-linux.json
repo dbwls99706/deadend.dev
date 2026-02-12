@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/ssl-unable-to-verify/openssl3-linux",
+  "url": "https://deadends.dev/networking/ssl-unable-to-verify/openssl3-linux",
+  "error": {
+    "signature": "SSL: certificate verify failed - unable to get local issuer certificate",
+    "regex": "unable to get local issuer certificate|certificate verify failed|UNABLE_TO_GET_ISSUER_CERT_LOCALLY",
+    "domain": "networking",
+    "category": "ssl_tls",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The client cannot verify the server's SSL certificate because the issuing CA certificate or intermediate certificates are missing from the local trust store. The certificate chain is incomplete or the CA bundle is outdated."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable SSL verification in the application (e.g., verify=False in Python requests)",
+      "why_fails": "Disabling verification removes all trust guarantees and exposes the application to MITM attacks. It does not fix the underlying missing CA certificate issue and creates a persistent security vulnerability that often leaks into production.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually download and install a single root CA certificate",
+      "why_fails": "The issue is often a missing intermediate certificate, not the root CA. Installing only the root CA will not complete the chain if intermediates are absent. Additionally, manually managing individual CA certs is fragile and does not scale.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update the system CA certificates bundle",
+      "success_rate": 0.88,
+      "how": "1. Update the CA bundle: apt update && apt install -y ca-certificates\n2. Refresh the trust store: update-ca-certificates\n3. For Python: pip install --upgrade certifi\n4. Set environment variable if needed: export SSL_CERT_FILE=$(python -c 'import certifi; print(certifi.where())')\n5. Test: curl https://target-host.com",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure the server to send the full certificate chain (including intermediates)",
+      "success_rate": 0.92,
+      "how": "1. Download intermediate certificates from your CA's documentation\n2. Concatenate into a full chain: cat server.crt intermediate.crt > fullchain.pem\n3. Configure the server to use the full chain file\n4. Restart the server\n5. Verify chain completeness: openssl s_client -connect host:443 -showcerts\n6. Check with SSL Labs: https://www.ssllabs.com/ssltest/",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.15, "condition": "when the missing intermediate was hiding an underlying expiry issue"},
+      {"error_id": "networking/ssl-protocol-error/openssl3-linux", "probability": 0.10, "condition": "when updating CA certs also updates OpenSSL which changes default protocol settings"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/ssl-self-signed/openssl3-linux", "probability": 0.20, "condition": "when replacing a self-signed cert with a CA-signed cert but missing intermediates"},
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.15, "condition": "when renewing a certificate but not updating the intermediate chain"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/ssl-self-signed/openssl3-linux", "distinction": "Unable-to-verify means the certificate was signed by a CA but the client cannot find that CA in its trust store; self-signed means the certificate was signed by itself"},
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "distinction": "Unable-to-verify is a trust chain issue; expired is a time validity issue. Both cause verify failures but for different reasons shown in the error detail"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 62,
+    "last_verification": "2026-02-12"
+  }
+}

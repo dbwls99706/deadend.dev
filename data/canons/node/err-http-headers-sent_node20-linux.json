@@ -64,9 +64,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/err-dlopen-failed/node20-linux",
+        "probability": 0.17
+      },
+      {
+        "error_id": "node/enospc-system-limit-watchers/node20-linux",
+        "probability": 0.2
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/ts-node-syntax-error/node20-linux",
+        "probability": 0.13
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/eaddrinuse-port/node20-linux",
+        "distinction": "'[ERR_HTTP_HEADERS_SENT]' indicates headers sent after response already started, while 'Error' indicates a port already in use."
+      },
+      {
+        "error_id": "node/err-invalid-package-config/node20-linux",
+        "distinction": "'[ERR_HTTP_HEADERS_SENT]' indicates headers sent after response already started, while '[ERR_INVALID_PACKAGE_CONFIG]' indicates an invalid package.json configuration."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

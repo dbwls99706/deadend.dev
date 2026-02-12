@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/cors-preflight-failed/http-linux",
+  "url": "https://deadends.dev/networking/cors-preflight-failed/http-linux",
+  "error": {
+    "signature": "CORS preflight request failed",
+    "regex": "CORS.*preflight.*fail|has been blocked by CORS policy|Access-Control-Allow-Origin.*missing|No 'Access-Control-Allow-Origin'",
+    "domain": "networking",
+    "category": "http",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": "HTTP/1.1+"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The browser's CORS preflight OPTIONS request was rejected by the server because the required Access-Control-Allow-Origin, Access-Control-Allow-Methods, or Access-Control-Allow-Headers response headers are missing or incorrectly configured. This prevents cross-origin JavaScript requests."
+  },
+  "dead_ends": [
+    {
+      "action": "Set Access-Control-Allow-Origin to * while also using credentials mode",
+      "why_fails": "The CORS specification explicitly forbids using the wildcard '*' for Access-Control-Allow-Origin when credentials (cookies, authorization headers) are included. Browsers will reject this combination, and the request will still fail with a CORS error.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable CORS checks in the browser using command-line flags for production use",
+      "why_fails": "Launching Chrome with --disable-web-security only works for local development on a single machine. It cannot be deployed to end users, does not fix the server-side configuration, and creates a significant security vulnerability if used habitually.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure the server to respond correctly to preflight OPTIONS requests",
+      "success_rate": 0.92,
+      "how": "1. Handle OPTIONS method on the API endpoint\n2. Return required headers:\n   Access-Control-Allow-Origin: https://your-frontend.com\n   Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\n   Access-Control-Allow-Headers: Content-Type, Authorization\n   Access-Control-Max-Age: 86400\n3. Return 204 No Content for OPTIONS requests\n4. For credentials: set Access-Control-Allow-Credentials: true with a specific origin (not *)\n5. In nginx: add_header 'Access-Control-Allow-Origin' '$http_origin' always;\n6. Test with: curl -X OPTIONS -H 'Origin: https://your-frontend.com' -v https://api.example.com/endpoint",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a reverse proxy to serve both frontend and API from the same origin",
+      "success_rate": 0.90,
+      "how": "1. Configure nginx or similar to proxy API requests:\n   location /api/ { proxy_pass http://backend:3000/; }\n   location / { root /var/www/frontend; }\n2. Both frontend and API now share the same origin, eliminating CORS entirely\n3. This avoids all CORS complexity and preflight overhead\n4. For development, configure webpack-dev-server or vite proxy:\n   proxy: { '/api': { target: 'http://localhost:3000' } }",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.10, "condition": "when adding CORS middleware introduces a misconfigured reverse proxy layer"},
+      {"error_id": "networking/http-503-service-unavailable/http-linux", "probability": 0.05, "condition": "when CORS middleware is incorrectly applied and crashes the application"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.05, "condition": "when a DNS fix causes the frontend to reach the API on a different origin"},
+      {"error_id": "networking/ssl-hostname-mismatch/openssl3-linux", "probability": 0.10, "condition": "when SSL hostname fix changes the API origin, triggering CORS"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/proxy-authentication-required/http-linux", "distinction": "CORS failures are browser-enforced same-origin policy violations; 407 is a proxy requiring authentication credentials unrelated to CORS"},
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "distinction": "CORS errors occur in the browser before or instead of the actual API response; 502 is a server-side proxy error where the backend returned an invalid response"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

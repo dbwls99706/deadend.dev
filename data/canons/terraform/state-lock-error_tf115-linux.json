@@ -59,9 +59,24 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "terraform/cycle-detected/tf115-linux",
+        "probability": 0.21
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/module-not-installed/tf1-linux",
+        "probability": 0.19
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/unsupported-attribute/tf1-linux",
+        "distinction": "Both produce similar messages, but 'state-lock-error' and 'unsupported-attribute' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

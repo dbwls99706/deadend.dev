@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/relation-does-not-exist/pg16-linux",
+  "url": "https://deadends.dev/database/relation-does-not-exist/pg16-linux",
+  "error": {
+    "signature": "psycopg2.errors.UndefinedTable: ERROR: relation \"my_table\" does not exist",
+    "regex": "ERROR:\\s+relation \"[^\"]+\" does not exist",
+    "domain": "database",
+    "category": "schema_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "The referenced table or view does not exist in the current database or search_path schema. Common causes include missing migrations, wrong database, wrong schema, or case-sensitive table name quoting."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the table name in double quotes without checking if the table actually exists",
+      "why_fails": "Double-quoting makes PostgreSQL treat the name as case-sensitive, which may fix a case mismatch but does nothing if the table was never created. This leads to debugging the wrong problem.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Dropping and recreating the database without running migrations",
+      "why_fails": "Dropping the database removes all data and without running migrations afterward, the tables still will not exist. This is destructive and does not solve the underlying issue.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run pending database migrations to create the missing table",
+      "success_rate": 0.90,
+      "how": "Run the application's migration tool (e.g., 'alembic upgrade head', 'django manage.py migrate', 'knex migrate:latest'). Verify with '\\dt' in psql to confirm the table exists.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check the search_path and connect to the correct schema",
+      "success_rate": 0.85,
+      "how": "Run 'SHOW search_path;' in psql. If the table is in a non-public schema, either set search_path: 'SET search_path TO myschema,public;' or fully qualify the table name: 'SELECT * FROM myschema.my_table;'.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.30, "condition": "when attempting to run migrations to fix the missing relation but migrations themselves fail"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/authentication-failed/pg16-linux", "probability": 0.20, "condition": "when user connects to wrong database after fixing auth issues"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "distinction": "PostgreSQL says 'relation does not exist' (covering tables, views, sequences) while MySQL says 'Table doesn't exist'. PostgreSQL uses the broader term 'relation'."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

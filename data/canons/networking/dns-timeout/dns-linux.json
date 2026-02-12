@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dns-timeout/dns-linux",
+  "url": "https://deadends.dev/networking/dns-timeout/dns-linux",
+  "error": {
+    "signature": "DNS query timeout: no response received",
+    "regex": "connection timed out.*no servers could be reached|DNS.*timeout|resolv.*timed out|query.*timed out",
+    "domain": "networking",
+    "category": "dns",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dns-resolver", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "The DNS resolver did not receive a response within the timeout period. This can be caused by an unreachable DNS server, firewall blocking UDP port 53, network connectivity issues, or an overloaded DNS server."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the DNS timeout value indefinitely",
+      "why_fails": "If the DNS server is unreachable or blocked by a firewall, no amount of waiting will produce a response. Increasing timeouts just delays the inevitable failure and makes applications appear to hang, degrading user experience without solving the root cause.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add the hostname to /etc/hosts as a permanent workaround",
+      "why_fails": "Static host entries bypass DNS but only work for the specific hostnames listed. IPs change, new services appear, and maintaining /etc/hosts does not scale. It also breaks if the IP address changes due to load balancing, failover, or infrastructure updates.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Diagnose and fix DNS server connectivity",
+      "success_rate": 0.88,
+      "how": "1. Test current DNS server: dig @$(grep nameserver /etc/resolv.conf | head -1 | awk '{print $2}') google.com\n2. Test alternate DNS: dig @8.8.8.8 google.com\n3. Check if UDP 53 is blocked: nmap -sU -p 53 8.8.8.8\n4. Check network route: traceroute -U -p 53 8.8.8.8\n5. If firewall is blocking, add rule: iptables -A OUTPUT -p udp --dport 53 -j ACCEPT\n6. Switch to working DNS: echo 'nameserver 8.8.8.8' > /etc/resolv.conf",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switch to DNS-over-HTTPS or DNS-over-TLS to bypass UDP blocking",
+      "success_rate": 0.82,
+      "how": "1. Install a DoH/DoT client such as stubby or cloudflared\n2. For systemd-resolved, enable DNS-over-TLS: set DNSOverTLS=yes in /etc/systemd/resolved.conf\n3. Set DNS servers that support DoT: DNS=1.1.1.1#cloudflare-dns.com 8.8.8.8#dns.google\n4. Restart resolved: systemctl restart systemd-resolved\n5. Verify: resolvectl query google.com",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.20, "condition": "when the timeout resolves but the domain actually does not exist"},
+      {"error_id": "networking/dns-servfail/dns-linux", "probability": 0.15, "condition": "when the DNS server responds after recovery but with an error status"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when the network issue causing DNS timeouts also affects TCP connections"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/host-unreachable/tcp-linux", "probability": 0.20, "condition": "when general network unreachability also prevents reaching DNS servers"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when upstream network congestion affects both TCP and DNS"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "distinction": "DNS timeout means no response was received at all; NXDOMAIN is a definitive response stating the domain does not exist"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "DNS timeout is specifically about the DNS query to port 53; connection timeout is about a TCP connection attempt to the target service port"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 58,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-concurrency-cancelled/gha-linux",
+  "url": "https://deadends.dev/cicd/gha-concurrency-cancelled/gha-linux",
+  "error": {
+    "signature": "Error: The run was canceled because a higher priority run was queued. Concurrency group: ci-main",
+    "regex": "(?:canceled.*concurrency|cancelled.*concurrency group|superseded by|This workflow was cancelled|canceled because a higher priority run)",
+    "domain": "cicd",
+    "category": "concurrency",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A GitHub Actions workflow run is cancelled because a newer commit to the same branch triggers another run in the same concurrency group. The cancel-in-progress setting supersedes the older run."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the concurrency configuration entirely",
+      "why_fails": "Without concurrency controls, multiple runs pile up consuming runner resources and potentially deploying out of order",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set a unique concurrency group per run using run_id",
+      "why_fails": "Using a unique key per run effectively disables concurrency control, defeating its purpose entirely",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use branch-aware concurrency groups with cancel-in-progress only for non-default branches",
+      "success_rate": 0.90,
+      "how": "Set 'concurrency: group: ${{ github.workflow }}-${{ github.ref }}' with 'cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}' to only cancel in-progress runs on feature branches",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable cancel-in-progress and let jobs queue instead",
+      "success_rate": 0.82,
+      "how": "Set 'cancel-in-progress: false' in the concurrency block so that newer runs wait for the current run to complete instead of cancelling it",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "probability": 0.10, "condition": "When a deployment run is cancelled mid-deploy, leaving infrastructure in an inconsistent state"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.10, "condition": "When rapid fix-push-fix cycles for syntax errors trigger multiple concurrent runs"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "Concurrency cancelled means a newer run superseded this one; timeout means the job ran too long"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

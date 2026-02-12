@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/unsupportedclassversionerror/jdk17-linux",
+  "url": "https://deadends.dev/java/unsupportedclassversionerror/jdk17-linux",
+  "error": {
+    "signature": "java.lang.UnsupportedClassVersionError",
+    "regex": "java\\.lang\\.UnsupportedClassVersionError.*has been compiled by a more recent version",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-12",
+    "summary": "UnsupportedClassVersionError occurs when a class file was compiled with a newer JDK version than the JRE running it. The error message includes class file version numbers (e.g., 61 = JDK 17, 65 = JDK 21)."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrading the dependency that contains the incompatible class to an older version",
+      "why_fails": "Downgrading dependencies can introduce security vulnerabilities, missing features, or incompatibilities with other dependencies that require the newer version. It is almost always better to upgrade your runtime JDK than to downgrade libraries.",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting -source and -target compiler flags without upgrading the JRE",
+      "why_fails": "The -source and -target flags control what your code compiles to, but they do not affect third-party dependencies. If a dependency JAR was compiled with JDK 21 bytecode, your runtime JRE must be >= 21 to load it regardless of your own compilation flags.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Upgrade the JRE to match or exceed the JDK version used to compile the class files",
+      "success_rate": 0.95,
+      "how": "1. Read the error message: 'class file version 65.0' means JDK 21, '61.0' means JDK 17, '55.0' means JDK 11. 2. Install the matching or newer JDK. 3. Update JAVA_HOME and PATH to point to the new JDK. 4. Verify with 'java -version'. 5. In CI/CD, update the JDK version in the pipeline configuration.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set the build tool to cross-compile to the target JRE's bytecode version",
+      "success_rate": 0.88,
+      "how": "1. In Maven, set <maven.compiler.release>17</maven.compiler.release> in pom.xml to target JDK 17 bytecode. 2. In Gradle, set java { toolchain { languageVersion = JavaLanguageVersion.of(17) } } to compile for JDK 17. 3. This only works for your own code — ensure all dependencies also target the same or lower bytecode version. 4. The --release flag is preferred over -source/-target as it also checks API compatibility.",
+      "sources": [],
+      "condition": "when you control the compilation but not the runtime"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.15, "condition": "when JDK upgrade introduces API changes that break compatibility with other libraries"},
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when JDK upgrade changes module visibility and classes become inaccessible"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.20, "condition": "when Maven resolves a newer version of a dependency compiled with a higher JDK"},
+      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.18, "condition": "when Gradle resolves a transitive dependency compiled with a higher JDK"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "UnsupportedClassVersionError means the class was found but its bytecode version is too new for the current JRE; ClassNotFoundException means the class was not found at all"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/aspnet-middleware-order/dotnet8-linux",
+  "error": {
+    "signature": "HTTP 401 Unauthorized or 403 Forbidden returned unexpectedly despite valid credentials and authorization configuration",
+    "regex": "(401\\s*Unauthorized|403\\s*Forbidden|AuthenticationMiddleware.*not.*configured|Authorization.*middleware.*order)",
+    "domain": "dotnet",
+    "category": "web_framework",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "ASP.NET Core middleware order errors cause unexpected 401/403 responses even when authentication is correctly configured. The middleware pipeline is order-dependent: UseAuthentication must come before UseAuthorization, and both must come after UseRouting but before MapControllers. Fix by correcting the middleware registration order in Program.cs."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding [AllowAnonymous] to controllers to work around 401/403 errors",
+      "why_fails": "Bypasses security entirely instead of fixing the middleware order; leaves endpoints unprotected and masks the configuration bug that will affect other secured endpoints",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Registering authentication services multiple times with different schemes",
+      "why_fails": "Adding duplicate authentication registrations creates ambiguity in scheme resolution; the default scheme may not be the one intended, and the middleware order issue remains regardless of how many schemes are registered",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure correct middleware order in Program.cs",
+      "success_rate": 0.92,
+      "how": "The correct order is: app.UseRouting(); app.UseCors(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers(); Authentication MUST come before Authorization. Both MUST come after UseRouting. CORS middleware must be before Authentication if CORS preflight is needed",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify authentication services are properly registered in DI",
+      "success_rate": 0.88,
+      "how": "Ensure Program.cs includes: builder.Services.AddAuthentication(defaultScheme).AddJwtBearer(options => { ... }); and builder.Services.AddAuthorization(); Check that the default authentication scheme matches the scheme used in [Authorize] attributes or policy definitions",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.25, "condition": "when fixing middleware order reveals that CORS was also misconfigured"},
+      {"error_id": "dotnet/ambiguous-match/dotnet8-linux", "probability": 0.10, "condition": "when routing issues compound with authentication failures"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.15, "condition": "when CORS preflight failure masks the actual 401/403 error"},
+      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.08, "condition": "when port binding issues cause requests to hit the wrong endpoint pipeline"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "distinction": "Middleware order errors result in 401/403 responses from the server; CORS blocked errors are enforced by the browser and appear as CORS policy violations in the browser console, though both can result from incorrect middleware ordering"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

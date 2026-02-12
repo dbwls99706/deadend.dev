@@ -64,9 +64,24 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "go/cannot-assign-to-struct-field/go1-linux",
+        "probability": 0.17
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/undefined-reference/go1-linux",
+        "probability": 0.12
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/nil-pointer-dereference/go1-linux",
+        "distinction": "'declared and not used' indicates an unused variable declaration, while 'runtime error' indicates a nil pointer dereference."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

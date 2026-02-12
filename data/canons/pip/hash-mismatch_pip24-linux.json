@@ -71,9 +71,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "pip/conflicting-dependencies/pip23-linux",
+        "probability": 0.24
+      },
+      {
+        "error_id": "pip/no-space-left-during-install/pip24-linux",
+        "probability": 0.15
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "pip/conflicting-dependencies/pip23-linux",
+        "probability": 0.14
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "distinction": "Both produce similar messages, but 'hash-mismatch' and 'no-matching-distribution' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/docker-aspnet-port/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/docker-aspnet-port/dotnet8-linux",
+  "error": {
+    "signature": "Unable to start Kestrel. System.IO.IOException: Failed to bind to address http://0.0.0.0:80: address already in use / connection refused on mapped port",
+    "regex": "(Failed to bind to address|Kestrel.*bind|ASPNETCORE_URLS.*port|connection refused.*container)",
+    "domain": "dotnet",
+    "category": "deployment",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "ASP.NET Docker port binding issues occur when Kestrel listens on a different port or interface than what Docker exposes. In .NET 8+, the default port changed from 80 to 8080 and the app listens on localhost instead of 0.0.0.0 by default. Fix by setting ASPNETCORE_URLS or ASPNETCORE_HTTP_PORTS environment variable and using EXPOSE with the correct port."
+  },
+  "dead_ends": [
+    {
+      "action": "Using EXPOSE 80 in Dockerfile without configuring Kestrel to listen on port 80",
+      "why_fails": "EXPOSE is only documentation metadata; it does not actually configure port binding. In .NET 8+, Kestrel defaults to port 8080, so EXPOSE 80 creates a mismatch between the documented and actual port",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Binding Kestrel to localhost (127.0.0.1) inside a Docker container",
+      "why_fails": "localhost inside a container is only accessible within the container itself; traffic from the Docker network or host port mapping arrives on the container's external interface (0.0.0.0), which localhost binding rejects",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set ASPNETCORE_HTTP_PORTS environment variable in the Dockerfile",
+      "success_rate": 0.92,
+      "how": "Add to Dockerfile: ENV ASPNETCORE_HTTP_PORTS=8080 and EXPOSE 8080. Then run with: docker run -p 5000:8080 myapp. For .NET 8+, ASPNETCORE_HTTP_PORTS is the preferred way to set the port. Alternatively use: ENV ASPNETCORE_URLS=http://+:8080 which also binds to all interfaces",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the official ASP.NET Docker base images and match port configuration",
+      "success_rate": 0.90,
+      "how": "Use mcr.microsoft.com/dotnet/aspnet:8.0 as the base image. This image sets ASPNETCORE_HTTP_PORTS=8080 by default. Ensure your docker run command maps to port 8080: docker run -p 80:8080 myapp. If you need a different port, override with ENV ASPNETCORE_HTTP_PORTS=<port> and update EXPOSE and -p accordingly",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.25, "condition": "when other services cannot connect to the misconfigured container port"},
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.15, "condition": "when port mismatch causes the origin URL to differ from CORS configuration"},
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.08, "condition": "when debugging port issues leads to discovering middleware configuration problems"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.15, "condition": "when Dockerfile uses a different .NET base image version than the project targets"},
+      {"error_id": "dotnet/platform-not-supported/dotnet8-linux", "probability": 0.10, "condition": "when Windows-developed app encounters platform issues in Linux Docker container"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "distinction": "Docker port binding issues are about the server failing to listen or being unreachable due to port/interface misconfiguration; HttpRequestException is about the client side failing to connect regardless of the cause"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

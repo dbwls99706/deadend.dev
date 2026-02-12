@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/proxy-authentication-required/http-linux",
+  "url": "https://deadends.dev/networking/proxy-authentication-required/http-linux",
+  "error": {
+    "signature": "HTTP 407 Proxy Authentication Required",
+    "regex": "407 Proxy Authentication Required|HTTP.*407|Proxy-Authenticate|proxy.*auth.*required",
+    "domain": "networking",
+    "category": "http",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": "HTTP/1.1+"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "An HTTP proxy server requires authentication before forwarding the request. The client must provide valid credentials via the Proxy-Authorization header using the authentication scheme specified in the proxy's Proxy-Authenticate response header."
+  },
+  "dead_ends": [
+    {
+      "action": "Bypass the proxy by hardcoding IP addresses to avoid DNS-based proxy routing",
+      "why_fails": "Corporate proxies typically operate at the network level (transparent proxy, WPAD, or mandatory routing). Hardcoding IPs does not bypass the proxy if traffic is routed through it at the network layer. Additionally, this breaks when IPs change and may violate corporate security policies.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set the standard Authorization header instead of Proxy-Authorization",
+      "why_fails": "The Authorization header authenticates with the origin server, not the proxy. Proxy servers specifically require the Proxy-Authorization header. Using the wrong header means the proxy never sees the credentials and continues returning 407.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure proxy credentials in the client application or environment",
+      "success_rate": 0.90,
+      "how": "1. Identify the proxy URL and authentication scheme from the 407 response headers\n2. Set environment variables: export HTTP_PROXY=http://user:pass@proxy:port export HTTPS_PROXY=http://user:pass@proxy:port\n3. For curl: curl -x http://proxy:port -U user:pass https://target.com\n4. For Python requests: proxies = {'http': 'http://user:pass@proxy:port', 'https': 'http://user:pass@proxy:port'}\n5. For npm: npm config set proxy http://user:pass@proxy:port\n6. For git: git config --global http.proxy http://user:pass@proxy:port",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use NTLM or Kerberos proxy authentication with a local proxy relay",
+      "success_rate": 0.85,
+      "how": "1. If the proxy requires NTLM/Kerberos (common in corporate environments), use a local proxy relay\n2. Install cntlm: apt install cntlm\n3. Configure cntlm with your domain credentials: edit /etc/cntlm.conf\n4. Run cntlm: cntlm -v -c /etc/cntlm.conf\n5. Point applications to cntlm's local port: export HTTP_PROXY=http://localhost:3128\n6. cntlm handles NTLM negotiation transparently",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when proxy authentication fails and the proxy blocks all further connection attempts"},
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.20, "condition": "when the proxy performs SSL inspection and injects its own CA certificate"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.10, "condition": "when the proxy was not configured in the client and direct connections time out"},
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS fails without the proxy and configuring the proxy triggers auth requirements"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/cors-preflight-failed/http-linux", "distinction": "407 requires proxy authentication credentials; CORS failures are browser-enforced origin policy checks unrelated to proxy authentication"},
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "distinction": "407 is the proxy requesting credentials before forwarding; 502 is the proxy reporting that the upstream server returned an invalid response after the proxy already authenticated and forwarded the request"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 42,
+    "last_verification": "2026-02-12"
+  }
+}

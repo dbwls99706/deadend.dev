@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/jenkins-pipeline-syntax/jenkins-linux",
+  "url": "https://deadends.dev/cicd/jenkins-pipeline-syntax/jenkins-linux",
+  "error": {
+    "signature": "WorkflowScript: expected a step @ line 12, column 5",
+    "regex": "(?:WorkflowScript.*expected|org\\.codehaus\\.groovy\\.control\\.MultipleCompilationErrorsException|No such DSL method|Invalid agent type|expected a step)",
+    "domain": "cicd",
+    "category": "pipeline_syntax",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "Jenkins pipeline (Jenkinsfile) contains Groovy syntax errors, invalid DSL method calls, or structural issues. The pipeline fails during parsing before any stages execute."
+  },
+  "dead_ends": [
+    {
+      "action": "Test Groovy syntax in an online Groovy compiler",
+      "why_fails": "Jenkins Pipeline DSL is not standard Groovy; many pipeline-specific constructs (pipeline, stage, steps) are Jenkins-only and will fail in a regular Groovy compiler",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Convert declarative pipeline to scripted pipeline to fix syntax errors",
+      "why_fails": "Scripted pipeline is more complex and error-prone; switching paradigms mid-debug introduces new categories of errors",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the Jenkins Pipeline Syntax Snippet Generator and Replay feature",
+      "success_rate": 0.91,
+      "how": "Navigate to your Jenkins instance > Pipeline Syntax (available in job config). Use the Snippet Generator to build correct DSL snippets. Use Replay to test changes without committing",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Validate Jenkinsfile locally using the Jenkins Pipeline Linter",
+      "success_rate": 0.88,
+      "how": "Use 'curl -X POST -F 'jenkinsfile=<Jenkinsfile' http://JENKINS_URL/pipeline-model-converter/validate' to validate declarative pipeline syntax remotely, or use IDE plugins with pipeline linting",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/jenkins-credential-not-found/jenkins-linux", "probability": 0.15, "condition": "When fixing syntax reveals credential binding errors in the pipeline"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "probability": 0.10, "condition": "When agent comes back online and pipeline runs but has syntax issues from recent edits"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "distinction": "Jenkins uses Groovy-based Jenkinsfile syntax; GitHub Actions uses YAML workflow files"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

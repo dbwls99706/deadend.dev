@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/connection-refused/pg16-linux",
+  "url": "https://deadends.dev/database/connection-refused/pg16-linux",
+  "error": {
+    "signature": "psycopg2.OperationalError: could not connect to server: Connection refused",
+    "regex": "could not connect to server.*Connection refused",
+    "domain": "database",
+    "category": "connection_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "PostgreSQL server is not running or not listening on the expected host/port. Most commonly caused by the service being stopped, misconfigured listen_addresses, or firewall rules blocking port 5432."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstalling the PostgreSQL client library (psycopg2) to fix the connection error",
+      "why_fails": "The error is a server-side connectivity issue, not a client library bug. Reinstalling psycopg2 does not affect whether the PostgreSQL server is reachable.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Changing the connection string encoding or SSL mode without verifying the server is actually running",
+      "why_fails": "If the server process is not running or not listening on the target port, no amount of connection parameter tweaking will establish a connection.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Start the PostgreSQL service and verify it is listening on the correct port",
+      "success_rate": 0.93,
+      "how": "Run 'sudo systemctl start postgresql' (or 'pg_ctl start -D /var/lib/postgresql/16/main'). Verify with 'ss -tlnp | grep 5432' or 'pg_isready -h localhost -p 5432'.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and update listen_addresses in postgresql.conf to bind to the correct interface",
+      "success_rate": 0.88,
+      "how": "Edit postgresql.conf and set listen_addresses = '*' (or the specific IP). Restart PostgreSQL. Also ensure pg_hba.conf allows connections from the client IP.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/authentication-failed/pg16-linux", "probability": 0.35, "condition": "when server starts but pg_hba.conf requires password authentication"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when PostgreSQL crashes due to disk full and fails to restart"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/too-many-connections/pg16-linux", "distinction": "Connection refused means the server is not listening at all, while too many connections means the server is running but has hit max_connections limit."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

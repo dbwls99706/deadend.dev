@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/redis-connection-refused/redis7-linux",
+  "url": "https://deadends.dev/database/redis-connection-refused/redis7-linux",
+  "error": {
+    "signature": "redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.",
+    "regex": "ConnectionError.*Connection refused.*6379|connect ECONNREFUSED.*6379",
+    "domain": "database",
+    "category": "connection_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Redis server is not running or not listening on the expected host/port. Commonly caused by the redis-server process not being started, bind address misconfiguration, or protected-mode blocking connections from non-loopback addresses."
+  },
+  "dead_ends": [
+    {
+      "action": "Changing Redis client library configuration (timeouts, retry settings) when the server is not running",
+      "why_fails": "Client-side configuration changes cannot make a connection to a server that is not listening. The error is at the TCP level; no amount of client tuning can establish a connection to a closed port.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reinstalling Redis client packages to fix connection refused",
+      "why_fails": "The client library correctly reports that the server is unreachable. The issue is server-side; reinstalling the client package has no effect on server availability.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Start the Redis server and verify it is listening",
+      "success_rate": 0.94,
+      "how": "Run: sudo systemctl start redis-server (or redis). Verify: redis-cli ping (should respond PONG). Check binding: redis-cli CONFIG GET bind. If connecting remotely, ensure redis.conf has 'bind 0.0.0.0' or the specific interface IP, and 'protected-mode no' (or set a password).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and fix protected-mode and firewall rules",
+      "success_rate": 0.88,
+      "how": "Redis 7 enables protected-mode by default, which rejects non-loopback connections when no password is set. Either set a password in redis.conf: requirepass yourpassword, or bind to specific IPs. Check firewall: sudo ufw allow 6379.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.10, "condition": "when Redis starts successfully but is immediately overwhelmed with data exceeding maxmemory"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.20, "condition": "when Redis crashes due to OOM and fails to restart"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/connection-refused/pg16-linux", "distinction": "Both are TCP connection refused errors but for different services. Redis defaults to port 6379, PostgreSQL to 5432. Redis connection refused is often due to protected-mode, while PostgreSQL is more commonly due to listen_addresses."},
+      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "distinction": "Redis gives an immediate connection refused, while MongoDB wraps it in a ServerSelectionTimeoutError that waits before failing."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 72,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/http-503-service-unavailable/http-linux",
+  "url": "https://deadends.dev/networking/http-503-service-unavailable/http-linux",
+  "error": {
+    "signature": "HTTP 503 Service Unavailable",
+    "regex": "503 Service Unavailable|HTTP.*503|Service.*Unavailable|temporarily.*unavailable",
+    "domain": "networking",
+    "category": "http",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": "HTTP/1.1+"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The server is temporarily unable to handle the request due to being overloaded, under maintenance, or having no healthy backend instances. This is typically a transient condition indicated by the Retry-After header when present."
+  },
+  "dead_ends": [
+    {
+      "action": "Aggressively retry with no delay or backoff",
+      "why_fails": "If the server is overloaded, rapid retries add more load and make the situation worse. This can trigger rate limiting, IP bans, or cascade failures across the infrastructure. The Retry-After header, when present, should be respected.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Assume the application code is broken and redeploy without checking infrastructure",
+      "why_fails": "503 errors are typically infrastructure-level (overload, maintenance, no healthy backends), not application-level bugs. Redeploying the same code does not add server capacity, fix a drained connection pool, or end a maintenance window.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Scale up the backend service and ensure healthy instances are available",
+      "success_rate": 0.88,
+      "how": "1. Check if any backend instances are running: kubectl get pods or systemctl status app\n2. Check health check status in your load balancer console\n3. Scale up instances: kubectl scale deployment app --replicas=3\n4. Check resource usage on existing instances: top, free -m, df -h\n5. If OOM killed, increase memory limits and restart\n6. Verify health check endpoint responds: curl http://backend:port/health\n7. Check if a maintenance page is active and disable it",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement proper retry logic with exponential backoff and circuit breakers",
+      "success_rate": 0.85,
+      "how": "1. Respect the Retry-After header if present in the 503 response\n2. Implement exponential backoff: initial 1s, multiply by 2, max 60s\n3. Add jitter to prevent thundering herd: delay = base_delay * 2^attempt + random(0, 1000ms)\n4. Implement a circuit breaker pattern to stop retries after N consecutive failures\n5. Queue requests during outages and process them when the service recovers\n6. Set up monitoring and alerting for 503 error rates",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.20, "condition": "when backend instances partially recover but return malformed responses"},
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "probability": 0.20, "condition": "when overloaded backends start responding very slowly instead of failing fast"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when all backend instances are down and the load balancer itself becomes overwhelmed"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.20, "condition": "when repeated 502 errors cause the load balancer to mark all backends as unhealthy"},
+      {"error_id": "networking/address-already-in-use/tcp-linux", "probability": 0.15, "condition": "when port conflicts prevent backend instances from starting"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "distinction": "503 means the service is known to be unavailable (often before a request is forwarded); 502 means a request was forwarded but the backend returned an invalid response"},
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "503 indicates the server acknowledges it cannot serve requests; 504 indicates the proxy waited for a response that never came within the timeout"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

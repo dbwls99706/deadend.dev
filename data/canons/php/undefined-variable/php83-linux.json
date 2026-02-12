@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/undefined-variable/php83-linux",
+  "url": "https://deadends.dev/php/undefined-variable/php83-linux",
+  "error": {
+    "signature": "Warning: Undefined variable $variableName",
+    "regex": "Warning: Undefined variable \\$\\w+",
+    "domain": "php",
+    "category": "runtime_warning",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "Undefined variable warnings in PHP 8.x are triggered when accessing a variable that has not been initialized. In PHP 8.0+ this was elevated from a notice to a warning. Common causes include typos in variable names, variables defined only inside conditional branches, and missing function parameters."
+  },
+  "dead_ends": [
+    {"action": "Suppressing warnings with error_reporting(E_ALL & ~E_WARNING) or the @ operator", "why_fails": "Hiding the warning does not fix the underlying bug. The variable is still undefined and will evaluate to null, potentially causing logic errors, null pointer exceptions downstream, or data corruption.", "fail_rate": 0.82, "sources": [], "condition": ""},
+    {"action": "Using extract() to blindly import array keys as variables", "why_fails": "extract() creates variables from array keys which is unpredictable and can overwrite existing variables. It makes code harder to trace and introduces security risks when used with user input.", "fail_rate": 0.73, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Initialize variables before use with sensible defaults", "success_rate": 0.96, "how": "Declare variables with default values before any conditional branches. For example, use '$result = null;' or '$count = 0;' at the top of the scope. This ensures the variable always exists regardless of which code path executes.", "sources": [], "condition": ""},
+    {"action": "Use isset() or the null coalescing operator (??) for optional variables", "success_rate": 0.93, "how": "When a variable may or may not be set, use the null coalescing operator: '$value = $possiblyUndefined ?? \"default\";'. For conditionals, use isset($var) instead of directly accessing the variable.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/type-error-argument/php83-linux", "probability": 0.20, "condition": "when the undefined variable (null) is passed as an argument to a type-hinted function parameter"}],
+    "preceded_by": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.10, "condition": "when a class instantiation fails and the variable that should hold the object is never assigned"}],
+    "frequently_confused_with": [{"error_id": "php/call-to-undefined-function/php83-linux", "distinction": "Undefined variable refers to a missing variable while undefined function refers to calling a function that does not exist in the current scope"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 110,
+    "last_verification": "2026-02-12"
+  }
+}

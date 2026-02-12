@@ -72,9 +72,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "aws/resource-already-exists/awscli2-linux",
+        "probability": 0.23
+      },
+      {
+        "error_id": "aws/expired-token-exception/awscli2-linux",
+        "probability": 0.17
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "aws/sts-access-denied/aws-cli2-linux",
+        "probability": 0.14
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/validation-exception/awscli2-linux",
+        "distinction": "'Stack is in ROLLBACK_COMPLETE state and can not be updated' indicates a CloudFormation stack in ROLLBACK_COMPLETE state, while 'An error occurred (ValidationException) when calling the X operation' indicates an AWS API validation error."
+      },
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "distinction": "'Stack is in ROLLBACK_COMPLETE state and can not be updated' indicates a CloudFormation stack in ROLLBACK_COMPLETE state, while 'An error occurred (AccessDeniedException) when calling the X operation' indicates an IAM permission denial."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

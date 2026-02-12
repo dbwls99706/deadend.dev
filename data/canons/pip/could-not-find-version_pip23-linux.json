@@ -59,9 +59,32 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "pip/conflicting-dependencies/pip23-linux",
+        "probability": 0.15
+      },
+      {
+        "error_id": "pip/install-requires-different-python/pip24-linux",
+        "probability": 0.17
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "pip/build-wheel-failed/pip23-linux-arm64",
+        "probability": 0.11
+      },
+      {
+        "error_id": "pip/externally-managed-environment/pip24-linux",
+        "probability": 0.18
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "distinction": "Both produce similar messages, but 'could-not-find-version' and 'no-matching-distribution' differ in root cause and environment context."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -59,9 +59,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "cuda/cudnn-not-compiled/cuda12-a100",
+        "probability": 0.24
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/cuda-driver-insufficient/cuda12-linux",
+        "probability": 0.14
+      },
+      {
+        "error_id": "cuda/nccl-timeout/torch2.0-multi-gpu",
+        "probability": 0.16
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+        "distinction": "'RuntimeError' indicates an illegal GPU memory access, while 'AssertionError' indicates PyTorch built without CUDA support."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

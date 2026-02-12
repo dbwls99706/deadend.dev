@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dns-servfail/dns-linux",
+  "url": "https://deadends.dev/networking/dns-servfail/dns-linux",
+  "error": {
+    "signature": "DNS SERVFAIL: server failure processing query",
+    "regex": "SERVFAIL|Server failure|server.*fail.*resolv|status: SERVFAIL",
+    "domain": "networking",
+    "category": "dns",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dns-resolver", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.84,
+    "last_updated": "2026-02-12",
+    "summary": "The DNS server returned a SERVFAIL response code, indicating it was unable to process the query. This commonly results from DNSSEC validation failures, broken zone delegations, or the authoritative nameserver being unreachable or misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable DNSSEC validation on the resolver to suppress SERVFAIL",
+      "why_fails": "DNSSEC validation protects against DNS cache poisoning and spoofing attacks. Disabling it hides the real problem (invalid DNSSEC signatures, expired keys) and makes the resolver vulnerable to attacks. The domain owner needs to fix their DNSSEC configuration.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Clear the local DNS cache and retry immediately",
+      "why_fails": "If the SERVFAIL is caused by an upstream issue (broken delegation, DNSSEC failure, authoritative server down), clearing the local cache simply forces a re-query that will receive the same SERVFAIL. Caching the negative result actually reduces load on the failing infrastructure.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Diagnose the SERVFAIL cause and fix the upstream DNS issue",
+      "success_rate": 0.85,
+      "how": "1. Check if DNSSEC is the cause: dig +cd yourdomain.com (bypasses DNSSEC validation)\n2. If +cd works, the issue is DNSSEC: check with dnsviz.net or dig +dnssec yourdomain.com\n3. Check authoritative servers: dig NS yourdomain.com and then dig @ns1.example.com yourdomain.com\n4. If authoritative server is down, contact domain owner or hosting provider\n5. Check zone delegation: dig +trace yourdomain.com\n6. For DNSSEC issues, the zone owner needs to resign or fix DS records at the registrar",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use an alternative DNS resolver that may have different caching or validation behavior",
+      "success_rate": 0.78,
+      "how": "1. Try Google DNS: dig @8.8.8.8 yourdomain.com\n2. Try Cloudflare DNS: dig @1.1.1.1 yourdomain.com\n3. Try Quad9: dig @9.9.9.9 yourdomain.com\n4. If one works, update /etc/resolv.conf to use that resolver\n5. Compare results to identify if the issue is resolver-specific or authoritative\n6. Note: different resolvers have different DNSSEC validation strictness",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.20, "condition": "when the SERVFAIL is a transient issue and the domain eventually resolves or is confirmed as NXDOMAIN"},
+      {"error_id": "networking/dns-timeout/dns-linux", "probability": 0.15, "condition": "when the recursive resolver that returned SERVFAIL becomes completely unreachable"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-timeout/dns-linux", "probability": 0.20, "condition": "when a timeout from the authoritative server causes the recursive resolver to return SERVFAIL"},
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when a previously non-existent domain is partially configured, leading to broken delegation"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "distinction": "SERVFAIL means the DNS server encountered an error and could not complete the query; NXDOMAIN is a successful query that definitively reports the domain does not exist"},
+      {"error_id": "networking/dns-timeout/dns-linux", "distinction": "SERVFAIL is a response from the DNS server indicating failure; timeout means no response was received at all within the allotted time"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

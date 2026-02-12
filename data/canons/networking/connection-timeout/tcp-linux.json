@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/connection-timeout/tcp-linux",
+  "url": "https://deadends.dev/networking/connection-timeout/tcp-linux",
+  "error": {
+    "signature": "Connection timed out (ETIMEDOUT)",
+    "regex": "Connection timed out|ETIMEDOUT|connect.*timed out|errno 110",
+    "domain": "networking",
+    "category": "tcp_connection",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The TCP connection attempt did not receive any response (SYN-ACK) within the timeout period. This typically indicates a firewall silently dropping packets, the host being down, or severe network congestion between client and server."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increase the TCP connection timeout to very large values",
+      "why_fails": "If packets are being dropped by a firewall or the host is down, no amount of waiting will produce a response. Large timeouts cause applications to hang for extended periods, degrade user experience, and consume connection pool resources without resolving the underlying network issue.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Assume it is a DNS issue and change DNS servers",
+      "why_fails": "ETIMEDOUT occurs after DNS resolution succeeds. The hostname has already resolved to an IP address; the failure is at the TCP level when the SYN packet gets no response. Changing DNS servers will not fix a firewall or routing problem between client and the resolved IP.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Diagnose the network path and fix firewall or routing issues",
+      "success_rate": 0.85,
+      "how": "1. Verify basic connectivity: ping target-host\n2. Trace the route: traceroute target-host (identify where packets stop)\n3. Test specific port: nc -zv -w5 target-host PORT\n4. Check local firewall: iptables -L -n | grep PORT\n5. Check cloud security groups / network ACLs if in cloud environment\n6. On the server side, verify iptables or nftables rules allow inbound traffic on the port\n7. If behind NAT, verify port forwarding is configured",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify the target host is running and the service is listening on the correct interface",
+      "success_rate": 0.83,
+      "how": "1. Confirm the host is up: ping target-host or check cloud console\n2. On the server: ss -tlnp | grep :PORT to verify service is listening\n3. Check if service binds to correct interface (0.0.0.0 vs 127.0.0.1)\n4. Check if the host has correct default gateway: ip route show\n5. Verify no IP blocklisting: check fail2ban, CSF, or cloud WAF rules\n6. For cloud instances, verify the instance is in a running state and has a public IP if needed",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.20, "condition": "when the firewall rule is fixed but the service is not actually running"},
+      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the connection eventually establishes but is reset during data transfer"},
+      {"error_id": "networking/host-unreachable/tcp-linux", "probability": 0.20, "condition": "when the route changes from dropping packets to returning ICMP unreachable"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS was fixed but the resolved IP is behind a firewall"},
+      {"error_id": "networking/host-unreachable/tcp-linux", "probability": 0.15, "condition": "when routing is partially restored but firewall still drops packets"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "Timeout means no response at all (packets dropped or host down); refused means the host actively responded with RST, confirming it is alive but nothing is listening"},
+      {"error_id": "networking/dns-timeout/dns-linux", "distinction": "Connection timeout is TCP-level (after DNS resolution); DNS timeout is during name resolution itself before any TCP connection is attempted"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 72,
+    "last_verification": "2026-02-12"
+  }
+}

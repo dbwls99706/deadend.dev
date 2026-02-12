@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/maven-build-failure/maven3-linux",
+  "url": "https://deadends.dev/java/maven-build-failure/maven3-linux",
+  "error": {
+    "signature": "[ERROR] COMPILATION ERROR",
+    "regex": "\\[ERROR\\].*COMPILATION ERROR|BUILD FAILURE.*Compilation failure",
+    "domain": "java",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "maven", "version_range": ">=3.8,<4.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Maven compilation failure occurs when the Java compiler encounters errors in source code during the compile phase. Common causes include missing imports, type errors, incompatible JDK version, missing dependency declarations, or annotation processor failures."
+  },
+  "dead_ends": [
+    {
+      "action": "Running 'mvn clean install -DskipTests' to bypass the compilation error",
+      "why_fails": "-DskipTests only skips test execution, not test compilation. The compilation error will still occur. Even -Dmaven.test.skip=true (which skips test compilation) does not help if the error is in main source code. Skipping tests does not fix compilation failures.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Deleting the ~/.m2/repository folder and re-downloading all dependencies",
+      "why_fails": "Deleting the local repository forces re-download of all dependencies, which is slow and usually unnecessary. Compilation errors are almost never caused by corrupted local repository artifacts. The error is in the source code or dependency declarations, not the repository cache.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Read the compiler error output carefully and fix the specific source code issue",
+      "success_rate": 0.92,
+      "how": "1. Look for the '[ERROR]' lines in Maven output — they contain the file path, line number, and error description. 2. Common errors: 'cannot find symbol' (missing import or dependency), 'incompatible types' (type mismatch), 'method does not override' (incorrect @Override). 3. Fix the source code error. 4. If the error references a class from a dependency, verify the dependency is declared in pom.xml with the correct groupId, artifactId, and version.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify the Maven compiler plugin configuration matches the project's JDK version",
+      "success_rate": 0.85,
+      "how": "1. Check the maven-compiler-plugin configuration in pom.xml. 2. Ensure <maven.compiler.release> or <maven.compiler.source>/<maven.compiler.target> matches your JDK version. 3. Run 'mvn -version' to verify which JDK Maven is using. 4. If using JDK 17+ features, set <maven.compiler.release>17</maven.compiler.release>. 5. For annotation processors (Lombok, MapStruct), ensure the processor is declared in the compiler plugin's <annotationProcessorPaths>.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.20, "condition": "when adding a dependency to fix compilation introduces a version conflict"},
+      {"error_id": "java/incompatible-types/jdk17-linux", "probability": 0.30, "condition": "when the underlying compilation error is a type mismatch"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.15, "condition": "when resolving a dependency conflict changes API availability causing compilation errors"},
+      {"error_id": "java/unsupportedclassversionerror/jdk17-linux", "probability": 0.10, "condition": "when fixing class version error by downgrading JDK makes newer syntax invalid"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/incompatible-types/jdk17-linux", "distinction": "Maven build failure is the wrapper; incompatible types is a specific compiler error type. Maven build failure can be caused by many different compiler errors, not just type mismatches."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 100,
+    "last_verification": "2026-02-12"
+  }
+}

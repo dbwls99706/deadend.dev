@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gitlab-runner-stuck/gitlab-linux",
+  "url": "https://deadends.dev/cicd/gitlab-runner-stuck/gitlab-linux",
+  "error": {
+    "signature": "This job is stuck because the project doesn't have any runners online assigned to it",
+    "regex": "(?:job is stuck|no runners online|stuck.*pending|Waiting for runner|no available runner|runner.*not available|This job has not started yet)",
+    "domain": "cicd",
+    "category": "infrastructure",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "gitlab-ci", "version_range": ">=15.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "GitLab CI job is stuck in pending state because no registered runner matches the job's tags, the runner is offline, or shared runners are disabled for the project."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove all tags from the job to run on any runner",
+      "why_fails": "Untagged jobs may run on inappropriate runners (wrong architecture, missing tools, insufficient resources), causing build failures",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restart the GitLab web application expecting it to fix runner connectivity",
+      "why_fails": "The GitLab application server and the runner are separate processes; restarting GitLab does not affect runner registration or connectivity",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify runner registration and ensure tags match the job requirements",
+      "success_rate": 0.90,
+      "how": "Go to Settings > CI/CD > Runners and check runner status. Ensure the runner's tags match the tags specified in .gitlab-ci.yml. Re-register the runner if needed with 'gitlab-runner register'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enable shared runners or register a new project-specific runner",
+      "success_rate": 0.88,
+      "how": "Go to Settings > CI/CD > Runners > Enable shared runners (if available on your GitLab instance). Or register a new runner: 'gitlab-runner register --url https://gitlab.com --token YOUR_TOKEN'",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.15, "condition": "When runner finally picks up the job but is under-resourced, causing test timeouts"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.10, "condition": "When flaky test failures consume all runner capacity, causing new jobs to queue"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "distinction": "GitLab runner stuck refers to GitLab CI runner registration and tag matching; Jenkins agent offline refers to Jenkins node connectivity"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

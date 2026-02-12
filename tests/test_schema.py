@@ -16,6 +16,7 @@ class TestSchemaEdgeCases:
             "git", "mcp", "http", "auth", "db", "rust", "llm",
             "typescript", "go", "kubernetes", "terraform",
             "aws", "nextjs", "react",
+            "java", "database", "cicd", "php", "dotnet", "networking",
         ]
         for domain in valid_domains:
             canon = make_canon()

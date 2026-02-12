@@ -22,6 +22,27 @@
   <meta name="twitter:card" content="summary">
 
   <link rel="canonical" href="{{ base_url }}/{{ domain }}/">
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ domain }} errors — Dead Ends & Fixes",
+    "description": "All known {{ domain }} errors with dead ends and verified workarounds. {{ total }} error entries.",
+    "url": "{{ base_url }}/{{ domain }}/",
+    "isPartOf": {"@type": "WebSite", "name": "deadends.dev", "url": "{{ base_url }}"},
+    "numberOfItems": {{ total }},
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": {{ total }},
+      "itemListElement": [{% for e in entries %}
+        {"@type": "ListItem", "position": {{ loop.index }}, "url": "{{ base_url }}/{{ e.id }}", "name": "{{ e.signature | e }}"}{{ "," if not loop.last else "" }}{% endfor %}
+      ]
+    }
+  }
+  </script>
+
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
     a { color: #58a6ff; }

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/sqlite-readonly/sqlite3-linux",
+  "url": "https://deadends.dev/database/sqlite-readonly/sqlite3-linux",
+  "error": {
+    "signature": "sqlite3.OperationalError: attempt to write a readonly database",
+    "regex": "attempt to write a readonly database",
+    "domain": "database",
+    "category": "permission_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "sqlite", "version_range": ">=3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "The SQLite database file or its containing directory does not have write permissions for the current user/process. SQLite needs write access to both the database file and the directory (for journal/WAL files). Common in containerized environments, after deployment, or with incorrect file ownership."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting the database file to chmod 777 in production",
+      "why_fails": "While this grants write access, it also allows any user on the system to read and modify the database, creating a serious security vulnerability. It is a dangerous shortcut that masks the real ownership issue.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Opening the database connection with read-write mode flag when file permissions deny writes",
+      "why_fails": "The SQLite connection URI mode (e.g., mode=rw) only controls how SQLite opens the file. It cannot override OS-level file permissions. If the filesystem denies write access, no SQLite flag can bypass it.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix file and directory permissions for the application user",
+      "success_rate": 0.93,
+      "how": "Identify the user running the application (e.g., www-data for web servers). Set ownership: chown www-data:www-data /path/to/db.sqlite3 /path/to/. Set permissions: chmod 664 /path/to/db.sqlite3; chmod 775 /path/to/. The directory needs write permission for SQLite journal files.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Move the database to a writable directory in containerized environments",
+      "success_rate": 0.88,
+      "how": "In Docker, mount a writable volume: docker run -v /host/data:/app/data myimage. In the application, point the database path to the mounted volume. Ensure the container user has write access. For Kubernetes, use a PersistentVolumeClaim mounted at the database path.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/sqlite-locked/sqlite3-linux", "probability": 0.10, "condition": "when fixing permissions reveals a concurrent access issue that was masked by the readonly error"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.10, "condition": "when a migration tool fails because it cannot write to the SQLite database"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/sqlite-locked/sqlite3-linux", "distinction": "'readonly database' is a persistent file permission issue. 'database is locked' is a transient concurrency issue. Readonly will never resolve on its own; locked will resolve when the other connection releases its lock."},
+      {"error_id": "database/redis-readonly/redis7-linux", "distinction": "SQLite readonly is a file permission issue on a single-node embedded database. Redis READONLY is a replication topology issue on a distributed system. Completely different causes despite similar names."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

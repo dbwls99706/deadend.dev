@@ -63,9 +63,36 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "node/digital-envelope-unsupported/node20-linux",
+        "probability": 0.2
+      },
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "probability": 0.24
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/maximum-call-stack/node20-linux",
+        "probability": 0.1
+      },
+      {
+        "error_id": "node/eacces-permission-denied/node20-linux",
+        "probability": 0.14
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/enomem/node20-linux",
+        "distinction": "'[ERR_INVALID_ARG_TYPE]' indicates an invalid argument type, while 'Error' indicates system memory exhaustion."
+      },
+      {
+        "error_id": "node/econnrefused/node20-linux",
+        "distinction": "'[ERR_INVALID_ARG_TYPE]' indicates an invalid argument type, while 'Error' indicates a refused TCP connection."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

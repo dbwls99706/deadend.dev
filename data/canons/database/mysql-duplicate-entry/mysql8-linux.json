@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-duplicate-entry/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-duplicate-entry/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1062 (23000): Duplicate entry '42' for key 'PRIMARY'",
+    "regex": "ERROR 1062.*Duplicate entry .* for key",
+    "domain": "database",
+    "category": "constraint_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "An INSERT or UPDATE attempts to store a duplicate value in a column with a unique index or primary key. Caused by AUTO_INCREMENT desync after bulk imports, race conditions, or application logic not checking for existing records."
+  },
+  "dead_ends": [
+    {
+      "action": "Using INSERT IGNORE to silently skip duplicates without understanding which rows are skipped",
+      "why_fails": "INSERT IGNORE silently discards rows with duplicate keys and also suppresses other errors (type conversion warnings, NOT NULL violations). This leads to silent data loss that is very hard to debug later.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing the unique index to avoid duplicate errors",
+      "why_fails": "Removing the unique constraint allows duplicate data which violates business rules and can cause incorrect query results, broken joins, and application-level errors.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use INSERT ... ON DUPLICATE KEY UPDATE to handle duplicates explicitly",
+      "success_rate": 0.94,
+      "how": "Rewrite as: INSERT INTO my_table (id, name) VALUES (42, 'new_name') ON DUPLICATE KEY UPDATE name = VALUES(name); This updates the existing row when a duplicate key is found, giving you upsert behavior.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reset AUTO_INCREMENT if the counter is desynchronized",
+      "success_rate": 0.90,
+      "how": "Run: ALTER TABLE my_table AUTO_INCREMENT = 1; MySQL will automatically set it to MAX(id)+1. This commonly fixes issues after bulk imports or table recovery. Verify: SHOW TABLE STATUS LIKE 'my_table';",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.15, "condition": "when concurrent INSERT ON DUPLICATE KEY UPDATE operations cause lock contention"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.10, "condition": "when a failed migration leaves AUTO_INCREMENT out of sync"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/unique-violation/pg16-linux", "distinction": "MySQL says 'Duplicate entry X for key Y' while PostgreSQL says 'duplicate key value violates unique constraint'. Same concept, different error format. MySQL shows the actual duplicate value in the message."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

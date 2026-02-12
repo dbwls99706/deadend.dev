@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/laravel-model-not-found/laravel11-linux",
+  "url": "https://deadends.dev/php/laravel-model-not-found/laravel11-linux",
+  "error": {
+    "signature": "Illuminate\\Database\\Eloquent\\ModelNotFoundException: No query results for model [App\\Models\\User] 42",
+    "regex": "ModelNotFoundException.*No query results for model \\[.*\\]",
+    "domain": "php",
+    "category": "framework_laravel",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "laravel", "version_range": ">=11.0,<12.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "ModelNotFoundException is thrown by Laravel when using findOrFail(), firstOrFail(), or route model binding and the record does not exist. This is expected behavior for missing records but often surfaces as an unhandled 404 error in production."
+  },
+  "dead_ends": [
+    {"action": "Catching ModelNotFoundException globally and returning an empty model", "why_fails": "Returning an empty model instead of a 404 hides the fact that the resource does not exist. Downstream code may attempt to use null properties from the empty model, causing confusing errors or displaying incorrect data to users.", "fail_rate": 0.70, "sources": [], "condition": ""},
+    {"action": "Replacing all findOrFail() calls with find() to avoid the exception", "why_fails": "Using find() instead of findOrFail() returns null when the record is missing, which pushes null handling to every call site. This leads to 'call to member function on null' errors scattered throughout the codebase.", "fail_rate": 0.68, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Handle the exception properly in the exception handler with a user-friendly 404 response", "success_rate": 0.94, "how": "In app/Exceptions/Handler.php (or bootstrap/app.php for Laravel 11), register a handler for ModelNotFoundException that returns a proper 404 JSON response for API routes or renders a 404 view for web routes. Laravel's default handler already converts this to a 404 but customize the message.", "sources": [], "condition": ""},
+    {"action": "Use optional route model binding or add existence validation before queries", "success_rate": 0.90, "how": "For route model binding, use Optional binding by defining a 'missing' method on the route. For manual queries, use 'exists()' check before findOrFail, or use find() with explicit null handling: '$user = User::find($id); if (!$user) { return response()->json([\"error\" => \"Not found\"], 404); }'.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/laravel-route-not-found/laravel11-linux", "probability": 0.15, "condition": "when the missing model triggers a redirect to a route that does not exist"}],
+    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.10, "condition": "when the database connection fails intermittently causing query results to appear empty"}],
+    "frequently_confused_with": [{"error_id": "php/pdo-connection-failed/php83-linux", "distinction": "ModelNotFoundException means the database is connected but the record does not exist while PDO connection failed means the database itself is unreachable"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

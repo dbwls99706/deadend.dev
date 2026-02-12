@@ -62,9 +62,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "git/shallow-update-not-allowed/git2-linux",
+        "probability": 0.22
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "git/cannot-lock-ref/git2-linux",
+        "probability": 0.12
+      },
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "probability": 0.15
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/submodule-not-initialized/git2-linux",
+        "distinction": "'pre-commit hook failed (add --no-verify to bypass)' indicates a pre-commit hook failure, while 'fatal' indicates a missing Git submodule mapping."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

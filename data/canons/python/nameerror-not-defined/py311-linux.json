@@ -64,9 +64,28 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [],
-    "preceded_by": [],
-    "frequently_confused_with": []
+    "leads_to": [
+      {
+        "error_id": "python/permissionerror-errno13/py311-linux",
+        "probability": 0.22
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "python/modulenotfounderror-no-module-named/py310-macos",
+        "probability": 0.1
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/subprocess-calledprocesserror/py311-linux",
+        "distinction": "'NameError' indicates a reference to an undefined variable, while 'subprocess.CalledProcessError' indicates a subprocess command failure."
+      },
+      {
+        "error_id": "python/deprecationwarning-datetime-utcnow/py311-linux",
+        "distinction": "'NameError' indicates a reference to an undefined variable, while 'DeprecationWarning' indicates use of a deprecated API."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",
