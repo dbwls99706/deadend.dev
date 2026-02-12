@@ -165,9 +165,9 @@ Each error is a JSON file with:
 }
 ```
 
-## AI Agent Integration — 15 Discovery Formats
+## AI Agent Integration — 18 Discovery Formats
 
-Every page on deadends.dev includes machine-readable data in 15 formats:
+Every page on deadends.dev includes machine-readable data in 18 formats:
 
 | Format | Location | Purpose |
 |--------|----------|---------|
@@ -185,7 +185,9 @@ Every page on deadends.dev includes machine-readable data in 15 formats:
 | agent-card.json | `/.well-known/` | Google A2A protocol |
 | security.txt | `/.well-known/` | RFC 9116 security contact |
 | robots.txt | `/robots.txt` | 34 AI crawlers explicitly welcomed |
-| CLAUDE.md | `/CLAUDE.md` | AI coding agent instructions |
+| CLAUDE.md | `/CLAUDE.md` | Claude Code instructions |
+| AGENTS.md | `/AGENTS.md` | OpenAI Codex CLI instructions |
+| .clinerules | `/.clinerules` | Cline AI instructions |
 
 ## Development
 
@@ -213,3 +215,5 @@ python -m generator.validate --data-only  # Validate before submitting
 ## License
 
 MIT (code) · CC BY 4.0 (data)
+
+<!-- mcp-name: io.github.dbwls99706/deadends-dev -->
