@@ -971,7 +971,7 @@ def build_llms_txt(canons: list[dict]) -> None:
         "",
         "## Integration Methods (choose one)",
         "",
-        "### Option 1: MCP Server (recommended for AI agents)",
+        "### Option 1: MCP Server (recommended for AI coding agents)",
         "",
         "```",
         "pip install deadends-dev",

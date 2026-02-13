@@ -91,8 +91,10 @@ SUMMARY={{ verdict.summary }}
 DEAD_ENDS={% for de in dead_ends %}{{ de.action }} (fail_rate={{ de.fail_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
 WORKAROUNDS={% for wa in workarounds|default([]) %}{{ wa.action }} (success_rate={{ wa.success_rate }}){% if not loop.last %}; {% endif %}{% endfor %}
 {% set graph = transition_graph|default({}) %}{% if graph.get("leads_to", []) %}LEADS_TO={% for lt in graph.leads_to %}{{ lt.error_id }} (p={{ lt.probability }}){% if not loop.last %}; {% endif %}{% endfor %}
+{% endif %}{% if graph.get("preceded_by", []) %}PRECEDED_BY={% for pb in graph.preceded_by %}{{ pb.error_id }} (p={{ pb.probability }}){% if not loop.last %}; {% endif %}{% endfor %}
 {% endif %}JSON_API={{ base_url }}/api/v1/{{ id }}.json
-MATCH_API={{ base_url }}/api/v1/match.json</pre>
+MATCH_API={{ base_url }}/api/v1/match.json
+STATS_API={{ base_url }}/api/v1/stats.json</pre>
   {% endautoescape %}
 
   <!-- HUMAN-READABLE SECTION -->

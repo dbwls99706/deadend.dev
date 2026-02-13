@@ -73,7 +73,10 @@ API_PATTERN={{ base_url }}/api/v1/{domain}/{slug}/{env}.json
 OPENAPI_SPEC={{ base_url }}/api/v1/openapi.json
 LLMS_TXT={{ base_url }}/llms.txt
 LLMS_FULL={{ base_url }}/llms-full.txt
-USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[].</pre>
+NDJSON_STREAM={{ base_url }}/api/v1/errors.ndjson
+STATS_API={{ base_url }}/api/v1/stats.json
+MCP_SERVER=pip install deadends-dev && python -m mcp.server
+USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[]. Or use the MCP server for direct tool access.</pre>
   {% endautoescape %}
 
   <header>
