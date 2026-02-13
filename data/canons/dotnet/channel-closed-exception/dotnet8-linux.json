@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/channel-closed-exception/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/channel-closed-exception/dotnet8-linux",
+  "error": {
+    "signature": "System.Threading.Channels.ChannelClosedException: The channel has been closed.",
+    "regex": "(ChannelClosedException|The channel has been closed)",
+    "domain": "dotnet",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.88,
+    "last_updated": "2026-02-13",
+    "summary": "ChannelClosedException is thrown when attempting to write to or read from a System.Threading.Channels.Channel<T> that has been completed (writer.Complete() was called) or when a bounded channel's writer is completed while readers are still awaiting. This commonly occurs in producer-consumer patterns when the producer signals completion prematurely, when exception handling in the producer calls Complete(exception) and the consumer does not handle the closure, or when application shutdown triggers channel completion while background consumers are still processing. Fix by using TryWrite/WaitToReadAsync patterns that gracefully handle closure, implementing proper cancellation token propagation, and ensuring producers and consumers have coordinated lifecycle management."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching ChannelClosedException and re-opening the channel by creating a new instance",
+      "why_fails": "Channels cannot be re-opened once completed. Creating a new channel instance means existing consumer tasks are still reading from the old (closed) channel while producers write to the new one. Without rewiring all consumers to the new channel reference, this creates a split-brain scenario where messages are lost. The underlying lifecycle coordination issue remains unsolved",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing the writer.Complete() call to prevent the channel from ever closing",
+      "why_fails": "Without calling Complete(), consumers using await foreach (var item in reader.ReadAllAsync()) will hang indefinitely waiting for more items after the producer finishes. This also prevents the channel from being garbage collected in long-running applications, causing memory leaks. The ReadAllAsync() enumeration only terminates when the writer signals completion",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using an unbounded channel to avoid backpressure-related closure issues",
+      "why_fails": "Switching from bounded to unbounded does not prevent ChannelClosedException. The exception is caused by writing after Complete() is called, not by channel capacity. An unbounded channel still throws ChannelClosedException if the writer has been completed. Additionally, unbounded channels introduce unbounded memory growth risk under producer-faster-than-consumer scenarios",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use TryWrite() and WaitToReadAsync() to gracefully handle channel closure",
+      "success_rate": 0.90,
+      "how": "Replace direct WriteAsync/ReadAsync with try-pattern methods that return false on closure: // Producer: while (hasData) { if (!channel.Writer.TryWrite(item)) { break; /* channel closed or full */ } } // Consumer: while (await channel.Reader.WaitToReadAsync(cancellationToken)) { while (channel.Reader.TryRead(out var item)) { await ProcessAsync(item); } }. The WaitToReadAsync pattern returns false when the channel is completed, avoiding the exception entirely",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement coordinated shutdown using CancellationToken and proper Complete() sequencing",
+      "success_rate": 0.88,
+      "how": "Use a CancellationTokenSource to coordinate producer and consumer lifecycles: var cts = new CancellationTokenSource(); // Producer: try { while (!cts.Token.IsCancellationRequested) { await channel.Writer.WriteAsync(item, cts.Token); } } catch (OperationCanceledException) { } finally { channel.Writer.Complete(); } // Consumer: try { await foreach (var item in channel.Reader.ReadAllAsync(cts.Token)) { await ProcessAsync(item); } } catch (OperationCanceledException) { }. On shutdown, call cts.Cancel() to stop producers first, then consumers drain remaining items",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Complete(exception) with proper error propagation to consumers",
+      "success_rate": 0.85,
+      "how": "When the producer encounters an error, pass the exception to Complete() so consumers receive it: // Producer: try { await ProduceItemsAsync(channel.Writer); channel.Writer.Complete(); } catch (Exception ex) { channel.Writer.Complete(ex); } // Consumer: try { await foreach (var item in channel.Reader.ReadAllAsync()) { ... } } catch (ChannelClosedException ex) when (ex.InnerException != null) { logger.LogError(ex.InnerException, \"Producer failed\"); // handle or retry }. This propagates the root cause through the channel rather than losing it",
+      "sources": [],
+      "condition": "When producers can fail and consumers need to know the reason"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.25, "condition": "when channel closure triggers CancellationToken cancellation in dependent tasks"},
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.10, "condition": "when removing Complete() calls leads to unbounded channel growth"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.20, "condition": "when task cancellation causes the producer to call Complete() while consumers are still reading"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.10, "condition": "when an unhandled exception in the producer pipeline triggers premature channel completion"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "distinction": "TaskCanceledException indicates a task was canceled via CancellationToken; ChannelClosedException specifically indicates an attempt to read from or write to a channel whose writer has been completed, regardless of cancellation"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

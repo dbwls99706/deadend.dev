@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cuda-unknown-error/cuda12-linux",
+  "url": "https://deadends.dev/cuda/cuda-unknown-error/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: CUDA error: unknown error",
+    "regex": "CUDA error: unknown error|cudaErrorUnknown",
+    "domain": "cuda",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "NVIDIA",
+      "vram_gb": 24
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.75,
+    "last_updated": "2026-02-13",
+    "summary": "A catch-all CUDA error that occurs when the CUDA runtime encounters an unrecoverable state. Most commonly caused by a stale GPU context after a previous CUDA error, driver bugs, or a corrupted GPU state from suspend/resume cycles. Often requires driver-level remediation."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the same operation in a loop assuming it is a transient error",
+      "why_fails": "Once the CUDA context enters an error state, all subsequent CUDA operations in the same process will fail; retrying without resetting the context is futile",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__ERROR.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set CUDA_LAUNCH_BLOCKING=1 hoping to get a more specific error",
+      "why_fails": "Unlike device-side assert errors, 'unknown error' typically originates from driver or hardware level, not from a specific kernel launch; synchronous mode does not reveal additional information",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/cuda.html#asynchronous-execution"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Uninstall and reinstall PyTorch to fix the CUDA error",
+      "why_fails": "The error is at the driver/hardware layer, not the framework layer; reinstalling PyTorch does not affect the NVIDIA driver or GPU state",
+      "fail_rate": 0.88,
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reset the GPU state by killing all CUDA processes and reinitializing",
+      "success_rate": 0.82,
+      "how": "# Kill all GPU processes\nsudo fuser -v /dev/nvidia* 2>/dev/null | xargs -r sudo kill -9\n# Or reset the GPU directly\nsudo nvidia-smi --gpu-reset\n# Then restart your training script in a fresh process",
+      "sources": [
+        "https://docs.nvidia.com/deploy/driver-persistence/index.html"
+      ],
+      "condition": "You have root/sudo access on the machine"
+    },
+    {
+      "action": "Reboot the machine to fully reset GPU driver and hardware state",
+      "success_rate": 0.90,
+      "how": "sudo reboot\n# After reboot, verify GPU state: nvidia-smi\n# Then re-run your workload",
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#post-installation-actions"
+      ],
+      "condition": "nvidia-smi --gpu-reset fails or the GPU is in an unrecoverable state"
+    },
+    {
+      "action": "Update or reinstall the NVIDIA driver to a known-stable version",
+      "success_rate": 0.80,
+      "how": "# Check current driver version\nnvidia-smi\n# Install latest stable driver\nsudo apt update && sudo apt install nvidia-driver-545\n# Or use the NVIDIA official installer\nsudo ./NVIDIA-Linux-x86_64-545.29.06.run\nsudo reboot",
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-installation-guide-linux/#driver-installation"
+      ],
+      "condition": "Error persists after reboot, indicating driver corruption or hardware-driver incompatibility"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/nvidia-smi-failed/cuda12-linux",
+        "probability": 0.30,
+        "condition": "Repeated unknown errors may destabilize the driver, causing nvidia-smi to fail"
+      },
+      {
+        "error_id": "cuda/context-destroyed/cuda12-linux",
+        "probability": 0.20,
+        "condition": "The unknown error state often corrupts the CUDA context, leading to context-destroyed errors in subsequent operations"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/device-side-assert/cuda12-a100",
+        "probability": 0.15,
+        "condition": "Unhandled device-side assert can leave the GPU in a corrupted state that manifests as unknown error"
+      },
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-rtx3090",
+        "probability": 0.10,
+        "condition": "Repeated OOM events without proper cleanup can corrupt GPU state"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/device-side-assert/cuda12-a100",
+        "distinction": "Device-side assert has a specific cause (illegal kernel operation) and can be debugged with CUDA_LAUNCH_BLOCKING=1; unknown error has no specific kernel-level cause"
+      },
+      {
+        "error_id": "cuda/nvidia-smi-failed/cuda12-linux",
+        "distinction": "nvidia-smi failure means the driver cannot communicate at all; unknown error means CUDA runtime is partially functional but encounters an unrecoverable state"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

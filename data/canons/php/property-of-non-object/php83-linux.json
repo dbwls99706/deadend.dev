@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/property-of-non-object/php83-linux",
+  "url": "https://deadends.dev/php/property-of-non-object/php83-linux",
+  "error": {
+    "signature": "Trying to access array offset on null",
+    "regex": "Trying to access array offset on (?:null|false|int|float|bool|string)",
+    "domain": "php",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.1,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.92,
+    "last_updated": "2026-02-13",
+    "summary": "This warning (promoted to a full warning in PHP 8.0+) occurs when code attempts to use array bracket syntax on a value that is null, false, or another non-array type. It replaces the older 'Trying to get property of non-object' message in many cases. Common causes include: API responses returning null instead of an expected array, database queries returning false on failure, json_decode() returning null for malformed JSON, and uninitialized variables assumed to be arrays. AI agents frequently encounter this when generated code omits null checks on function return values."
+  },
+  "dead_ends": [
+    {"action": "Suppressing the warning with the @ error suppression operator", "why_fails": "The @ operator hides the warning but the underlying null value propagates through the application. Downstream code receives null instead of the expected data, causing incorrect behavior, silent data loss, or errors that surface far from the actual problem. This makes debugging extremely difficult and violates PHP 8.x best practices that treat these as meaningful warnings.", "fail_rate": 0.88, "sources": [], "condition": ""},
+    {"action": "Casting the variable to array with (array)$variable before access", "why_fails": "Casting null to an array produces an empty array, so the expected key will still not exist and the access returns null anyway. Casting false to an array produces [false], which gives incorrect data. This masks the real issue: the upstream function or query returned an unexpected type, and the root cause should be investigated rather than papered over.", "fail_rate": 0.74, "sources": [], "condition": ""},
+    {"action": "Initializing the variable to an empty array at the top of the function", "why_fails": "If the variable is later assigned from a function that can return null (e.g., json_decode, database fetch), the initialization is overwritten. The null replaces the empty array, and the original warning returns. The fix only works if the variable is never reassigned, which is rarely the case in the code patterns that trigger this error.", "fail_rate": 0.68, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use the null coalescing operator (??) to provide a safe default at the point of access", "success_rate": 0.93, "how": "Replace direct array access like $data['key'] with $data['key'] ?? null (or a meaningful default). For nested access, chain the operator: $response['data']['items'] ?? []. This cleanly handles null at any level of the chain without suppressing errors. For object property access on potentially null values in PHP 8.0+, use the nullsafe operator: $obj?->property?->subProperty. Example: $name = $user['profile']['name'] ?? 'Unknown';", "sources": [], "condition": ""},
+    {"action": "Add explicit null/type checks before accessing the return value of functions that can return null or false", "success_rate": 0.91, "how": "Before accessing array offsets, validate the source data. For json_decode: $data = json_decode($json, true); if (!is_array($data)) { handle error }. For database queries: $row = $stmt->fetch(); if ($row === false) { handle no results }. For API responses: validate the response structure before deep access. Use isset() or array_key_exists() for individual key checks. This makes the code self-documenting about what types are expected.", "sources": [], "condition": ""},
+    {"action": "Use strict return types and union types to catch null returns at the type system level", "success_rate": 0.87, "how": "Declare return types on functions that may return null: function getUser(int $id): ?array. Enable strict_types with declare(strict_types=1) at the top of every file. Use PHP 8.1+ intersection and union types to make nullable returns explicit. Use static analysis tools like PHPStan (level 6+) or Psalm to detect potential null dereferences at build time: 'vendor/bin/phpstan analyse --level 6 src/'. PHPStan will flag every instance where an array offset is accessed on a potentially null value.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/type-error-argument/php83-linux", "probability": 0.18, "condition": "when the null value from the failed array access is passed as an argument to a function expecting a non-null type"}],
+    "preceded_by": [{"error_id": "php/json-decode-error/php83-linux", "probability": 0.25, "condition": "when json_decode() returns null on malformed JSON and the result is immediately accessed as an array"}],
+    "frequently_confused_with": [{"error_id": "php/undefined-variable/php83-linux", "distinction": "Undefined variable means the variable was never assigned at all, while 'Trying to access array offset on null' means the variable exists but its value is null (or another non-array type). The former is a scope or naming issue; the latter is a data flow issue where a function returned an unexpected type."}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

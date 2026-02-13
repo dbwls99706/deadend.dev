@@ -69,7 +69,7 @@ MATCH_API={{ base_url }}/api/v1/match.json</pre>
     <p class="meta">{{ environments|length }} environment{{ 's' if environments|length != 1 else '' }} · {{ total_dead_ends }} dead ends · {{ total_workarounds }} workarounds · Fix rates: {{ min_rate }}%–{{ max_rate }}%</p>
   </header>
 
-  <!-- TL;DR for AI agents -->
+  <!-- TL;DR for AI coding agents -->
   <section id="tldr" style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1rem;margin:1rem 0;">
     <strong>TL;DR:</strong> Fix rates range from {{ min_rate }}% to {{ max_rate }}% across {{ environments|length }} environments.
     Top dead end: <em>{{ common_dead_ends[0].action }}</em> ({{ (common_dead_ends[0].fail_rate * 100)|int }}% fail).

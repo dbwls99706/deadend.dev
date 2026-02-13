@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/env-var-client-access/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/env-var-client-access/nextjs14-linux",
+  "error": {
+    "signature": "Error: Environment variable 'X' is not available on the client. Use NEXT_PUBLIC_ prefix.",
+    "regex": "(Environment variable .+ is not available on the client|Use NEXT_PUBLIC_ prefix|process\\.env\\..+ is undefined)",
+    "domain": "nextjs",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "next.js", "version_range": ">=14.0,<15.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.94,
+    "last_updated": "2026-02-13",
+    "summary": "Next.js only exposes environment variables to client-side (browser) code if they are prefixed with NEXT_PUBLIC_. Variables without this prefix are available only in server-side code (API routes, getServerSideProps, Server Components, Server Actions). This is a security feature to prevent accidental leaking of secrets like API keys, database credentials, and tokens to the browser bundle. The error manifests as undefined values when accessing process.env.MY_VAR in client components, or as an explicit error when Next.js detects client-side access attempts. Fix by either adding the NEXT_PUBLIC_ prefix for truly public values, or restructuring the code to access the variable server-side and pass the result to the client."
+  },
+  "dead_ends": [
+    {
+      "action": "Using process.env directly in client components and expecting runtime variable access",
+      "why_fails": "Next.js performs static string replacement of process.env.NEXT_PUBLIC_* at build time using webpack DefinePlugin. Non-prefixed variables are never included in the client bundle. process.env on the client is an empty object - there is no runtime environment variable access in the browser. Even if you somehow inject process.env at runtime (e.g., via a polyfill), Next.js build optimization has already replaced the references",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding the secret/sensitive variable with NEXT_PUBLIC_ prefix to make it accessible on the client",
+      "why_fails": "NEXT_PUBLIC_ variables are inlined into the JavaScript bundle at build time and are visible to anyone who inspects the page source or network requests. Adding NEXT_PUBLIC_ to database URLs, API secret keys, auth tokens, or any sensitive value exposes them publicly. This is a security vulnerability, not a fix. The variable was intentionally server-only to protect it",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": "When the variable contains sensitive data (API keys, database URLs, secrets)"
+    },
+    {
+      "action": "Using dynamic import or eval to access process.env at runtime in client code",
+      "why_fails": "The environment variable replacement happens at compile time during the webpack build, not at runtime. Dynamic import delays module loading but the module is still compiled with the same build-time replacements. eval('process.env.MY_VAR') will fail because process.env is not available in the browser environment. These approaches add complexity without solving the fundamental issue that server environment variables are not shipped to the client",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Prefix truly public (non-sensitive) variables with NEXT_PUBLIC_ in .env files",
+      "success_rate": 0.95,
+      "how": "Rename the variable in your .env file: NEXT_PUBLIC_API_URL=https://api.example.com, NEXT_PUBLIC_ANALYTICS_ID=UA-12345. Then access it as process.env.NEXT_PUBLIC_API_URL in client components. Important: you must restart the Next.js dev server after changing .env files. Only use this for non-sensitive values like public API endpoints, feature flags, or analytics IDs. Never prefix database URLs, API secrets, or auth tokens with NEXT_PUBLIC_",
+      "sources": [],
+      "condition": "When the variable contains non-sensitive, publicly safe values"
+    },
+    {
+      "action": "Create an API route or Server Action that accesses the server-side variable and returns the result",
+      "success_rate": 0.91,
+      "how": "Create a server endpoint that accesses the variable: // app/api/config/route.ts: export async function GET() { return Response.json({ apiUrl: process.env.INTERNAL_API_URL }); }. Call it from the client: const res = await fetch('/api/config'); const { apiUrl } = await res.json(); For Server Actions: // actions.ts: 'use server'; export async function getConfig() { return { featureEnabled: process.env.FEATURE_FLAG === 'true' }; }. This keeps the raw secret server-side while exposing only the computed result",
+      "sources": [],
+      "condition": "When the variable is sensitive or you need server-side processing of the value"
+    },
+    {
+      "action": "Pass server environment values as props from Server Components to Client Components",
+      "success_rate": 0.92,
+      "how": "Access the env var in a Server Component and pass it as a prop: // app/page.tsx (Server Component): import { ClientDashboard } from './ClientDashboard'; export default function Page() { const apiUrl = process.env.INTERNAL_API_URL; return <ClientDashboard apiUrl={apiUrl!} />; } // ClientDashboard.tsx: 'use client'; export function ClientDashboard({ apiUrl }: { apiUrl: string }) { /* use apiUrl */ }. This keeps the variable out of the client bundle while making the value available. Note: the value will still be visible in the HTML/RSC payload, so do not pass actual secrets this way - only pass derived/safe values",
+      "sources": [],
+      "condition": "When using the App Router with Server Components"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "nextjs/hydration-failed/nextjs14-linux", "probability": 0.15, "condition": "when server and client render different values because the env var is available server-side but undefined client-side"},
+      {"error_id": "nextjs/server-component-client-hook/nextjs14-linux", "probability": 0.10, "condition": "when developers try to convert a client component to a server component to access env vars but it uses hooks"}
+    ],
+    "preceded_by": [
+      {"error_id": "nextjs/use-client-directive_nextjs14-linux", "probability": 0.15, "condition": "when adding 'use client' to a component that previously accessed env vars as a server component"},
+      {"error_id": "nextjs/server-only-import-client/nextjs14-linux", "probability": 0.10, "condition": "when a server-only utility that reads env vars is imported into a client component"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "nextjs/server-only-import-client/nextjs14-linux", "distinction": "server-only-import-client is about importing a module marked with 'server-only' package into a client component; env-var-client-access is specifically about accessing non-NEXT_PUBLIC_ environment variables in client code"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

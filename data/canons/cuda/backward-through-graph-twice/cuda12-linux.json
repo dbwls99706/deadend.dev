@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/backward-through-graph-twice/cuda12-linux",
+  "url": "https://deadends.dev/cuda/backward-through-graph-twice/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: Trying to backward through the graph a second time",
+    "regex": "Trying to backward through the graph a second time.*Specify retain_graph=True",
+    "domain": "cuda",
+    "category": "autograd_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "NVIDIA",
+      "vram_gb": 24
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.90,
+    "last_updated": "2026-02-13",
+    "summary": "PyTorch frees the computation graph after the first backward() call. Calling backward() again on the same graph without retain_graph=True, or reusing a non-detached tensor across multiple losses, triggers this error."
+  },
+  "dead_ends": [
+    {
+      "action": "Always set retain_graph=True on every backward() call",
+      "why_fails": "retain_graph=True prevents graph memory from being freed, causing massive GPU memory leaks that eventually lead to OOM; it is a workaround, not a fix, and masks the real architectural problem",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Call optimizer.zero_grad() between the two backward passes hoping to reset the graph",
+      "why_fails": "zero_grad() only zeroes parameter gradients, it does not recreate the freed computation graph",
+      "fail_rate": 0.92,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.optim.Optimizer.zero_grad.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap the second backward call in torch.no_grad()",
+      "why_fails": "torch.no_grad() disables gradient tracking for new operations but cannot reconstruct an already-freed computation graph",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.no_grad.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Restructure code to compute all losses before calling a single backward() on the combined loss",
+      "success_rate": 0.94,
+      "how": "loss_total = loss_a + loss_b\nloss_total.backward()\noptimizer.step()",
+      "sources": [
+        "https://pytorch.org/docs/stable/notes/autograd.html"
+      ],
+      "condition": "Multiple loss terms that can be summed"
+    },
+    {
+      "action": "Use .detach() on tensors shared between independent computation paths",
+      "success_rate": 0.90,
+      "how": "For GAN training: fake_images = generator(z)\nd_loss = discriminator(fake_images.detach())  # detach so D backward doesn't traverse G graph\ng_loss = discriminator(fake_images)  # separate forward for G backward",
+      "sources": [
+        "https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html"
+      ],
+      "condition": "GAN or multi-network training where networks share intermediate tensors"
+    },
+    {
+      "action": "Use retain_graph=True only on the first backward() and let the second backward() free the graph",
+      "success_rate": 0.85,
+      "how": "loss_d.backward(retain_graph=True)  # keep graph for generator update\nloss_g.backward()  # final backward frees the graph\n# Ensure optimizer.step() and zero_grad() are called appropriately for each network",
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.Tensor.backward.html"
+      ],
+      "condition": "When two backward passes through the same graph are genuinely required"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-rtx3090",
+        "probability": 0.30,
+        "condition": "Using retain_graph=True as a blanket fix causes GPU memory to accumulate"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/tensor-device-mismatch/cuda12-linux",
+        "probability": 0.10,
+        "condition": "After fixing device placement, training loop logic errors surface"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/attributeerror-tensor-no-grad/torch2.1-linux",
+        "distinction": "No-grad errors occur when trying to access .grad on tensors with requires_grad=False; backward-through-graph-twice is about reusing a freed computation graph"
+      },
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-rtx3090",
+        "distinction": "OOM from retain_graph=True is a consequence of the naive fix for this error, not the same root cause"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

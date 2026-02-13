@@ -358,7 +358,7 @@ def build_sitemap(
 
 def build_robots_txt() -> None:
     """Generate robots.txt with explicit AI crawler allowances."""
-    content = f"""# deadends.dev - Structured failure knowledge for AI agents
+    content = f"""# deadends.dev - Structured failure knowledge for AI coding agents
 # All crawlers welcome — this site is BUILT for AI consumption
 
 User-agent: *
@@ -1537,7 +1537,7 @@ def build_well_known(canons: list[dict]) -> None:
 
 
 def build_stats_json(canons: list[dict]) -> None:
-    """Generate /api/v1/stats.json — detailed dataset statistics for AI agents."""
+    """Generate /api/v1/stats.json — dataset statistics for AI coding agents."""
     domains: dict[str, list[dict]] = {}
     for c in canons:
         domains.setdefault(c["error"]["domain"], []).append(c)
@@ -1599,13 +1599,13 @@ def build_ndjson(canons: list[dict]) -> None:
 
 
 def build_version_json(canons: list[dict]) -> None:
-    """Generate /api/v1/version.json — service metadata for AI agents."""
+    """Generate /api/v1/version.json — service metadata for AI coding agents."""
     domains = sorted({c["error"]["domain"] for c in canons})
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     version_data = {
         "service": "deadends.dev",
-        "version": "1.1.0",
+        "version": "1.4.0",
         "description": (
             "Structured failure knowledge for AI coding agents. "
             "Dead ends, workarounds, and error chains."

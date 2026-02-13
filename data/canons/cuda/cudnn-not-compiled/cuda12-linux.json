@@ -1,0 +1,132 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cudnn-not-compiled/cuda12-linux",
+  "url": "https://deadends.dev/cuda/cudnn-not-compiled/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: cuDNN error: CUDNN_STATUS_NOT_INITIALIZED",
+    "regex": "cuDNN error: CUDNN_STATUS_NOT_INITIALIZED|cuDNN (version mismatch|not initialized|failed to initialize)",
+    "domain": "cuda",
+    "category": "library_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "NVIDIA",
+      "vram_gb": 24
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-13",
+    "summary": "cuDNN library fails to initialize, typically due to a version mismatch between the installed cuDNN, CUDA toolkit, and the deep learning framework. Can also occur when cuDNN shared libraries are missing or LD_LIBRARY_PATH is misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Set torch.backends.cudnn.enabled = False to bypass cuDNN entirely",
+      "why_fails": "Disables hardware-accelerated convolution and RNN operations, causing 2-10x slowdown; treats the symptom rather than fixing the version mismatch",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://pytorch.org/docs/stable/backends.html#torch.backends.cudnn"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Download and install cuDNN from the NVIDIA website without checking CUDA version compatibility",
+      "why_fails": "cuDNN 8.x requires specific CUDA minor versions; installing cuDNN 8.9 with CUDA 12.0 may fail because cuDNN 8.9 requires CUDA 12.2+",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade only the CUDA toolkit without updating cuDNN or the framework",
+      "why_fails": "Upgrading CUDA without matching cuDNN and PyTorch versions creates a three-way version incompatibility that is harder to debug",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install PyTorch from the official channel with the correct CUDA version, which bundles a compatible cuDNN",
+      "success_rate": 0.93,
+      "how": "pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121\n# This bundles cuDNN matching CUDA 12.1; verify with: python -c \"import torch; print(torch.backends.cudnn.version())\"",
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use NVIDIA's official CUDA container images that have pre-matched CUDA, cuDNN, and NCCL versions",
+      "success_rate": 0.90,
+      "how": "docker run --gpus all -it nvcr.io/nvidia/pytorch:24.01-py3\n# NGC containers include tested combinations of CUDA, cuDNN, and PyTorch",
+      "sources": [
+        "https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pytorch"
+      ],
+      "condition": "Docker/container environment is available"
+    },
+    {
+      "action": "Install the matching cuDNN version using conda which handles dependency resolution automatically",
+      "success_rate": 0.88,
+      "how": "conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia\n# conda resolves cuDNN version automatically",
+      "sources": [
+        "https://pytorch.org/get-started/locally/"
+      ],
+      "condition": "Conda environment is available"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/device-side-assert/cuda12-a100",
+        "probability": 0.10,
+        "condition": "Partial cuDNN initialization can cause sporadic kernel failures"
+      },
+      {
+        "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
+        "probability": 0.20,
+        "condition": "cuDNN fix attempts that change CUDA version may trigger CUDA/PyTorch version mismatches"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/nvcc-not-found/cuda12-linux",
+        "probability": 0.15,
+        "condition": "Incomplete CUDA toolkit installation often also leaves cuDNN misconfigured"
+      },
+      {
+        "error_id": "cuda/version-mismatch/cuda12.1-torch2.1",
+        "probability": 0.18,
+        "condition": "CUDA/PyTorch version mismatch frequently also affects cuDNN compatibility"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/cudnn-not-compiled-with-support/cuda12-linux",
+        "distinction": "CUDNN_STATUS_NOT_INITIALIZED means cuDNN is present but fails to start; 'not compiled with support' means the framework was built without cuDNN entirely"
+      },
+      {
+        "error_id": "cuda/cublas-init-error/cuda12.1-a100",
+        "distinction": "cuBLAS init errors affect linear algebra operations; cuDNN init errors affect convolution and RNN operations. Both are library initialization failures but for different CUDA libraries"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

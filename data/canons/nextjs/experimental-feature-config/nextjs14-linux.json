@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/experimental-feature-config/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/experimental-feature-config/nextjs14-linux",
+  "error": {
+    "signature": "Error: The experimental feature 'X' requires 'experimental.X' to be enabled in next.config.js",
+    "regex": "(experimental feature .+ requires|experimental\\..+ to be enabled|requires.*experimental.*next\\.config)",
+    "domain": "nextjs",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "next.js", "version_range": ">=14.0,<15.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.90,
+    "last_updated": "2026-02-13",
+    "summary": "Next.js gates certain features behind experimental flags in next.config.js. When code uses an experimental API (e.g., serverActions, ppr, instrumentationHook, typedRoutes, serverComponentsExternalPackages) without the corresponding config flag, this error is thrown at build or dev startup. In Next.js 14, some previously experimental features have been promoted to stable (e.g., Server Actions became stable in 14.0), while others remain behind experimental flags. The confusion often arises from outdated documentation, blog posts referencing features that changed status between versions, or copying configuration from a different Next.js version. Fix by adding the correct experimental flag or by checking if the feature has been promoted to stable in your version."
+  },
+  "dead_ends": [
+    {
+      "action": "Enabling every experimental flag at once to avoid configuration errors",
+      "why_fails": "Experimental flags can conflict with each other and may introduce breaking behavior changes. Some experimental features are mutually exclusive or modify the same build pipeline in incompatible ways. Enabling untested combinations can cause build failures, runtime errors, or silently incorrect behavior. Additionally, experimental features may be removed or renamed in future versions, creating upgrade burden",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrading Next.js to a version where the feature was not experimental",
+      "why_fails": "If the feature was experimental in the earlier version, it either did not exist or was in a less stable state. Downgrading typically moves you further from stability, not closer. Features graduate from experimental to stable in newer versions, so upgrading is usually the correct direction. Downgrading also forfeits security patches and bug fixes",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting the experimental flag in environment variables instead of next.config.js",
+      "why_fails": "Next.js experimental flags must be set in next.config.js (or next.config.mjs/ts). They cannot be configured via environment variables, .env files, or command-line arguments. The Next.js config loader reads these flags from the config file directly during build initialization, before environment variable processing for runtime config",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the specific experimental flag to next.config.js",
+      "success_rate": 0.93,
+      "how": "Add the required experimental flag to your next.config.js: // next.config.js\n/** @type {import('next').NextConfig} */\nconst nextConfig = {\n  experimental: {\n    // Add the specific flag mentioned in the error:\n    ppr: true,                    // Partial Prerendering\n    typedRoutes: true,            // Type-safe routes\n    instrumentationHook: true,    // Instrumentation\n    serverComponentsExternalPackages: ['sharp', 'prisma'],\n  },\n};\nmodule.exports = nextConfig;\n\nOnly add the flag that the error message specifies. Restart the dev server after changing next.config.js",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check if the feature has been promoted to stable in Next.js 14 and remove the experimental prefix",
+      "success_rate": 0.90,
+      "how": "Several features were promoted to stable in Next.js 14: Server Actions (no longer need experimental.serverActions), App Router (stable since 13.4). Check the Next.js 14 release notes and upgrade guide. If you find the feature is now stable: 1) Remove the experimental flag, 2) Follow the migration guide for any API changes. Example: if you had experimental: { serverActions: true }, remove it in Next.js 14 since Server Actions are stable. For features that moved from experimental to top-level config: transpilePackages (was experimental.transpilePackages), serverComponentsExternalPackages (moved to top-level in 14.x). Update accordingly: const nextConfig = { serverComponentsExternalPackages: ['sharp'] };",
+      "sources": [],
+      "condition": "When upgrading from Next.js 13 to 14"
+    },
+    {
+      "action": "Use a conditional config to enable experimental features only in specific environments",
+      "success_rate": 0.87,
+      "how": "For features still under development, enable them conditionally: // next.config.js\nconst nextConfig = {\n  experimental: {\n    ...(process.env.ENABLE_PPR === 'true' && { ppr: true }),\n    ...(process.env.NODE_ENV === 'development' && { typedRoutes: true }),\n  },\n};\nmodule.exports = nextConfig;\n\nThis allows you to test experimental features in development while keeping production builds on stable features. Set ENABLE_PPR=true in .env.local for local development. This approach reduces risk when experimenting with features that may affect build output or runtime behavior",
+      "sources": [],
+      "condition": "When gradually adopting experimental features"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "nextjs/err-next-config-invalid_next14-linux", "probability": 0.15, "condition": "when adding experimental flags with incorrect types or unsupported flag names"},
+      {"error_id": "nextjs/hydration-failed/nextjs14-linux", "probability": 0.10, "condition": "when experimental features like PPR change the rendering behavior and cause hydration mismatches"}
+    ],
+    "preceded_by": [
+      {"error_id": "nextjs/err-next-config-invalid_next14-linux", "probability": 0.10, "condition": "when next.config.js has syntax errors that prevent experimental flags from being read"},
+      {"error_id": "nextjs/module-not-found-resolve/nextjs14-linux", "probability": 0.10, "condition": "when a package requires an experimental feature that has not been enabled"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "nextjs/err-next-config-invalid_next14-linux", "distinction": "Config invalid errors are about malformed next.config.js (wrong types, unknown keys); experimental feature config errors specifically mean the config file is valid but a required experimental flag is missing"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

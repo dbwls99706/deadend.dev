@@ -1,7 +1,7 @@
 """deadends.dev MCP Server — Error knowledge for AI coding agents.
 
 Exposes structured failure knowledge through the Model Context Protocol.
-AI agents can query error signatures to get dead ends, workarounds,
+AI coding agents can query error signatures to get dead ends, workarounds,
 and error chains without web search.
 
 Usage:
