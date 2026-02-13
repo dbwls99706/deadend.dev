@@ -47,24 +47,21 @@
     }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "deadends.dev",
+    "url": "{{ base_url }}",
+    "logo": "{{ base_url }}/favicon.svg",
+    "description": "Structured failure knowledge database for AI coding agents. {{ total_errors }} error entries across {{ domains | length }} domains.",
+    "sameAs": ["https://github.com/dbwls99706/deadends.dev"]
+  }
+  </script>
 
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
-    a { color: #58a6ff; }
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.2rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    .meta { color: #8b949e; font-size: 0.85rem; }
-    .domain-list { list-style: none; padding: 0; }
-    .domain-list li { padding: 0.5rem 0; border-bottom: 1px solid #161b22; }
-    .domain-list li a { text-decoration: none; font-size: 1.05rem; }
-    .count { color: #8b949e; font-size: 0.9rem; }
-    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    .hero { margin: 2rem 0; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
-    .api-section code { font-size: 0.9rem; }
-  </style>
+  <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
-<body>
+<body class="pg-index">
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">SITE=deadends.dev
 PURPOSE=Structured failure knowledge for AI agents — dead ends, workarounds, error chains
@@ -96,7 +93,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <ul class="domain-list">
       {% for domain in domain_stats %}
       <li>
-        <a href="{{ base_path }}/{{ domain.slug }}/">{{ domain.slug }}</a>
+        <a href="{{ base_path }}/{{ domain.slug }}/">{{ domain.slug | display_name }}</a>
         <span class="count">— {{ domain.count }} error{{ 's' if domain.count != 1 else '' }}</span>
       </li>
       {% endfor %}

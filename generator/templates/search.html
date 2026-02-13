@@ -33,33 +33,10 @@
     ]
   }
   </script>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
-    a { color: #58a6ff; }
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    .meta { color: #8b949e; font-size: 0.85rem; }
-    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    nav a { color: #8b949e; text-decoration: none; }
-    nav a:hover { color: #58a6ff; }
-    .verdict-false { color: #f85149; }
-    .verdict-partial { color: #d29922; }
-    .verdict-true { color: #3fb950; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
-    #search-input { width: 100%; padding: 0.75rem; font-size: 1rem; font-family: monospace; background: #161b22; color: #e0e0e0; border: 1px solid #30363d; border-radius: 6px; box-sizing: border-box; }
-    #search-input:focus { border-color: #58a6ff; outline: none; }
-    #search-input::placeholder { color: #484f58; }
-    .result { border: 1px solid #30363d; border-radius: 6px; padding: 1rem; margin: 0.75rem 0; }
-    .result:hover { border-color: #58a6ff; }
-    .result h3 { margin: 0 0 0.5rem 0; font-size: 1rem; }
-    .result .dead-end-count { color: #f85149; }
-    .result .workaround-count { color: #3fb950; }
-    #no-results { display: none; color: #8b949e; padding: 2rem; text-align: center; }
-    #all-errors { margin-top: 2rem; }
-    .error-entry { padding: 0.4rem 0; border-bottom: 1px solid #161b22; }
-  </style>
+
+  <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
-<body>
+<body class="pg-search">
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">PAGE: Error Search
 PURPOSE: Match error messages against {{ total_errors }} known patterns across {{ domain_count }} domains

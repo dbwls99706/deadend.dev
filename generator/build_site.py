@@ -18,6 +18,24 @@ BASE_URL = "https://deadends.dev"
 # Empty string when hosted at root domain
 BASE_PATH = ""
 
+# Domain display names for proper capitalization in titles/breadcrumbs
+DOMAIN_DISPLAY_NAMES = {
+    "aws": "AWS",
+    "cuda": "CUDA",
+    "cicd": "CI/CD",
+    "php": "PHP",
+    "dotnet": ".NET",
+    "nextjs": "Next.js",
+    "typescript": "TypeScript",
+    "pip": "pip",
+}
+
+
+def domain_display_name(domain: str) -> str:
+    """Return proper display name for a domain slug."""
+    return DOMAIN_DISPLAY_NAMES.get(domain, domain.capitalize())
+
+
 # Search engine verification codes — replace with actual codes after registering
 GOOGLE_VERIFICATION = "bOa6r9d87jFHgTQb7iuN5QokGsgy99_NYrz0x1jsSmk"
 BING_VERIFICATION = ""  # e.g., "ABCDEF1234567890"
@@ -162,7 +180,6 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
                 "@type": "HowTo",
                 "name": f"How to fix {sig}",
                 "description": canon["verdict"]["summary"],
-                "totalTime": "PT10M",
                 "step": howto_steps,
             }
             howto_json_ld = json.dumps(
@@ -510,6 +527,111 @@ def build_cname() -> None:
     print("  Generated: CNAME")
 
 
+def build_stylesheet() -> None:
+    """Generate shared CSS stylesheet for all pages.
+
+    Extracting CSS to a shared file enables browser caching across
+    page navigations, improving Core Web Vitals (LCP, FCP).
+    """
+    # CSS written as joined list to avoid E501 line-length violations
+    css = "\n".join([
+        "/* deadends.dev — shared stylesheet */",
+        "body { font-family: system-ui, -apple-system, sans-serif;",
+        "  max-width: 800px; margin: 2rem auto;",
+        "  padding: 0 1rem; color: #e0e0e0; background: #0d1117; }",
+        "a { color: #58a6ff; }",
+        "h1 { font-size: 1.4rem; }",
+        "h2 { font-size: 1.1rem;",
+        "  border-bottom: 1px solid #30363d;",
+        "  padding-bottom: 0.5rem; }",
+        "code { background: #161b22;",
+        "  padding: 0.2rem 0.4rem; border-radius: 3px; }",
+        "pre { background: #161b22;",
+        "  padding: 1rem; border-radius: 6px;",
+        "  overflow-x: auto; }",
+        ".meta { color: #8b949e; font-size: 0.85rem; }",
+        "nav { margin-bottom: 1.5rem; }",
+        "nav a { color: #8b949e; text-decoration: none; }",
+        "nav a:hover { color: #58a6ff; }",
+        "footer { margin-top: 3rem;",
+        "  padding-top: 1rem;",
+        "  border-top: 1px solid #30363d; }",
+        "",
+        "/* Page-specific heading sizes */",
+        ".pg-index h1 { font-size: 1.8rem; }",
+        ".pg-index h2 { font-size: 1.2rem; }",
+        ".pg-domain h1, .pg-search h1 { font-size: 1.6rem; }",
+        "",
+        "/* Verdict colors */",
+        ".verdict-true { color: #3fb950; }",
+        ".verdict-partial { color: #d29922; }",
+        ".verdict-false { color: #f85149; }",
+        ".pg-detail .verdict-true,",
+        ".pg-detail .verdict-false,",
+        ".pg-detail .verdict-partial { font-weight: bold; }",
+        "",
+        "/* Dead ends & workarounds */",
+        ".dead-end { border-left: 4px solid #f85149;",
+        "  padding-left: 1rem; margin: 1rem 0; }",
+        ".workaround { border-left: 4px solid #3fb950;",
+        "  padding-left: 1rem; margin: 1rem 0; }",
+        ".fail-rate { color: #f85149; }",
+        ".success-rate { color: #3fb950; }",
+        "",
+        "/* Index page */",
+        ".domain-list { list-style: none; padding: 0; }",
+        ".domain-list li { padding: 0.5rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        ".domain-list li a {",
+        "  text-decoration: none; font-size: 1.05rem; }",
+        ".count { color: #8b949e; font-size: 0.9rem; }",
+        ".hero { margin: 2rem 0; }",
+        ".api-section code { font-size: 0.9rem; }",
+        "",
+        "/* Domain page */",
+        ".entry { padding: 0.75rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        "",
+        "/* Error summary page */",
+        ".env-card { border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  padding: 1rem; margin: 0.75rem 0; }",
+        ".variation { display: inline-block;",
+        "  background: #161b22;",
+        "  padding: 0.2rem 0.6rem;",
+        "  border-radius: 4px;",
+        "  margin: 0.2rem; font-size: 0.85rem; }",
+        "",
+        "/* Search page */",
+        "#search-input { width: 100%;",
+        "  padding: 0.75rem; font-size: 1rem;",
+        "  font-family: monospace;",
+        "  background: #161b22; color: #e0e0e0;",
+        "  border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  box-sizing: border-box; }",
+        "#search-input:focus {",
+        "  border-color: #58a6ff; outline: none; }",
+        "#search-input::placeholder { color: #484f58; }",
+        ".result { border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  padding: 1rem; margin: 0.75rem 0; }",
+        ".result:hover { border-color: #58a6ff; }",
+        ".result h3 {",
+        "  margin: 0 0 0.5rem 0; font-size: 1rem; }",
+        ".result .dead-end-count { color: #f85149; }",
+        ".result .workaround-count { color: #3fb950; }",
+        "#no-results { display: none; color: #8b949e;",
+        "  padding: 2rem; text-align: center; }",
+        "#all-errors { margin-top: 2rem; }",
+        ".error-entry { padding: 0.4rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        "",
+    ])
+    (SITE_DIR / "style.css").write_text(css, encoding="utf-8")
+    print("  Generated: style.css")
+
+
 def build_og_image() -> None:
     """Generate a branded OG image (1200x630 PNG) for social sharing.
 
@@ -708,6 +830,48 @@ def build_error_summary_pages(
         # Generate common variations from the regex pattern
         common_variations = _generate_variations(signature, regex, domain)
 
+        # TechArticle JSON-LD for error summary pages
+        dates = [
+            c["verdict"].get("last_updated", "")
+            for c in slug_canons
+        ]
+        first_seen_dates = [
+            c["error"].get("first_seen", "")
+            for c in slug_canons
+            if c["error"].get("first_seen")
+        ]
+        summary_json_ld = json.dumps(
+            {
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "name": signature,
+                "headline": f"Fix {signature}",
+                "description": (
+                    f"{len(environments)} environments, "
+                    f"{len(common_dead_ends)} dead ends, "
+                    f"{len(common_workarounds)} workarounds. "
+                    f"Fix rates: {min_rate}%–{max_rate}%."
+                ),
+                "url": f"{BASE_URL}/{domain}/{slug}/",
+                "datePublished": min(first_seen_dates)
+                if first_seen_dates
+                else "",
+                "dateModified": max(dates) if dates else "",
+                "image": f"{BASE_URL}/og-image.png",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "deadends.dev",
+                    "url": BASE_URL,
+                },
+                "about": {
+                    "@type": "SoftwareSourceCode",
+                    "programmingLanguage": domain,
+                },
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+
         html = template.render(
             signature=signature,
             regex=regex,
@@ -721,6 +885,7 @@ def build_error_summary_pages(
             total_workarounds=len(common_workarounds),
             min_rate=min_rate,
             max_rate=max_rate,
+            summary_json_ld=summary_json_ld,
         )
 
         # Write to /{domain}/{slug}/index.html
@@ -1540,6 +1705,7 @@ def main():
     )
     jinja_env.globals["base_path"] = BASE_PATH
     jinja_env.globals["base_url"] = BASE_URL
+    jinja_env.filters["display_name"] = domain_display_name
 
     # Build pages
     print("Generating error pages...")
@@ -1612,6 +1778,10 @@ def main():
 
     print("Generating IndexNow support...")
     build_indexnow(canons)
+    print()
+
+    print("Generating shared stylesheet...")
+    build_stylesheet()
     print()
 
     print("Generating OG image for social sharing...")

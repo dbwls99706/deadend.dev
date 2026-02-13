@@ -45,6 +45,7 @@ def built_site(tmp_path_factory):
         )
         jinja_env.globals["base_path"] = bs.BASE_PATH
         jinja_env.globals["base_url"] = bs.BASE_URL
+        jinja_env.filters["display_name"] = bs.domain_display_name
 
         build_error_pages(canons, jinja_env)
         build_domain_pages(canons, jinja_env)

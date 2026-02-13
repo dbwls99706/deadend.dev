@@ -60,7 +60,7 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       {"@type": "ListItem", "position": 1, "name": "deadends.dev", "item": "{{ base_url }}"},
-      {"@type": "ListItem", "position": 2, "name": "{{ error.domain }}", "item": "{{ base_url }}/{{ error.domain }}/"},
+      {"@type": "ListItem", "position": 2, "name": "{{ error.domain | display_name }}", "item": "{{ base_url }}/{{ error.domain }}/"},
       {"@type": "ListItem", "position": 3, "name": "{{ error.signature }}", "item": "{{ base_url }}/{{ id_parts[0] }}/{{ id_parts[1] }}/"},
       {"@type": "ListItem", "position": 4, "name": "{{ env_summary }}"}
     ]
@@ -73,28 +73,10 @@
 {{ howto_json_ld | safe }}
   </script>
   {% endif %}
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
-    .verdict-false { color: #f85149; font-weight: bold; }
-    .verdict-partial { color: #d29922; font-weight: bold; }
-    .verdict-true { color: #3fb950; font-weight: bold; }
-    .dead-end { border-left: 4px solid #f85149; padding-left: 1rem; margin: 1rem 0; }
-    .workaround { border-left: 4px solid #3fb950; padding-left: 1rem; margin: 1rem 0; }
-    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-    a { color: #58a6ff; }
-    h1 { font-size: 1.4rem; }
-    h2 { font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    .meta { color: #8b949e; font-size: 0.85rem; }
-    .fail-rate { color: #f85149; }
-    .success-rate { color: #3fb950; }
-    nav { margin-bottom: 2rem; }
-    nav a { color: #8b949e; text-decoration: none; }
-    nav a:hover { color: #58a6ff; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
-  </style>
+
+  <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
-<body>
+<body class="pg-detail">
   <!-- AI-PARSEABLE STRUCTURED SUMMARY — Use /api/v1/{{ id }}.json for full data -->
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">ERROR_ID={{ id }}
@@ -114,7 +96,7 @@ MATCH_API={{ base_url }}/api/v1/match.json</pre>
   {% endautoescape %}
 
   <!-- HUMAN-READABLE SECTION -->
-  <nav><a href="{{ base_path }}/">deadends.dev</a> / <a href="{{ base_path }}/{{ error.domain }}/">{{ error.domain }}</a></nav>
+  <nav><a href="{{ base_path }}/">deadends.dev</a> / <a href="{{ base_path }}/{{ error.domain }}/">{{ error.domain | display_name }}</a></nav>
 
   <header>
     <h1><code>{{ error.signature }}</code></h1>
