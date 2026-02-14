@@ -712,7 +712,17 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
                     cat = c["error"]["category"]
                     categories[cat] = categories.get(cat, 0) + 1
                     conf = c["verdict"]["confidence"]
-                    conf_levels[conf] = conf_levels.get(conf, 0) + 1
+                    if isinstance(conf, (int, float)):
+                        conf_label = (
+                            "high" if conf >= 0.8
+                            else "medium" if conf >= 0.5
+                            else "low"
+                        )
+                    else:
+                        conf_label = str(conf)
+                    conf_levels[conf_label] = (
+                        conf_levels.get(conf_label, 0) + 1
+                    )
                 top_cats = sorted(
                     categories.items(), key=lambda x: x[1], reverse=True
                 )[:5]

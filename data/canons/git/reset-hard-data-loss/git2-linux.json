@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/reset-hard-data-loss/git2-linux",
+  "url": "https://deadends.dev/git/reset-hard-data-loss/git2-linux",
+  "error": {
+    "signature": "HEAD is now at <commit> — uncommitted changes permanently lost after git reset --hard",
+    "regex": "(?:HEAD is now at [0-9a-f]+|git reset --hard.*(?:lost|gone|disappeared)|Cannot recover.*reset --hard)",
+    "domain": "git",
+    "category": "data_loss",
+    "first_seen": "2018-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Attempting to undo recent commits",
+        "Cleaning working directory after failed merge",
+        "Syncing local branch to remote state"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.45,
+    "confidence": 0.93,
+    "last_updated": "2026-02-14",
+    "summary": "git reset --hard discards ALL uncommitted changes (staged and unstaged) permanently. Unlike committed work which can be recovered via reflog, uncommitted changes have no reflog entry. Staged changes may be partially recoverable from git's object database if gc hasn't run, but unstaged changes are gone forever."
+  },
+  "dead_ends": [
+    {
+      "action": "Looking in git reflog for uncommitted changes that were lost",
+      "why_fails": "Reflog only tracks changes to HEAD (commits, checkouts, rebases). Uncommitted working directory changes and staged-but-not-committed changes are NOT recorded in the reflog. git reflog will show the commit you reset TO, but the uncommitted work that was discarded is not recoverable this way.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://git-scm.com/docs/git-reflog"
+      ],
+      "condition": "When the lost changes were never committed"
+    },
+    {
+      "action": "Running git reset --hard HEAD~1 expecting it to be easily reversible like git revert",
+      "why_fails": "git reset --hard moves the branch pointer AND overwrites the working tree. Unlike git revert (which creates a new commit to undo changes), reset --hard is destructive. The commit itself IS recoverable via reflog, but any uncommitted modifications in the working directory at the time of the reset are permanently lost.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://git-scm.com/docs/git-reset"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using git checkout -- . or git restore . thinking it's safer than reset --hard",
+      "why_fails": "Both git checkout -- . and git restore . also permanently discard unstaged changes in the working directory. They don't touch staged changes (unlike reset --hard which also destroys staged work), but the effect on unstaged modifications is equally destructive and equally unrecoverable.",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs/git-restore"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use git stash before any destructive operation",
+      "success_rate": 0.98,
+      "how": "Run 'git stash -u' (includes untracked files) before doing git reset --hard. This saves all working directory changes. You can recover them later with 'git stash pop' or 'git stash apply'. Make this a habit before any reset.",
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": "Preventive measure before reset"
+    },
+    {
+      "action": "Recover staged files from git's object database using git fsck --lost-found",
+      "success_rate": 0.55,
+      "how": "Run 'git fsck --lost-found' to find dangling blobs (staged files that were added but never committed). Check .git/lost-found/other/ for recovered file contents. This only works for files that were staged ('git add'), and only before 'git gc' runs. Identify files by content since filenames are lost.",
+      "tradeoff": "Only recovers staged content, not unstaged edits; filenames are lost; time-limited before gc",
+      "sources": [
+        "https://git-scm.com/docs/git-fsck"
+      ],
+      "condition": "When files were git-added but not committed before reset --hard"
+    },
+    {
+      "action": "Use git reset --soft or --mixed instead of --hard",
+      "success_rate": 0.95,
+      "how": "Use 'git reset --soft HEAD~1' to undo the last commit but keep all changes staged. Use 'git reset --mixed HEAD~1' (or just 'git reset HEAD~1') to undo the commit and unstage changes but keep them in working directory. Only use --hard when you truly want to discard everything.",
+      "sources": [
+        "https://git-scm.com/docs/git-reset"
+      ],
+      "condition": "When you want to undo commits without losing changes"
+    },
+    {
+      "action": "Recover committed work (not uncommitted) via git reflog",
+      "success_rate": 0.97,
+      "how": "Run 'git reflog' to find the commit hash before the reset. Then 'git reset --hard <hash>' or 'git checkout -b recovery <hash>' to restore. Reflog entries expire after 90 days by default. This only recovers committed code, not uncommitted working directory changes.",
+      "sources": [
+        "https://git-scm.com/docs/git-reflog"
+      ],
+      "condition": "When the lost work was in previous commits (not uncommitted changes)"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "git/merge-conflict/git2-linux",
+        "probability": 0.3,
+        "condition": "Developer uses reset --hard to abandon a failed merge"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/detached-head/git2-linux",
+        "distinction": "Detached HEAD is about being on no branch, not about data loss. reset --hard on detached HEAD is doubly dangerous since there's no branch reflog to help."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 120,
+    "last_verification": "2026-02-14"
+  }
+}

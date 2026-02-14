@@ -1409,7 +1409,10 @@ def build_openapi_spec(canons: list[dict]) -> None:
                                     "enum": ["true", "partial", "false"],
                                 },
                                 "fix_success_rate": {"type": "number"},
-                                "confidence": {"type": "string"},
+                                "confidence": {
+                                    "type": "number",
+                                    "description": "0.0-1.0 score",
+                                },
                                 "summary": {"type": "string"},
                             },
                         },

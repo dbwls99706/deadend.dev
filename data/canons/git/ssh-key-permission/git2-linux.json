@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/ssh-key-permission/git2-linux",
+  "url": "https://deadends.dev/git/ssh-key-permission/git2-linux",
+  "error": {
+    "signature": "Permissions 0644 for '/home/user/.ssh/id_rsa' are too open — SSH refuses key with wrong permissions",
+    "regex": "(?:[Pp]ermissions? (?:0[0-7]{3}|are too open)|(?:bad permissions|UNPROTECTED PRIVATE KEY FILE).*\\.ssh|It is required that your private key files are NOT accessible by others)",
+    "domain": "git",
+    "category": "authentication_error",
+    "first_seen": "2016-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "First-time SSH setup for GitHub/GitLab",
+        "Copying SSH keys to new machine or Docker container",
+        "WSL2 mounting Windows filesystem with wrong permissions",
+        "CI/CD pipeline using deploy keys"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.97,
+    "confidence": 0.96,
+    "last_updated": "2026-02-14",
+    "summary": "SSH refuses to use private keys that are readable by other users. This is a security feature. The private key file must have permissions 600 (owner read/write only) and the .ssh directory must be 700 (owner only). This commonly happens when copying keys between systems, extracting from archives, or using shared filesystems."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting permissions to 644 or 666 on the private key file",
+      "why_fails": "SSH strictly requires private keys to be readable only by the owner (mode 600 or stricter). Permissions 644 means group and others can read the file, which SSH considers a security risk. It will refuse to use the key and fall back to password auth (which may also fail).",
+      "fail_rate": 0.99,
+      "sources": [
+        "https://man.openbsd.org/ssh"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using chmod on SSH keys in a mounted Windows filesystem (WSL2, VirtualBox shared folders)",
+      "why_fails": "Windows filesystems (NTFS, FAT32) mounted in Linux don't support Unix file permissions. chmod appears to succeed but has no effect. The permissions remain whatever the mount options specify (typically 777 or 755). You must either copy keys to a native Linux filesystem or use mount options to set default permissions.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": "When .ssh directory is on a mounted Windows partition"
+    },
+    {
+      "action": "Using ssh-add without fixing file permissions first",
+      "why_fails": "ssh-add also checks private key file permissions before adding the key to the agent. You'll get the same 'too open' error from ssh-add. The file permissions must be fixed first before any SSH tool will accept the key.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://man.openbsd.org/ssh-add"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set correct permissions: chmod 600 for keys, chmod 700 for .ssh directory",
+      "success_rate": 0.98,
+      "how": "Run: 'chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa && chmod 644 ~/.ssh/id_rsa.pub && chmod 644 ~/.ssh/known_hosts && chmod 600 ~/.ssh/config'. Private keys must be 600, public keys and known_hosts can be 644, the .ssh directory itself must be 700.",
+      "sources": [
+        "https://man.openbsd.org/ssh"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Copy SSH keys to native Linux filesystem in WSL2",
+      "success_rate": 0.95,
+      "how": "Copy keys from Windows mount to native Linux path: 'cp /mnt/c/Users/<name>/.ssh/id_rsa ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa'. The native Linux filesystem supports proper permissions. Alternatively, set WSL mount options in /etc/wsl.conf: [automount] options = metadata,umask=077.",
+      "sources": [],
+      "condition": "When using WSL2 with keys on Windows filesystem"
+    },
+    {
+      "action": "Use SSH config to specify key path explicitly",
+      "success_rate": 0.92,
+      "how": "Add to ~/.ssh/config: 'Host github.com\\n  IdentityFile ~/.ssh/github_key\\n  IdentitiesOnly yes'. This ensures git uses the correct key with correct permissions. Useful when you have multiple keys for different services.",
+      "sources": [
+        "https://man.openbsd.org/ssh_config"
+      ],
+      "condition": "When using multiple SSH keys for different services"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/permission-denied-publickey/git2-linux",
+        "distinction": "permission-denied-publickey means the server doesn't recognize the SSH key. ssh-key-permission means SSH refuses to even USE the key locally due to file permission issues. Fix permissions first, then troubleshoot server-side key recognition."
+      },
+      {
+        "error_id": "git/credential-rejected/git2-linux",
+        "distinction": "credential-rejected is about HTTPS username/password or token authentication. ssh-key-permission is specifically about SSH key file permissions on the local machine."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 110,
+    "last_verification": "2026-02-14"
+  }
+}

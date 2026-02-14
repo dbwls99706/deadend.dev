@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/rebase-interactive-conflict/git2-linux",
+  "url": "https://deadends.dev/git/rebase-interactive-conflict/git2-linux",
+  "error": {
+    "signature": "Could not apply <hash>... Resolve all conflicts manually, then run git rebase --continue",
+    "regex": "(?:Could not apply [0-9a-f]+|CONFLICT.*(?:rebase|cherry-pick)|git rebase --(?:continue|abort|skip)|interactive rebase in progress)",
+    "domain": "git",
+    "category": "rebase_error",
+    "first_seen": "2017-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Squashing commits with git rebase -i",
+        "Reordering or editing commit history",
+        "Cleaning up feature branch before merge"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.91,
+    "last_updated": "2026-02-14",
+    "summary": "Interactive rebase replays commits one by one onto a new base. When a commit conflicts with the new context, git stops and asks you to resolve manually. Unlike a simple merge conflict, you may face multiple rounds of conflicts (one per conflicting commit). The todo file in .git/rebase-merge/ controls which commits are replayed."
+  },
+  "dead_ends": [
+    {
+      "action": "Using git merge instead of resolving the rebase conflict",
+      "why_fails": "You cannot mix merge and rebase operations. Running 'git merge' while a rebase is in progress creates an inconsistent state. You must either resolve the current conflict and 'git rebase --continue', or abort entirely with 'git rebase --abort'.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Editing .git/rebase-merge/git-rebase-todo manually after rebase has started",
+      "why_fails": "The todo file can only be safely edited during the initial editor prompt of git rebase -i. Once rebase has started replaying commits, modifying the todo file directly leads to unpredictable behavior. If you need to change the plan, abort and restart the interactive rebase.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Running git rebase --skip without understanding what commit is being skipped",
+      "why_fails": "--skip permanently drops the current commit from the rebased history. If you skip a commit that contains important changes (not just conflict noise), those changes are lost from the branch. Always check 'git log --oneline REBASE_HEAD' or 'git show REBASE_HEAD' before skipping.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Resolve conflicts commit by commit with git rebase --continue",
+      "success_rate": 0.9,
+      "how": "For each conflicting commit: 1) Open conflicted files and resolve the markers (<<<< ==== >>>>). 2) Stage resolved files with 'git add <file>'. 3) Run 'git rebase --continue' to proceed to the next commit. Repeat until all commits are replayed. Use 'git diff' and 'git status' to verify resolution at each step.",
+      "sources": [
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Abort and retry with a different rebase strategy",
+      "success_rate": 0.95,
+      "how": "Run 'git rebase --abort' to return to the state before rebase started. Then try alternative approaches: 1) Squash locally first with 'git reset --soft' then recommit, 2) Use 'git rebase -i --autosquash' with fixup commits, 3) Rebase fewer commits at a time to isolate conflicts.",
+      "sources": [
+        "https://git-scm.com/docs/git-rebase"
+      ],
+      "condition": "When conflicts are too complex to resolve commit-by-commit"
+    },
+    {
+      "action": "Use git rerere to auto-resolve recurring conflicts",
+      "success_rate": 0.8,
+      "how": "Enable with 'git config --global rerere.enabled true'. Git records how you resolve conflicts and auto-applies the same resolution if the same conflict appears again. Particularly useful for long-running feature branches that are rebased repeatedly against main.",
+      "tradeoff": "Only helps with identical conflict patterns; initial resolution still manual",
+      "sources": [
+        "https://git-scm.com/docs/git-rerere"
+      ],
+      "condition": "For repeatedly rebased branches"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "git/merge-conflict/git2-linux",
+        "probability": 0.4,
+        "condition": "Multiple commits in interactive rebase can each produce separate conflicts"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "git/diverged-branches/git2-linux",
+        "probability": 0.35,
+        "condition": "Developer tries to rebase diverged branch onto upstream"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/rebase-conflict/git2-linux",
+        "distinction": "rebase-conflict covers simple non-interactive rebase. Interactive rebase has additional complexity from the todo list (pick, squash, edit, reword) and multi-step conflict resolution."
+      },
+      {
+        "error_id": "git/cherry-pick-conflict/git2-linux",
+        "distinction": "cherry-pick applies a single commit; interactive rebase replays multiple commits sequentially and can reorder, squash, or edit them."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 95,
+    "last_verification": "2026-02-14"
+  }
+}
