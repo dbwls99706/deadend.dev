@@ -1195,7 +1195,93 @@ def build_openapi_spec(canons: list[dict]) -> None:
                     "responses": {
                         "200": {
                             "description": "Compact matching patterns",
-                            "content": {"application/json": {}},
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "version": {"type": "string"},
+                                            "total": {"type": "integer"},
+                                            "generated": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                            },
+                                            "usage": {"type": "string"},
+                                            "patterns": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Canon ID"
+                                                            ),
+                                                        },
+                                                        "sig": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Error signature"
+                                                            ),
+                                                        },
+                                                        "re": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Regex pattern"
+                                                            ),
+                                                        },
+                                                        "domain": {
+                                                            "type": "string",
+                                                        },
+                                                        "ok": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "true",
+                                                                "partial",
+                                                                "false",
+                                                            ],
+                                                            "description": (
+                                                                "Resolvable"
+                                                            ),
+                                                        },
+                                                        "rate": {
+                                                            "type": "number",
+                                                            "description": (
+                                                                "Fix success rate"
+                                                            ),
+                                                        },
+                                                        "conf": {
+                                                            "type": "number",
+                                                            "description": (
+                                                                "Confidence score"
+                                                            ),
+                                                        },
+                                                        "de": {
+                                                            "type": "integer",
+                                                            "description": (
+                                                                "Dead end count"
+                                                            ),
+                                                        },
+                                                        "wa": {
+                                                            "type": "integer",
+                                                            "description": (
+                                                                "Workaround count"
+                                                            ),
+                                                        },
+                                                        "url": {
+                                                            "type": "string",
+                                                            "format": "uri",
+                                                            "description": (
+                                                                "Full JSON API URL"
+                                                            ),
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         }
                     },
                 }

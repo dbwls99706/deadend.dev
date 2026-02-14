@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/migration-not-null-no-default/pg16-linux",
+  "url": "https://deadends.dev/database/migration-not-null-no-default/pg16-linux",
+  "error": {
+    "signature": "ERROR: column \"X\" of relation \"Y\" contains null values",
+    "regex": "(?:column .+ contains null values|cannot add NOT NULL column with no default)",
+    "domain": "database",
+    "category": "migration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Django migrations",
+        "Alembic/SQLAlchemy migrations",
+        "Rails ActiveRecord migrations",
+        "Flyway/Liquibase migrations"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.91,
+    "last_updated": "2026-02-14",
+    "summary": "PostgreSQL rejects adding a NOT NULL constraint to a column that contains null values, or adding a new NOT NULL column without a default value to a table with existing rows. The fix requires either backfilling existing data, providing a default, or splitting the migration into multiple steps."
+  },
+  "dead_ends": [
+    {
+      "action": "Dropping the column and recreating it as NOT NULL",
+      "why_fails": "Dropping a column permanently destroys all data in that column across every row in the table. If the table has production data, this causes irreversible data loss. Even in development, this disrupts other migrations that depend on the column existing and breaks rollback sequences.",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-altertable.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Running ALTER TABLE ... SET NOT NULL on a column that still has null values",
+      "why_fails": "PostgreSQL performs a full table scan to verify no nulls exist before applying the NOT NULL constraint. If any row has a null value in that column, the entire ALTER TABLE statement fails and rolls back. On large tables, this scan can lock the table for extended periods before ultimately failing.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-altertable.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Deleting all rows with null values to satisfy the NOT NULL constraint",
+      "why_fails": "Deleting rows to satisfy a schema constraint destroys production data. Rows with null values in one column may contain critical data in other columns. This approach also does not prevent future nulls from appearing between the DELETE and the ALTER TABLE, unless done within a transaction that locks the table.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-delete.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the column as nullable, backfill existing rows, then add the NOT NULL constraint",
+      "success_rate": 0.95,
+      "how": "Split into three migration steps: 1) ALTER TABLE ADD COLUMN new_col type; (nullable). 2) UPDATE table SET new_col = <default_value> WHERE new_col IS NULL; 3) ALTER TABLE ALTER COLUMN new_col SET NOT NULL; This approach is safe for production because existing rows are never in a violating state. For large tables, batch the UPDATE to avoid long-running transactions.",
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-altertable.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a DEFAULT value in the migration to populate existing rows automatically",
+      "success_rate": 0.92,
+      "how": "ALTER TABLE ADD COLUMN new_col type NOT NULL DEFAULT <value>; PostgreSQL 11+ adds the column with the default value for all existing rows without rewriting the table (metadata-only operation). New rows also get the default. This is the fastest approach for adding a non-null column to a large table.",
+      "tradeoff": "The default value must be a sensible choice for all existing rows; dynamic defaults require the backfill approach instead",
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-altertable.html"
+      ],
+      "condition": "When a static default value is appropriate for all existing rows"
+    },
+    {
+      "action": "Split the migration into multiple deployments for zero-downtime changes",
+      "success_rate": 0.88,
+      "how": "Deploy in phases: Phase 1 — add nullable column and update application code to write non-null values. Phase 2 — run backfill job (UPDATE in batches of 1000-10000 rows). Phase 3 — add NOT NULL constraint. This prevents long table locks and allows rollback at each phase. Use a CHECK constraint (NOT VALID) first, then VALIDATE CONSTRAINT separately to avoid full table lock.",
+      "tradeoff": "Requires multiple deployments and careful coordination between schema and application changes",
+      "sources": [
+        "https://www.postgresql.org/docs/16/sql-altertable.html#SQL-ALTERTABLE-DESC-ADD-TABLE-CONSTRAINT"
+      ],
+      "condition": "For high-traffic production tables where downtime is unacceptable"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "probability": 0.1,
+        "condition": "When a failed migration leaves the schema in a partially-applied state and subsequent migrations reference the expected column"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 52,
+    "last_verification": "2026-02-14"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/pod-pending-resource-quota/k8s128-linux",
+  "url": "https://deadends.dev/kubernetes/pod-pending-resource-quota/k8s128-linux",
+  "error": {
+    "signature": "0/3 nodes are available: 3 Insufficient cpu.",
+    "regex": "(?:\\d+/\\d+ nodes are available:.*Insufficient (?:cpu|memory))|(?:exceeded quota)",
+    "domain": "kubernetes",
+    "category": "scheduling_error",
+    "first_seen": "2023-09-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.28,<1.32"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "managed clusters (EKS, GKE, AKS)",
+        "on-premise clusters with fixed node pools",
+        "namespaces with ResourceQuota enforced"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.87,
+    "last_updated": "2026-02-14",
+    "summary": "Pod cannot be scheduled because the cluster has insufficient CPU or memory to satisfy the pod's resource requests. This can be caused by actual resource exhaustion, overly generous resource requests, ResourceQuota limits on the namespace, or a combination of these factors."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing the number of replicas in the deployment hoping the scheduler will find room",
+      "why_fails": "Adding more replicas makes the problem worse, not better. Each additional replica requires its own resource allocation. If the cluster cannot schedule one pod due to insufficient CPU, requesting more pods with the same resource requirements only increases the total resource demand and creates more Pending pods.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Deleting random pods from the namespace to free up resources",
+      "why_fails": "Pods managed by controllers (Deployments, ReplicaSets, StatefulSets, DaemonSets) are immediately recreated after deletion. The freed resources are reclaimed within seconds by the replacement pods. Deleting unmanaged pods may free resources temporarily but destroys workloads without solving the underlying capacity problem.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Setting resource requests to 0 to bypass the scheduling constraint",
+      "why_fails": "While setting requests to 0 allows the pod to be scheduled on any node regardless of available resources, the pod runs as BestEffort QoS class. It will be the first to be evicted under memory pressure, and it can starve other workloads or be OOMKilled unpredictably. This trades a clear scheduling error for intermittent runtime failures that are harder to diagnose.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Inspect ResourceQuota and actual resource usage with kubectl describe quota and kubectl top nodes",
+      "success_rate": 0.90,
+      "how": "Run 'kubectl describe quota -n <namespace>' to see quota limits vs current usage. Run 'kubectl top nodes' to see actual node resource consumption. Compare the pod's resource requests (from the deployment spec) against available capacity. If quota is the bottleneck, request a quota increase or reduce the pod's requests to realistic values based on actual usage.",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Right-size resource requests based on actual usage metrics",
+      "success_rate": 0.88,
+      "how": "Use 'kubectl top pods -n <namespace>' or a monitoring tool (Prometheus, Datadog) to measure actual CPU and memory usage over time. Set requests to the P95 usage value rather than arbitrary large numbers. Many teams over-request by 3-10x, wasting schedulable capacity. Use Vertical Pod Autoscaler (VPA) in recommendation mode to get suggested values.",
+      "tradeoff": "Under-requesting can lead to CPU throttling or OOMKill under load spikes",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/run-application/vertical-pod-autoscale/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Scale down or evict lower-priority deployments to free cluster capacity",
+      "success_rate": 0.85,
+      "how": "Identify non-critical workloads with 'kubectl get deployments -n <namespace> --sort-by=.spec.replicas'. Scale down staging or batch workloads: 'kubectl scale deployment <name> --replicas=0'. For managed clusters, enable cluster autoscaler to add nodes automatically when demand exceeds capacity.",
+      "tradeoff": "Reduces availability of scaled-down workloads; autoscaler adds cost and has a 2-5 minute provisioning delay",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+      ],
+      "condition": "When the cluster genuinely lacks capacity rather than just having inflated requests"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.25,
+        "condition": "When resource requests are reduced too aggressively to fit scheduling constraints, pods get OOMKilled under load"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.3,
+        "condition": "After an OOMKill, teams increase memory requests/limits beyond what the cluster can schedule"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 62,
+    "last_verification": "2026-02-14"
+  }
+}

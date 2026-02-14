@@ -88,7 +88,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/exec-format-error_docker24-linux",
+        "error_id": "docker/exec-format-error/docker27-linux",
         "distinction": "The generic exec-format-error may be caused by a missing shebang in scripts. This platform-specific variant is specifically about CPU architecture mismatch between image and host."
       }
     ]

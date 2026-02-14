@@ -79,12 +79,7 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": [
-      {
-        "error_id": "nextjs/server-component-async-error/next14-linux",
-        "distinction": "The async params error is specific to Next.js 15's breaking change where route params became Promises. Generic async server component errors are about using async/await in components (which is valid in server components)."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "manual",

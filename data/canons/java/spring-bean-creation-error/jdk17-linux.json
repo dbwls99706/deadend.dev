@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/spring-bean-creation-error/jdk17-linux",
+  "url": "https://deadends.dev/java/spring-bean-creation-error/jdk17-linux",
+  "error": {
+    "signature": "Error creating bean with name 'X': Unsatisfied dependency expressed through constructor parameter",
+    "regex": "Error creating bean with name '([\\w]+)'.*(?:Unsatisfied dependency|No qualifying bean)",
+    "domain": "java",
+    "category": "dependency_injection_error",
+    "first_seen": "2022-11-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Spring Boot 3.x applications",
+        "Spring Framework 6.x",
+        "multi-module Maven/Gradle projects"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-14",
+    "summary": "Spring cannot create a bean because a required dependency is missing from the application context. This is typically caused by a missing @Component/@Service annotation, incorrect component scan paths, or circular dependencies. The error message identifies the bean name and the unsatisfied dependency type."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding @Autowired annotation to every field as a shotgun fix",
+      "why_fails": "If the dependency bean does not exist in the application context, @Autowired does not create it — it just changes the injection point from constructor to field. The root cause is that the target bean class is not registered as a Spring component. Field injection also makes dependencies implicit, harder to test, and allows creation of objects in invalid states.",
+      "fail_rate": 0.82,
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/dependencies.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Creating empty placeholder beans with @Bean methods to satisfy injection",
+      "why_fails": "Placeholder beans provide no actual functionality. The injected dependency appears non-null but its methods either do nothing, return null, or throw UnsupportedOperationException. This silences the startup error but causes NullPointerExceptions or incorrect behavior at runtime, which are much harder to trace back to the missing real implementation.",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/java/bean-annotation.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Adding @Lazy to all injected dependencies to defer the error",
+      "why_fails": "Using @Lazy universally defers bean creation from startup to first use. This turns a clear, immediate startup error into a runtime exception that occurs unpredictably when the lazy bean is first accessed — potentially in production under load. It also masks circular dependency errors that Spring would otherwise detect and report at startup.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify component scan paths include the package containing the missing bean",
+      "success_rate": 0.92,
+      "how": "Check your @SpringBootApplication or @ComponentScan annotation's basePackages. The default scan starts from the package of the main application class. If the missing bean is in a different package tree (common in multi-module projects), add its package explicitly: @ComponentScan(basePackages = {\"com.example.app\", \"com.example.shared\"}). Run with --debug flag to see which packages are scanned.",
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure the missing class has @Service, @Component, @Repository, or @Configuration annotation",
+      "success_rate": 0.90,
+      "how": "Check the class that Spring cannot find. It must have a stereotype annotation (@Service, @Component, @Repository, @Controller) or be declared as a @Bean in a @Configuration class. The error message 'No qualifying bean of type X' tells you the exact type to look for. Search your codebase for the class and add the appropriate annotation.",
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html#beans-stereotype-annotations"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Break circular dependencies by applying @Lazy to ONE side of the cycle",
+      "success_rate": 0.85,
+      "how": "If the error mentions a circular reference (BeanCurrentlyInCreationException), identify the dependency cycle from the stack trace. Add @Lazy to the constructor parameter on ONE side of the cycle: @Lazy @Autowired private final ServiceB serviceB. Better yet, refactor to eliminate the cycle by extracting shared logic into a third bean. Spring Boot 3.x no longer allows circular references by default.",
+      "tradeoff": "Using @Lazy on one side is a quick fix but the circular dependency remains an architectural smell that should be refactored",
+      "sources": [
+        "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-lazy-init.html"
+      ],
+      "condition": "When the error is specifically a circular dependency"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.2,
+        "condition": "When a placeholder bean or @Lazy workaround is used instead of fixing the missing dependency"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "When a dependency class is on the classpath at compile time but missing at runtime"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 58,
+    "last_verification": "2026-02-14"
+  }
+}

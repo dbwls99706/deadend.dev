@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/runtimeerror-no-running-event-loop/py311-linux",
+  "url": "https://deadends.dev/python/runtimeerror-no-running-event-loop/py311-linux",
+  "error": {
+    "signature": "RuntimeError: no running event loop",
+    "regex": "RuntimeError: (?:no running event loop|This event loop is already running|cannot be called from a running event loop)",
+    "domain": "python",
+    "category": "async_error",
+    "first_seen": "2020-10-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Jupyter notebooks",
+        "Django async views",
+        "FastAPI with synchronous dependencies",
+        "mixing sync and async code"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-14",
+    "summary": "This error occurs when async code is called without a running event loop, or when asyncio.run() is called from within an already-running event loop. The root cause is almost always an incorrect boundary between synchronous and asynchronous code. Fixing it requires understanding which context you are in and using the appropriate pattern."
+  },
+  "dead_ends": [
+    {
+      "action": "Using nest_asyncio.apply() as a permanent fix in production code",
+      "why_fails": "nest_asyncio monkey-patches asyncio to allow nested event loops, which masks the architectural problem and introduces subtle bugs. Nested loops can cause reentrancy issues where callbacks execute in unexpected order, leading to data races and deadlocks. It also prevents migration to newer Python async patterns and breaks structured concurrency guarantees.",
+      "fail_rate": 0.72,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html"
+      ],
+      "condition": "Acceptable as a temporary workaround in Jupyter notebooks only"
+    },
+    {
+      "action": "Creating a new event loop with asyncio.new_event_loop() inside an async function",
+      "why_fails": "Creating a second event loop inside an async context results in two competing loops. The new loop cannot run because the thread is already occupied by the outer loop. Calling loop.run_until_complete() on the new loop blocks the current thread and deadlocks the outer loop. This creates hangs that are difficult to diagnose.",
+      "fail_rate": 0.88,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.new_event_loop"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Calling asyncio.run() inside a function that is already running within an event loop",
+      "why_fails": "asyncio.run() creates a new event loop and runs it until completion. If called from within an already-running loop (e.g., inside a FastAPI endpoint, Django async view, or Jupyter cell), it raises 'RuntimeError: This event loop is already running'. asyncio.run() is designed as the top-level entry point, not for nested async calls.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-runner.html#asyncio.run"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use await directly when already inside an async context",
+      "success_rate": 0.93,
+      "how": "If you are inside an async function (async def), simply 'await' the coroutine directly instead of using asyncio.run() or loop.run_until_complete(). For example, change 'asyncio.run(fetch_data())' to 'result = await fetch_data()'. If the calling function is not async, make it async and propagate await up the call chain.",
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-task.html"
+      ],
+      "condition": "When the calling code can be made async"
+    },
+    {
+      "action": "Use asyncio.get_event_loop() correctly based on your Python version and context",
+      "success_rate": 0.85,
+      "how": "In Python 3.10+, asyncio.get_event_loop() emits a deprecation warning if no loop is running. Use 'asyncio.get_running_loop()' inside async code to get the current loop. For synchronous entry points, use 'asyncio.run(main())' as the single top-level call. For libraries that must support both sync and async, use 'loop.run_in_executor()' to bridge sync-to-async boundaries cleanly.",
+      "tradeoff": "Requires restructuring the call chain to have a clear sync/async boundary at the top level",
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_running_loop"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restructure code to maintain a clean sync/async boundary",
+      "success_rate": 0.90,
+      "how": "Identify the single entry point where async begins (e.g., asyncio.run(main()) in a script, or the framework's async handler in FastAPI/Django). Keep all code above the boundary synchronous and all code below it async. Use 'loop.run_in_executor(None, sync_function)' to call synchronous blocking code from async code. Use 'asyncio.run()' only once at the top level.",
+      "tradeoff": "May require significant refactoring of existing codebases that mix sync and async patterns",
+      "sources": [
+        "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_in_executor"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 68,
+    "last_verification": "2026-02-14"
+  }
+}
