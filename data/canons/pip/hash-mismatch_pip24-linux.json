@@ -70,30 +70,16 @@
         "https://pip.pypa.io/en/stable/topics/secure-installs/"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if the package was yanked/replaced on PyPI — this could be a security issue"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "pip/conflicting-dependencies/pip23-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "pip/no-space-left-during-install/pip24-linux",
-        "probability": 0.15
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "pip/conflicting-dependencies/pip23-linux",
-        "probability": 0.14
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "pip/no-matching-distribution/pip24-linux",
-        "distinction": "Both produce similar messages, but 'hash-mismatch' and 'no-matching-distribution' differ in root cause and environment context."
+        "error_id": "pip/hash-mismatch/pip23-linux",
+        "distinction": "'ERROR' is a security_error error while 'ERROR' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -89,12 +89,7 @@
         "condition": "Wrong module format loaded"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "node/err-require-esm/node20-linux",
-        "distinction": "ERR_REQUIRE_ESM is specifically about CJS/ESM mismatch; SyntaxError can have many causes including JSON parse and typos"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

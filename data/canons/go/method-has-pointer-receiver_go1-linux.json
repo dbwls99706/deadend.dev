@@ -60,24 +60,10 @@
       {
         "error_id": "go/cannot-use-as-type/go1-linux",
         "probability": 0.21
-      },
-      {
-        "error_id": "go/declared-not-used/go1-linux",
-        "probability": 0.22
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "go/panic-runtime-error/go1-linux",
-        "probability": 0.14
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "go/interface-conversion-panic/go121-linux",
-        "distinction": "Pointer receiver error is a compile-time error about calling a method with a pointer receiver on a non-addressable value; interface conversion panic is a runtime panic from a failed type assertion on an interface"
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

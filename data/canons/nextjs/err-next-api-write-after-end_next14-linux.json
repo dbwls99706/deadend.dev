@@ -61,30 +61,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "nextjs/api-route-body-not-parsed/nextjs14-linux",
-        "probability": 0.23
-      },
-      {
-        "error_id": "nextjs/err-next-config-invalid/next14-linux",
-        "probability": 0.15
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "nextjs/use-client-directive/nextjs14-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "nextjs/next-image-unconfigured-host/next14-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "nextjs/not-found-function/nextjs14-linux",
-        "distinction": "Both produce similar messages, but 'err-next-api-write-after-end' and 'not-found-function' differ in root cause and environment context."
+        "error_id": "nextjs/missing-suspense-boundary/next14-linux",
+        "distinction": "'Error' is a api-routes error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -65,30 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "git/not-a-git-repository/git2-linux",
-        "probability": 0.22
-      },
-      {
-        "error_id": "git/large-file-push-rejected/git2-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "git/merge-conflict-markers/git2-linux",
-        "probability": 0.13
-      },
-      {
-        "error_id": "git/failed-to-push-refs/git2-linux",
-        "probability": 0.17
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/failed-to-push-refs/git2-linux",
-        "distinction": "Both produce similar messages, but 'cannot-lock-ref' and 'failed-to-push-refs' differ in root cause and environment context."
+        "error_id": "git/pathspec-did-not-match/git2-linux",
+        "distinction": "'error' is a ref_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

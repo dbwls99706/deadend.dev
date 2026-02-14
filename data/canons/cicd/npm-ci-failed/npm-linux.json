@@ -30,7 +30,7 @@
       "why_fails": "npm install may resolve different dependency versions than what was tested locally, introducing non-deterministic builds and subtle bugs",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.npmjs.com/cli/v10/commands/npm-ci"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Regenerating the lockfile in CI defeats the purpose of deterministic builds; different npm versions may produce different lockfiles",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.npmjs.com/cli/v10/commands/npm-ci"
       ],
       "condition": ""
     }

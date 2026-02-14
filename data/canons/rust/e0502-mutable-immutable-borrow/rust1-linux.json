@@ -69,8 +69,8 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0382-borrow-moved-value/rust1-linux",
-        "distinction": "E0382 is use-after-move; E0502 is simultaneous mutable+immutable borrow"
+        "error_id": "rust/rust-cannot-borrow-mut/rust1.77-linux",
+        "distinction": "'error[E0502]' is a borrow_error error while 'cannot borrow `*self` as mutable because it is als' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

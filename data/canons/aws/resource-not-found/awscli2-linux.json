@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Verify the ARN or resource identifier for typos"
     }
   ],
   "transition_graph": {
@@ -79,12 +79,7 @@
         "condition": "Permissions fixed but resource referenced by wrong name or region"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "aws/access-denied-exception/awscli2-linux",
-        "distinction": "AccessDenied can mask ResourceNotFound when permissions hide resource existence for security"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

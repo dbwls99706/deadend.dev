@@ -56,30 +56,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/env-file-not-found/docker27-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "docker/network-has-active-endpoints/docker24-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "docker/pip-install-root-warning/docker27-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/network-not-found/docker27-linux",
-        "distinction": "'dependency failed to start' indicates a failed Docker Compose service dependency, while 'response from daemon' indicates a missing Docker network."
-      },
-      {
-        "error_id": "docker/healthcheck-failing/docker24-linux",
-        "distinction": "'dependency failed to start' indicates a failed Docker Compose service dependency, while 'health' indicates a failing container health check."
+        "error_id": "docker/docker-iptables-failed/docker27-linux",
+        "distinction": "'dependency failed to start' is a orchestration_error error while 'iptables failed' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

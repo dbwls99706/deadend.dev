@@ -61,30 +61,16 @@
         "https://doc.rust-lang.org/error_codes/E0425.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check for typos in name and verify module visibility (pub)"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "rust/e0308-mismatched-types/rust1-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0597-borrowed-too-short/rust1-linux",
-        "probability": 0.1
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
-        "distinction": "'[E0425]' indicates a value not found in scope, while '[E0277]' indicates a type that cannot be sent between threads."
-      },
-      {
-        "error_id": "rust/e0308-mismatched-types/rust1-linux",
-        "distinction": "'[E0425]' indicates a value not found in scope, while '[E0308]' indicates match arms returning different types."
+        "error_id": "rust/cargo-feature-not-found/rust1-linux",
+        "distinction": "'error[E0425]' is a name_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

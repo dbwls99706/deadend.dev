@@ -72,7 +72,7 @@
     },
     {
       "action": "Ensure arguments passed to reverse() or {% url %} match the URL pattern's capture groups",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "If the error says 'with arguments' or 'keyword arguments', the URL exists but the parameters do not match. Check the URL pattern for expected capture groups. For example, if the pattern is 'path(\"items/<int:pk>/\", ...)', then reverse('item-detail', kwargs={'pk': item.pk}) is correct but reverse('item-detail', args=[item.slug]) would fail because slug is a string. Ensure the types and names match exactly.",
       "tradeoff": "None; this is a diagnostic step that directly identifies the mismatch",
       "sources": [
@@ -94,7 +94,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/runtimeerror-set-changed-size/py311-linux",
+        "distinction": "'django.urls.exceptions.NoReverseMatch' is a routing_error error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

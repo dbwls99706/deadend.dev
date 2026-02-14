@@ -56,26 +56,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/pip-install-root-warning/docker27-linux",
-        "probability": 0.2
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "docker/compose-version-obsolete/docker27-linux",
-        "probability": 0.14
-      },
-      {
-        "error_id": "docker/apt-get-update-failed/docker27-linux",
-        "probability": 0.12
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/image-prune-in-use/docker27-linux",
-        "distinction": "'npm error EACCES' indicates insufficient file system permissions, while 'response from daemon' indicates an image removal blocked by running containers."
+        "error_id": "docker/volume-mount-permission-denied/docker27-linux",
+        "distinction": "'npm error EACCES' is a permission_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

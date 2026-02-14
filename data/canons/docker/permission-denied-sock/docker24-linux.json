@@ -29,7 +29,7 @@
     {
       "action": "Running chmod 777 /var/run/docker.sock",
       "why_fails": "This opens the Docker socket to all users on the system, which is a severe security vulnerability. The Docker daemon runs as root, so unrestricted socket access grants root-equivalent privileges to any local user. The permission also resets on Docker daemon restart.",
-      "fail_rate": 0.3,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.docker.com/engine/security/#docker-daemon-attack-surface"
       ],
@@ -38,7 +38,7 @@
     {
       "action": "Prefixing every Docker command with sudo",
       "why_fails": "Running Docker with sudo works as an immediate workaround but is not a long-term solution. It breaks IDE integrations, Docker Compose workflows, CI/CD scripts, and development tooling that expects Docker to work without sudo. It also trains users to run everything as root.",
-      "fail_rate": 0.25,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.docker.com/engine/install/linux-postinstall/"
       ]
@@ -67,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/permission-denied-sock/docker24-wsl2",
+        "distinction": "'Got permission denied while trying to connect to t' is a permissions error while 'Got permission denied while trying to connect to t' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

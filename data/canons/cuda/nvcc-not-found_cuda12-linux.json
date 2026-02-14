@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "cuda/all-cuda-capable-devices-busy/cuda12-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "cuda/cudnn-not-compiled-with-support/cuda12-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "cuda/nccl-timeout/torch2.0-multi-gpu",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "cuda/device-side-assert/cuda12-a100",
-        "distinction": "'FileNotFoundError' indicates NVCC compiler not found in PATH, while 'RuntimeError' indicates a CUDA kernel assertion failure (often bad tensor indices)."
+        "error_id": "cuda/cuda-driver-insufficient/cuda12-linux",
+        "distinction": "'FileNotFoundError' is a build error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

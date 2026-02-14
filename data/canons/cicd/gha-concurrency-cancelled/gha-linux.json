@@ -39,7 +39,7 @@
       "why_fails": "Using a unique key per run effectively disables concurrency control, defeating its purpose entirely",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions"
       ],
       "condition": ""
     }

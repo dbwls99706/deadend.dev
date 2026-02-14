@@ -84,12 +84,7 @@
         "condition": "Fixing ownership changes variable types"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "rust/e0277-trait-bound/rust1-linux",
-        "distinction": "E0277 is about missing trait implementations; E0308 is about concrete type mismatches"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

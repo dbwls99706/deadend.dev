@@ -74,34 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/err-package-path-not-exported/node20-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "node/err-unhandled-rejection/node20-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "node/heap-out-of-memory/node18-linux",
-        "probability": 0.15
-      },
-      {
-        "error_id": "node/err-invalid-package-config/node20-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/err-http-headers-sent/node20-linux",
-        "distinction": "'npm error ERESOLVE could not resolve peer dependency conflict' indicates conflicting npm peer dependency versions, while '[ERR_HTTP_HEADERS_SENT]' indicates headers sent after response already started."
-      },
-      {
-        "error_id": "node/err-crypto-invalid-iv-length/node20-linux",
-        "distinction": "'npm error ERESOLVE could not resolve peer dependency conflict' indicates conflicting npm peer dependency versions, while 'Error' indicates an invalid cryptographic parameter."
+        "error_id": "node/maximum-call-stack/node20-linux",
+        "distinction": "'npm error ERESOLVE could not resolve peer dependen' is a dependency_error error while 'RangeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

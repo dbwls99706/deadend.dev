@@ -79,12 +79,7 @@
         "condition": "Pull triggered by push failure conflicts with local work"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "git/failed-to-push-refs/git2-linux",
-        "distinction": "failed-to-push is about remote vs local commits; local-changes-overwritten is about uncommitted working tree changes"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

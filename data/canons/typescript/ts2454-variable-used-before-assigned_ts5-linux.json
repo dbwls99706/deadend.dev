@@ -60,18 +60,9 @@
       {
         "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
         "probability": 0.18
-      },
-      {
-        "error_id": "typescript/ts2307-cannot-find-module/ts5-linux",
-        "probability": 0.25
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "typescript/ts6133-declared-not-read/ts5-linux",
-        "probability": 0.16
-      }
-    ],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",

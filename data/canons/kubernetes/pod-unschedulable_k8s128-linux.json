@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "kubernetes/configmap-not-found/k8s128-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "kubernetes/back-off-pulling-image/k8s1-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "kubernetes/evicted-pod/k8s1-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "kubernetes/createcontainerconfigerror/k8s1-linux",
-        "probability": 0.14
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "kubernetes/service-not-found/k8s1-linux",
-        "distinction": "'0/3 nodes are available' indicates insufficient cluster resources to schedule a pod, while 'couldn't find service' indicates a missing or endpoint-less Kubernetes Service."
+        "error_id": "kubernetes/configmap-too-large/k8s1-linux",
+        "distinction": "'0/3 nodes are available' is a scheduling error while 'Error from server' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

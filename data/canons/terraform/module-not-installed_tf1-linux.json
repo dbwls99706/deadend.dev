@@ -52,7 +52,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": ""
+      "how": "Run terraform init to download modules"
     },
     {
       "action": "If module source changed, run terraform init -upgrade to fetch new version",
@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": ""
+      "how": "If module source changed, run terraform init -upgrade to fetch new version"
     },
     {
       "action": "For CI/CD, ensure terraform init runs before plan/apply",
@@ -74,22 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "terraform/provider-not-present/tf1-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "terraform/provider-not-found/tf115-linux",
-        "probability": 0.11
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "terraform/provider-not-found/tf115-linux",
-        "distinction": "Both produce similar messages, but 'module-not-installed' and 'provider-not-found' differ in root cause and environment context."
+        "error_id": "terraform/output-not-found/tf1-linux",
+        "distinction": "'Error' is a module_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

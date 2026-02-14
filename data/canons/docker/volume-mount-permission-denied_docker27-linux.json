@@ -36,7 +36,7 @@
     },
     {
       "action": "chmod 777 on host directory",
-      "why_fails": "Major security risk \u2014 opens directory to all users",
+      "why_fails": "Major security risk — opens directory to all users",
       "fail_rate": 0.8,
       "sources": [
         "https://docs.docker.com/engine/storage/volumes/"
@@ -70,36 +70,18 @@
         "https://docs.docker.com/engine/storage/volumes/"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use named volumes instead of bind mounts for data that doesn't need host access"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/build-arg-not-set/docker24-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "docker/exec-format-error/docker27-linux",
-        "probability": 0.23
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
-      {
-        "error_id": "docker/image-prune-in-use/docker27-linux",
-        "probability": 0.16
-      },
       {
         "error_id": "docker/npm-install-eacces-docker/docker27-linux",
         "probability": 0.17
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/exec-format-error/docker27-linux",
-        "distinction": "'Error' indicates insufficient file system permissions, while 'exec format error' indicates a CPU architecture mismatch (e.g., arm64 vs amd64)."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

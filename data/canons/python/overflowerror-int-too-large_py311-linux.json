@@ -61,30 +61,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/fileexistserror/py311-linux",
-        "probability": 0.2
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/modulenotfounderror/py310-macos",
-        "probability": 0.2
-      },
-      {
-        "error_id": "python/typeerror-not-iterable/py311-linux",
-        "probability": 0.2
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/zerodivisionerror/py311-linux",
-        "distinction": "'OverflowError' indicates a numeric overflow beyond system limits, while 'ZeroDivisionError' indicates division by zero."
-      },
-      {
-        "error_id": "python/connectionrefusederror/py311-linux",
-        "distinction": "'OverflowError' indicates a numeric overflow beyond system limits, while 'ConnectionRefusedError' indicates a refused network connection (service not listening)."
+        "error_id": "python/assertionerror/py311-linux",
+        "distinction": "'OverflowError' is a numeric error while 'AssertionError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

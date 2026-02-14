@@ -70,34 +70,16 @@
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check for early returns before hooks — all hooks must run before any return"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "react/context-undefined/react18-linux",
-        "probability": 0.23
-      },
-      {
-        "error_id": "react/cannot-read-undefined-map/react18-linux",
-        "probability": 0.18
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "react/controlled-uncontrolled-switch/react18-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
-        "probability": 0.16
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "react/invalid-dom-property/react18-linux",
-        "distinction": "'Rendered more hooks than during the previous render' indicates conditional hook calls changing between renders, while 'Warning' indicates an incorrect DOM attribute name in JSX."
+        "error_id": "react/hooks-in-class-component/react18-linux",
+        "distinction": "'Rendered more hooks than during the previous rende' is a hook_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

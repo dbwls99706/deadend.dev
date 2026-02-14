@@ -65,34 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/bind-address-already-in-use/docker27-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "docker/compose-service-depends-on/docker27-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "docker/image-prune-in-use/docker27-linux",
-        "probability": 0.15
-      },
-      {
-        "error_id": "docker/exec-format-error/docker27-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/network-not-found/docker27-linux",
-        "distinction": "'COPY --from=builder failed' indicates a missing file from a multi-stage build, while 'response from daemon' indicates a missing Docker network."
-      },
-      {
-        "error_id": "docker/exit-code-137/docker27-linux",
-        "distinction": "'COPY --from=builder failed' indicates a missing file from a multi-stage build, while 'Container exited with code 137 (OOMKilled)' indicates container killed due to OOM (out of memory)."
+        "error_id": "docker/apt-get-update-failed/docker27-linux",
+        "distinction": "'COPY --from=builder failed' is a build_error error while 'E' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

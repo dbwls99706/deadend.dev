@@ -30,7 +30,7 @@
       "why_fails": "Credentials in source code are a critical security vulnerability; they are visible in build logs and version history",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Jenkins credentials scoped to a folder are only available to jobs within that folder; the pipeline in a different folder cannot access them",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     }

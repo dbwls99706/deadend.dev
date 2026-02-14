@@ -44,7 +44,7 @@
     {
       "action": "Using git stash pop when you meant git stash apply",
       "why_fails": "git stash pop applies the stash AND removes it from the stash list. If the apply has conflicts, the stash is NOT removed (safe). But if it applies cleanly, the stash is gone. Use 'git stash apply' to keep the stash entry as a safety net, then 'git stash drop' after confirming the changes are correct.",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://git-scm.com/docs/git-stash"
       ],

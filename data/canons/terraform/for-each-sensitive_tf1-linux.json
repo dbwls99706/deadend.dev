@@ -65,26 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "terraform/cycle-in-module/tf1-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "terraform/backend-initialization-required/tf115-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "terraform/depends-on-module/tf1-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "terraform/cycle-detected/tf115-linux",
-        "distinction": "Both produce similar messages, but 'for-each-sensitive' and 'cycle-detected' differ in root cause and environment context."
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "distinction": "'Error' is a config_error error while 'Provider configuration not present' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

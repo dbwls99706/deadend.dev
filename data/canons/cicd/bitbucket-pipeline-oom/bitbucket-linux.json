@@ -30,7 +30,7 @@
       "why_fails": "Bitbucket Pipelines has hard limits per plan tier (e.g., 4GB or 8GB max). Requesting more than the plan allows results in a pipeline configuration error.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://support.atlassian.com/bitbucket-cloud/docs/pipeline-start-conditions/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Bitbucket pipeline containers do not support adding swap. The memory limit is enforced by the container runtime cgroup, which counts both memory and swap.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://support.atlassian.com/bitbucket-cloud/docs/pipeline-start-conditions/"
       ],
       "condition": ""
     }

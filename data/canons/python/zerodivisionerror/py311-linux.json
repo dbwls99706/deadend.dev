@@ -66,26 +66,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/typeerror-nonetype-not-subscriptable/py311-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/permissionerror-errno13/py311-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/indexerror-list-out-of-range/py311-linux",
-        "distinction": "'ZeroDivisionError' indicates division by zero, while 'IndexError' indicates a list index out of valid range."
-      },
-      {
-        "error_id": "python/unicodedecodeerror/py311-linux",
-        "distinction": "'ZeroDivisionError' indicates division by zero, while 'UnicodeDecodeError' indicates a Unicode decoding failure."
+        "error_id": "python/overflowerror/py311-linux",
+        "distinction": "'ZeroDivisionError' is a math_error error while 'OverflowError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

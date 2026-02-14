@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if another terraform apply is running and wait for it to finish"
     }
   ],
   "transition_graph": {
@@ -79,12 +79,7 @@
         "condition": "Cycle error crashed apply leaving lock behind"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "terraform/provider-not-present/tf1-linux",
-        "distinction": "Provider not present is about missing terraform init; state lock is about concurrent access or crashed runs"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

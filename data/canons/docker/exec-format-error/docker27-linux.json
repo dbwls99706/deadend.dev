@@ -79,12 +79,7 @@
         "condition": "Investigating OCI failure reveals architecture mismatch"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
-        "distinction": "OCI runtime create failed is a broader error; exec format error specifically means wrong CPU architecture"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

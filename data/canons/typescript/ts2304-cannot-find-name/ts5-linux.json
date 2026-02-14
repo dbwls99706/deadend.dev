@@ -61,15 +61,11 @@
         "https://www.typescriptlang.org/tsconfig#include"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check tsconfig include/exclude paths and module resolution settings"
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {
-        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
-        "probability": 0.24
-      },
       {
         "error_id": "typescript/ts2339-property-not-exist/ts5-linux",
         "probability": 0.24

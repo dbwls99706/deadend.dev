@@ -37,7 +37,7 @@
     {
       "action": "Initializing the variable to None at function top",
       "why_fails": "Hides the real bug if the None path is never intended",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.python.org/3/library/exceptions.html"
       ],
@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/runtimeerror-coroutine-never-awaited/py311-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/indexerror-list-out-of-range/py311-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/indexerror-list-out-of-range/py311-linux",
-        "distinction": "'UnboundLocalError' indicates a variable referenced before assignment in local scope, while 'IndexError' indicates a list index out of valid range."
-      },
-      {
-        "error_id": "python/modulenotfounderror/py310-macos",
-        "distinction": "'UnboundLocalError' indicates a variable referenced before assignment in local scope, while 'ModuleNotFoundError' indicates a missing Python module or package."
+        "error_id": "python/runtimeerror-set-changed-size/py311-linux",
+        "distinction": "'UnboundLocalError' is a scoping error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

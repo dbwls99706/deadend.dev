@@ -52,7 +52,7 @@
         "https://registry.terraform.io/providers"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the provider documentation for the correct attribute name"
     },
     {
       "action": "Run terraform providers schema to see all available attributes",
@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/language/providers/requirements"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check provider version — attribute may have been added/removed in a version change"
     }
   ],
   "transition_graph": {
@@ -78,26 +78,13 @@
       {
         "error_id": "terraform/for-each-sensitive/tf1-linux",
         "probability": 0.23
-      },
-      {
-        "error_id": "terraform/module-not-installed/tf1-linux",
-        "probability": 0.16
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "terraform/invalid-provider-config/tf115-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "terraform/invalid-count-argument/tf115-linux",
-        "probability": 0.19
-      }
-    ],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "terraform/output-not-found/tf1-linux",
-        "distinction": "Both produce similar messages, but 'unsupported-attribute' and 'output-not-found' differ in root cause and environment context."
+        "distinction": "'Error' is a config_error with a different root cause than 'Error'. Check the error signature and stack trace carefully to distinguish them."
       }
     ]
   },

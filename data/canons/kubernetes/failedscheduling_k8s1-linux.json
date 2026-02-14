@@ -74,30 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "kubernetes/forbidden-exceeded-quota/k8s1-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "kubernetes/ingress-502-bad-gateway/k8s1-linux",
-        "probability": 0.16
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "kubernetes/secret-not-found/k8s1-linux",
-        "distinction": "'FailedScheduling' indicates insufficient cluster resources to schedule a pod, while 'Error' indicates a missing Kubernetes Secret."
-      },
-      {
-        "error_id": "kubernetes/forbidden-user/k8s128-linux",
-        "distinction": "'FailedScheduling' indicates insufficient cluster resources to schedule a pod, while 'from server (Forbidden)' indicates RBAC permission denial for a service account."
+        "error_id": "kubernetes/k8s-priority-class-not-found/k8s129-linux",
+        "distinction": "'Warning FailedScheduling' is a scheduling_error error while 'Error creating' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

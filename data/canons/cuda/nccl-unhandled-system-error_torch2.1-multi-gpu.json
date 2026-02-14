@@ -68,22 +68,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "cuda/cuda-lazy-loading/cuda12-rtx4090",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "cuda/no-kernel-image-for-device/cuda12-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "cuda/all-cuda-capable-devices-busy/cuda12-linux",
-        "distinction": "Both produce similar messages, but 'nccl-unhandled-system-error' and 'all-cuda-capable-devices-busy' differ in root cause and environment context."
+        "distinction": "'RuntimeError' is a distributed_error error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

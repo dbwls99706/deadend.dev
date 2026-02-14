@@ -30,7 +30,7 @@
       "why_fails": "This disables SSH host key verification entirely, creating a security vulnerability to MITM attacks. It also does not fix connectivity or credential issues.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.ansible.com/ansible/latest/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the host is genuinely unreachable (wrong IP, firewall, SSH not running), no amount of timeout increase will succeed — it just delays the failure",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.ansible.com/ansible/latest/"
       ],
       "condition": ""
     }

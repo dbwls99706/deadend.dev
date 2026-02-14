@@ -61,24 +61,15 @@
         "https://go.dev/ref/mod#go-mod-tidy"
       ],
       "condition": "",
-      "how": ""
+      "how": "Run go mod tidy to clean up and add all missing dependencies"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "go/channel-deadlock/go1-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "go/declared-not-used/go1-linux",
         "probability": 0.13
-      },
-      {
-        "error_id": "go/syntax-error-unexpected/go1-linux",
-        "probability": 0.1
       }
     ],
     "frequently_confused_with": [

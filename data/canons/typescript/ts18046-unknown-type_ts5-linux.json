@@ -61,15 +61,11 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use type predicate or assertion function for custom error types"
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {
-        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
-        "probability": 0.15
-      },
       {
         "error_id": "typescript/ts7006-implicitly-any/ts5-linux",
         "probability": 0.23
@@ -85,12 +81,7 @@
         "probability": 0.19
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "typescript/ts2739-missing-properties/ts5-linux",
-        "distinction": "'TS18046' indicates an 'unknown' type requiring narrowing, while 'TS2739' indicates missing required properties on an object type."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

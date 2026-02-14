@@ -30,7 +30,7 @@
       "why_fails": "Resource classes like 'large', 'xlarge', '2xlarge' and ARM resource classes are only available on paid plans; free tier is limited to 'small' and 'medium'",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://circleci.com/docs/"
       ],
       "condition": ""
     },

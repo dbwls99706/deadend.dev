@@ -79,12 +79,7 @@
         "condition": "Wrong directory led to pathspec failure then this error"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "git/pathspec-no-match/git2-linux",
-        "distinction": "pathspec error means file/branch not found in git; not-a-git-repository means no git repo at all"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -77,12 +77,7 @@
         "probability": 0.12
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "go/nil-pointer-dereference/go1-linux",
-        "distinction": "'declared and not used' indicates an unused variable declaration, while 'runtime error' indicates a nil pointer dereference."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

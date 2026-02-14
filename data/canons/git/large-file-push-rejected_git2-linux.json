@@ -74,34 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "git/worktree-locked/git2-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "git/stash-apply-conflict/git2-linux",
-        "probability": 0.18
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "git/pathspec-did-not-match/git2-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "git/detached-head/git2-linux",
-        "probability": 0.2
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/stash-pop-conflict/git2-linux",
-        "distinction": "'remote' indicates a file exceeding GitHub's size limit, while 'error' indicates a conflict when applying a Git stash."
-      },
-      {
-        "error_id": "git/already-on-branch/git2-linux",
-        "distinction": "'remote' indicates a file exceeding GitHub's size limit, while 'Already on 'main'' indicates already on the requested branch."
+        "error_id": "git/src-refspec-no-match/git2-linux",
+        "distinction": "'remote' is a push_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -67,10 +67,6 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
-        "probability": 0.16
-      },
-      {
         "error_id": "typescript/ts2339-property-not-exist/ts5-linux",
         "probability": 0.16
       }
@@ -79,20 +75,12 @@
       {
         "error_id": "typescript/ts2769-no-overload-matches/ts5-linux",
         "probability": 0.2
-      },
-      {
-        "error_id": "typescript/ts2307-cannot-find-module/ts5-linux",
-        "probability": 0.18
       }
     ],
     "frequently_confused_with": [
       {
         "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
         "distinction": "'TS2564' indicates a class property missing initialization, while 'TS2345' indicates an argument type mismatch."
-      },
-      {
-        "error_id": "typescript/ts2694-no-exported-member/ts5-linux",
-        "distinction": "'TS2564' indicates a class property missing initialization, while 'TS2694' indicates a missing exported member from a module."
       }
     ]
   },

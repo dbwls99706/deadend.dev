@@ -79,12 +79,7 @@
         "condition": "After init, plan reveals circular dependencies"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "terraform/state-lock-error/tf1-linux",
-        "distinction": "State lock is about concurrent access; cycle error is about circular resource dependencies in configuration"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts2694-no-exported-member/ts5-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "typescript/ts7006-implicitly-any/ts5-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
-        "probability": 0.14
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts7006-implicitly-any/ts5-linux",
-        "distinction": "'TS18048' indicates a possibly undefined value access, while 'TS7006' indicates an implicit 'any' type on a parameter."
+        "error_id": "typescript/ts2532-object-possibly-undefined/ts5-linux",
+        "distinction": "'error TS18048' is a strictness error while 'error TS2532' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

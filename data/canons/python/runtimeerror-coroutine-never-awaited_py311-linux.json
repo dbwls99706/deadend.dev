@@ -57,16 +57,7 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/indexerror-list-out-of-range/py311-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "python/filenotfounderror/py311-linux",
-        "probability": 0.25
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "python/asyncio-no-running-event-loop/py311-linux",
@@ -74,10 +65,6 @@
       }
     ],
     "frequently_confused_with": [
-      {
-        "error_id": "python/importerror-cannot-import-name/py311-linux",
-        "distinction": "'RuntimeWarning' indicates a coroutine that was never awaited, while 'ImportError' indicates a specific name missing from an installed module."
-      },
       {
         "error_id": "python/asyncio-no-running-event-loop/py311-linux",
         "distinction": "'RuntimeWarning' indicates a coroutine that was never awaited, while 'RuntimeError' indicates no running asyncio event loop."

@@ -61,32 +61,18 @@
         "https://developer.hashicorp.com/terraform/cli/commands/providers"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check system resources (memory) — large state files can OOM the provider"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "terraform/output-not-found/tf1-linux",
-        "probability": 0.21
-      },
-      {
-        "error_id": "terraform/invalid-provider-config/tf115-linux",
-        "probability": 0.22
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "terraform/provider-version-constraint/tf1-linux",
         "probability": 0.14
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "terraform/state-lock-dynamodb/tf1-linux",
-        "distinction": "'Error' indicates a Terraform provider plugin crash, while 'acquiring the state lock' indicates a Terraform state lock conflict."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

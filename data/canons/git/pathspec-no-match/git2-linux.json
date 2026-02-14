@@ -52,7 +52,7 @@
         "https://git-scm.com/docs/git-ls-files"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check spelling and use git ls-files or git branch -a to verify the name"
     },
     {
       "action": "Fetch remote branches if switching to a remote branch",
@@ -79,12 +79,7 @@
         "condition": "Navigated to repo but wrong branch or file path"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "git/not-a-git-repository/git2-linux",
-        "distinction": "not-a-git-repository means no repo exists; pathspec error means repo exists but file/branch does not"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

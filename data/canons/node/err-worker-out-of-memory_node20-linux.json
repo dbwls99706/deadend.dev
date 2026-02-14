@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/econnreset/node20-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "node/maximum-call-stack/node20-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "node/err-stream-premature-close/node20-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/eperm-operation-not-permitted/node20-linux",
-        "distinction": "'FATAL ERROR' indicates memory exhaustion, while 'Error' indicates an operation not permitted by the OS."
-      },
-      {
-        "error_id": "node/err-module-not-found/node20-linux",
-        "distinction": "'FATAL ERROR' indicates memory exhaustion, while '[ERR_MODULE_NOT_FOUND]' indicates a missing Node.js module."
+        "error_id": "node/heap-out-of-memory/node18-linux",
+        "distinction": "'FATAL ERROR' is a memory error while 'FATAL ERROR' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -65,30 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "nextjs/getserversideprops-export/nextjs14-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "nextjs/err-next-api-write-after-end/next14-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "nextjs/image-optimization-error/nextjs14-linux",
-        "distinction": "'TypeError' indicates undefined searchParams access, while 'Error' indicates an invalid next/image src prop."
-      },
-      {
-        "error_id": "nextjs/metadata-client-component/nextjs14-linux",
-        "distinction": "'TypeError' indicates undefined searchParams access, while 'Error' indicates exporting metadata from a 'use client' component."
+        "error_id": "nextjs/dynamic-server-usage/next14-linux",
+        "distinction": "'TypeError' is a type_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

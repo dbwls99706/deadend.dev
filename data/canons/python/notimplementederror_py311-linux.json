@@ -66,32 +66,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/connectionrefusederror/py311-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "python/modulenotfounderror-no-module-named/py310-macos",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "python/runtimeerror-set-changed-size/py311-linux",
         "probability": 0.13
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/deprecationwarning-datetime-utcnow/py311-linux",
-        "distinction": "'NotImplementedError' indicates a call to an unimplemented method, while 'DeprecationWarning' indicates use of a deprecated API."
-      },
-      {
-        "error_id": "python/eofeerror-unexpected/py311-linux",
-        "distinction": "'NotImplementedError' indicates a call to an unimplemented method, while 'EOFError' indicates unexpected end of input."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

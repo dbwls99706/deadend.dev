@@ -62,18 +62,8 @@
         "probability": 0.22
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "node/err-ossl-wrong-version-number/node20-linux",
-        "probability": 0.15
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "node/err-invalid-package-config/node20-linux",
-        "distinction": "'[ERR_REQUIRE_ASYNC_MODULE]' indicates a different error condition (err-require-async-module), while '[ERR_INVALID_PACKAGE_CONFIG]' indicates an invalid package.json configuration."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

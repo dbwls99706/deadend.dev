@@ -83,10 +83,6 @@
     ],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
-        "distinction": "'TS2339' indicates a property not existing on the given type, while 'TS1259' indicates a default import requiring esModuleInterop."
-      },
-      {
         "error_id": "typescript/ts2304-cannot-find-name/ts5-linux",
         "distinction": "'TS2339' indicates a property not existing on the given type, while 'TS2304' indicates a reference to an undeclared identifier."
       }

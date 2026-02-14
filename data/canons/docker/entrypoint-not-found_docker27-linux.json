@@ -74,32 +74,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/manifest-not-found/docker27-linux",
-        "probability": 0.23
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
-      {
-        "error_id": "docker/exec-format-error/docker27-linux",
-        "probability": 0.14
-      },
       {
         "error_id": "docker/oci-runtime-create-failed/docker27-linux",
         "probability": 0.18
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/manifest-not-found/docker27-linux",
-        "distinction": "'docker' indicates a missing container entrypoint script, while 'response from daemon' indicates a missing Docker image tag or manifest."
-      },
-      {
-        "error_id": "docker/manifest-unknown/docker24-linux",
-        "distinction": "'docker' indicates a missing container entrypoint script, while 'response from daemon' indicates a missing Docker image tag or manifest."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

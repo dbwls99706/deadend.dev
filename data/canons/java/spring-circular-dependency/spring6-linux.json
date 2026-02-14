@@ -37,7 +37,7 @@
     {
       "action": "Using @Lazy on one of the circular dependencies as a permanent solution",
       "why_fails": "@Lazy creates a proxy that defers initialization, breaking the cycle at startup. However, the circular dependency still exists in the design. The lazy proxy can cause unexpected behavior: the real bean is created on first access, which can happen at unpredictable times, potentially causing threading issues or startup order problems.",
-      "fail_rate": 0.45,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.spring.io/spring-framework/reference/"
       ],

@@ -84,12 +84,7 @@
         "condition": "Fixed image pull but container itself crashes"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
-        "distinction": "ImagePullBackOff is about pulling the image; CrashLoopBackOff means image pulled successfully but container crashes"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

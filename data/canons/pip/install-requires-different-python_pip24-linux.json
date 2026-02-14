@@ -74,22 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "pip/requires-python-version/pip23-linux",
-        "probability": 0.18
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "pip/inconsistent-requirements/pip23-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "pip/requires-python-version/pip23-linux",
-        "distinction": "Both produce similar messages, but 'install-requires-different-python' and 'requires-python-version' differ in root cause and environment context."
+        "error_id": "pip/backtracking-taking-long/pip24-linux",
+        "distinction": "'ERROR' is a version_error error while 'INFO' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

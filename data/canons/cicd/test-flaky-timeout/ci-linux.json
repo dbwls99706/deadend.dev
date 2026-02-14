@@ -30,7 +30,7 @@
       "why_fails": "Masks the real issue (slow tests, resource contention, race conditions); makes CI feedback loops painfully slow and can hit job-level timeouts",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Retries hide genuine bugs, increase CI costs, and create false confidence in test results; flaky tests that occasionally pass are still broken",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-workflows"
       ],
       "condition": ""
     }

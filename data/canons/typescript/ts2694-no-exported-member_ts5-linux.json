@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the library's changelog/migration guide for renamed or removed exports"
     },
     {
       "action": "Use IDE Go to Definition to find the actual export path",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use IDE Go to Definition to find the actual export path"
     },
     {
       "action": "Check if import path changed: import { X } from 'lib' vs 'lib/subpath'",
@@ -74,26 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts2769-no-overload-matches/ts5-linux",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "typescript/ts18046-unknown-type/ts5-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
-        "distinction": "'TS2694' indicates a missing exported member from a module, while 'TS7053' indicates an implicit 'any' from string indexing."
-      },
-      {
-        "error_id": "typescript/ts6133-declared-not-read/ts5-linux",
-        "distinction": "'TS2694' indicates a missing exported member from a module, while 'TS6133' indicates a declared but unused variable."
+        "error_id": "typescript/ts2305-module-no-exported-member/ts5-linux",
+        "distinction": "'error TS2694' is a import_error error while 'error TS2305' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

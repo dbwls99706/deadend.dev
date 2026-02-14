@@ -65,30 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "pip/read-timeout-error/pip24-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "pip/inconsistent-requirements/pip23-linux",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "pip/read-timeout-error/pip24-linux",
-        "probability": 0.2
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "pip/no-matching-distribution/pip24-linux",
-        "distinction": "Both produce similar messages, but 'no-space-left-during-install' and 'no-matching-distribution' differ in root cause and environment context."
-      },
-      {
-        "error_id": "pip/could-not-find-version/pip23-linux",
-        "distinction": "Both produce similar messages, but 'no-space-left-during-install' and 'could-not-find-version' differ in root cause and environment context."
+        "error_id": "pip/editable-install-requires-pyproject/pip24-linux",
+        "distinction": "'ERROR' is a disk_error error while 'ERROR' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

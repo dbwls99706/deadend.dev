@@ -57,7 +57,7 @@
     {
       "action": "Use git mergetool or IDE merge UI for complex conflicts",
       "success_rate": 0.88,
-      "how": "",
+      "how": "Use git mergetool or IDE merge UI for complex conflicts",
       "sources": [
         "https://git-scm.com/docs/git-mergetool"
       ],

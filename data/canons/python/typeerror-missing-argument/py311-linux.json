@@ -53,7 +53,7 @@
         "https://docs.python.org/3/tutorial/classes.html#method-objects"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if calling instance method without self, or missing args after refactor"
     },
     {
       "action": "Compare call site args with function signature",
@@ -66,36 +66,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/sqlalchemy-detachedinstanceerror/py311-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "python/filenotfounderror/py311-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "python/typeerror-unsupported-operand/py311-linux",
         "probability": 0.11
-      },
-      {
-        "error_id": "python/runtimeerror-coroutine-never-awaited/py311-linux",
-        "probability": 0.12
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/keyerror/py311-linux",
-        "distinction": "'TypeError' indicates a missing required function argument, while 'KeyError' indicates a missing dictionary key."
-      },
-      {
-        "error_id": "python/timeouterror/py311-linux",
-        "distinction": "'TypeError' indicates a missing required function argument, while 'TimeoutError' indicates a network or operation timeout."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

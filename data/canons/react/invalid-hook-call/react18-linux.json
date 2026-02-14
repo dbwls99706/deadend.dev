@@ -57,7 +57,7 @@
     {
       "action": "Check for duplicate React versions in node_modules",
       "success_rate": 0.85,
-      "how": "",
+      "how": "Check for duplicate React versions in node_modules",
       "sources": [
         "https://react.dev/warnings/invalid-hook-call-warning"
       ],

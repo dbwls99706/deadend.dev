@@ -66,24 +66,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/attributeerror-tensor-no-grad/torch2.0-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "python/asyncio-no-running-event-loop/py311-linux",
         "probability": 0.14
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/nameerror-not-defined/py311-linux",
-        "distinction": "'RuntimeError' indicates an asyncio event loop conflict, while 'NameError' indicates a reference to an undefined variable."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

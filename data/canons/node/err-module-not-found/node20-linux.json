@@ -61,7 +61,7 @@
         "https://nodejs.org/api/packages.html#package-entry-points"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check package.json exports field matches the import path"
     }
   ],
   "transition_graph": {

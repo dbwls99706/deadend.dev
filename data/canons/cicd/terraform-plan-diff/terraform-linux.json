@@ -30,7 +30,7 @@
       "why_fails": "Unreviewed auto-apply can destroy or modify production resources. Destructive changes (replace, destroy) are especially dangerous without human review.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://developer.hashicorp.com/terraform/docs"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Infrastructure drift compounds over time. Future plans become increasingly large and confusing, making it harder to determine which changes are intentional.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://developer.hashicorp.com/terraform/docs"
       ],
       "condition": ""
     }

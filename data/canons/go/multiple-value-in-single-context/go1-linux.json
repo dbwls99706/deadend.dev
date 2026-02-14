@@ -65,28 +65,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "go/cannot-assign-to-struct-field/go1-linux",
-        "probability": 0.22
-      },
-      {
-        "error_id": "go/json-unmarshal-wrong-type/go1-linux",
-        "probability": 0.23
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "go/cannot-convert-type/go1-linux",
         "probability": 0.16
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "go/too-many-open-files/go1-linux",
-        "distinction": "'multiple-value func() (used as single value, error) in single-value context' indicates a multi-return function used in single-value context, while 'dial tcp' indicates file descriptor exhaustion."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

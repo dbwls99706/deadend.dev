@@ -30,7 +30,7 @@
       "why_fails": "Without frozen-lockfile, CI installs potentially different versions than local development, leading to 'works on my machine' issues and non-reproducible builds",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://pnpm.io/cli/install"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This defeats the purpose of a lockfile. CI would install the latest compatible versions, which may differ from what was tested locally.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://pnpm.io/cli/install"
       ],
       "condition": ""
     }

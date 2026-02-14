@@ -37,7 +37,7 @@
     {
       "action": "Using a different type that has const constructors",
       "why_fails": "May not be functionally equivalent",
-      "fail_rate": 0.45,
+      "fail_rate": 0.55,
       "sources": [
         "https://doc.rust-lang.org/error_codes/"
       ],
@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "rust/e0015-non-const-fn/rust1-linux",
-        "probability": 0.21
-      },
-      {
-        "error_id": "rust/e0277-trait-bound/rust1-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
-        "probability": 0.13
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0277-trait-not-implemented/rust1-linux",
-        "distinction": "'[E0015]' indicates a non-const function called in const context, while '[E0277]' indicates an unsatisfied trait bound."
-      },
-      {
-        "error_id": "rust/e0282-type-annotations-needed/rust1-linux",
-        "distinction": "'[E0015]' indicates a non-const function called in const context, while '[E0282]' indicates insufficient type information for inference."
+        "error_id": "rust/e0061-wrong-number-args/rust1-linux",
+        "distinction": "'error[E0015]' is a const-eval error while 'error[E0061]' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

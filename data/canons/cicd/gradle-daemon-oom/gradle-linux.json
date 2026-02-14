@@ -30,7 +30,7 @@
       "why_fails": "Running without a daemon (--no-daemon) creates a new JVM for each build. Without increasing memory for the direct JVM, builds still OOM since the same workload needs the same memory.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.gradle.org/current/userguide/gradle_daemon.html"
       ],
       "condition": ""
     },

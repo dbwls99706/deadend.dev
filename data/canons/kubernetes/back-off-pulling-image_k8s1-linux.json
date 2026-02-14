@@ -76,34 +76,12 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
-        "probability": 0.24
-      },
-      {
         "error_id": "kubernetes/imagepullbackoff/k8s1-linux",
         "probability": 0.2
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "kubernetes/clusterrole-forbidden/k8s1-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "kubernetes/forbidden-user/k8s128-linux",
-        "probability": 0.14
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "kubernetes/createcontainerconfigerror/k8s1-linux",
-        "distinction": "'Warning' indicates failure to pull a container image, while 'CreateContainerConfigError' indicates a missing secret or configmap for container config."
-      },
-      {
-        "error_id": "kubernetes/service-has-no-endpoints/k8s128-linux",
-        "distinction": "'Warning' indicates failure to pull a container image, while 'endpoints for service not found' indicates a missing or endpoint-less Kubernetes Service."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

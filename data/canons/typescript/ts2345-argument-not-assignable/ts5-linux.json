@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/generics.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use function overloads or generics to accept multiple types safely"
     }
   ],
   "transition_graph": {

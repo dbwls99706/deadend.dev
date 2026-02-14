@@ -36,7 +36,7 @@
     },
     {
       "action": "Use extern crate (pre-2018 edition syntax)",
-      "why_fails": "Unnecessary since Rust 2018 \u2014 just add to Cargo.toml",
+      "why_fails": "Unnecessary since Rust 2018 — just add to Cargo.toml",
       "fail_rate": 0.7,
       "sources": [
         "https://doc.rust-lang.org/edition-guide/rust-2018/module-system/path-clarity.html"
@@ -74,23 +74,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
       {
-        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
-        "probability": 0.19
+        "error_id": "rust/e0015-non-const-fn/rust1-linux",
+        "distinction": "'error[E0433]' is a import_error error while 'error[E0015]' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0499-mutable-borrow-twice/rust1-linux",
-        "probability": 0.14
-      }
-    ],
-    "frequently_confused_with": []
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

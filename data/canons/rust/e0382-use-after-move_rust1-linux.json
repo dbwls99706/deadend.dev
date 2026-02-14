@@ -63,21 +63,8 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "rust/e0499-mutable-borrow-twice/rust1-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "rust/e0015-cannot-call-non-const-fn/rust1-linux",
-        "probability": 0.16
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
-      {
-        "error_id": "rust/e0597-borrowed-too-short/rust1-linux",
-        "probability": 0.19
-      },
       {
         "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
         "probability": 0.15

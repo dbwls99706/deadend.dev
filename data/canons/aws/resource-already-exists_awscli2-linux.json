@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use the existing resource — describe/get it to verify it matches your needs"
     },
     {
       "action": "For IaC (Terraform/CloudFormation), import the existing resource into your state",
@@ -70,30 +70,16 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use data sources to reference existing resources instead of creating new ones"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/lambda-runtime-error/aws-cli2-linux",
-        "probability": 0.19
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "aws/s3-nosuchbucket/aws-cli2-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "aws/s3-access-denied/awscli2-linux",
-        "distinction": "'An error occurred (ResourceAlreadyExistsException)' indicates a resource that already exists outside Terraform, while 'An error occurred (AccessDenied) when calling the GetObject operation' indicates an IAM permission denial."
-      },
-      {
-        "error_id": "aws/invalid-security-token/awscli2-linux",
-        "distinction": "'An error occurred (ResourceAlreadyExistsException)' indicates a resource that already exists outside Terraform, while 'An error occurred (InvalidClientTokenId)' indicates an invalid AWS security token."
+        "error_id": "aws/access-denied-s3/aws-cli2-linux",
+        "distinction": "'An error occurred (ResourceAlreadyExistsException)' is a conflict_error error while 'An error occurred (AccessDenied) when calling the ' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

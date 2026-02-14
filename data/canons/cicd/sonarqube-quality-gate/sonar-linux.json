@@ -30,7 +30,7 @@
       "why_fails": "This defeats the purpose of quality gates. Technical debt accumulates, and code quality degrades continuously.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.sonarsource.com/sonarqube/latest/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This bypasses the quality gate entirely. If the branch is merged, low-quality code enters the main branch without review.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.sonarsource.com/sonarqube/latest/"
       ],
       "condition": ""
     }

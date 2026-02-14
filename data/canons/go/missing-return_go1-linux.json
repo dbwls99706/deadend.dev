@@ -65,34 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "go/interface-nil-not-nil/go1-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "go/json-unmarshal-wrong-type/go1-linux",
-        "probability": 0.18
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "go/too-many-open-files/go1-linux",
-        "probability": 0.2
-      },
-      {
-        "error_id": "go/cannot-convert-type/go1-linux",
-        "probability": 0.17
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "go/imported-not-used/go1-linux",
         "distinction": "'missing return at end of function' indicates a missing return statement, while 'imported and not used' indicates an unused import."
-      },
-      {
-        "error_id": "go/json-unmarshal-wrong-type/go1-linux",
-        "distinction": "'missing return at end of function' indicates a missing return statement, while 'json' indicates a JSON unmarshal type mismatch."
       }
     ]
   },

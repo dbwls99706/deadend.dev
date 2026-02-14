@@ -37,7 +37,7 @@
     {
       "action": "Setting count = 0 to skip the resource",
       "why_fails": "Works but prevents use of count.index in any expressions",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://developer.hashicorp.com/terraform/language/resources"
       ],
@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "terraform/module-not-installed/tf1-linux",
-        "probability": 0.2
-      },
-      {
-        "error_id": "terraform/state-lock-dynamodb/tf1-linux",
-        "probability": 0.2
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "terraform/apply-timeout/tf1-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "terraform/unsupported-attribute/tf1-linux",
-        "distinction": "Both produce similar messages, but 'invalid-count-argument' and 'unsupported-attribute' differ in root cause and environment context."
-      },
-      {
-        "error_id": "terraform/cycle-in-module/tf1-linux",
-        "distinction": "Both produce similar messages, but 'invalid-count-argument' and 'cycle-in-module' differ in root cause and environment context."
+        "error_id": "terraform/backend-initialization-required/tf115-linux",
+        "distinction": "'Error' is a meta-arguments error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -84,17 +84,9 @@
       {
         "error_id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
         "probability": 0.12
-      },
-      {
-        "error_id": "typescript/ts6133-declared-not-read/ts5-linux",
-        "probability": 0.17
       }
     ],
     "frequently_confused_with": [
-      {
-        "error_id": "typescript/ts1005-expected/ts5-linux",
-        "distinction": "'TS2769' indicates no matching function overload, while 'TS1005' indicates a syntax error (missing expected token)."
-      },
       {
         "error_id": "typescript/ts2564-no-initializer/ts5-linux",
         "distinction": "'TS2769' indicates no matching function overload, while 'TS2564' indicates a class property missing initialization."

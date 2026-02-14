@@ -61,7 +61,7 @@
         "https://health.aws.amazon.com/health/status"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check AWS Health Dashboard for ongoing service incidents"
     },
     {
       "action": "If persistent, try a different AWS region as failover",
@@ -74,30 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/sts-access-denied/aws-cli2-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "aws/lambda-timeout/awscli2-linux",
-        "probability": 0.19
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "aws/dynamodb-provisioned-throughput-exceeded/awscli2-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "aws/cloudformation-rollback-complete/awscli2-linux",
-        "distinction": "'An error occurred (ServiceUnavailableException) when calling the X operation' indicates an AWS service outage, while 'Stack is in ROLLBACK_COMPLETE state and can not be updated' indicates a CloudFormation stack in ROLLBACK_COMPLETE state."
-      },
-      {
-        "error_id": "aws/s3-access-denied/awscli2-linux",
-        "distinction": "'An error occurred (ServiceUnavailableException) when calling the X operation' indicates an AWS service outage, while 'An error occurred (AccessDenied) when calling the GetObject operation' indicates an IAM permission denial."
+        "error_id": "aws/cloudwatch-log-group-exists/aws-cli2-linux",
+        "distinction": "'An error occurred (ServiceUnavailableException) wh' is a availability_error error while 'ResourceAlreadyExistsException' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

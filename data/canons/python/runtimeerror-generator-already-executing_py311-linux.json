@@ -62,28 +62,18 @@
         "https://docs.python.org/3/reference/expressions.html#yield-expressions"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use separate generator instances for recursive patterns"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/unicodedecodeerror/py311-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "python/stopiteration/py311-linux",
         "probability": 0.14
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/memoryerror/py311-linux",
-        "distinction": "'RuntimeError' indicates re-entry into an already-executing generator, while 'MemoryError' indicates memory exhaustion."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -88,10 +88,6 @@
       {
         "error_id": "aws/expired-token-exception/awscli2-linux",
         "distinction": "ExpiredToken means valid permissions but expired session; AccessDenied means active session but insufficient permissions"
-      },
-      {
-        "error_id": "aws/resource-not-found/awscli2-linux",
-        "distinction": "ResourceNotFound means resource doesn't exist; AccessDenied means it may exist but you can't access it"
       }
     ]
   },

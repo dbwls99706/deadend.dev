@@ -30,7 +30,7 @@
       "why_fails": "semantic-release is designed for release branches (main, master, next). Running on PR branches creates releases from unmerged code and produces duplicate versions.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://semantic-release.gitbook.io/semantic-release/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "semantic-release determines the next version from git tags. Manual tags that do not follow its conventions cause it to calculate incorrect versions or skip releases.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://semantic-release.gitbook.io/semantic-release/"
       ],
       "condition": ""
     }

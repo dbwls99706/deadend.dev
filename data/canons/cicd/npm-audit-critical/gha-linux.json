@@ -30,7 +30,7 @@
       "why_fails": "The --force flag applies breaking changes by upgrading to major versions. This can introduce incompatible APIs, breaking the build or runtime behavior.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.npmjs.com/cli/v10/commands/npm-audit"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This eliminates the security gate entirely. Critical vulnerabilities in production dependencies can be exploited.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.npmjs.com/cli/v10/commands/npm-audit"
       ],
       "condition": ""
     }

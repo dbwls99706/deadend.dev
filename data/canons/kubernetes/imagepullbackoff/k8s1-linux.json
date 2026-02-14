@@ -79,12 +79,7 @@
         "condition": "Wrong architecture image pushed to registry"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
-        "distinction": "CrashLoopBackOff means container runs and crashes; ImagePullBackOff means image cannot be downloaded"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

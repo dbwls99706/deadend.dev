@@ -66,26 +66,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/connectionrefusederror/py311-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/runtimeerror-event-loop-running/py311-linux",
-        "probability": 0.13
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/runtimeerror-set-changed-size/py311-linux",
-        "distinction": "'ValueError' indicates a mismatch in the number of values during unpacking, while 'RuntimeError' indicates mutation of a set during iteration."
-      },
-      {
         "error_id": "python/valueerror-not-enough-values/py311-linux",
-        "distinction": "Both produce similar messages, but 'valueerror-too-many-values-unpack' and 'valueerror-not-enough-values' differ in root cause and environment context."
+        "distinction": "'ValueError' is a value_error with a different root cause than 'ValueError'. Check the error signature and stack trace carefully to distinguish them."
       }
     ]
   },

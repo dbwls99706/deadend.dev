@@ -65,30 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "react/cannot-update-while-rendering/react18-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "react/cannot-read-null-usecontext/react18-linux",
-        "probability": 0.2
-      },
-      {
-        "error_id": "react/act-warning-test/react18-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "react/cannot-update-while-rendering/react18-linux",
-        "distinction": "'Warning' indicates missing unique keys in a list, while 'Cannot update a component while rendering a different component' indicates a state update during render phase."
-      },
-      {
-        "error_id": "react/cannot-update-unmounted/react18-linux",
-        "distinction": "Both produce similar messages, but 'each-child-unique-key' and 'cannot-update-unmounted' differ in root cause and environment context."
+        "error_id": "react/react-duplicate-key-warning/react18-linux",
+        "distinction": "'Warning' is a render_warning error while 'Warning' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

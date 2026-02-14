@@ -74,34 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "git/already-on-branch/git2-linux",
-        "probability": 0.21
-      },
-      {
-        "error_id": "git/stash-apply-conflict/git2-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "git/rebase-conflict/git2-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "git/large-file-push-rejected/git2-linux",
-        "probability": 0.1
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/detached-head/git2-linux",
-        "distinction": "'fatal' indicates a missing Git submodule mapping, while 'You are in 'detached HEAD' state' indicates a detached HEAD state (not on any branch)."
-      },
-      {
-        "error_id": "git/already-on-branch/git2-linux",
-        "distinction": "'fatal' indicates a missing Git submodule mapping, while 'Already on 'main'' indicates already on the requested branch."
+        "error_id": "git/submodule-update-failed/git2-linux",
+        "distinction": "'fatal' is a submodule_error error while 'Failed to recurse into submodule path — submodule ' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

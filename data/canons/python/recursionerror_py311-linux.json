@@ -37,7 +37,7 @@
     {
       "action": "Using @functools.lru_cache to memoize the recursive function",
       "why_fails": "Only helps if there are overlapping subproblems; doesn't fix infinite recursion",
-      "fail_rate": 0.45,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.python.org/3/library/exceptions.html#RecursionError"
       ],
@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/valueerror-too-many-values-unpack/py311-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/connectionerror-requests/py311-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "python/pandas-settingwithcopywarning/py311-linux",
-        "probability": 0.14
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/syntaxerror-invalid-syntax/py311-linux",
-        "distinction": "'RecursionError' indicates infinite recursion exceeding the stack depth limit, while 'SyntaxError' indicates a Python syntax error."
-      },
-      {
-        "error_id": "python/modulenotfounderror/py310-macos",
-        "distinction": "'RecursionError' indicates infinite recursion exceeding the stack depth limit, while 'ModuleNotFoundError' indicates a missing Python module or package."
+        "error_id": "python/assertionerror/py311-linux",
+        "distinction": "'RecursionError' is a runtime error while 'AssertionError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

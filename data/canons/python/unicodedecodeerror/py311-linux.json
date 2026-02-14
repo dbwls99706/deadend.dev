@@ -80,12 +80,7 @@
         "condition": "Found the file but it has unexpected encoding"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/valueerror-invalid-literal/py311-linux",
-        "distinction": "ValueError is about data format; UnicodeDecodeError is specifically about byte-to-string decoding"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

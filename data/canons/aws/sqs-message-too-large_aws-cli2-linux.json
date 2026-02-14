@@ -63,22 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/lambda-runtime-error/aws-cli2-linux",
-        "probability": 0.23
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "aws/secrets-manager-not-found/aws-cli2-linux",
-        "probability": 0.11
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "aws/iam-policy-too-large/awscli2-linux",
-        "distinction": "'An error occurred (InvalidParameterValue) when calling the SendMessage operation' indicates an SQS message exceeding size limit, while 'An error occurred (LimitExceededException) when calling the PutRolePolicy' indicates an IAM policy size limit exceeded."
+        "error_id": "aws/cloudwatch-log-group-exists/aws-cli2-linux",
+        "distinction": "'An error occurred (InvalidParameterValue) when cal' is a sqs error while 'ResourceAlreadyExistsException' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -56,34 +56,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "nextjs/metadata-not-supported-client/next14-linux",
-        "probability": 0.25
-      },
-      {
-        "error_id": "nextjs/api-route-body-not-parsed/nextjs14-linux",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "nextjs/cookies-headers-in-page/nextjs14-linux",
-        "probability": 0.14
-      },
-      {
-        "error_id": "nextjs/image-optimization-error/nextjs14-linux",
-        "probability": 0.11
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "nextjs/middleware-redirect-loop/nextjs14-linux",
-        "distinction": "Both produce similar messages, but 'parallel-routes-default' and 'middleware-redirect-loop' differ in root cause and environment context."
-      },
-      {
-        "error_id": "nextjs/metadata-client-component/nextjs14-linux",
-        "distinction": "Both produce similar messages, but 'parallel-routes-default' and 'metadata-client-component' differ in root cause and environment context."
+        "distinction": "'Error' is a routing_error with a different root cause than 'Error'. Check the error signature and stack trace carefully to distinguish them."
       }
     ]
   },

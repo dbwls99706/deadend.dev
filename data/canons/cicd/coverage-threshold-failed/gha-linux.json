@@ -30,7 +30,7 @@
       "why_fails": "This circumvents the quality gate entirely. Coverage will continue to drop over time without enforcement, accumulating untested code.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Tests that merely call functions without asserting behavior provide false coverage confidence. They pass coverage checks but do not catch bugs.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions"
       ],
       "condition": ""
     }

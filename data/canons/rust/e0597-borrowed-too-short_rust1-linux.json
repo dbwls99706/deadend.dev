@@ -27,7 +27,7 @@
   "dead_ends": [
     {
       "action": "Use 'static lifetime to extend",
-      "why_fails": "'static means lives forever \u2014 wrong for most temporary values",
+      "why_fails": "'static means lives forever — wrong for most temporary values",
       "fail_rate": 0.8,
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0597.html"
@@ -36,7 +36,7 @@
     },
     {
       "action": "Leak memory with Box::leak",
-      "why_fails": "Creates a genuine memory leak \u2014 never do this for normal code",
+      "why_fails": "Creates a genuine memory leak — never do this for normal code",
       "fail_rate": 0.9,
       "sources": [
         "https://doc.rust-lang.org/std/boxed/struct.Box.html#method.leak"
@@ -70,23 +70,18 @@
         "https://doc.rust-lang.org/std/rc/struct.Rc.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use Rc/Arc for shared ownership when multiple parts need the data"
     }
   ],
   "transition_graph": {
-    "leads_to": [
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
       {
-        "error_id": "rust/e0382-borrow-moved-value/rust1-linux",
-        "probability": 0.19
+        "error_id": "rust/e0700-async-closure-lifetime/rust1-linux",
+        "distinction": "'error[E0597]' is a lifetime_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0507-move-out-of-borrow/rust1-linux",
-        "probability": 0.16
-      }
-    ],
-    "frequently_confused_with": []
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

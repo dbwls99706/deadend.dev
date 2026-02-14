@@ -65,28 +65,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/throttling-exception/awscli2-linux",
-        "probability": 0.17
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "aws/s3-access-denied/awscli2-linux",
         "probability": 0.14
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "aws/rds-connection-timeout/aws-cli2-linux",
-        "distinction": "'botocore.exceptions.NoCredentialsError' indicates missing AWS credentials configuration, while 'OperationalError' indicates a network or operation timeout."
-      },
-      {
-        "error_id": "aws/resource-not-found/awscli2-linux",
-        "distinction": "'botocore.exceptions.NoCredentialsError' indicates missing AWS credentials configuration, while 'An error occurred (ResourceNotFoundException)' indicates a missing AWS resource."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/pickle-unpickling-error/py311-linux",
-        "probability": 0.25
-      },
-      {
-        "error_id": "python/importerror-circular/py311-linux",
-        "probability": 0.19
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/deprecationwarning-datetime-utcnow/py311-linux",
-        "probability": 0.1
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/nameerror-not-defined/py311-linux",
-        "distinction": "'TypeError' indicates a missing required function argument, while 'NameError' indicates a reference to an undefined variable."
+        "error_id": "python/assertionerror/py311-linux",
+        "distinction": "'TypeError' is a call-signature error while 'AssertionError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

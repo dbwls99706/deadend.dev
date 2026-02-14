@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check for ExternalId requirement if assuming cross-account role"
     }
   ],
   "transition_graph": {
@@ -82,20 +82,11 @@
     ],
     "preceded_by": [
       {
-        "error_id": "aws/cloudformation-rollback-complete/awscli2-linux",
-        "probability": 0.1
-      },
-      {
         "error_id": "aws/ecr-login-required/awscli2-linux",
         "probability": 0.12
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "aws/ecs-service-unable-to-place/aws-cli2-linux",
-        "distinction": "'An error occurred (AccessDenied) when calling the AssumeRole operation' indicates missing Docker registry authentication, while 'service unable to place tasks' indicates ECS unable to place tasks on instances."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

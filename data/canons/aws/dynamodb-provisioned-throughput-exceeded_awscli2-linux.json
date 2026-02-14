@@ -65,26 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/access-denied-s3/aws-cli2-linux",
-        "probability": 0.18
-      },
-      {
-        "error_id": "aws/s3-nosuchbucket/aws-cli2-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "aws/ecs-service-unable-to-place/aws-cli2-linux",
-        "probability": 0.12
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "aws/sqs-message-too-large/aws-cli2-linux",
-        "distinction": "'An error occurred (ProvisionedThroughputExceededException)' indicates DynamoDB throughput capacity exceeded, while 'An error occurred (InvalidParameterValue) when calling the SendMessage operation' indicates an SQS message exceeding size limit."
+        "error_id": "aws/sts-access-denied/aws-cli2-linux",
+        "distinction": "'An error occurred (ProvisionedThroughputExceededEx' is a throttling_error error while 'An error occurred (AccessDenied) when calling the ' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

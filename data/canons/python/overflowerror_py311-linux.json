@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use Python's arbitrary precision int instead of numpy int64 for large numbers"
     },
     {
       "action": "For numpy, use dtype=object or dtype=np.int64 explicitly and check bounds",
@@ -66,30 +66,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/valueerror-invalid-literal/py311-linux",
-        "probability": 0.23
-      },
-      {
-        "error_id": "python/stopiteration/py311-linux",
-        "probability": 0.25
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/runtimeerror-event-loop-running/py311-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/unboundlocalerror/py311-linux",
-        "distinction": "'OverflowError' indicates a numeric overflow beyond system limits, while 'UnboundLocalError' indicates a variable referenced before assignment in local scope."
-      },
-      {
-        "error_id": "python/indexerror-list-out-of-range/py311-linux",
-        "distinction": "'OverflowError' indicates a numeric overflow beyond system limits, while 'IndexError' indicates a list index out of valid range."
+        "error_id": "python/valueerror-math-domain/py311-linux",
+        "distinction": "'OverflowError' is a math_error error while 'ValueError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

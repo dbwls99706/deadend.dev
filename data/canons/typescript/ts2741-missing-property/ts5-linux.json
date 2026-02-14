@@ -79,20 +79,12 @@
       {
         "error_id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
         "probability": 0.1
-      },
-      {
-        "error_id": "typescript/ts2532-object-possibly-undefined/ts5-linux",
-        "probability": 0.17
       }
     ],
     "frequently_confused_with": [
       {
         "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
         "distinction": "'TS2741' indicates a missing required property in a type, while 'TS2345' indicates an argument type mismatch."
-      },
-      {
-        "error_id": "typescript/ts1005-expected/ts5-linux",
-        "distinction": "'TS2741' indicates a missing required property in a type, while 'TS1005' indicates a syntax error (missing expected token)."
       }
     ]
   },

@@ -52,7 +52,7 @@
         "https://doc.rust-lang.org/error_codes/E0061.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the function signature and match the argument count"
     },
     {
       "action": "If you need optional params, use Option<T> or a config struct",
@@ -69,32 +69,15 @@
       {
         "error_id": "rust/e0412-type-not-found/rust1-linux",
         "probability": 0.18
-      },
-      {
-        "error_id": "rust/e0382-use-after-move/rust1-linux",
-        "probability": 0.2
       }
     ],
     "preceded_by": [
-      {
-        "error_id": "rust/e0433-unresolved-import/rust1-linux",
-        "probability": 0.16
-      },
       {
         "error_id": "rust/e0308-match-arms-different-types/rust1-linux",
         "probability": 0.16
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "rust/e0277-trait-not-implemented/rust1-linux",
-        "distinction": "'[E0061]' indicates wrong number of function arguments, while '[E0277]' indicates an unsatisfied trait bound."
-      },
-      {
-        "error_id": "rust/e0433-unresolved-import/rust1-linux",
-        "distinction": "'[E0061]' indicates wrong number of function arguments, while '[E0433]' indicates an unresolved crate or module import."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

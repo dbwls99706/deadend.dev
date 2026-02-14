@@ -66,26 +66,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/unboundlocalerror/py311-linux",
-        "probability": 0.15
-      },
-      {
-        "error_id": "python/recursionerror/py311-linux",
-        "probability": 0.22
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/asyncio-no-running-event-loop/py311-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/pydantic-validation-error/py311-linux",
-        "distinction": "'subprocess.CalledProcessError' indicates a subprocess command failure, while 'pydantic.error_wrappers.ValidationError' indicates a Pydantic data validation failure."
+        "error_id": "python/assertionerror/py311-linux",
+        "distinction": "'subprocess.CalledProcessError' is a subprocess_error error while 'AssertionError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

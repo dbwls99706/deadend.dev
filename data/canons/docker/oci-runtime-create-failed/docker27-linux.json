@@ -84,12 +84,7 @@
         "condition": "Exec format error is a common cause of OCI runtime failure"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/exec-format-error/docker27-linux",
-        "distinction": "exec format error is specifically about binary architecture mismatch; OCI runtime create is a broader container start failure"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

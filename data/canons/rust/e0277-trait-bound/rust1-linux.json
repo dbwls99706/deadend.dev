@@ -79,12 +79,7 @@
         "condition": "Type mismatch fix requires implementing a trait"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "rust/e0308-mismatched-types/rust1-linux",
-        "distinction": "E0308 is about concrete type mismatches; E0277 is about missing trait implementations on a type"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

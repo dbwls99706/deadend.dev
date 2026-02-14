@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the line BEFORE the reported error — that's usually where the real issue is"
     },
     {
       "action": "Look for unclosed brackets, parentheses, or template literals",
@@ -70,30 +70,16 @@
         "https://www.typescriptlang.org/tsconfig/#target"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check tsconfig.json target — some syntax requires ES2020+"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "typescript/ts2739-missing-properties/ts5-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "typescript/ts2589-excessive-stack-depth/ts5-linux",
-        "probability": 0.14
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts2741-missing-property/ts5-linux",
-        "distinction": "'TS1005' indicates a syntax error (missing expected token), while 'TS2741' indicates a missing required property in a type."
+        "error_id": "typescript/ts2339-index-signature/ts5-linux",
+        "distinction": "'error TS1005' is a syntax_error error while 'error TS7053' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

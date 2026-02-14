@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "git/pathspec-no-match/git2-linux",
-        "probability": 0.23
-      },
-      {
-        "error_id": "git/not-a-git-repository/git2-linux",
-        "probability": 0.19
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "git/failed-to-push-refs/git2-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/error-failed-to-push-some-refs/git2-linux",
-        "distinction": "'CONFLICT (content)' indicates a Git merge conflict, while 'error' indicates a rejected Git push (remote has new commits)."
-      },
-      {
-        "error_id": "git/pathspec-no-match/git2-linux",
-        "distinction": "'CONFLICT (content)' indicates a Git merge conflict, while 'error' indicates a branch or file not found in Git."
+        "error_id": "git/stash-apply-conflict/git2-linux",
+        "distinction": "'CONFLICT (content)' is a merge error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

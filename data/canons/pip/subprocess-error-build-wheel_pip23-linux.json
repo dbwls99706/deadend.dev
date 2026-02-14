@@ -37,7 +37,7 @@
     {
       "action": "Installing an older version of the package",
       "why_fails": "Older versions may have the same build requirements",
-      "fail_rate": 0.45,
+      "fail_rate": 0.55,
       "sources": [
         "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "pip/no-matching-distribution/pip24-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "pip/conflicting-dependencies/pip23-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "pip/could-not-find-version/pip23-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "pip/hash-mismatch/pip23-linux",
-        "probability": 0.16
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "pip/no-matching-distribution/pip24-linux",
-        "distinction": "'error' indicates a subprocess command failure, while 'ERROR' indicates no matching package distribution found."
+        "error_id": "pip/build-wheel-failed/pip23-macos-arm64",
+        "distinction": "'error' is a build error while 'Failed building wheel for X' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

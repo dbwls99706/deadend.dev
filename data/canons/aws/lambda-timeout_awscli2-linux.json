@@ -65,30 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "aws/lambda-runtime-error/aws-cli2-linux",
-        "probability": 0.25
-      },
-      {
-        "error_id": "aws/resource-not-found/awscli2-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "aws/no-credentials-error/awscli2-linux",
-        "probability": 0.1
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "aws/rds-connection-timeout/aws-cli2-linux",
-        "distinction": "Lambda timeout means the entire function exceeded its configured execution time limit (default 3s, max 15min); RDS connection timeout means the database connection specifically failed or timed out, which may or may not cause a Lambda timeout"
-      },
-      {
-        "error_id": "aws/ecs-service-unable-to-place/aws-cli2-linux",
-        "distinction": "'Task timed out after X.XX seconds (Lambda timeout)' indicates a network or operation timeout, while 'service unable to place tasks' indicates ECS unable to place tasks on instances."
+        "error_id": "aws/aws-api-gateway-timeout/awscli2-linux",
+        "distinction": "'Task timed out after X.XX seconds (Lambda timeout)' is a timeout_error error while 'Execution failed due to a timeout error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -27,7 +27,7 @@
   "dead_ends": [
     {
       "action": "Make the bucket public",
-      "why_fails": "Security risk \u2014 opens all objects to the internet",
+      "why_fails": "Security risk — opens all objects to the internet",
       "fail_rate": 0.9,
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check S3 Block Public Access settings if accessing from external"
     }
   ],
   "transition_graph": {
@@ -80,12 +80,7 @@
         "probability": 0.21
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "aws/iam-policy-too-large/awscli2-linux",
-        "probability": 0.12
-      }
-    ],
+    "preceded_by": [],
     "frequently_confused_with": []
   },
   "metadata": {

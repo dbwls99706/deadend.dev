@@ -75,22 +75,9 @@
       {
         "error_id": "aws/s3-access-denied/awscli2-linux",
         "probability": 0.12
-      },
-      {
-        "error_id": "aws/throttling-exception/awscli2-linux",
-        "probability": 0.13
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "aws/lambda-runtime-error/aws-cli2-linux",
-        "distinction": "'Error' indicates missing ECR authentication, while 'Runtime.ImportModuleError' indicates a Lambda runtime import failure."
-      },
-      {
-        "error_id": "aws/cognito-user-not-confirmed/aws-cli2-linux",
-        "distinction": "'Error' indicates missing ECR authentication, while 'An error occurred (UserNotConfirmedException) when calling the InitiateAuth oper' indicates an unconfirmed Cognito user."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

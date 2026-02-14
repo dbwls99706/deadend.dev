@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "terraform/unsupported-attribute/tf1-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "terraform/error-refreshing-state/tf1-linux",
-        "probability": 0.21
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "terraform/apply-timeout/tf1-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "terraform/invalid-provider-config/tf115-linux",
-        "distinction": "Both produce similar messages, but 'provider-not-found' and 'invalid-provider-config' differ in root cause and environment context."
+        "distinction": "'Error' is a providers with a different root cause than 'Error'. Check the error signature and stack trace carefully to distinguish them."
       }
     ]
   },

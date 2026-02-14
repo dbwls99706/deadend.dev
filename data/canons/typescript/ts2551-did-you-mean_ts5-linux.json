@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use the suggested correct property name from the error message"
     },
     {
       "action": "Use IDE autocomplete to avoid typos in property names",
@@ -61,16 +61,11 @@
         "https://www.typescriptlang.org/docs/handbook/2/objects.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use IDE autocomplete to avoid typos in property names"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts18048-possibly-undefined/ts5-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
@@ -81,16 +76,7 @@
         "probability": 0.18
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "typescript/ts2739-missing-properties/ts5-linux",
-        "distinction": "'TS2551' indicates a probable typo in a property name, while 'TS2739' indicates missing required properties on an object type."
-      },
-      {
-        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
-        "distinction": "'TS2551' indicates a probable typo in a property name, while 'TS7053' indicates an implicit 'any' from string indexing."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

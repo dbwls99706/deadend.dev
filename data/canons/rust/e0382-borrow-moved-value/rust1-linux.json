@@ -84,12 +84,7 @@
         "condition": "Type fix changes ownership semantics"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "rust/e0308-mismatched-types/rust1-linux",
-        "distinction": "E0308 is about type mismatches; E0382 is specifically about use-after-move ownership violations"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

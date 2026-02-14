@@ -40,7 +40,7 @@
     {
       "action": "Deleting node_modules and reinstalling",
       "why_fails": "If the ENOENT is caused by a hardcoded path in source code or a native module without ARM64 prebuilt binary, reinstalling does not resolve the issue. The path reference remains incorrect.",
-      "fail_rate": 0.42,
+      "fail_rate": 0.55,
       "condition": "Source code contains hardcoded paths or native module lacks ARM64 support",
       "sources": [
         "https://nodejs.org/api/errors.html#common-system-errors"

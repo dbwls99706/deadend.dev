@@ -99,7 +99,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/runtimeerror-dict-changed-size/py311-linux",
+        "distinction": "'Segmentation fault (core dumped)' is a native_crash error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

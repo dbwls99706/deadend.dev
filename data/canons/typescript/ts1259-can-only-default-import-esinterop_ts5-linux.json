@@ -37,7 +37,7 @@
     {
       "action": "Using import * as X from 'module'",
       "why_fails": "Works but makes all usage look like X.default; awkward API",
-      "fail_rate": 0.45,
+      "fail_rate": 0.55,
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
@@ -63,30 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts2694-no-exported-member/ts5-linux",
-        "probability": 0.16
-      },
-      {
-        "error_id": "typescript/ts2304-cannot-find-name/ts5-linux",
-        "probability": 0.16
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "typescript/ts1005-expected/ts5-linux",
-        "probability": 0.13
-      },
-      {
-        "error_id": "typescript/ts2532-object-possibly-undefined/ts5-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts2305-module-no-exported-member/ts5-linux",
-        "distinction": "'TS1259' indicates a default import requiring esModuleInterop, while 'TS2305' indicates a missing exported member from a module."
+        "error_id": "typescript/ts2454-variable-used-before-assigned/ts5-linux",
+        "distinction": "'error TS1259' is a modules error while 'error TS2454' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

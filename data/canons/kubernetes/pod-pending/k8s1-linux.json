@@ -73,12 +73,7 @@
         "condition": "Increased memory limits made pod unschedulable"
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
-        "distinction": "CrashLoopBackOff means pod runs and crashes; Pending means pod never starts"
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

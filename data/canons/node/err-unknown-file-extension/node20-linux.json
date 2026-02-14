@@ -48,7 +48,7 @@
     {
       "action": "Use tsx or ts-node for TypeScript execution",
       "success_rate": 0.95,
-      "how": "",
+      "how": "Use tsx or ts-node for TypeScript execution",
       "sources": [
         "https://nodejs.org/api/typescript.html"
       ],
@@ -65,24 +65,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/err-module-not-found-esm/node20-linux",
-        "probability": 0.2
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "node/err-package-json-invalid/node20-linux",
         "probability": 0.18
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "node/eperm-operation-not-permitted/node20-linux",
-        "distinction": "'[ERR_UNKNOWN_FILE_EXTENSION]' indicates an unrecognized file extension for Node.js loader, while 'Error' indicates an operation not permitted by the OS."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

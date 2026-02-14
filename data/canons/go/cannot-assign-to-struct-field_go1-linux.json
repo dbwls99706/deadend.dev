@@ -65,16 +65,7 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "go/cannot-use-as-type/go1-linux",
-        "probability": 0.24
-      },
-      {
-        "error_id": "go/slice-bounds-out-of-range/go121-linux",
-        "probability": 0.21
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "go/declared-not-used/go1-linux",
@@ -85,16 +76,7 @@
         "probability": 0.12
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "go/assignment-to-entry-in-nil-map/go1-linux",
-        "distinction": "'cannot assign to struct field in map' indicates an assignment to a struct field in a map (not addressable), while 'panic' indicates writing to an uninitialized (nil) map."
-      },
-      {
-        "error_id": "go/panic-runtime-error/go1-linux",
-        "distinction": "'cannot assign to struct field in map' indicates an assignment to a struct field in a map (not addressable), while 'panic' indicates an index/slice out of bounds."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

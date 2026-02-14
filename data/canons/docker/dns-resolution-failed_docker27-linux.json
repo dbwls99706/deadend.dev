@@ -90,12 +90,7 @@
         "probability": 0.15
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/compose-service-depends-on/docker27-linux",
-        "distinction": "'Could not resolve host / Temporary failure in name resolution' indicates DNS resolution failure inside containers, while 'dependency failed to start' indicates a failed Docker Compose service dependency."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

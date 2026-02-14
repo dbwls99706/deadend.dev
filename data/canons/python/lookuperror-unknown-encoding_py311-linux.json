@@ -62,26 +62,16 @@
         "https://docs.python.org/3/library/codecs.html#standard-encodings"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check Python's list of standard encodings for the correct name"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/typeerror-missing-argument/py311-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/attributeerror-module-no-attribute/py311-linux",
-        "probability": 0.12
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "python/filenotfounderror/py311-linux",
-        "distinction": "'LookupError' indicates an unknown encoding specification, while 'FileNotFoundError' indicates a missing file or directory."
+        "error_id": "python/unicodedecodeerror/py311-linux",
+        "distinction": "'LookupError' is a encoding_error error while 'UnicodeDecodeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -63,26 +63,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/memory-leak-warning/node20-linux",
-        "probability": 0.23
-      },
-      {
-        "error_id": "node/segfault-native-module/node20-linux",
-        "probability": 0.2
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "node/experimental-vm-modules/node20-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/unhandled-promise-rejection/node20-linux",
-        "distinction": "'[ERR_MODULE_NOT_FOUND]' indicates a missing Node.js module, while 'UnhandledPromiseRejectionWarning' indicates an unhandled promise rejection."
+        "error_id": "node/err-import-assertion-type-missing/node20-linux",
+        "distinction": "'Error [ERR_MODULE_NOT_FOUND]' is a esm error while 'TypeError [ERR_IMPORT_ASSERTION_TYPE_MISSING]' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -28,7 +28,7 @@
   "dead_ends": [
     {
       "action": "Increase disk size as first response",
-      "why_fails": "May be a temp dir issue \u2014 check where the writes are going",
+      "why_fails": "May be a temp dir issue — check where the writes are going",
       "fail_rate": 0.55,
       "sources": [
         "https://docs.python.org/3/library/os.html"
@@ -75,19 +75,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
       {
-        "error_id": "python/timeouterror/py311-linux",
-        "probability": 0.16
+        "error_id": "python/fileexistserror/py311-linux",
+        "distinction": "'OSError' is a filesystem_error error while 'FileExistsError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/lookuperror-unknown-encoding/py311-linux",
-        "probability": 0.11
-      }
-    ],
-    "frequently_confused_with": []
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

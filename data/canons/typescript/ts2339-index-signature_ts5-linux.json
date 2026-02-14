@@ -61,16 +61,11 @@
         "https://www.typescriptlang.org/docs/handbook/2/keyof-types.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use keyof typeof obj to restrict keys to known ones"
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
-        "probability": 0.18
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "typescript/ts2551-did-you-mean/ts5-linux",
@@ -81,10 +76,6 @@
       {
         "error_id": "typescript/ts2339-property-not-exist/ts5-linux",
         "distinction": "'TS7053' indicates a missing index signature on an object type, while 'TS2339' indicates a property not existing on the given type."
-      },
-      {
-        "error_id": "typescript/ts2739-missing-properties/ts5-linux",
-        "distinction": "'TS7053' indicates a missing index signature on an object type, while 'TS2739' indicates missing required properties on an object type."
       }
     ]
   },

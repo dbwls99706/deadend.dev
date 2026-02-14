@@ -61,27 +61,14 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/container-already-in-use/docker27-linux",
-        "probability": 0.21
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [
       {
         "error_id": "docker/cannot-stop-container/docker24-linux",
         "probability": 0.17
-      },
-      {
-        "error_id": "docker/network-has-active-endpoints/docker24-linux",
-        "probability": 0.12
       }
     ],
     "frequently_confused_with": [
-      {
-        "error_id": "docker/pip-install-root-warning/docker27-linux",
-        "distinction": "'OCI runtime create failed' indicates a container runtime startup failure, while 'WARNING' indicates a pip root user warning in Docker."
-      },
       {
         "error_id": "docker/cannot-stop-container/docker24-linux",
         "distinction": "'OCI runtime create failed' indicates a container runtime startup failure, while 'response from daemon' indicates insufficient file system permissions."

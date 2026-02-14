@@ -27,7 +27,7 @@
   "dead_ends": [
     {
       "action": "Use unsafe to bypass the borrow checker",
-      "why_fails": "Never use unsafe to work around ownership \u2014 it will cause UB",
+      "why_fails": "Never use unsafe to work around ownership — it will cause UB",
       "fail_rate": 0.95,
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0507.html"
@@ -80,22 +80,8 @@
         "probability": 0.17
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0277-trait-bound/rust1-linux",
-        "probability": 0.17
-      },
-      {
-        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
-        "probability": 0.11
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "rust/e0382-use-after-move/rust1-linux",
-        "distinction": "'[E0507]' indicates moving out of borrowed content, while '[E0382]' indicates use of a moved value (ownership violation)."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

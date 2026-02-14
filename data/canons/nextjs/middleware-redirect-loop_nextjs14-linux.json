@@ -65,26 +65,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "nextjs/streaming-not-supported/next14-linux",
-        "probability": 0.24
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "nextjs/module-not-found-resolve/nextjs14-linux",
-        "probability": 0.11
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "nextjs/cannot-read-properties-searchparams/nextjs14-linux",
-        "distinction": "'Error' indicates an infinite redirect loop in middleware, while 'TypeError' indicates undefined searchParams access."
-      },
-      {
-        "error_id": "nextjs/streaming-not-supported/next14-linux",
-        "distinction": "Both produce similar messages, but 'middleware-redirect-loop' and 'streaming-not-supported' differ in root cause and environment context."
+        "error_id": "nextjs/middleware-export-error/nextjs14-linux",
+        "distinction": "'Error' is a routing_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

@@ -74,30 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "rust/e0277-trait-not-implemented/rust1-linux",
-        "probability": 0.19
-      },
-      {
-        "error_id": "rust/e0106-missing-lifetime/rust1-linux",
-        "probability": 0.18
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "rust/e0502-borrow-conflict/rust1-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "rust/e0282-type-annotations-needed/rust1-linux",
-        "probability": 0.1
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0507-move-out-of-borrow/rust1-linux",
-        "distinction": "'[E0277]' indicates a type that cannot be sent between threads, while '[E0507]' indicates moving out of borrowed content."
+        "error_id": "rust/rust-crossbeam-scope-panic/rust1.77-linux",
+        "distinction": "'error[E0277]' is a concurrency_error error while 'thread '<unnamed>' panicked at 'a]scoped thread pa' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

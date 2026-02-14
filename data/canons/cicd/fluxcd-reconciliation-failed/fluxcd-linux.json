@@ -30,7 +30,7 @@
       "why_fails": "FluxCD will re-read the same broken manifests from Git and fail again. The issue is in the source, not in FluxCD's state.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://fluxcd.io/flux/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Suspending stops GitOps entirely. The cluster drifts from the desired state in Git, defeating the purpose of FluxCD.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://fluxcd.io/flux/"
       ],
       "condition": ""
     }

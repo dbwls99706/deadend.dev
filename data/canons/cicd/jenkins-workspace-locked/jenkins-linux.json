@@ -30,7 +30,7 @@
       "why_fails": "Deleting the workspace of a running build causes that build to fail mid-execution with file-not-found errors",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Killing the agent process disconnects it from Jenkins, orphans child processes, and may corrupt build state",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     }

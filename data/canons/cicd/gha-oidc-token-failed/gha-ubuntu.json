@@ -37,7 +37,7 @@
     {
       "action": "Use a personal access token (PAT) as a substitute for OIDC authentication",
       "why_fails": "PATs are long-lived static credentials that must be stored as secrets, rotated manually, and pose a security risk if leaked. This defeats the entire purpose of OIDC, which provides short-lived, keyless authentication. Many organizations block this approach via policy.",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.github.com/en/actions"
       ],

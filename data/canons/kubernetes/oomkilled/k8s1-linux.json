@@ -83,10 +83,6 @@
       {
         "error_id": "python/memoryerror/py311-linux",
         "distinction": "Python MemoryError is process-level; OOMKilled is container-level enforced by the kernel"
-      },
-      {
-        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
-        "distinction": "CrashLoopBackOff is the symptom; OOMKilled is a specific cause of the crash"
       }
     ]
   },

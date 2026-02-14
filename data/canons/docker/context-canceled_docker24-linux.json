@@ -61,30 +61,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "docker/healthcheck-failing/docker24-linux",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "docker/image-prune-in-use/docker27-linux",
-        "probability": 0.13
-      },
-      {
-        "error_id": "docker/npm-install-eacces-docker/docker27-linux",
-        "probability": 0.19
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/cannot-stop-container/docker24-linux",
-        "distinction": "'failed to solve' indicates a canceled Docker build operation, while 'response from daemon' indicates insufficient file system permissions."
-      },
-      {
-        "error_id": "docker/layer-already-being-pulled/docker24-linux",
-        "distinction": "'failed to solve' indicates a canceled Docker build operation, while 'layer already being pulled by another client. Waiting...' indicates concurrent Docker image pulls."
+        "error_id": "docker/build-arg-not-set/docker24-linux",
+        "distinction": "'failed to solve' is a build error while 'WARNING' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

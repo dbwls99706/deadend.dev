@@ -88,20 +88,12 @@
       {
         "error_id": "typescript/ts2345-argument-not-assignable/ts5-linux",
         "probability": 0.12
-      },
-      {
-        "error_id": "typescript/ts2694-no-exported-member/ts5-linux",
-        "probability": 0.15
       }
     ],
     "frequently_confused_with": [
       {
         "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
         "distinction": "'TS2352' indicates a potentially incorrect type conversion, while 'TS2322' indicates a type assignment incompatibility."
-      },
-      {
-        "error_id": "typescript/ts2305-module-no-exported-member/ts5-linux",
-        "distinction": "'TS2352' indicates a potentially incorrect type conversion, while 'TS2305' indicates a missing exported member from a module."
       }
     ]
   },

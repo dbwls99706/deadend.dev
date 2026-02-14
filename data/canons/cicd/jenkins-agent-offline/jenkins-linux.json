@@ -30,7 +30,7 @@
       "why_fails": "Controller restarts disrupt all running jobs and do not fix the underlying agent connectivity or provisioning issue",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Running builds on any available node may cause failures due to missing tools, wrong OS, or insufficient resources",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://www.jenkins.io/doc/"
       ],
       "condition": ""
     }

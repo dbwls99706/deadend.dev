@@ -75,18 +75,9 @@
       {
         "error_id": "terraform/unsupported-attribute/tf1-linux",
         "probability": 0.17
-      },
-      {
-        "error_id": "terraform/error-refreshing-state/tf1-linux",
-        "probability": 0.14
       }
     ],
-    "frequently_confused_with": [
-      {
-        "error_id": "terraform/provider-not-found/tf115-linux",
-        "distinction": "Both produce similar messages, but 'invalid-reference' and 'provider-not-found' differ in root cause and environment context."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

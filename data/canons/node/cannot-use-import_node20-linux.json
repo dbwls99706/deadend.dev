@@ -74,30 +74,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/json-parse-unexpected-token/node20-linux",
-        "probability": 0.17
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "node/syntaxerror-unexpected-token/node20-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "node/syntax-error-unexpected-token-import/node20-linux",
-        "probability": 0.15
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/err-worker-out-of-memory/node20-linux",
-        "distinction": "'SyntaxError' indicates an import statement in a CommonJS context, while 'FATAL ERROR' indicates memory exhaustion."
-      },
-      {
-        "error_id": "node/err-use-after-close/node20-linux",
-        "distinction": "'SyntaxError' indicates an import statement in a CommonJS context, while '[ERR_USE_AFTER_CLOSE]' indicates use of a socket after it was closed."
+        "error_id": "node/err-unsupported-esm-url-scheme/node20-linux",
+        "distinction": "'SyntaxError' is a module_error error while 'Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]
   },

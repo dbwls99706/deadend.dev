@@ -28,7 +28,7 @@
     {
       "action": "Assigning to a throwaway: _ = unused",
       "why_fails": "Suppresses the error but why declare it?",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://pkg.go.dev/cmd/compile"
       ],
@@ -69,22 +69,8 @@
         "probability": 0.24
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "go/panic-runtime-error/go1-linux",
-        "probability": 0.11
-      },
-      {
-        "error_id": "go/assignment-to-entry-in-nil-map/go1-linux",
-        "probability": 0.11
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "go/import-cycle-not-allowed/go121-linux",
-        "distinction": "'declared and not used' indicates an unused variable declaration (Go compiler enforces this), while 'import cycle not allowed' indicates a circular dependency between Go packages."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

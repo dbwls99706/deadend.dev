@@ -28,7 +28,7 @@
     {
       "action": "Disabling SSL/TLS certificate verification entirely with a TrustManager that trusts all certificates",
       "why_fails": "A TrustManager that accepts all certificates disables the fundamental security guarantee of TLS. This makes the application vulnerable to man-in-the-middle attacks where an attacker can intercept and modify all encrypted traffic. This is never acceptable in production and should be avoided even in development.",
-      "fail_rate": 0.3,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.oracle.com/en/java/javase/21/docs/api/"
       ],
