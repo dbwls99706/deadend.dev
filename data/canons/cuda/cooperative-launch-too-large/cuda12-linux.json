@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Increasing GPU memory to allow more concurrent blocks",
       "why_fails": "Cooperative launch occupancy is limited by SM count, registers per SM, and shared memory per SM — not global memory. Adding more VRAM does not increase the number of SMs or change per-SM resource limits.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching to a regular kernel launch without redesigning the algorithm",
       "why_fails": "Cooperative kernels use grid-wide synchronization (cooperative_groups::grid_group::sync). Removing cooperative launch without removing grid sync calls causes undefined behavior or hangs. The algorithm must be restructured to not require global synchronization.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.15, "condition": "when reducing grid size causes out-of-bounds indexing in the kernel"}
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when reducing grid size causes out-of-bounds indexing in the kernel"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cuda/too-many-threads/cuda12-linux", "probability": 0.10, "condition": "when switching from regular to cooperative launch exposes occupancy constraints"}
+      {
+        "error_id": "cuda/too-many-threads/cuda12-linux",
+        "probability": 0.1,
+        "condition": "when switching from regular to cooperative launch exposes occupancy constraints"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cuda/too-many-threads/cuda12-linux", "distinction": "Too-many-threads is about exceeding the per-block thread limit (1024). Cooperative-launch-too-large is about the total grid exceeding simultaneous device occupancy. The former is a per-block limit; the latter is a device-wide constraint."}
+      {
+        "error_id": "cuda/too-many-threads/cuda12-linux",
+        "distinction": "Too-many-threads is about exceeding the per-block thread limit (1024). Cooperative-launch-too-large is about the total grid exceeding simultaneous device occupancy. The former is a per-block limit; the latter is a device-wide constraint."
+      }
     ]
   },
   "metadata": {

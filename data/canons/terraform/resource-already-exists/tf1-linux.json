@@ -73,7 +73,12 @@
         "condition": "Lock error caused partial apply, resource created but not in state"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/depends-on-module/tf1-linux",
+        "distinction": "'Error: creating resource: already exists' vs 'Error: Module output depends on resource that no longer exis': while both are terraform errors in the state_error category, the former Cloud resource exists but not in Terraform state. Common after manual changes or while the latter Module references a resource that was removed from config but exists in state."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

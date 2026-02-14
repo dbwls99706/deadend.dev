@@ -29,14 +29,18 @@
       "action": "Wrapping the list in str() to make it hashable",
       "why_fails": "Loses structure; str representation can collide for different lists",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "condition": ""
     },
     {
       "action": "Using json.dumps() as hash key",
       "why_fails": "Fragile — key ordering matters, wastes memory",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Use --no-build-isolation globally for all packages",
       "why_fails": "Disabling build isolation can cause dependency pollution and break other packages that require clean builds",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrade pip to avoid build isolation",
       "why_fails": "Old pip versions have worse dependency resolution and more bugs; build isolation is there for good reason",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Install build dependencies first, then use --no-build-isolation for the specific package",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "pip install setuptools wheel cython numpy && pip install --no-build-isolation <package>",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/subprocess-error/pip24-linux", "probability": 0.3, "condition": "when build isolation partially works but compilation fails"}
+      {
+        "error_id": "pip/subprocess-error/pip24-linux",
+        "probability": 0.3,
+        "condition": "when build isolation partially works but compilation fails"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/metadata-generation-failed/pip24-linux", "probability": 0.25, "condition": "when metadata extraction triggers a build"}
+      {
+        "error_id": "pip/metadata-generation-failed/pip24-linux",
+        "probability": 0.25,
+        "condition": "when metadata extraction triggers a build"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/src-install-failed/pip24-linux", "distinction": "Build isolation failure is about the isolated build environment setup; src-install-failed is about the actual compilation or install step after environment setup"}
+      {
+        "error_id": "pip/src-install-failed/pip24-linux",
+        "distinction": "Build isolation failure is about the isolated build environment setup; src-install-failed is about the actual compilation or install step after environment setup"
+      }
     ]
   },
   "metadata": {

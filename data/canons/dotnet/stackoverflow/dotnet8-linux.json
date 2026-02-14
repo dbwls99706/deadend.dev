@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "StackOverflowException occurs when the execution stack overflows due to infinite recursion or excessively deep call chains. This exception cannot be caught in .NET. Common causes include recursive property setters, circular DI dependencies, and recursive serialization. Fix by identifying and breaking the recursive cycle."
@@ -26,14 +29,18 @@
       "action": "Attempting to catch StackOverflowException with try-catch",
       "why_fails": "StackOverflowException is not catchable in .NET since .NET 2.0; the CLR terminates the process immediately when the stack overflows, so no catch block will execute",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing the thread stack size via Thread constructor or environment variable",
       "why_fails": "Only delays the crash for truly recursive code; infinite recursion will exhaust any stack size. Larger stacks also waste memory per thread and can cause OutOfMemoryException in multi-threaded scenarios",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.15, "condition": "when large stack sizes per thread exhaust available memory"},
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.20, "condition": "when the recursive cycle is in object serialization"}
+      {
+        "error_id": "dotnet/outofmemoryexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when large stack sizes per thread exhaust available memory"
+      },
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when the recursive cycle is in object serialization"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.25, "condition": "when circular reference in object graph causes infinite serialization recursion"},
-      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.10, "condition": "when tracked entities with circular navigation properties trigger recursive processing"}
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.25,
+        "condition": "when circular reference in object graph causes infinite serialization recursion"
+      },
+      {
+        "error_id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when tracked entities with circular navigation properties trigger recursive processing"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "distinction": "StackOverflowException is caused by exhausting the call stack through deep recursion; OutOfMemoryException is caused by exhausting heap memory through large allocations"}
+      {
+        "error_id": "dotnet/outofmemoryexception/dotnet8-linux",
+        "distinction": "StackOverflowException is caused by exhausting the call stack through deep recursion; OutOfMemoryException is caused by exhausting heap memory through large allocations"
+      }
     ]
   },
   "metadata": {

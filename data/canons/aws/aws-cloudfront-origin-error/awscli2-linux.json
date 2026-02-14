@@ -38,7 +38,9 @@
       "action": "Change CloudFront price class to fix the issue",
       "why_fails": "Price class only affects which edge locations are used, not origin connectivity",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

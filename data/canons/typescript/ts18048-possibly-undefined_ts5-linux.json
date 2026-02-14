@@ -29,14 +29,18 @@
       "action": "Adding ! assertion to every occurrence",
       "why_fails": "Ignores the type system's warning; runtime errors when truly undefined",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     },
     {
       "action": "Initializing everything to empty string/zero",
       "why_fails": "Wrong defaults cause subtle bugs worse than crashes",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],

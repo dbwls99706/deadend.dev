@@ -68,7 +68,8 @@
       "sources": [
         "https://git-scm.com/docs/git-cherry-pick"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git cherry-pick --abort"
     }
   ],
   "transition_graph": {

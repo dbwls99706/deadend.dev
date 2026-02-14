@@ -29,14 +29,18 @@
       "action": "Using git checkout -- . to discard all changes",
       "why_fails": "Destroys all uncommitted work",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Using git clean -fd",
       "why_fails": "Deletes untracked files permanently",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

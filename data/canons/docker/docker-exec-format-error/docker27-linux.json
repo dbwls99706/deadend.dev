@@ -28,15 +28,19 @@
     {
       "action": "Installing QEMU without registering binfmt_misc handlers",
       "why_fails": "QEMU alone is not enough; the kernel needs binfmt_misc entries to know which emulator to use for foreign binaries",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Forcing the entrypoint to bash without checking if bash exists in the image",
       "why_fails": "Many minimal images (alpine, scratch) do not include bash; use /bin/sh instead",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -52,7 +56,7 @@
     },
     {
       "action": "Add a proper shebang line to shell scripts used as entrypoints",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Ensure the first line of the script is #!/bin/sh (not #!/bin/bash if bash is not installed) and the file has execute permissions",
       "sources": [
         "https://docs.docker.com/reference/dockerfile/#entrypoint"

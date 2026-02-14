@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.89,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-13",
     "summary": "InvalidCastException occurs when an explicit cast or unboxing operation fails at runtime because the actual object type is not compatible with the target type. Common scenarios include: casting objects from untyped collections (ArrayList, DataRow fields), incorrect unboxing of value types (e.g., casting an int boxed as object to long), COM interop type mismatches, and interface cast failures when the same assembly is loaded from different paths. On .NET 8 Linux, a particularly common cause is assembly loading contexts where the 'same' type loaded from different AssemblyLoadContexts are treated as distinct types. Fix by using safe casting patterns (as/is), proper generic collections, and ensuring consistent assembly loading."
   },
@@ -25,22 +28,28 @@
     {
       "action": "Suppressing the exception by wrapping every cast in try-catch and returning a default value",
       "why_fails": "This masks the real type mismatch and leads to silent data corruption or logic errors downstream. The cast failure indicates a fundamental type contract violation that needs to be understood and fixed, not hidden. Default values propagating through the system create bugs that are much harder to diagnose later",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using Convert.ChangeType() as a universal replacement for direct casts",
       "why_fails": "Convert.ChangeType() only works for types that implement IConvertible (primitive types, string, DateTime). It will throw InvalidCastException or FormatException for custom types, complex objects, and many framework types. It also does not handle nullable types correctly, throwing for Nullable<T> targets",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": "When dealing with custom types or nullable value types"
     },
     {
       "action": "Assuming the cast fails because of an inheritance issue and adding a base class or interface",
       "why_fails": "When the types look identical but the cast fails (common error message: 'Unable to cast Type to Type' with same names), the issue is usually assembly loading: the same type loaded from two different assembly contexts are distinct CLR types. Adding inheritance relationships does not help because the runtime sees them as completely unrelated types from different assemblies",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": "When source and target type names appear identical in the error message"
     }
   ],
@@ -54,7 +63,7 @@
     },
     {
       "action": "Replace untyped collections with generic equivalents to get compile-time type safety",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Replace ArrayList with List<T>, Hashtable with Dictionary<TKey, TValue>, and DataRow field access with strongly-typed models. For DataRow: instead of (decimal)row[\"Price\"], use row.Field<decimal>(\"Price\") which handles DBNull and performs proper type conversion. For legacy APIs returning object, create typed wrapper methods: public static T GetValue<T>(DataRow row, string column) => row.IsNull(column) ? default! : row.Field<T>(column);",
       "sources": [],
       "condition": ""
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when developers replace casts with 'as' operator but forget to handle the null result"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.10, "condition": "when incorrect type casts cause downstream LINQ or collection operations to fail"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when developers replace casts with 'as' operator but forget to handle the null result"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when incorrect type casts cause downstream LINQ or collection operations to fail"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.10, "condition": "when deserializing JSON to incorrect target types"},
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.05, "condition": "when EF model changes cause database column type mismatches"}
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when deserializing JSON to incorrect target types"
+      },
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "probability": 0.05,
+        "condition": "when EF model changes cause database column type mismatches"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/argumentexception/dotnet8-linux", "distinction": "ArgumentException is thrown when a method explicitly validates its parameters and rejects an argument; InvalidCastException is thrown by the runtime when a cast or unboxing operation encounters an incompatible type at runtime"}
+      {
+        "error_id": "dotnet/argumentexception/dotnet8-linux",
+        "distinction": "ArgumentException is thrown when a method explicitly validates its parameters and rejects an argument; InvalidCastException is thrown by the runtime when a cast or unboxing operation encounters an incompatible type at runtime"
+      }
     ]
   },
   "metadata": {

@@ -38,7 +38,9 @@
       "action": "Using the root account credentials",
       "why_fails": "Against AWS security best practices; no audit trail",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

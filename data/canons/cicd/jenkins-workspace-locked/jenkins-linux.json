@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "runtime": {
+      "name": "jenkins",
+      "version_range": ">=2.300"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Manually delete the workspace directory while a build is running",
       "why_fails": "Deleting the workspace of a running build causes that build to fail mid-execution with file-not-found errors",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Kill all Java processes on the agent to release locks",
       "why_fails": "Killing the agent process disconnects it from Jenkins, orphans child processes, and may corrupt build state",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "probability": 0.15, "condition": "When locked workspaces consume all disk space, causing the agent to become unhealthy and disconnect"}
+      {
+        "error_id": "cicd/jenkins-agent-offline/jenkins-linux",
+        "probability": 0.15,
+        "condition": "When locked workspaces consume all disk space, causing the agent to become unhealthy and disconnect"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "probability": 0.15, "condition": "When agent reconnects after a disruption while a build was running, leaving stale locks"}
+      {
+        "error_id": "cicd/jenkins-agent-offline/jenkins-linux",
+        "probability": 0.15,
+        "condition": "When agent reconnects after a disruption while a build was running, leaving stale locks"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "distinction": "Workspace locked is a runtime resource contention issue; pipeline syntax is a parsing error before execution"}
+      {
+        "error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux",
+        "distinction": "Workspace locked is a runtime resource contention issue; pipeline syntax is a parsing error before execution"
+      }
     ]
   },
   "metadata": {

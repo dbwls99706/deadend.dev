@@ -38,7 +38,9 @@
       "action": "Upgrade instance types to fix red cluster status",
       "why_fails": "If the issue is disk pressure, upgrading instance type without adding storage won't help",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

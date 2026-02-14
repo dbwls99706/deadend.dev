@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "mongodb",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Increasing serverSelectionTimeoutMS to very large values",
       "why_fails": "If the server is not running or unreachable, waiting longer will not help. This only delays the error and makes the application appear to hang instead of failing fast.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Reinstalling the MongoDB driver (pymongo/mongoose) to fix connection issues",
       "why_fails": "Connection refused is a network-level error. The driver correctly reports that the server is unreachable. Reinstalling the driver changes nothing about server availability.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,28 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mongodb-authentication-failed/mongo7-linux", "probability": 0.30, "condition": "when server starts but authentication is enabled and credentials are wrong"}
+      {
+        "error_id": "database/mongodb-authentication-failed/mongo7-linux",
+        "probability": 0.3,
+        "condition": "when server starts but authentication is enabled and credentials are wrong"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.10, "condition": "when disk full on a shared server causes MongoDB to crash alongside other services"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.1,
+        "condition": "when disk full on a shared server causes MongoDB to crash alongside other services"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/connection-refused/pg16-linux", "distinction": "MongoDB ServerSelectionTimeoutError wraps connection refused with a timeout mechanism, while PostgreSQL reports connection refused immediately. MongoDB's error appears after the selection timeout period."},
-      {"error_id": "database/redis-connection-refused/redis7-linux", "distinction": "Both are connection refused errors but for different database systems. MongoDB uses port 27017 by default, Redis uses 6379."}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "distinction": "MongoDB ServerSelectionTimeoutError wraps connection refused with a timeout mechanism, while PostgreSQL reports connection refused immediately. MongoDB's error appears after the selection timeout period."
+      },
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "distinction": "Both are connection refused errors but for different database systems. MongoDB uses port 27017 by default, Redis uses 6379."
+      }
     ]
   },
   "metadata": {

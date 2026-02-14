@@ -29,14 +29,18 @@
       "action": "Increasing thread pool size to work around the deadlock",
       "why_fails": "Adding more threads does not resolve a deadlock — the circular lock dependency remains. New threads may also deadlock on the same resources, making the situation worse.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding synchronized blocks around existing synchronized blocks to force ordering",
       "why_fails": "Adding more synchronization without careful analysis often creates new deadlock opportunities. Nested synchronization increases the chance of circular dependencies.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],

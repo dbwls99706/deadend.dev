@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.1,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.1,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,19 +25,78 @@
     "summary": "Headers already sent errors occur when PHP attempts to send HTTP headers (via header(), setcookie(), or session_start()) after output has already been flushed to the browser. The error message indicates the exact file and line where premature output began. Common culprits are whitespace or BOM before <?php, echo/print statements before headers, or included files that produce output."
   },
   "dead_ends": [
-    {"action": "Wrapping the header() call in an if(!headers_sent()) conditional", "why_fails": "This suppresses the warning but does not fix the root cause. The header or cookie is silently not sent, leading to broken redirects, lost sessions, or missing response headers. The user experiences mysterious failures without visible errors.", "fail_rate": 0.85, "sources": [], "condition": ""},
-    {"action": "Moving session_start() to a later point in the script", "why_fails": "If output has already been produced before the new location of session_start(), the error persists. The fix requires eliminating premature output, not moving session_start() further down. This often leads to cascading issues where session data is unavailable when needed.", "fail_rate": 0.72, "sources": [], "condition": ""},
-    {"action": "Adding error_reporting(0) or @ operator to silence the warning", "why_fails": "Suppressing the error hides the symptom while leaving the broken behavior intact. Headers and cookies still fail to send. Redirects break silently, sessions do not initialize, and content-type headers are missing, causing downstream failures that are much harder to debug.", "fail_rate": 0.92, "sources": [], "condition": ""}
+    {
+      "action": "Wrapping the header() call in an if(!headers_sent()) conditional",
+      "why_fails": "This suppresses the warning but does not fix the root cause. The header or cookie is silently not sent, leading to broken redirects, lost sessions, or missing response headers. The user experiences mysterious failures without visible errors.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Moving session_start() to a later point in the script",
+      "why_fails": "If output has already been produced before the new location of session_start(), the error persists. The fix requires eliminating premature output, not moving session_start() further down. This often leads to cascading issues where session data is unavailable when needed.",
+      "fail_rate": 0.72,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Adding error_reporting(0) or @ operator to silence the warning",
+      "why_fails": "Suppressing the error hides the symptom while leaving the broken behavior intact. Headers and cookies still fail to send. Redirects break silently, sessions do not initialize, and content-type headers are missing, causing downstream failures that are much harder to debug.",
+      "fail_rate": 0.92,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Remove all output before header-sending calls by checking the file and line indicated in the error", "success_rate": 0.95, "how": "The error message specifies exactly where premature output started (e.g., 'output started at /app/config.php:1'). Open that file and line. Look for: whitespace or newlines before the opening <?php tag, a UTF-8 BOM (invisible byte order mark), echo/print/var_dump statements, HTML outside PHP tags, or a closing ?> tag followed by whitespace in an included file. Remove the offending output. Use 'hexdump -C file.php | head' to detect invisible BOM characters (EF BB BF).", "sources": [], "condition": ""},
-    {"action": "Enable output buffering with ob_start() at the very beginning of the script or in php.ini", "success_rate": 0.92, "how": "Add ob_start() as the very first statement after <?php in your entry point, or set 'output_buffering = 4096' in php.ini. This buffers all output so headers can be sent at any point before the buffer is flushed. For frameworks, ensure the bootstrap file calls ob_start() before any include. Note: this is a workaround that masks the architectural issue; prefer fixing premature output for long-term maintainability.", "sources": [], "condition": ""},
-    {"action": "Remove closing ?> tags from all PHP-only files to prevent trailing whitespace", "success_rate": 0.88, "how": "The PHP manual recommends omitting the closing ?> tag in files that contain only PHP code. Any whitespace or newline after ?> is treated as output, triggering 'headers already sent' when the file is included before a header() call. Remove the closing ?> from all library, config, and class files. Most coding standards (PSR-12) mandate this practice.", "sources": [], "condition": ""}
+    {
+      "action": "Remove all output before header-sending calls by checking the file and line indicated in the error",
+      "success_rate": 0.95,
+      "how": "The error message specifies exactly where premature output started (e.g., 'output started at /app/config.php:1'). Open that file and line. Look for: whitespace or newlines before the opening <?php tag, a UTF-8 BOM (invisible byte order mark), echo/print/var_dump statements, HTML outside PHP tags, or a closing ?> tag followed by whitespace in an included file. Remove the offending output. Use 'hexdump -C file.php | head' to detect invisible BOM characters (EF BB BF).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enable output buffering with ob_start() at the very beginning of the script or in php.ini",
+      "success_rate": 0.92,
+      "how": "Add ob_start() as the very first statement after <?php in your entry point, or set 'output_buffering = 4096' in php.ini. This buffers all output so headers can be sent at any point before the buffer is flushed. For frameworks, ensure the bootstrap file calls ob_start() before any include. Note: this is a workaround that masks the architectural issue; prefer fixing premature output for long-term maintainability.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Remove closing ?> tags from all PHP-only files to prevent trailing whitespace",
+      "success_rate": 0.88,
+      "how": "The PHP manual recommends omitting the closing ?> tag in files that contain only PHP code. Any whitespace or newline after ?> is treated as output, triggering 'headers already sent' when the file is included before a header() call. Remove the closing ?> from all library, config, and class files. Most coding standards (PSR-12) mandate this practice.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/session-expired/php83-linux", "probability": 0.22, "condition": "when session_start() fails silently due to suppressed headers-already-sent, causing sessions to never initialize"}],
-    "preceded_by": [{"error_id": "php/undefined-variable/php83-linux", "probability": 0.12, "condition": "when a notice or warning about an undefined variable produces output before header() is called"}],
-    "frequently_confused_with": [{"error_id": "php/session-expired/php83-linux", "distinction": "Headers already sent is a specific PHP warning about output ordering, while session expired relates to session lifetime and cookie validity. However, suppressed headers-already-sent errors can cause sessions to appear expired because session cookies never reach the browser."}]
+    "leads_to": [
+      {
+        "error_id": "php/session-expired/php83-linux",
+        "probability": 0.22,
+        "condition": "when session_start() fails silently due to suppressed headers-already-sent, causing sessions to never initialize"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/undefined-variable/php83-linux",
+        "probability": 0.12,
+        "condition": "when a notice or warning about an undefined variable produces output before header() is called"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/session-expired/php83-linux",
+        "distinction": "Headers already sent is a specific PHP warning about output ordering, while session expired relates to session lifetime and cookie validity. However, suppressed headers-already-sent errors can cause sessions to appear expired because session cookies never reach the browser."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

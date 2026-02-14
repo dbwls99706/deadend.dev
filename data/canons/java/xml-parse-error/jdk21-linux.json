@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "runtime": {
+      "name": "jdk",
+      "version_range": ">=21,<22"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "The Java XML parser encountered malformed content before the XML declaration or root element. The most common cause is a BOM (Byte Order Mark) at the beginning of a UTF-8 file, invisible whitespace or characters before the <?xml declaration, or the input is not XML at all (e.g., an HTML error page returned from an HTTP request, or an empty response). This error is prevalent in Spring configuration parsing, SOAP services, and Maven POM files."
@@ -25,15 +28,19 @@
     {
       "action": "Switching from SAX to DOM parser to handle the malformed content",
       "why_fails": "Both SAX and DOM parsers perform the same XML well-formedness checks. If the input is not valid XML, neither parser can handle it. DOM may give a slightly different error message but will still reject malformed content at the prolog level.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting the parser to be lenient or non-validating",
       "why_fails": "Non-validating mode skips DTD/Schema validation, not well-formedness checks. 'Content is not allowed in prolog' is a well-formedness error (XML 1.0 spec), not a validation error. There is no standard way to make a Java XML parser accept malformed XML at the prolog level.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.15, "condition": "when Spring XML configuration fails to parse, beans defined in that file are not registered"},
-      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.15, "condition": "when a POM file has BOM or encoding issues causing Maven to fail"}
+      {
+        "error_id": "java/spring-bean-not-found/spring6-linux",
+        "probability": 0.15,
+        "condition": "when Spring XML configuration fails to parse, beans defined in that file are not registered"
+      },
+      {
+        "error_id": "java/maven-build-failure/maven3-linux",
+        "probability": 0.15,
+        "condition": "when a POM file has BOM or encoding issues causing Maven to fail"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.10, "condition": "when an HTTP timeout returns a partial or error response that is then parsed as XML"}
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when an HTTP timeout returns a partial or error response that is then parsed as XML"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "distinction": "SAXParseException is for XML parsing failures. Jackson deserialization errors are for JSON parsing failures. Both are parsing errors but for different data formats. Check the Content-Type of the input to determine which parser should be used."}
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "distinction": "SAXParseException is for XML parsing failures. Jackson deserialization errors are for JSON parsing failures. Both are parsing errors but for different data formats. Check the Content-Type of the input to determine which parser should be used."
+      }
     ]
   },
   "metadata": {

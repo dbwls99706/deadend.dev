@@ -29,14 +29,18 @@
       "action": "Providing a default value in createContext to avoid the error",
       "why_fails": "Default value masks missing Provider; component uses stale/wrong data",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Making the context value optional and checking everywhere",
       "why_fails": "Adds null checks throughout the codebase; verbose and error-prone",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

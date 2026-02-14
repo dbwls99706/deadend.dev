@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "ci-runner", "version_range": ">=1.0"},
+    "runtime": {
+      "name": "ci-runner",
+      "version_range": ">=1.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2026-02-12",
     "summary": "Automated deployment rollback fails because no previous stable version is recorded, the artifact registry was cleaned up, or the rollback process itself has a bug. Leaves the system in a partially deployed or broken state."
   },
@@ -26,14 +29,18 @@
       "action": "Manually SSH into production servers and revert files by hand",
       "why_fails": "Manual rollbacks are error-prone, skip health checks, bypass load balancers, and create drift between deployment state and CI records",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Redeploy the current broken version hoping it works on second attempt",
       "why_fails": "If the deployment artifact is faulty, redeploying it will fail the same way; this wastes time during an incident",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Implement blue-green or canary deployment strategy with instant switchback",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Deploy new version alongside old version (blue-green) or route a small percentage of traffic to the new version (canary). On failure, switch traffic back to the known-good version instantly",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "probability": 0.15, "condition": "When trying to find a previous deployment artifact that has been cleaned up"}
+      {
+        "error_id": "cicd/gha-artifact-not-found/gha-linux",
+        "probability": 0.15,
+        "condition": "When trying to find a previous deployment artifact that has been cleaned up"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.20, "condition": "When a failed Docker build leads to deploying a broken image, triggering rollback"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.2,
+        "condition": "When a failed Docker build leads to deploying a broken image, triggering rollback"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-concurrency-cancelled/gha-linux", "distinction": "Rollback failure is about reverting a bad deployment; concurrency cancellation is about CI job scheduling conflicts"}
+      {
+        "error_id": "cicd/gha-concurrency-cancelled/gha-linux",
+        "distinction": "Rollback failure is about reverting a bad deployment; concurrency cancellation is about CI job scheduling conflicts"
+      }
     ]
   },
   "metadata": {

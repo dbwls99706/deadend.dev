@@ -29,14 +29,18 @@
       "action": "Removing the readiness probe",
       "why_fails": "All traffic goes to unready pods; users see 500 errors",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting the probe to check a path that always returns 200",
       "why_fails": "Defeats the purpose of readiness checks",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

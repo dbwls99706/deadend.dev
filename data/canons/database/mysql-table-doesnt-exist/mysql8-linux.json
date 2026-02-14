@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Changing lower_case_table_names after the database has been initialized",
       "why_fails": "lower_case_table_names must be set before MySQL data directory initialization. Changing it on an existing instance with mixed-case table names causes existing tables to become inaccessible.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Copying .ibd tablespace files from another MySQL instance directly",
       "why_fails": "InnoDB tablespace files are tied to the specific MySQL instance's data dictionary. Simply copying .ibd files without proper IMPORT TABLESPACE procedure causes corruption errors.",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.15, "condition": "when attempting to run migrations but they fail due to other dependency issues"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.15,
+        "condition": "when attempting to run migrations but they fail due to other dependency issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-access-denied/mysql8-linux", "probability": 0.20, "condition": "when user connects to wrong database after fixing access issues"}
+      {
+        "error_id": "database/mysql-access-denied/mysql8-linux",
+        "probability": 0.2,
+        "condition": "when user connects to wrong database after fixing access issues"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "MySQL says 'Table doesn't exist' while PostgreSQL says 'relation does not exist'. MySQL error includes the database name prefix (mydb.my_table) which PostgreSQL does not."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "MySQL says 'Table doesn't exist' while PostgreSQL says 'relation does not exist'. MySQL error includes the database name prefix (mydb.my_table) which PostgreSQL does not."
+      }
     ]
   },
   "metadata": {

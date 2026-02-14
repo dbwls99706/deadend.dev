@@ -29,14 +29,18 @@
       "action": "Truncating the name arbitrarily",
       "why_fails": "May cause duplicate names or lose identifying information",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using underscores instead of hyphens",
       "why_fails": "Underscores are not valid in Kubernetes resource names",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

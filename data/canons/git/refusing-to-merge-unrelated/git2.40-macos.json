@@ -78,7 +78,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "git/refusing-to-merge-unrelated/git2.40-linux",
+        "distinction": "'fatal: refusing to merge unrelated histories' vs 'fatal: refusing to merge unrelated histories': while both are git errors in the merge category, the former Same fundamental error as Linux: two branches with no common ancestor. On macOS, while the latter This error was introduced in Git 2.9 as a safety measure. It occurs when merging."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

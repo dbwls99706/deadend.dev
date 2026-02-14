@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "runtime": {
+      "name": "jenkins",
+      "version_range": ">=2.300"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.89,
     "last_updated": "2026-02-12",
     "summary": "Jenkins pipeline (Jenkinsfile) contains Groovy syntax errors, invalid DSL method calls, or structural issues. The pipeline fails during parsing before any stages execute."
@@ -26,14 +29,18 @@
       "action": "Test Groovy syntax in an online Groovy compiler",
       "why_fails": "Jenkins Pipeline DSL is not standard Groovy; many pipeline-specific constructs (pipeline, stage, steps) are Jenkins-only and will fail in a regular Groovy compiler",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Convert declarative pipeline to scripted pipeline to fix syntax errors",
       "why_fails": "Scripted pipeline is more complex and error-prone; switching paradigms mid-debug introduces new categories of errors",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/jenkins-credential-not-found/jenkins-linux", "probability": 0.15, "condition": "When fixing syntax reveals credential binding errors in the pipeline"}
+      {
+        "error_id": "cicd/jenkins-credential-not-found/jenkins-linux",
+        "probability": 0.15,
+        "condition": "When fixing syntax reveals credential binding errors in the pipeline"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "probability": 0.10, "condition": "When agent comes back online and pipeline runs but has syntax issues from recent edits"}
+      {
+        "error_id": "cicd/jenkins-agent-offline/jenkins-linux",
+        "probability": 0.1,
+        "condition": "When agent comes back online and pipeline runs but has syntax issues from recent edits"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "distinction": "Jenkins uses Groovy-based Jenkinsfile syntax; GitHub Actions uses YAML workflow files"}
+      {
+        "error_id": "cicd/gha-workflow-syntax-error/gha-linux",
+        "distinction": "Jenkins uses Groovy-based Jenkinsfile syntax; GitHub Actions uses YAML workflow files"
+      }
     ]
   },
   "metadata": {

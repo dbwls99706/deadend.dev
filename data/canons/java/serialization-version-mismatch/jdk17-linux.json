@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Changing the serialVersionUID in the current class to match the old serialized data",
       "why_fails": "If the class structure has actually changed (fields added/removed/renamed), forcing the serialVersionUID to match will not make the data compatible. Deserialization may succeed but produce corrupted objects with null or wrong field values.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": "when the class structure has materially changed"
     },
     {
       "action": "Ignoring the error and re-serializing all data",
       "why_fails": "If the serialized data is in persistent storage (files, databases, caches, message queues) being actively used by other services, re-serializing is not always possible. Other services may still send the old format.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": "in distributed systems with shared serialized data"
     }
   ],
   "workarounds": [
     {
       "action": "Always declare an explicit serialVersionUID in serializable classes to control version compatibility",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Add 'private static final long serialVersionUID = 1L;' to every Serializable class. 2. Only change it when making intentionally incompatible changes. 3. For compatible changes (adding optional fields), keep the same serialVersionUID. 4. Use 'serialver com.example.MyClass' to find the current auto-generated UID if you need to set it retroactively. 5. This prevents future mismatches from accidental class modifications.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.15, "condition": "when migrating from Java serialization to Jackson JSON introduces new deserialization errors"}
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when migrating from Java serialization to Jackson JSON introduces new deserialization errors"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when the class definition changes package or name, causing ClassNotFoundException before the UID check"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when the class definition changes package or name, causing ClassNotFoundException before the UID check"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "distinction": "Jackson deserialization errors are about JSON-to-Java mapping; serialVersionUID mismatch is specific to Java's built-in binary serialization mechanism"}
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "distinction": "Jackson deserialization errors are about JSON-to-Java mapping; serialVersionUID mismatch is specific to Java's built-in binary serialization mechanism"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Wrapping every test in a global act()",
       "why_fails": "Masks the specific update that isn't being awaited",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Suppressing console.error in tests",
       "why_fails": "Hides real issues along with the act warning",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

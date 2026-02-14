@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.91,
     "last_updated": "2026-02-13",
     "summary": "Blazor Server and Blazor United (SSR) prerender components on the server where there is no browser or JavaScript runtime. Calling IJSRuntime methods (InvokeAsync, InvokeVoidAsync) during OnInitialized/OnInitializedAsync or OnParametersSet during prerendering fails because there is no SignalR circuit or browser connection yet. Fix by deferring JS interop to OnAfterRender/OnAfterRenderAsync, checking the render mode, or disabling prerendering for the component."
@@ -25,22 +28,28 @@
     {
       "action": "Wrapping the JS interop call in a try-catch to silently ignore the prerender failure",
       "why_fails": "The component renders without the JS-dependent state, causing visual flicker, missing data, or broken UI on initial load. The catch block masks a real architectural issue and the component's first render will always be incomplete, creating a poor user experience and potential hydration mismatches",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Injecting NavigationManager to detect prerendering and skip all initialization logic",
       "why_fails": "NavigationManager is available during prerendering and does not reliably indicate the render phase. Skipping all initialization during prerender means the server-rendered HTML has no meaningful content, defeating the purpose of SSR for SEO and first-paint performance. The component renders as empty on the server",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Moving the JS interop call to the component constructor or field initializer",
       "why_fails": "The constructor runs even earlier than OnInitialized and the DI-injected IJSRuntime is not yet available or is in the same prerender context. This typically results in a NullReferenceException or the same InvalidOperationException, now thrown from the constructor which is harder to debug",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when the JS interop result is expected to be non-null but the deferred call leaves state uninitialized during the first render"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when fixing the prerender issue introduces incorrect component lifecycle management"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when the JS interop result is expected to be non-null but the deferred call leaves state uninitialized during the first render"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when fixing the prerender issue introduces incorrect component lifecycle management"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when Blazor middleware misconfiguration causes unexpected prerendering behavior"},
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.12, "condition": "when debugging null state issues reveals the root cause is JS interop during prerender"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when Blazor middleware misconfiguration causes unexpected prerendering behavior"
+      },
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.12,
+        "condition": "when debugging null state issues reveals the root cause is JS interop during prerender"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "The JS interop prerender error is a specific InvalidOperationException thrown by the Blazor framework when IJSRuntime is invoked without a browser context; generic InvalidOperationException can occur for any invalid state, such as modifying a collection during enumeration or calling methods on a disposed object"}
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "distinction": "The JS interop prerender error is a specific InvalidOperationException thrown by the Blazor framework when IJSRuntime is invoked without a browser context; generic InvalidOperationException can occur for any invalid state, such as modifying a collection during enumeration or calling methods on a disposed object"
+      }
     ]
   },
   "metadata": {

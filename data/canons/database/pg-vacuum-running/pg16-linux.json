@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Disabling autovacuum to reduce IO load on a busy production system",
       "why_fails": "Disabling autovacuum accelerates the wraparound problem. Without vacuuming, dead tuples accumulate, table bloat grows, and the database will eventually enter single-user mode or refuse to accept writes to prevent transaction ID wraparound.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Running VACUUM FULL on large tables during peak traffic",
       "why_fails": "VACUUM FULL acquires an ACCESS EXCLUSIVE lock, blocking all reads and writes on the table for the entire duration. On large tables this can take hours, causing a full outage. Regular VACUUM (without FULL) is sufficient for wraparound prevention and allows concurrent access.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.20, "condition": "when table bloat from delayed vacuuming causes disk usage to grow unchecked"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.2,
+        "condition": "when table bloat from delayed vacuuming causes disk usage to grow unchecked"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.15, "condition": "when long-running queries prevent vacuum from advancing the oldest xmin"}
+      {
+        "error_id": "database/query-timeout/pg16-linux",
+        "probability": 0.15,
+        "condition": "when long-running queries prevent vacuum from advancing the oldest xmin"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/disk-full/pg16-linux", "distinction": "Wraparound warnings are about transaction ID exhaustion and dead tuple accumulation. Disk full is about filesystem capacity. However, vacuum issues often cause disk usage growth due to table bloat, so they are frequently related."}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "distinction": "Wraparound warnings are about transaction ID exhaustion and dead tuple accumulation. Disk full is about filesystem capacity. However, vacuum issues often cause disk usage growth due to table bloat, so they are frequently related."
+      }
     ]
   },
   "metadata": {

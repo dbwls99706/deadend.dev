@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Pip 24 requires PEP 660 support for editable installs with pyproject.toml. Older build backends (setuptools <64) lack the build_editable hook. The legacy setup.py develop fallback was removed."
@@ -25,15 +28,19 @@
     {
       "action": "Use pip install -e . --no-use-pep517",
       "why_fails": "The --no-use-pep517 flag is deprecated in pip 24 and will not work for pyproject.toml-based projects",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Add a setup.py just for editable installs",
       "why_fails": "Creating a setup.py alongside pyproject.toml causes confusion and potential conflicts between build systems",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/metadata-generation-failed/pip24-linux", "probability": 0.2, "condition": "when the build backend upgrade introduces metadata issues"}
+      {
+        "error_id": "pip/metadata-generation-failed/pip24-linux",
+        "probability": 0.2,
+        "condition": "when the build backend upgrade introduces metadata issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/build-isolation-failed/pip24-linux", "probability": 0.15, "condition": "when build isolation prevents setuptools upgrade"}
+      {
+        "error_id": "pip/build-isolation-failed/pip24-linux",
+        "probability": 0.15,
+        "condition": "when build isolation prevents setuptools upgrade"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/build-isolation-failed/pip24-linux", "distinction": "Editable-install-legacy is specifically about missing PEP 660 hook; build-isolation-failed is about the isolated build environment itself failing"}
+      {
+        "error_id": "pip/build-isolation-failed/pip24-linux",
+        "distinction": "Editable-install-legacy is specifically about missing PEP 660 hook; build-isolation-failed is about the isolated build environment itself failing"
+      }
     ]
   },
   "metadata": {

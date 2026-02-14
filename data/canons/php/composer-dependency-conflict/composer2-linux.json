@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "composer", "version_range": ">=2.0,<3.0"},
+    "runtime": {
+      "name": "composer",
+      "version_range": ">=2.0,<3.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Composer dependency conflicts occur when two or more packages require incompatible versions of a shared dependency. This is especially common when upgrading major versions of frameworks or when mixing packages from different ecosystem generations."
   },
   "dead_ends": [
-    {"action": "Using --ignore-platform-reqs to bypass the conflict", "why_fails": "This flag only bypasses platform requirements (PHP version, extensions), not package version conflicts. Even if it did work, ignoring requirements leads to runtime errors when incompatible code is loaded together.", "fail_rate": 0.85, "sources": [], "condition": ""},
-    {"action": "Manually editing composer.lock to force a version", "why_fails": "Editing composer.lock directly corrupts the dependency graph integrity. Composer will detect the hash mismatch and refuse to install, or worse, install an inconsistent set of packages that fail at runtime.", "fail_rate": 0.90, "sources": [], "condition": ""}
+    {
+      "action": "Using --ignore-platform-reqs to bypass the conflict",
+      "why_fails": "This flag only bypasses platform requirements (PHP version, extensions), not package version conflicts. Even if it did work, ignoring requirements leads to runtime errors when incompatible code is loaded together.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Manually editing composer.lock to force a version",
+      "why_fails": "Editing composer.lock directly corrupts the dependency graph integrity. Composer will detect the hash mismatch and refuse to install, or worse, install an inconsistent set of packages that fail at runtime.",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Use 'composer why' and 'composer depends' to find the conflict chain, then update constraints", "success_rate": 0.85, "how": "Run 'composer why package/name' to see why each version is required. Run 'composer depends other/dep --tree' to visualize the dependency chain. Adjust version constraints in composer.json to allow compatible versions. Use 'composer update --with-dependencies' to re-resolve.", "sources": [], "condition": ""},
-    {"action": "Use composer's allow-plugins or replace/provide to resolve the conflict", "success_rate": 0.80, "how": "If the conflict is between two packages that provide the same interface, use the 'replace' field in composer.json. If one package is a fork of another, specify which one to use. As a last resort, use 'composer require package/name:^2.0 --with-all-dependencies' to let composer resolve the full tree.", "sources": [], "condition": ""}
+    {
+      "action": "Use 'composer why' and 'composer depends' to find the conflict chain, then update constraints",
+      "success_rate": 0.85,
+      "how": "Run 'composer why package/name' to see why each version is required. Run 'composer depends other/dep --tree' to visualize the dependency chain. Adjust version constraints in composer.json to allow compatible versions. Use 'composer update --with-dependencies' to re-resolve.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use composer's allow-plugins or replace/provide to resolve the conflict",
+      "success_rate": 0.8,
+      "how": "If the conflict is between two packages that provide the same interface, use the 'replace' field in composer.json. If one package is a fork of another, specify which one to use. As a last resort, use 'composer require package/name:^2.0 --with-all-dependencies' to let composer resolve the full tree.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.18, "condition": "when a forced resolution installs an incompatible version that is missing expected classes"}],
-    "preceded_by": [{"error_id": "php/laravel-migration-failed/laravel11-linux", "probability": 0.10, "condition": "when a failed migration prompts updating the ORM package which then causes conflicts"}],
-    "frequently_confused_with": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "distinction": "Dependency conflict prevents installation entirely while autoload not found means packages are installed but the autoloader cannot locate a specific class"}]
+    "leads_to": [
+      {
+        "error_id": "php/class-not-found/php83-linux",
+        "probability": 0.18,
+        "condition": "when a forced resolution installs an incompatible version that is missing expected classes"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/laravel-migration-failed/laravel11-linux",
+        "probability": 0.1,
+        "condition": "when a failed migration prompts updating the ORM package which then causes conflicts"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/composer-autoload-not-found/composer2-linux",
+        "distinction": "Dependency conflict prevents installation entirely while autoload not found means packages are installed but the autoloader cannot locate a specific class"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

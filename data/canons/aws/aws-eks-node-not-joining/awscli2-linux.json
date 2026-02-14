@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Terminate and re-launch nodes without fixing the root cause",
       "why_fails": "New nodes will have the same misconfiguration and fail to join identically",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Upgrade the EKS control plane version to fix node joining",
       "why_fails": "Version upgrades can make things worse if node AMI is incompatible with the new control plane version",
-      "fail_rate": 0.70,
-      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html"],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html"
+      ],
       "condition": ""
     }
   ],
@@ -42,26 +49,41 @@
       "action": "Verify aws-auth ConfigMap includes the node IAM role ARN",
       "success_rate": 0.85,
       "how": "kubectl get configmap aws-auth -n kube-system -o yaml and ensure the node role ARN is listed under mapRoles",
-      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html"],
+      "sources": [
+        "https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html"
+      ],
       "condition": ""
     },
     {
       "action": "Check node security group allows communication with the control plane",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "Ensure node security group allows outbound 443 to the cluster endpoint and inbound from the cluster security group",
-      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html"],
+      "sources": [
+        "https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.20, "condition": "Node IAM role lacks required EKS permissions"}
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.2,
+        "condition": "Node IAM role lacks required EKS permissions"
+      }
     ],
     "preceded_by": [
-      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.15, "condition": "IAM misconfiguration prevents node registration"}
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "IAM misconfiguration prevents node registration"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "aws/aws-fargate-task-failed/awscli2-linux", "distinction": "Fargate task failures are serverless container issues; EKS node not joining is about EC2-based worker node registration with the cluster"}
+      {
+        "error_id": "aws/aws-fargate-task-failed/awscli2-linux",
+        "distinction": "Fargate task failures are serverless container issues; EKS node not joining is about EC2-based worker node registration with the cluster"
+      }
     ]
   },
   "metadata": {

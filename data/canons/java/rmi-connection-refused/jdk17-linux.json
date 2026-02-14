@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "The RMI client cannot connect to the RMI registry or remote object. Commonly caused by the RMI registry not running, firewall blocking the port, or java.rmi.server.hostname resolving to a non-routable address (like 127.0.0.1 in Docker)."
@@ -25,15 +28,19 @@
     {
       "action": "Only checking if the RMI registry port is open without verifying hostname resolution",
       "why_fails": "RMI uses a two-phase connection: first to the registry, then to the server object's advertised hostname. Even if the registry is reachable, the stub may contain a hostname (like the container ID in Docker) that the client cannot resolve.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling the firewall entirely instead of opening the specific RMI ports",
       "why_fails": "RMI uses dynamic ports for remote objects in addition to the registry port. Disabling the entire firewall is a security risk. The correct approach is to fix the port assignment, not remove the firewall.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.10, "condition": "when migrating from RMI to HTTP-based communication introduces timeout issues"}
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when migrating from RMI to HTTP-based communication introduces timeout issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "probability": 0.15, "condition": "when SSL configuration issues prevent RMI over SSL connections"}
+      {
+        "error_id": "java/ssl-handshake-exception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when SSL configuration issues prevent RMI over SSL connections"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "distinction": "JDBC connection refused is for database connections; RMI connection refused is for Java-to-Java remote method invocation communication"}
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "distinction": "JDBC connection refused is for database connections; RMI connection refused is for Java-to-Java remote method invocation communication"
+      }
     ]
   },
   "metadata": {

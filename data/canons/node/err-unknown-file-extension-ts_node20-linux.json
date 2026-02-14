@@ -29,14 +29,18 @@
       "action": "Adding type: module to package.json",
       "why_fails": "Node still doesn't understand .ts syntax; only changes module system",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Renaming .ts files to .js",
       "why_fails": "Loses TypeScript type checking entirely",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

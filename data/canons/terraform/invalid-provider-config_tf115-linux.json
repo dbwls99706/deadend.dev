@@ -29,14 +29,18 @@
       "action": "Hardcoding credentials in the provider block",
       "why_fails": "Security risk; credentials end up in version control",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Using default provider without explicit configuration",
       "why_fails": "Fails in CI/CD where defaults don't exist",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

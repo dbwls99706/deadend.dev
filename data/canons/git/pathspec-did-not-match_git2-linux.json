@@ -29,14 +29,18 @@
       "action": "Creating the branch locally with the same name",
       "why_fails": "May create an unrelated branch that doesn't track the remote",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Using --force to override",
       "why_fails": "checkout --force doesn't create branches; still fails",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

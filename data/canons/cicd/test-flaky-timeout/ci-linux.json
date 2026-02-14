@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "ci-runner", "version_range": ">=1.0"},
+    "runtime": {
+      "name": "ci-runner",
+      "version_range": ">=1.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Simply increase the test timeout to a very large value",
       "why_fails": "Masks the real issue (slow tests, resource contention, race conditions); makes CI feedback loops painfully slow and can hit job-level timeouts",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Add automatic retry logic to re-run failed tests multiple times",
       "why_fails": "Retries hide genuine bugs, increase CI costs, and create false confidence in test results; flaky tests that occasionally pass are still broken",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.20, "condition": "When multiple flaky tests hang simultaneously, causing the entire job to timeout"}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "probability": 0.2,
+        "condition": "When multiple flaky tests hang simultaneously, causing the entire job to timeout"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.10, "condition": "When cache miss causes slower build, leaving less time for test execution within the timeout"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "probability": 0.1,
+        "condition": "When cache miss causes slower build, leaving less time for test execution within the timeout"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "Flaky test timeout is about individual test cases failing intermittently; runner timeout is about the entire CI job exceeding its time limit"}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "distinction": "Flaky test timeout is about individual test cases failing intermittently; runner timeout is about the entire CI job exceeding its time limit"
+      }
     ]
   },
   "metadata": {

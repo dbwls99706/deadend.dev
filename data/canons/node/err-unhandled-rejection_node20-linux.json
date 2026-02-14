@@ -29,14 +29,18 @@
       "action": "Adding process.on('unhandledRejection', () => {}) to silence it",
       "why_fails": "Hides bugs; since Node 15 unhandled rejections crash the process by default",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Converting all async functions to callbacks",
       "why_fails": "Massive refactor that introduces callback hell; not a real fix",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

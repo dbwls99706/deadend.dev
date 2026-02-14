@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Invalid timezone errors occur when PHP encounters an unrecognized timezone identifier. This can happen due to deprecated timezone names (e.g., US/Pacific-New), missing timezone database, user input with invalid timezones, or mismatched ICU/IANA timezone data."
   },
   "dead_ends": [
-    {"action": "Using timezone abbreviations (EST, PST, CST) instead of IANA identifiers", "why_fails": "Timezone abbreviations are ambiguous. CST can mean Central Standard Time (US), China Standard Time, or Cuba Standard Time. PHP may resolve them incorrectly, causing silent data corruption in date calculations.", "fail_rate": 0.75, "sources": [], "condition": ""},
-    {"action": "Hardcoding UTC offset like +05:30 instead of using named timezones", "why_fails": "Fixed UTC offsets do not account for daylight saving time transitions. Using +05:30 instead of Asia/Kolkata works for India, but using -05:00 instead of America/New_York will be wrong for half the year.", "fail_rate": 0.60, "sources": [], "condition": ""}
+    {
+      "action": "Using timezone abbreviations (EST, PST, CST) instead of IANA identifiers",
+      "why_fails": "Timezone abbreviations are ambiguous. CST can mean Central Standard Time (US), China Standard Time, or Cuba Standard Time. PHP may resolve them incorrectly, causing silent data corruption in date calculations.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Hardcoding UTC offset like +05:30 instead of using named timezones",
+      "why_fails": "Fixed UTC offsets do not account for daylight saving time transitions. Using +05:30 instead of Asia/Kolkata works for India, but using -05:00 instead of America/New_York will be wrong for half the year.",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Use IANA timezone identifiers and validate user input against timezone_identifiers_list()", "success_rate": 0.95, "how": "Always use canonical IANA names like 'America/New_York', 'Europe/London', 'Asia/Tokyo'. Validate user-provided timezones: if (!in_array($tz, timezone_identifiers_list())) { throw new InvalidArgumentException('Invalid timezone'); }", "sources": [], "condition": ""},
-    {"action": "Set a default timezone in php.ini and application configuration", "success_rate": 0.90, "how": "In php.ini: date.timezone = UTC. In application bootstrap: date_default_timezone_set('UTC'). Store all datetimes in UTC in the database and convert to the user's timezone only for display.", "sources": [], "condition": ""}
+    {
+      "action": "Use IANA timezone identifiers and validate user input against timezone_identifiers_list()",
+      "success_rate": 0.95,
+      "how": "Always use canonical IANA names like 'America/New_York', 'Europe/London', 'Asia/Tokyo'. Validate user-provided timezones: if (!in_array($tz, timezone_identifiers_list())) { throw new InvalidArgumentException('Invalid timezone'); }",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set a default timezone in php.ini and application configuration",
+      "success_rate": 0.9,
+      "how": "In php.ini: date.timezone = UTC. In application bootstrap: date_default_timezone_set('UTC'). Store all datetimes in UTC in the database and convert to the user's timezone only for display.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/intl-locale-error/php83-linux", "probability": 0.15, "condition": "when timezone issues coincide with locale-dependent date formatting failures"}],
-    "preceded_by": [{"error_id": "php/type-error-argument/php83-linux", "probability": 0.10, "condition": "when passing a non-string or null value to DateTimeZone constructor"}],
-    "frequently_confused_with": [{"error_id": "php/intl-locale-error/php83-linux", "distinction": "Timezone errors are about IANA timezone database identifiers, while intl locale errors are about ICU locale identifiers for number/date formatting rules"}]
+    "leads_to": [
+      {
+        "error_id": "php/intl-locale-error/php83-linux",
+        "probability": 0.15,
+        "condition": "when timezone issues coincide with locale-dependent date formatting failures"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/type-error-argument/php83-linux",
+        "probability": 0.1,
+        "condition": "when passing a non-string or null value to DateTimeZone constructor"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/intl-locale-error/php83-linux",
+        "distinction": "Timezone errors are about IANA timezone database identifiers, while intl locale errors are about ICU locale identifiers for number/date formatting rules"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

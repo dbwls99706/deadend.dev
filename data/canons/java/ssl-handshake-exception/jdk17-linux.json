@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disabling SSL/TLS certificate verification entirely with a TrustManager that trusts all certificates",
       "why_fails": "A TrustManager that accepts all certificates disables the fundamental security guarantee of TLS. This makes the application vulnerable to man-in-the-middle attacks where an attacker can intercept and modify all encrypted traffic. This is never acceptable in production and should be avoided even in development.",
-      "fail_rate": 0.30,
-      "sources": [],
+      "fail_rate": 0.3,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading TLS version to TLSv1.0 or TLSv1.1 to avoid handshake failures",
       "why_fails": "TLSv1.0 and TLSv1.1 have known security vulnerabilities and are disabled by default in JDK 17+. Downgrading TLS version opens the connection to BEAST, POODLE, and other attacks. Modern servers increasingly reject TLSv1.0/1.1 connections entirely.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "probability": 0.15, "condition": "when TLS fix changes cipher suites and causes connection resets with incompatible servers"},
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.10, "condition": "when database SSL configuration change causes connection failures"}
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when TLS fix changes cipher suites and causes connection resets with incompatible servers"
+      },
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when database SSL configuration change causes connection failures"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.12, "condition": "when enabling SSL on a JDBC connection that previously used plaintext"},
-      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "probability": 0.08, "condition": "when investigating connection resets reveals underlying TLS negotiation failures"}
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.12,
+        "condition": "when enabling SSL on a JDBC connection that previously used plaintext"
+      },
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when investigating connection resets reveals underlying TLS negotiation failures"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "distinction": "SSLHandshakeException is specifically about TLS certificate/protocol negotiation failure; SocketException: Connection reset is about TCP-level abrupt closure. Both can occur during connection establishment but have different root causes and fixes."}
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "distinction": "SSLHandshakeException is specifically about TLS certificate/protocol negotiation failure; SocketException: Connection reset is about TCP-level abrupt closure. Both can occur during connection establishment but have different root causes and fixes."
+      }
     ]
   },
   "metadata": {

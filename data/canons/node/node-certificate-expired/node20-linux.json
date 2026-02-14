@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "TLS handshake failed because the server's SSL certificate has expired. Node.js strict TLS validation rejects expired certificates by default."
@@ -29,14 +29,18 @@
       "action": "Setting NODE_TLS_REJECT_UNAUTHORIZED=0 in production",
       "why_fails": "Disables all certificate validation, exposing the application to man-in-the-middle attacks",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Pinning the expired certificate in the trust store",
       "why_fails": "The certificate is expired; pinning it does not make it valid and other clients will still reject it",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

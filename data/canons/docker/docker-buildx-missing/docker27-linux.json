@@ -28,15 +28,19 @@
     {
       "action": "Symlinking buildx binary to a random path",
       "why_fails": "Docker CLI plugins must be in ~/.docker/cli-plugins/ or /usr/libexec/docker/cli-plugins/; other paths are not scanned",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using DOCKER_BUILDKIT=1 docker build as a replacement",
       "why_fails": "DOCKER_BUILDKIT=1 enables BuildKit but does not provide buildx features like multi-platform builds, custom builders, and build caching backends",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

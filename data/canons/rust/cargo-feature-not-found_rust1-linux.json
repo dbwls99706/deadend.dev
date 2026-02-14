@@ -42,7 +42,8 @@
       "sources": [
         "https://doc.rust-lang.org/cargo/reference/features.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "cargo doc --open"
     },
     {
       "action": "Check if the feature was renamed or removed in a version update",

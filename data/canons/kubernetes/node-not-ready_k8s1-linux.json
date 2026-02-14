@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "systemctl status kubelet on the node"
     },
     {
       "action": "Check node conditions: kubectl describe node <name> for detailed status",
@@ -59,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl describe node"
     },
     {
       "action": "Common causes: disk pressure, memory pressure, PID pressure, or container runtime down",

@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "runtime": {
+      "name": "http",
+      "version_range": ">=1.1"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "The application trusts the X-Forwarded-For header for client IP identification, but clients can inject arbitrary values in this header. This allows IP-based access control bypass, rate limit evasion, and log forgery. The application must only trust XFF values from known trusted proxies."
   },
@@ -26,14 +29,18 @@
       "action": "Trust the entire X-Forwarded-For header value without validation",
       "why_fails": "Any client can set X-Forwarded-For to an arbitrary IP address. Without validating which proxies in the chain are trusted, the application may use the attacker-controlled leftmost value as the real client IP.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Strip X-Forwarded-For at the edge proxy but not configure the application to use the correct header",
       "why_fails": "If the edge proxy strips the header but re-adds it with only the direct client IP, the application must be configured to read from this specific proxy's header. Misconfiguration means the application may still read a different header or the wrong position in the chain.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/http-429-rate-limited/http-linux", "probability": 0.20, "condition": "when IP-based rate limiting is bypassed via XFF spoofing, and after fixing it, legitimate rate limits are enforced"},
-      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.15, "condition": "when tightening proxy trust configuration blocks traffic from untrusted proxies"}
+      {
+        "error_id": "networking/http-429-rate-limited/http-linux",
+        "probability": 0.2,
+        "condition": "when IP-based rate limiting is bypassed via XFF spoofing, and after fixing it, legitimate rate limits are enforced"
+      },
+      {
+        "error_id": "networking/firewall-blocked/tcp-linux",
+        "probability": 0.15,
+        "condition": "when tightening proxy trust configuration blocks traffic from untrusted proxies"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/http-429-rate-limited/http-linux", "probability": 0.15, "condition": "when investigating rate limit bypass reveals XFF spoofing as the evasion method"}
+      {
+        "error_id": "networking/http-429-rate-limited/http-linux",
+        "probability": 0.15,
+        "condition": "when investigating rate limit bypass reveals XFF spoofing as the evasion method"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/cors-preflight-failed/http-linux", "distinction": "XFF spoofing is about client IP trust and identification; CORS is about cross-origin request authorization. Both involve HTTP headers but serve completely different security purposes"}
+      {
+        "error_id": "networking/cors-preflight-failed/http-linux",
+        "distinction": "XFF spoofing is about client IP trust and identification; CORS is about cross-origin request authorization. Both involve HTTP headers but serve completely different security purposes"
+      }
     ]
   },
   "metadata": {

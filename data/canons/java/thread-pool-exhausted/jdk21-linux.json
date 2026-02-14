@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "runtime": {
+      "name": "jdk",
+      "version_range": ">=21,<22"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Setting the thread pool size to match the maximum expected concurrent tasks",
       "why_fails": "Creating thousands of platform threads consumes excessive memory (each thread uses ~1MB of stack space). A pool of 10000 threads uses ~10GB of stack memory alone. This does not scale and causes OutOfMemoryError or extreme context switching overhead. Thread pools should be sized based on available CPU cores and task types (CPU-bound vs I/O-bound).",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using an unbounded work queue (LinkedBlockingQueue without capacity) to prevent rejection",
       "why_fails": "An unbounded queue never triggers rejection, so the pool never grows beyond core size. Under sustained high load, the queue grows indefinitely, consuming all heap memory and eventually causing OutOfMemoryError. It also means requests wait in the queue for a very long time, causing client-side timeouts.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Use virtual threads (JDK 21+) for I/O-bound workloads to avoid pool exhaustion",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Replace platform thread pools with virtual threads: ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor(). Virtual threads are lightweight (~1KB each) and can scale to millions of concurrent tasks. They are ideal for I/O-bound workloads (HTTP calls, database queries, file I/O). Not suitable for CPU-bound tasks where platform threads with pool sizing are still preferred.",
       "sources": [],
       "condition": "JDK 21+ required"
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.20, "condition": "when unbounded queues or too many threads consume all heap memory"},
-      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.25, "condition": "when rejected tasks cause upstream HTTP requests to fail with timeout"}
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when unbounded queues or too many threads consume all heap memory"
+      },
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when rejected tasks cause upstream HTTP requests to fail with timeout"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "probability": 0.20, "condition": "when tasks are blocked waiting for database connections, preventing threads from completing"},
-      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.15, "condition": "when slow HTTP calls hold threads in the pool for too long"}
+      {
+        "error_id": "java/connection-pool-exhausted/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when tasks are blocked waiting for database connections, preventing threads from completing"
+      },
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when slow HTTP calls hold threads in the pool for too long"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "distinction": "Thread pool exhaustion means no available threads to execute tasks. Connection pool exhaustion means no available database connections. Both are resource exhaustion issues but involve different resources. Thread pool issues affect all kinds of tasks; connection pool issues specifically affect database operations."}
+      {
+        "error_id": "java/connection-pool-exhausted/jdk17-linux",
+        "distinction": "Thread pool exhaustion means no available threads to execute tasks. Connection pool exhaustion means no available database connections. Both are resource exhaustion issues but involve different resources. Thread pool issues affect all kinds of tasks; connection pool issues specifically affect database operations."
+      }
     ]
   },
   "metadata": {

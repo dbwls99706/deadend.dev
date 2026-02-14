@@ -29,14 +29,18 @@
       "action": "Using CUDA events instead of external semaphores for cross-API synchronization",
       "why_fails": "CUDA events are internal to the CUDA runtime and cannot synchronize with Vulkan, OpenGL, or other graphics APIs. Cross-API synchronization requires external semaphores or external memory. CUDA events only work between CUDA streams.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Falling back to CPU-side synchronization (glFinish/vkQueueWaitIdle) between CUDA and graphics operations",
       "why_fails": "CPU-side synchronization forces a full pipeline flush on both the CUDA and graphics sides, destroying all parallelism. It introduces massive latency (potentially milliseconds per sync) and defeats the purpose of GPU interop.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

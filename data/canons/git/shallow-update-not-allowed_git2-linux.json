@@ -42,7 +42,8 @@
       "sources": [
         "https://git-scm.com/docs/git-fetch#Documentation/git-fetch.txt---unshallow"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git fetch --unshallow"
     },
     {
       "action": "Fetch specific depth: git fetch --depth=100 to get more history",
@@ -50,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-fetch#Documentation/git-fetch.txt---depthltdepthgt"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git fetch --depth=100 to get more history"
     }
   ],
   "transition_graph": {

@@ -29,14 +29,18 @@
       "action": "Downgrading Next.js to match the old config format",
       "why_fails": "Loses security patches and new features",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Suppressing the warning with typescript/eslint rules",
       "why_fails": "The config error is at build time, not lint time",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

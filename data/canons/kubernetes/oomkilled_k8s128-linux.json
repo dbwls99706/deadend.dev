@@ -29,14 +29,18 @@
       "action": "Removing memory limits entirely",
       "why_fails": "Container can consume all node memory and affect other pods",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting memory limit to very high value",
       "why_fails": "Hides the memory leak; wastes cluster resources",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

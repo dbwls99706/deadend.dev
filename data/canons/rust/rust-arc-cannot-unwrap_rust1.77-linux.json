@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,7 +29,9 @@
       "action": "Use unsafe to extract the inner value regardless of reference count",
       "why_fails": "Other references will point to freed memory causing use-after-free bugs",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Ensure all other Arc clones are dropped before calling try_unwrap",
       "success_rate": 0.88,
       "how": "// Drop other references first\ndrop(other_arc_clone);\n// Now try_unwrap will succeed\nlet inner = Arc::try_unwrap(arc).expect(\"all refs should be dropped\");",
-      "sources": ["https://doc.rust-lang.org/std/sync/struct.Arc.html#method.try_unwrap"],
+      "sources": [
+        "https://doc.rust-lang.org/std/sync/struct.Arc.html#method.try_unwrap"
+      ],
       "condition": ""
     },
     {
       "action": "Use Arc::into_inner() (Rust 1.70+) which returns None instead of panicking",
       "success_rate": 0.85,
       "how": "if let Some(inner) = Arc::into_inner(arc) {\n    // use inner\n} else {\n    // other references still exist, handle gracefully\n}",
-      "sources": ["https://doc.rust-lang.org/std/sync/struct.Arc.html#method.into_inner"],
+      "sources": [
+        "https://doc.rust-lang.org/std/sync/struct.Arc.html#method.into_inner"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux", "probability": 0.15, "condition": "When Arc ownership issues affect channel endpoints"}
+      {
+        "error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When Arc ownership issues affect channel endpoints"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-async-send-bound/rust1.77-linux", "probability": 0.15, "condition": "When Arc is introduced to satisfy Send bounds"}
+      {
+        "error_id": "rust/rust-async-send-bound/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When Arc is introduced to satisfy Send bounds"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/e0382-use-after-move/rust1-linux", "distinction": "E0382 is compile-time move error; Arc unwrap failure is a runtime error from shared ownership"}
+      {
+        "error_id": "rust/e0382-use-after-move/rust1-linux",
+        "distinction": "E0382 is compile-time move error; Arc unwrap failure is a runtime error from shared ownership"
+      }
     ]
   },
   "metadata": {

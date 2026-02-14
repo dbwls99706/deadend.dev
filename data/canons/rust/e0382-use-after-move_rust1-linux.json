@@ -29,14 +29,18 @@
       "action": "Using unsafe to read the moved memory",
       "why_fails": "Undefined behavior; memory may have been freed or reused",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Making everything Copy",
       "why_fails": "Not all types can be Copy (heap-allocated types like String, Vec)",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],

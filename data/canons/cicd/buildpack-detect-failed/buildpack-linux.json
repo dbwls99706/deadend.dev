@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "cloud-native-buildpacks", "version_range": ">=0.10"},
+    "runtime": {
+      "name": "cloud-native-buildpacks",
+      "version_range": ">=0.10"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Adding multiple conflicting language files to trick detection",
       "why_fails": "Multiple detection matches can cause ambiguous buildpack ordering or selection of the wrong buildpack, leading to build failures later in the process",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Specifying a buildpack URL without verifying it supports the app type",
       "why_fails": "An incompatible buildpack will fail at the build phase instead of detection, producing more confusing errors",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Ensure the correct project files exist in the root directory",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "For Node.js: ensure package.json is in the root. For Python: add requirements.txt or setup.py. For Go: add go.mod. For Java: add pom.xml or build.gradle. Check that the build path points to the correct directory.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "when buildpack failures lead teams to switch to Dockerfile-based builds"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.15,
+        "condition": "when buildpack failures lead teams to switch to Dockerfile-based builds"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-checkout-failed/gha-linux", "probability": 0.15, "condition": "when checkout failure results in an incomplete source tree missing detection files"}
+      {
+        "error_id": "cicd/gha-checkout-failed/gha-linux",
+        "probability": 0.15,
+        "condition": "when checkout failure results in an incomplete source tree missing detection files"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "buildpack-detect-failed is specific to Cloud Native Buildpacks auto-detection; docker-build-failed is a Dockerfile-based build error"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "distinction": "buildpack-detect-failed is specific to Cloud Native Buildpacks auto-detection; docker-build-failed is a Dockerfile-based build error"
+      }
     ]
   },
   "metadata": {

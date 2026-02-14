@@ -11,9 +11,14 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
     "os": "linux",
-    "hardware": {"gpu": "any"}
+    "hardware": {
+      "gpu": "any"
+    }
   },
   "verdict": {
     "resolvable": "true",
@@ -26,22 +31,26 @@
     {
       "action": "Reinstall PyTorch or TensorFlow to fix CUDA initialization",
       "why_fails": "The issue is at the driver/hardware level, not in the ML framework. Reinstalling frameworks does not fix driver or permission issues.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Set CUDA_HOME environment variable",
       "why_fails": "CUDA_HOME is for compile-time toolkit location; it does not affect runtime initialization or driver loading",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify GPU driver is loaded: nvidia-smi",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run nvidia-smi. If it fails, reload driver: modprobe nvidia. Check dmesg for driver errors.",
       "sources": [],
       "condition": ""
@@ -63,13 +72,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cuda/cuda-driver-insufficient/cuda12-linux", "probability": 0.25, "condition": "when driver loads but is too old for the CUDA toolkit version"}
+      {
+        "error_id": "cuda/cuda-driver-insufficient/cuda12-linux",
+        "probability": 0.25,
+        "condition": "when driver loads but is too old for the CUDA toolkit version"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cuda/invalid-device-ordinal/cuda12-linux", "probability": 0.15, "condition": "when device ordinal error masks an initialization failure"}
+      {
+        "error_id": "cuda/invalid-device-ordinal/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when device ordinal error masks an initialization failure"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cuda/context-destroyed/cuda12-linux", "distinction": "Not-initialized means CUDA never started successfully; context-destroyed means it was running but the context was torn down"}
+      {
+        "error_id": "cuda/context-destroyed/cuda12-linux",
+        "distinction": "Not-initialized means CUDA never started successfully; context-destroyed means it was running but the context was torn down"
+      }
     ]
   },
   "metadata": {

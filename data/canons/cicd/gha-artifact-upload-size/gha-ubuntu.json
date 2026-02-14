@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "ubuntu-latest"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Increase the artifact size limit through repository or organization settings",
       "why_fails": "The 10 GB per-artifact limit is a hard GitHub platform limit that cannot be changed through any settings. There is no configuration option to raise it.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Split the artifact into multiple upload steps without reducing total size",
       "why_fails": "Each individual upload-artifact call still has the 10 GB limit, and the overall repository storage quota (500 MB for free, up to 50 GB for enterprise) still applies to the sum of all artifacts. Splitting does not address the root cause of excessive artifact size.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Compress the artifact directory by just adding tar without exclusions",
       "why_fails": "If the contents are already compressed binaries, media files, or caches, tar/gzip yields minimal size reduction. Without excluding unnecessary files first, the archive will still exceed the limit.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": "When artifact contents are already compressed binaries or media"
     }
   ],
@@ -69,14 +78,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "probability": 0.35, "condition": "When upload fails silently or partially, downstream jobs that depend on download-artifact will fail"},
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.15, "condition": "When repeated upload retries consume significant job time"}
+      {
+        "error_id": "cicd/gha-artifact-not-found/gha-linux",
+        "probability": 0.35,
+        "condition": "When upload fails silently or partially, downstream jobs that depend on download-artifact will fail"
+      },
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "probability": 0.15,
+        "condition": "When repeated upload retries consume significant job time"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.10, "condition": "When Docker builds produce unexpectedly large image tarballs as artifacts"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.1,
+        "condition": "When Docker builds produce unexpectedly large image tarballs as artifacts"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "distinction": "Upload size error is about exceeding limits when storing artifacts; artifact not found is about failing to retrieve a previously uploaded artifact in a downstream job"}
+      {
+        "error_id": "cicd/gha-artifact-not-found/gha-linux",
+        "distinction": "Upload size error is about exceeding limits when storing artifacts; artifact not found is about failing to retrieve a previously uploaded artifact in a downstream job"
+      }
     ]
   },
   "metadata": {

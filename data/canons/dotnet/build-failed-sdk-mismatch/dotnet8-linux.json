@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Downgrading the target framework in .csproj to match an older installed SDK",
       "why_fails": "Changes the application's target framework, potentially breaking API usage and removing access to newer features. Other developers and CI systems still need the correct SDK, so this only fixes the local machine",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting global.json to use whatever SDK is installed",
       "why_fails": "global.json exists to ensure consistent builds across environments; removing it causes different developers to build with different SDK versions, leading to subtle behavioral differences and 'works on my machine' problems",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,39 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.20, "condition": "when SDK mismatch causes NuGet to fail resolving framework-specific packages"},
-      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "probability": 0.15, "condition": "when different SDK versions resolve different implicit package versions"},
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.10, "condition": "when partial build produces missing assembly references"}
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when SDK mismatch causes NuGet to fail resolving framework-specific packages"
+      },
+      {
+        "error_id": "dotnet/nuget-version-conflict/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when different SDK versions resolve different implicit package versions"
+      },
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when partial build produces missing assembly references"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.15, "condition": "when Dockerfile uses a base image with a different SDK version than expected"},
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.10, "condition": "when investigating restore failures reveals the underlying SDK version problem"}
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when Dockerfile uses a base image with a different SDK version than expected"
+      },
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when investigating restore failures reveals the underlying SDK version problem"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "distinction": "SDK mismatch is about the .NET SDK version being incompatible with the target framework; NuGet restore failure is about packages not being found or downloaded from package sources"}
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "distinction": "SDK mismatch is about the .NET SDK version being incompatible with the target framework; NuGet restore failure is about packages not being found or downloaded from package sources"
+      }
     ]
   },
   "metadata": {

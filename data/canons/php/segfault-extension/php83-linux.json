@@ -11,28 +11,76 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2026-02-12",
     "summary": "Segmentation faults in PHP are caused by bugs in C-level extensions, incompatible extension versions, or memory corruption. The PHP process crashes without a PHP-level error message, making these difficult to diagnose. Common culprits include outdated PECL extensions, Xdebug, and database driver extensions compiled against a different PHP version."
   },
   "dead_ends": [
-    {"action": "Ignoring the segfault and relying on PHP-FPM to restart the worker", "why_fails": "While PHP-FPM does restart crashed workers, repeated segfaults cause service instability, lost requests, and potential data corruption if the crash occurs mid-transaction. Each crash also loses any in-flight request data. Monitoring may not detect the issue if restarts are fast.", "fail_rate": 0.80, "sources": [], "condition": ""},
-    {"action": "Reinstalling PHP without identifying the problematic extension", "why_fails": "Reinstalling PHP without removing or updating the offending extension will reproduce the same segfault. The crash originates in the extension's shared object (.so) file, not in PHP core. A fresh PHP install loads the same broken extension.", "fail_rate": 0.75, "sources": [], "condition": ""}
+    {
+      "action": "Ignoring the segfault and relying on PHP-FPM to restart the worker",
+      "why_fails": "While PHP-FPM does restart crashed workers, repeated segfaults cause service instability, lost requests, and potential data corruption if the crash occurs mid-transaction. Each crash also loses any in-flight request data. Monitoring may not detect the issue if restarts are fast.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Reinstalling PHP without identifying the problematic extension",
+      "why_fails": "Reinstalling PHP without removing or updating the offending extension will reproduce the same segfault. The crash originates in the extension's shared object (.so) file, not in PHP core. A fresh PHP install loads the same broken extension.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Enable core dumps and use GDB to identify the crashing extension", "success_rate": 0.82, "how": "Enable core dumps: 'ulimit -c unlimited' and set 'rlimit_core = unlimited' in php-fpm.conf. Reproduce the crash. Analyze with GDB: 'gdb php core.12345' then 'bt' for backtrace. The backtrace will show which .so extension caused the crash. Update or remove that extension.", "sources": [], "condition": ""},
-    {"action": "Disable extensions one by one to isolate the culprit, then update or replace it", "success_rate": 0.78, "how": "List loaded extensions with 'php -m'. Disable extensions one at a time by commenting them out in the relevant .ini file in /etc/php/8.3/mods-available/ or using 'phpdismod'. Test after each change. Once the crashing extension is identified, update it with 'pecl upgrade {extension}' or replace it with a compatible alternative.", "sources": [], "condition": ""}
+    {
+      "action": "Enable core dumps and use GDB to identify the crashing extension",
+      "success_rate": 0.82,
+      "how": "Enable core dumps: 'ulimit -c unlimited' and set 'rlimit_core = unlimited' in php-fpm.conf. Reproduce the crash. Analyze with GDB: 'gdb php core.12345' then 'bt' for backtrace. The backtrace will show which .so extension caused the crash. Update or remove that extension.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable extensions one by one to isolate the culprit, then update or replace it",
+      "success_rate": 0.78,
+      "how": "List loaded extensions with 'php -m'. Disable extensions one at a time by commenting them out in the relevant .ini file in /etc/php/8.3/mods-available/ or using 'phpdismod'. Test after each change. Once the crashing extension is identified, update it with 'pecl upgrade {extension}' or replace it with a compatible alternative.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/opcache-restart/php83-linux", "probability": 0.15, "condition": "when the segfault corrupts the OPcache shared memory segment forcing a restart"}],
-    "preceded_by": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.10, "condition": "when memory exhaustion in a C extension causes a double-free or use-after-free leading to a segfault"}],
-    "frequently_confused_with": [{"error_id": "php/memory-limit-exhausted/php83-linux", "distinction": "Segfaults are low-level C crashes with no PHP error message while memory exhaustion produces a clear PHP fatal error with the memory limit and allocation size"}]
+    "leads_to": [
+      {
+        "error_id": "php/opcache-restart/php83-linux",
+        "probability": 0.15,
+        "condition": "when the segfault corrupts the OPcache shared memory segment forcing a restart"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.1,
+        "condition": "when memory exhaustion in a C extension causes a double-free or use-after-free leading to a segfault"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "distinction": "Segfaults are low-level C crashes with no PHP error message while memory exhaustion produces a clear PHP fatal error with the memory limit and allocation size"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

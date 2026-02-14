@@ -29,14 +29,18 @@
       "action": "Using require() instead of import",
       "why_fails": "Bypasses TypeScript module checking; loses type information",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     },
     {
       "action": "Using import * as X from 'module'",
       "why_fails": "Works but makes all usage look like X.default; awkward API",
       "fail_rate": 0.45,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],

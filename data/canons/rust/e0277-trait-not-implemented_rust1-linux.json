@@ -29,14 +29,18 @@
       "action": "Using unsafe impl Send for MyType {}",
       "why_fails": "Lying to the compiler about thread safety causes data races",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing the async requirement",
       "why_fails": "May require major architectural changes just to avoid a trait bound",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],

@@ -38,21 +38,27 @@
       "action": "Reinstalling the binary inside the container",
       "why_fails": "The binary itself is compiled correctly — it is compiled for a different CPU architecture. Reinstalling fetches the same architecture-mismatched binary because the base image is the wrong platform.",
       "fail_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "The binary is assumed to be corrupted when the issue is CPU architecture mismatch."
     },
     {
       "action": "Adding chmod +x to the binary",
       "why_fails": "This is a permissions fix. The error is about ELF binary architecture mismatch, not file permissions. The binary is executable, just not for this CPU instruction set.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "'exec format error' is confused with permission denied errors."
     },
     {
       "action": "Setting DOCKER_DEFAULT_PLATFORM after the image is already pulled",
       "why_fails": "DOCKER_DEFAULT_PLATFORM only affects future image pulls. The cached image is still the wrong architecture. You must remove the old image first.",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "Environment variables retroactively fix cached images."
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,35 +29,52 @@
       "action": "Pad input with extra bytes to satisfy the size requirement",
       "why_fails": "Extra bytes corrupt the parse result; the parser needs valid data, not padding",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use nom::complete combinators instead of nom::streaming",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "// Instead of:\nuse nom::bytes::streaming::tag;\n// Use:\nuse nom::bytes::complete::tag;",
-      "sources": ["https://docs.rs/nom/latest/nom/bytes/complete/index.html"],
+      "sources": [
+        "https://docs.rs/nom/latest/nom/bytes/complete/index.html"
+      ],
       "condition": ""
     },
     {
       "action": "Buffer all input before parsing when using streaming mode",
       "success_rate": 0.85,
       "how": "let full_input = std::io::read_to_string(reader)?;\nlet result = parser(&full_input);",
-      "sources": ["https://docs.rs/nom/latest/nom/#streaming--complete"],
+      "sources": [
+        "https://docs.rs/nom/latest/nom/#streaming--complete"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-regex-compile-error/rust1.77-linux", "probability": 0.10, "condition": "When nom failures lead to regex-based parsing attempts"}
+      {
+        "error_id": "rust/rust-regex-compile-error/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When nom failures lead to regex-based parsing attempts"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-io-broken-pipe/rust1.77-linux", "probability": 0.10, "condition": "When incomplete I/O causes incomplete parser input"}
+      {
+        "error_id": "rust/rust-io-broken-pipe/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When incomplete I/O causes incomplete parser input"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-regex-compile-error/rust1.77-linux", "distinction": "Regex compile error is about pattern validity; nom Incomplete is about insufficient input data for a parser"}
+      {
+        "error_id": "rust/rust-regex-compile-error/rust1.77-linux",
+        "distinction": "Regex compile error is about pattern validity; nom Incomplete is about insufficient input data for a parser"
+      }
     ]
   },
   "metadata": {

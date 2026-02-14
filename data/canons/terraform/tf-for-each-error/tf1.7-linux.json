@@ -38,7 +38,9 @@
       "action": "Use depends_on to ensure the for_each source is computed first",
       "why_fails": "depends_on controls execution order but does not make unknown values known at plan time",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -71,7 +73,12 @@
       }
     ],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-count-cannot-be-computed/tf1.7-linux",
+        "distinction": "'Error: Invalid for_each argument: The \"for_each\" set include' vs 'Error: Invalid count argument: The \"count\" value depends on ': while both are terraform errors in the config_error category, the former The for_each argument depends on values not known until apply, which Terraform r while the latter The count meta-argument depends on a value that is not known until apply time, w."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

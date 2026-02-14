@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "A Docker service or Compose stack references a secret that does not exist in the swarm or has not been created. Secrets must be created before services that use them."
@@ -28,15 +28,19 @@
     {
       "action": "Hardcoding the secret value in the Dockerfile or docker-compose.yml",
       "why_fails": "Secrets end up in the image layer history or version control, creating a security vulnerability",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using environment variables instead of Docker secrets for sensitive data",
       "why_fails": "Environment variables are visible in docker inspect, /proc/<pid>/environ, and logs; less secure than secrets",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -52,7 +56,7 @@
     },
     {
       "action": "For Docker Compose, define secrets as file-based in the compose file",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "In docker-compose.yml: secrets: { my_secret: { file: ./my_secret.txt } } and reference in services with secrets: [my_secret]",
       "sources": [
         "https://docs.docker.com/compose/how-tos/use-secrets/"

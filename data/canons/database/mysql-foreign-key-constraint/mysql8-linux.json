@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "An INSERT or UPDATE attempted to set a foreign key column to a value that does not exist in the referenced parent table. This is referential integrity enforcement working as designed. Common during data imports, seed scripts, or when inserting rows in the wrong order."
@@ -26,14 +29,18 @@
       "action": "Disabling foreign key checks globally and leaving them disabled permanently",
       "why_fails": "SET GLOBAL FOREIGN_KEY_CHECKS = 0 disables referential integrity for all sessions, allowing orphaned rows and data corruption. This defeats the purpose of foreign keys and creates data quality issues that are extremely difficult to clean up later.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Dropping the foreign key constraint to allow the insert",
       "why_fails": "Removing the constraint allows the immediate insert but permanently removes referential integrity protection. Future inserts can create orphaned records. Re-adding the constraint later will fail if orphaned data already exists.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.15, "condition": "when foreign key checks require shared locks on parent rows causing contention"}
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.15,
+        "condition": "when foreign key checks require shared locks on parent rows causing contention"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "probability": 0.20, "condition": "when migrations create child tables before parent tables exist"}
+      {
+        "error_id": "database/mysql-table-doesnt-exist/mysql8-linux",
+        "probability": 0.2,
+        "condition": "when migrations create child tables before parent tables exist"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/foreign-key-violation/pg16-linux", "distinction": "MySQL ERROR 1452 and PostgreSQL foreign key violation are the same concept. MySQL shows 'Cannot add or update a child row'. PostgreSQL shows 'violates foreign key constraint'. The fix approach is identical: ensure parent records exist first."}
+      {
+        "error_id": "database/foreign-key-violation/pg16-linux",
+        "distinction": "MySQL ERROR 1452 and PostgreSQL foreign key violation are the same concept. MySQL shows 'Cannot add or update a child row'. PostgreSQL shows 'violates foreign key constraint'. The fix approach is identical: ensure parent records exist first."
+      }
     ]
   },
   "metadata": {

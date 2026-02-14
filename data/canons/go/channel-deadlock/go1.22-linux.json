@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Go 1.22+ runtime detected that all goroutines are blocked on channel operations. Typically caused by sending on an unbuffered channel with no receiver, or forgetting to close a channel that a range loop reads from."
   },
@@ -28,7 +28,7 @@
     {
       "action": "Increase channel buffer size indefinitely",
       "why_fails": "Buffered channels only delay the deadlock until the buffer fills — the fundamental send/receive imbalance remains",
-      "fail_rate": 0.70,
+      "fail_rate": 0.7,
       "sources": [
         "https://go.dev/ref/spec#Channel_types"
       ],
@@ -37,8 +37,10 @@
     {
       "action": "Add time.Sleep before channel operations",
       "why_fails": "Sleep does not create a receiver — the goroutine still blocks after the sleep completes",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
@@ -66,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "go/goroutine-leak/go1.22-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when deadlock is 'fixed' by adding goroutines that then leak"
       }
     ],

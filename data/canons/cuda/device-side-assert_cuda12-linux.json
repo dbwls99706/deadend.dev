@@ -29,14 +29,18 @@
       "action": "Restarting the Python process to clear the error",
       "why_fails": "Device-side asserts are sticky; error persists until GPU context is reset",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Catching RuntimeError and continuing training",
       "why_fails": "GPU is in an error state; all subsequent CUDA operations will fail",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

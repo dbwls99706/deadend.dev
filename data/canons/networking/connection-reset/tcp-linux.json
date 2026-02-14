@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.82,
     "last_updated": "2026-02-12",
     "summary": "The remote host sent a TCP RST packet, forcibly closing the established connection. This typically indicates the server process crashed, the connection was idle too long and was reaped, a load balancer or proxy intervened, or the server is overwhelmed."
@@ -25,15 +28,19 @@
     {
       "action": "Immediately retry the same request in a tight loop without backoff",
       "why_fails": "If the server is overwhelmed or rate-limiting connections, rapid retries will make the problem worse. The server will continue resetting connections, potentially leading to IP bans or exhausting client resources with failed connections.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Increase the TCP keepalive interval on the client only",
       "why_fails": "If the reset is caused by an intermediate device (load balancer, NAT gateway) timing out idle connections, the client-side keepalive must be shorter than the intermediary's timeout. However, client-only keepalives do not help if the server or intermediary does not support or respond to them, or if the reset is caused by server crashes.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Configure keepalive probes and idle timeout settings across the connection chain",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "1. Set TCP keepalive on the application socket: setsockopt(SO_KEEPALIVE)\n2. Configure system keepalive: sysctl -w net.ipv4.tcp_keepalive_time=60 net.ipv4.tcp_keepalive_intvl=10 net.ipv4.tcp_keepalive_probes=6\n3. Check load balancer idle timeout (e.g., AWS ALB defaults to 60s) and set keepalive interval below it\n4. For HTTP, use Connection: keep-alive headers and ensure server supports them\n5. Monitor for connection resets: ss -s to track reset counts",
       "sources": [],
       "condition": ""
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.20, "condition": "when the server process crashes and does not restart, leaving no listener on the port"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when the server becomes completely unresponsive instead of actively resetting"}
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.2,
+        "condition": "when the server process crashes and does not restart, leaving no listener on the port"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the server becomes completely unresponsive instead of actively resetting"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/ssl-protocol-error/openssl3-linux", "probability": 0.15, "condition": "when a TLS handshake failure causes the server to send RST"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.10, "condition": "when an initially timed-out connection eventually connects but is immediately reset"}
+      {
+        "error_id": "networking/ssl-protocol-error/openssl3-linux",
+        "probability": 0.15,
+        "condition": "when a TLS handshake failure causes the server to send RST"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.1,
+        "condition": "when an initially timed-out connection eventually connects but is immediately reset"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "Connection reset occurs on an already-established connection (RST after SYN-ACK); connection refused occurs during the initial handshake before a connection is established"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "Connection reset is an active signal from the peer; timeout is the absence of any response at all"}
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "distinction": "Connection reset occurs on an already-established connection (RST after SYN-ACK); connection refused occurs during the initial handshake before a connection is established"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "Connection reset is an active signal from the peer; timeout is the absence of any response at all"
+      }
     ]
   },
   "metadata": {

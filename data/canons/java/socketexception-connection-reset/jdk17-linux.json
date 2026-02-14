@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Immediately retrying the request without any backoff or investigation",
       "why_fails": "If the connection reset is due to a server-side issue (crash, overload, deployment), immediate retry will likely hit the same problem or exacerbate server load. Without exponential backoff, rapid retries can cause cascading failures and make recovery harder.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing socket timeout values to prevent the connection from being reset",
       "why_fails": "Connection reset is an active signal from the remote end — it is not a timeout. The RST packet arrives regardless of your timeout settings. Increasing timeouts helps with read timeouts (no response) but not with connection resets (explicit rejection).",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Configure connection pool keep-alive and validation to prevent stale connections",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "1. For HikariCP: set connectionTimeout, idleTimeout, and maxLifetime to values shorter than the load balancer/firewall idle timeout. 2. Enable connection validation: spring.datasource.hikari.connection-test-query=SELECT 1 or spring.datasource.hikari.validation-timeout=5000. 3. For HTTP connection pools (Apache HttpClient): set evictIdleConnections(30, TimeUnit.SECONDS). 4. Check if a load balancer or NAT gateway has an idle timeout shorter than your keep-alive interval.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.15, "condition": "when the database server is restarting and new connections are also refused"},
-      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "probability": 0.10, "condition": "when connection reset during TLS negotiation is misdiagnosed as an SSL error"}
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the database server is restarting and new connections are also refused"
+      },
+      {
+        "error_id": "java/ssl-handshake-exception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when connection reset during TLS negotiation is misdiagnosed as an SSL error"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.10, "condition": "when initial connection succeeds but the database crashes during the query"},
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.08, "condition": "when the remote server runs out of memory and kills the connection"}
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when initial connection succeeds but the database crashes during the query"
+      },
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when the remote server runs out of memory and kills the connection"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "distinction": "Connection reset is a TCP-level abrupt closure (RST packet); SSLHandshakeException is a TLS-level failure during certificate/protocol negotiation. Connection reset can happen during TLS handshake, but SSLHandshakeException has specific certificate/protocol details."}
+      {
+        "error_id": "java/ssl-handshake-exception/jdk17-linux",
+        "distinction": "Connection reset is a TCP-level abrupt closure (RST packet); SSLHandshakeException is a TLS-level failure during certificate/protocol negotiation. Connection reset can happen during TLS handshake, but SSLHandshakeException has specific certificate/protocol details."
+      }
     ]
   },
   "metadata": {

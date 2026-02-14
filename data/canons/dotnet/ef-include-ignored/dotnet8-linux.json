@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Making the navigation property non-nullable and expecting EF Core to auto-populate it",
       "why_fails": "EF Core does not guarantee population of navigation properties based on nullability annotations. A non-nullable reference navigation (e.g., public Order Order { get; set; } = null!;) will still be null if not loaded via Include(). The null-forgiving operator suppresses compiler warnings but does not cause EF Core to load the data. This leads to NullReferenceException at runtime instead of a clear error about missing Include()",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Enabling lazy loading globally by adding UseLazyLoadingProxies() to solve all missing Include() issues",
       "why_fails": "Lazy loading introduces N+1 query problems that severely degrade performance. Each navigation property access triggers a separate database roundtrip. In list/collection scenarios, this can result in hundreds of queries instead of one. Additionally, lazy loading requires all navigation properties to be virtual, and it silently fails (returns null) when the DbContext has been disposed, such as after async operations or when entities are returned from a service layer",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": "When used as a blanket solution without query analysis"
     },
     {
       "action": "Adding null checks around every navigation property access to prevent the exception",
       "why_fails": "Null checks hide the fact that required related data was never loaded, leading to silent data loss and incorrect business logic. For example, if order.Customer is null because Include was missing, skipping the customer processing silently produces incomplete results. The null navigation property is a data loading bug, not a valid null state",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": "When the navigation property represents a required relationship"
     }
   ],
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.30, "condition": "when navigation properties are accessed without null checks after failing to include them"},
-      {"error_id": "dotnet/linq-translation-failure/dotnet8-linux", "probability": 0.10, "condition": "when complex Include() chains produce LINQ expressions that EF Core cannot translate to SQL"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.3,
+        "condition": "when navigation properties are accessed without null checks after failing to include them"
+      },
+      {
+        "error_id": "dotnet/linq-translation-failure/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when complex Include() chains produce LINQ expressions that EF Core cannot translate to SQL"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when switching to AsNoTracking() queries causes previously lazy-loaded navigation properties to stop loading"},
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.10, "condition": "when model changes add new required navigation properties to existing queries that lack Include()"}
+      {
+        "error_id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when switching to AsNoTracking() queries causes previously lazy-loaded navigation properties to stop loading"
+      },
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when model changes add new required navigation properties to existing queries that lack Include()"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "distinction": "NullReferenceException is a generic null dereference error; the navigation property null error specifically identifies that EF Core related data was not loaded via Include(), pointing to a data access issue rather than a general null reference bug"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "distinction": "NullReferenceException is a generic null dereference error; the navigation property null error specifically identifies that EF Core related data was not loaded via Include(), pointing to a data access issue rather than a general null reference bug"
+      }
     ]
   },
   "metadata": {

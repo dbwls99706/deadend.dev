@@ -29,14 +29,18 @@
       "action": "Deleting and recreating the pod",
       "why_fails": "Kubernetes will restart it with the same config; crash will recur",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing restart policy backoff",
       "why_fails": "Does not fix the underlying crash",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "aws cloudformation delete-stack --stack-name X"
     },
     {
       "action": "Check the Events tab to find why creation failed, then fix the template",

@@ -29,14 +29,18 @@
       "action": "Running git checkout main immediately",
       "why_fails": "HEAD is corrupt, checkout will fail too",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting .git/HEAD",
       "why_fails": "Makes the repository completely unusable",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "mongodb",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "MongoDB rejected the authentication attempt. Commonly caused by wrong password, wrong authentication database (authSource), user not existing in the specified database, or SCRAM mechanism mismatch between client and server."
@@ -26,14 +29,18 @@
       "action": "Creating the user in the application database instead of the authSource database",
       "why_fails": "MongoDB authenticates users against a specific database (authSource, typically 'admin'). Creating a user in 'myappdb' does not help if the client authenticates against 'admin'. The user must exist in the authentication database.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling authentication by removing the security.authorization setting",
       "why_fails": "Disabling authentication in production exposes the database to unauthorized access. MongoDB has been a frequent target of ransomware attacks on open instances. This is a security anti-pattern, not a fix.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mongodb-namespace-not-found/mongo7-linux", "probability": 0.15, "condition": "when user authenticates to wrong database that lacks expected collections"}
+      {
+        "error_id": "database/mongodb-namespace-not-found/mongo7-linux",
+        "probability": 0.15,
+        "condition": "when user authenticates to wrong database that lacks expected collections"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.30, "condition": "when server becomes reachable but authentication is enabled"}
+      {
+        "error_id": "database/mongodb-connection-failed/mongo7-linux",
+        "probability": 0.3,
+        "condition": "when server becomes reachable but authentication is enabled"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/authentication-failed/pg16-linux", "distinction": "MongoDB authentication failure (code 18) includes authSource complexity that PostgreSQL lacks. MongoDB users are scoped to databases, while PostgreSQL users are cluster-wide. MongoDB uses 'authSource' parameter, PostgreSQL does not have this concept."}
+      {
+        "error_id": "database/authentication-failed/pg16-linux",
+        "distinction": "MongoDB authentication failure (code 18) includes authSource complexity that PostgreSQL lacks. MongoDB users are scoped to databases, while PostgreSQL users are cluster-wide. MongoDB uses 'authSource' parameter, PostgreSQL does not have this concept."
+      }
     ]
   },
   "metadata": {

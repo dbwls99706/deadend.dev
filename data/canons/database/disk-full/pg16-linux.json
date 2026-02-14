@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "The filesystem containing PostgreSQL's data directory is full. Writes fail including WAL, temp files, and table data. PostgreSQL may become read-only or crash. Caused by table bloat, excessive WAL retention, large temp files, or insufficient disk provisioning."
   },
@@ -26,21 +29,25 @@
       "action": "Running VACUUM FULL on large tables when the disk is already completely full",
       "why_fails": "VACUUM FULL needs to create a complete copy of the table before dropping the old one. When disk is at 100%, there is no space for the copy and the operation fails immediately or makes things worse.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting PostgreSQL WAL files manually from pg_wal directory",
       "why_fails": "Manually deleting WAL segments can corrupt the database and prevent recovery. PostgreSQL tracks which WAL files are needed; removing them without pg_archivecleanup causes data loss.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Free disk space by removing non-essential files, then run maintenance",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1) Remove old log files: find /var/log/postgresql -name '*.log' -mtime +7 -delete. 2) Clear temp files. 3) Drop unused tables or indexes. 4) Once some space is available, run regular VACUUM (not FULL) on bloated tables. 5) Check pg_wal size and adjust wal_keep_size if excessive.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.30, "condition": "when PostgreSQL crashes due to inability to write WAL and fails to restart"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.3,
+        "condition": "when PostgreSQL crashes due to inability to write WAL and fails to restart"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.15, "condition": "when disk I/O becomes extremely slow as the filesystem fills up, causing queries to timeout before the full disk error appears"}
+      {
+        "error_id": "database/query-timeout/pg16-linux",
+        "probability": 0.15,
+        "condition": "when disk I/O becomes extremely slow as the filesystem fills up, causing queries to timeout before the full disk error appears"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/sqlite-readonly/sqlite3-linux", "distinction": "PostgreSQL disk full is a storage exhaustion issue. SQLite read-only is a file permission issue. Both prevent writes but for fundamentally different reasons."}
+      {
+        "error_id": "database/sqlite-readonly/sqlite3-linux",
+        "distinction": "PostgreSQL disk full is a storage exhaustion issue. SQLite read-only is a file permission issue. Both prevent writes but for fundamentally different reasons."
+      }
     ]
   },
   "metadata": {

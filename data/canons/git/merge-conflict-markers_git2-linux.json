@@ -29,14 +29,18 @@
       "action": "Accepting 'ours' or 'theirs' blindly for all files",
       "why_fails": "Discards one side's changes entirely without reviewing",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting the conflicting files and recreating them",
       "why_fails": "Loses git history; may miss important changes from either side",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

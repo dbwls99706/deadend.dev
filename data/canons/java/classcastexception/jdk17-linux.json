@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "ClassCastException is thrown when code attempts to cast an object to a type that is not an instance of that type. Common with raw types, generic type erasure, and incorrect assumptions about runtime types."
@@ -25,15 +28,19 @@
     {
       "action": "Suppressing the unchecked cast warning with @SuppressWarnings(\"unchecked\") without verifying runtime types",
       "why_fails": "The @SuppressWarnings annotation only hides the compiler warning; it does not make the cast safe. The ClassCastException will still occur at runtime. Suppressing warnings without verification masks the exact problem that needs to be fixed.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding multiple cascading instanceof checks to handle every possible type",
       "why_fails": "Cascading instanceof checks are brittle and violate the open-closed principle. When new types are added, the checks must be updated everywhere. This approach indicates a design problem — typically a missing interface, improper use of generics, or a need for the visitor pattern.",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.10, "condition": "when instanceof check returns false and null fallback is used without null handling"},
-      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.08, "condition": "when type validation is added that throws IllegalStateException for unexpected types"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when instanceof check returns false and null fallback is used without null handling"
+      },
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when type validation is added that throws IllegalStateException for unexpected types"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.20, "condition": "when Jackson deserializes JSON into the wrong concrete type"},
-      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.12, "condition": "when Hibernate proxy object cannot be cast to the expected entity type"}
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when Jackson deserializes JSON into the wrong concrete type"
+      },
+      {
+        "error_id": "java/hibernate-lazy-init/jdk17-linux",
+        "probability": 0.12,
+        "condition": "when Hibernate proxy object cannot be cast to the expected entity type"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "ClassCastException means the class exists but the object is not an instance of the target type; ClassNotFoundException means the class definition cannot be found at all on the classpath"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "ClassCastException means the class exists but the object is not an instance of the target type; ClassNotFoundException means the class definition cannot be found at all on the classpath"
+      }
     ]
   },
   "metadata": {

@@ -38,7 +38,9 @@
       "action": "Initializing the variable to None at function top",
       "why_fails": "Hides the real bug if the None path is never intended",
       "fail_rate": 0.4,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     }
   ],

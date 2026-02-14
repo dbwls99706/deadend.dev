@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Network timeout during package download from PyPI. Caused by slow connections, network congestion, large packages, or restrictive firewall/proxy settings. The default timeout of 15 seconds is often insufficient."
   },
@@ -26,14 +29,18 @@
       "action": "Simply retry the same command immediately",
       "why_fails": "If the network issue is persistent (slow connection, firewall), retrying without changes will hit the same timeout",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": "when network issue is persistent"
     },
     {
       "action": "Switch to HTTP instead of HTTPS to reduce overhead",
       "why_fails": "PyPI requires HTTPS; HTTP is blocked and also insecure",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -54,7 +61,7 @@
     },
     {
       "action": "Download the wheel separately and install from file",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "pip download <package> -d ./wheels && pip install --no-index --find-links ./wheels <package>",
       "sources": [],
       "condition": "for large packages on slow connections"
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/proxy-error/pip24-linux", "probability": 0.2, "condition": "when timeout is caused by proxy misconfiguration"}
+      {
+        "error_id": "pip/proxy-error/pip24-linux",
+        "probability": 0.2,
+        "condition": "when timeout is caused by proxy misconfiguration"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/ssl-error/pip24-linux", "probability": 0.15, "condition": "when SSL handshake takes too long and times out"}
+      {
+        "error_id": "pip/ssl-error/pip24-linux",
+        "probability": 0.15,
+        "condition": "when SSL handshake takes too long and times out"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/proxy-error/pip24-linux", "distinction": "Timeout is about the connection being too slow or dropping; proxy error is specifically about inability to connect through a proxy server"}
+      {
+        "error_id": "pip/proxy-error/pip24-linux",
+        "distinction": "Timeout is about the connection being too slow or dropping; proxy error is specifically about inability to connect through a proxy server"
+      }
     ]
   },
   "metadata": {

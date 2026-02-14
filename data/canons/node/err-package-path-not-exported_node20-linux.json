@@ -29,14 +29,18 @@
       "action": "Patching node_modules to add the export",
       "why_fails": "Will be overwritten on next npm install",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using require.resolve with custom paths",
       "why_fails": "Bypasses package boundaries; may break with updates",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

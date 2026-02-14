@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,35 +29,52 @@
       "action": "Keep the sender alive with a leaked reference to prevent drop",
       "why_fails": "Memory leak and the sender will never send meaningful data; just delays the problem",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Handle RecvError properly instead of unwrapping",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "match rx.recv() {\n    Ok(msg) => process(msg),\n    Err(RecvError) => { /* sender dropped, clean up */ break; }\n}",
-      "sources": ["https://doc.rust-lang.org/std/sync/mpsc/struct.Receiver.html"],
+      "sources": [
+        "https://doc.rust-lang.org/std/sync/mpsc/struct.Receiver.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use recv_timeout or try_recv for non-blocking patterns",
       "success_rate": 0.85,
       "how": "use std::time::Duration;\nmatch rx.recv_timeout(Duration::from_secs(5)) {\n    Ok(msg) => process(msg),\n    Err(RecvTimeoutError::Timeout) => continue,\n    Err(RecvTimeoutError::Disconnected) => break,\n}",
-      "sources": ["https://doc.rust-lang.org/std/sync/mpsc/struct.Receiver.html#method.recv_timeout"],
+      "sources": [
+        "https://doc.rust-lang.org/std/sync/mpsc/struct.Receiver.html#method.recv_timeout"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux", "probability": 0.15, "condition": "When channel errors in async context lead to runtime issues"}
+      {
+        "error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When channel errors in async context lead to runtime issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux", "probability": 0.10, "condition": "When Arc holding a sender is prematurely unwrapped"}
+      {
+        "error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When Arc holding a sender is prematurely unwrapped"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-io-broken-pipe/rust1.77-linux", "distinction": "Broken pipe is an I/O error for OS-level pipes; channel recv disconnected is for in-process mpsc channels"}
+      {
+        "error_id": "rust/rust-io-broken-pipe/rust1.77-linux",
+        "distinction": "Broken pipe is an I/O error for OS-level pipes; channel recv disconnected is for in-process mpsc channels"
+      }
     ]
   },
   "metadata": {

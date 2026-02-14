@@ -29,14 +29,18 @@
       "action": "Adding 'use client' to the component",
       "why_fails": "cookies/headers are server-only APIs; 'use client' will cause import errors",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Wrapping in try/catch",
       "why_fails": "Next.js checks usage at build time; runtime handling doesn't prevent the error",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

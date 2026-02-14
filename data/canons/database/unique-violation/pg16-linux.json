@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Dropping the unique constraint to avoid the error",
       "why_fails": "The unique constraint exists to enforce data integrity. Removing it allows duplicate data which will cause subtle and hard-to-debug application errors downstream.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Catching the exception and silently ignoring it without handling the duplicate",
       "why_fails": "Silently swallowing the error means the intended data was not inserted or updated. This causes data loss or inconsistency without any user-visible indication.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Reset the sequence if primary key serial/identity column is out of sync",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run: SELECT setval('my_table_id_seq', (SELECT MAX(id) FROM my_table)); This resynchronizes the sequence with the actual maximum value in the table, which often happens after bulk data imports.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when concurrent upsert operations on the same rows create lock contention"}
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "probability": 0.15,
+        "condition": "when concurrent upsert operations on the same rows create lock contention"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.20, "condition": "when a failed migration leaves sequences out of sync with existing data"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.2,
+        "condition": "when a failed migration leaves sequences out of sync with existing data"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-duplicate-entry/mysql8-linux", "distinction": "PostgreSQL says 'duplicate key value violates unique constraint' while MySQL says 'Duplicate entry for key'. Same concept, different error message format."}
+      {
+        "error_id": "database/mysql-duplicate-entry/mysql8-linux",
+        "distinction": "PostgreSQL says 'duplicate key value violates unique constraint' while MySQL says 'Duplicate entry for key'. Same concept, different error message format."
+      }
     ]
   },
   "metadata": {

@@ -60,7 +60,8 @@
       "sources": [
         "https://pipx.pypa.io/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pipx install tool-name"
     }
   ],
   "transition_graph": {

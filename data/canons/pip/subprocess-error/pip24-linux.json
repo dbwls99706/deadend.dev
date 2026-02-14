@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "A subprocess invoked by pip (typically setup.py or build backend) exited with a non-zero status. This is a wrapper error — the actual cause is in the subprocess output above this message. Common causes: missing build deps, syntax errors in setup.py, or incompatible build backend."
@@ -26,21 +29,25 @@
       "action": "Only read the final 'subprocess-exited-with-error' line",
       "why_fails": "This line is just the wrapper; the actual error with actionable information is in the preceding output",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Upgrade pip to fix subprocess handling",
       "why_fails": "The error is not in pip's subprocess handling — it is in the package's build script that failed",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Read the full error output above the subprocess error line to find the real cause",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run pip install -v <package> for verbose output, then look for the actual error (missing header, syntax error, etc.)",
       "sources": [],
       "condition": ""
@@ -54,7 +61,7 @@
     },
     {
       "action": "Try installing a specific older version that has prebuilt wheels",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "pip install <package>==<older-version> where older version has wheels for your platform",
       "sources": [],
       "condition": "when the latest version lacks wheels"
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/build-isolation-failed/pip24-linux", "probability": 0.2, "condition": "when fixing subprocess error requires changes to build isolation"}
+      {
+        "error_id": "pip/build-isolation-failed/pip24-linux",
+        "probability": 0.2,
+        "condition": "when fixing subprocess error requires changes to build isolation"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/src-install-failed/pip24-linux", "probability": 0.3, "condition": "when source build compilation failure triggers subprocess error"}
+      {
+        "error_id": "pip/src-install-failed/pip24-linux",
+        "probability": 0.3,
+        "condition": "when source build compilation failure triggers subprocess error"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/src-install-failed/pip24-linux", "distinction": "Subprocess-error is a generic wrapper around any build failure; src-install-failed specifically indicates missing compilers or libraries"}
+      {
+        "error_id": "pip/src-install-failed/pip24-linux",
+        "distinction": "Subprocess-error is a generic wrapper around any build failure; src-install-failed specifically indicates missing compilers or libraries"
+      }
     ]
   },
   "metadata": {

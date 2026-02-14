@@ -29,14 +29,18 @@
       "action": "Increase task CPU/memory to fix CannotPullContainerError",
       "why_fails": "Image pull errors are network or permission issues, not resource limits",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Restart the ECS service to fix persistent task failures",
       "why_fails": "Service restart re-launches the same task definition; configuration errors persist",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

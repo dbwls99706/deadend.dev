@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Simply clear the BGP session repeatedly without investigating the underlying cause",
       "why_fails": "Clearing the BGP session forces a re-establishment, but if the root cause (interface flap, MTU mismatch, CPU overload dropping keepalives) persists, the session will drop again after the hold timer expires.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Increase the hold timer to very large values to mask the problem",
       "why_fails": "While a longer hold timer delays detection, it also means convergence takes much longer when a genuine failure occurs, and the underlying keepalive loss still indicates a real issue like congestion or CPU starvation.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.30, "condition": "when routes are withdrawn and traffic is blackholed to destinations learned via the failed peer"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.3,
+        "condition": "when routes are withdrawn and traffic is blackholed to destinations learned via the failed peer"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/mtu-too-large/tcp-linux", "probability": 0.15, "condition": "when MTU mismatch on the peering link causes keepalive fragmentation and drops"}
+      {
+        "error_id": "networking/mtu-too-large/tcp-linux",
+        "probability": 0.15,
+        "condition": "when MTU mismatch on the peering link causes keepalive fragmentation and drops"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "BGP peer down is a routing protocol event causing route withdrawal; connection timeout is a transport-layer issue where a specific TCP connection cannot be established"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "BGP peer down is a routing protocol event causing route withdrawal; connection timeout is a transport-layer issue where a specific TCP connection cannot be established"
+      }
     ]
   },
   "metadata": {

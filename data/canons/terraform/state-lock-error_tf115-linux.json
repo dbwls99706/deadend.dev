@@ -29,14 +29,18 @@
       "action": "Running terraform force-unlock immediately",
       "why_fails": "May corrupt state if another process is genuinely running",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting the lock file from the backend manually",
       "why_fails": "Backend-specific and risky; may lose state data",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

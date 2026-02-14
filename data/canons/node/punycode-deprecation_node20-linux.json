@@ -51,7 +51,8 @@
       "sources": [
         "https://www.npmjs.com/package/punycode"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "npm install punycode"
     },
     {
       "action": "Update the dependency that uses punycode — check npm ls punycode",

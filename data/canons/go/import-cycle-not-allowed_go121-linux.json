@@ -29,14 +29,18 @@
       "action": "Merging the packages into one",
       "why_fails": "Creates a monolithic package; violates separation of concerns",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Using go:linkname to access unexported symbols",
       "why_fails": "Compiler directive abuse; breaks with Go updates",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

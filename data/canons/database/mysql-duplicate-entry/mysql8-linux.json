@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Using INSERT IGNORE to silently skip duplicates without understanding which rows are skipped",
       "why_fails": "INSERT IGNORE silently discards rows with duplicate keys and also suppresses other errors (type conversion warnings, NOT NULL violations). This leads to silent data loss that is very hard to debug later.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Removing the unique index to avoid duplicate errors",
       "why_fails": "Removing the unique constraint allows duplicate data which violates business rules and can cause incorrect query results, broken joins, and application-level errors.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Reset AUTO_INCREMENT if the counter is desynchronized",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run: ALTER TABLE my_table AUTO_INCREMENT = 1; MySQL will automatically set it to MAX(id)+1. This commonly fixes issues after bulk imports or table recovery. Verify: SHOW TABLE STATUS LIKE 'my_table';",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.15, "condition": "when concurrent INSERT ON DUPLICATE KEY UPDATE operations cause lock contention"}
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.15,
+        "condition": "when concurrent INSERT ON DUPLICATE KEY UPDATE operations cause lock contention"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.10, "condition": "when a failed migration leaves AUTO_INCREMENT out of sync"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.1,
+        "condition": "when a failed migration leaves AUTO_INCREMENT out of sync"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/unique-violation/pg16-linux", "distinction": "MySQL says 'Duplicate entry X for key Y' while PostgreSQL says 'duplicate key value violates unique constraint'. Same concept, different error format. MySQL shows the actual duplicate value in the message."}
+      {
+        "error_id": "database/unique-violation/pg16-linux",
+        "distinction": "MySQL says 'Duplicate entry X for key Y' while PostgreSQL says 'duplicate key value violates unique constraint'. Same concept, different error format. MySQL shows the actual duplicate value in the message."
+      }
     ]
   },
   "metadata": {

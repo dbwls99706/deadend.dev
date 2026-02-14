@@ -60,7 +60,8 @@
       "sources": [
         "https://git-scm.com/docs/git-remote"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git remote remove origin && git remote add origin"
     }
   ],
   "transition_graph": {

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "PCRE backtrack limit errors occur when a regular expression requires more backtracking steps than allowed by pcre.backtrack_limit (default 1,000,000). This usually indicates a catastrophic backtracking pattern that needs to be rewritten, not a limit that should be raised."
   },
   "dead_ends": [
-    {"action": "Increasing pcre.backtrack_limit to a very large value", "why_fails": "The backtracking pattern has exponential time complexity. Raising the limit from 1M to 10M only allows it to run 10x longer before failing. On slightly larger input, it will hit the new limit and also consume excessive CPU.", "fail_rate": 0.75, "sources": [], "condition": ""},
-    {"action": "Suppressing the PCRE error with @ operator and treating no-match as valid", "why_fails": "When preg_match() returns false (error) instead of 0 (no match), the result is fundamentally different. Suppressing this silently skips validation or parsing that the regex was meant to perform.", "fail_rate": 0.80, "sources": [], "condition": ""}
+    {
+      "action": "Increasing pcre.backtrack_limit to a very large value",
+      "why_fails": "The backtracking pattern has exponential time complexity. Raising the limit from 1M to 10M only allows it to run 10x longer before failing. On slightly larger input, it will hit the new limit and also consume excessive CPU.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Suppressing the PCRE error with @ operator and treating no-match as valid",
+      "why_fails": "When preg_match() returns false (error) instead of 0 (no match), the result is fundamentally different. Suppressing this silently skips validation or parsing that the regex was meant to perform.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Rewrite the regex to avoid catastrophic backtracking with atomic groups or possessive quantifiers", "success_rate": 0.88, "how": "Replace patterns like (a+)+ with (?>a+)+ (atomic group) or a++ (possessive quantifier). Use specific character classes instead of greedy .* patterns. For example, replace '\".*\"' with '\"[^\"]*\"' to avoid backtracking on quoted strings.", "sources": [], "condition": ""},
-    {"action": "Use a dedicated parser instead of regex for complex structured text", "success_rate": 0.85, "how": "For HTML parsing, use DOMDocument or a library like symfony/dom-crawler instead of regex. For JSON, use json_decode(). For CSV, use fgetcsv(). Dedicated parsers handle edge cases correctly without backtracking issues.", "sources": [], "condition": ""}
+    {
+      "action": "Rewrite the regex to avoid catastrophic backtracking with atomic groups or possessive quantifiers",
+      "success_rate": 0.88,
+      "how": "Replace patterns like (a+)+ with (?>a+)+ (atomic group) or a++ (possessive quantifier). Use specific character classes instead of greedy .* patterns. For example, replace '\".*\"' with '\"[^\"]*\"' to avoid backtracking on quoted strings.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a dedicated parser instead of regex for complex structured text",
+      "success_rate": 0.85,
+      "how": "For HTML parsing, use DOMDocument or a library like symfony/dom-crawler instead of regex. For JSON, use json_decode(). For CSV, use fgetcsv(). Dedicated parsers handle edge cases correctly without backtracking issues.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/max-execution-time/php83-linux", "probability": 0.25, "condition": "when the regex backtracking is slow but below the limit, it can still exhaust the PHP execution time"}],
-    "preceded_by": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.10, "condition": "when large input data triggers both memory issues and regex backtracking"}],
-    "frequently_confused_with": [{"error_id": "php/max-execution-time/php83-linux", "distinction": "Backtrack limit errors are specific to PCRE regex engine limits, while max execution time is about overall PHP script runtime regardless of what the script is doing"}]
+    "leads_to": [
+      {
+        "error_id": "php/max-execution-time/php83-linux",
+        "probability": 0.25,
+        "condition": "when the regex backtracking is slow but below the limit, it can still exhaust the PHP execution time"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.1,
+        "condition": "when large input data triggers both memory issues and regex backtracking"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/max-execution-time/php83-linux",
+        "distinction": "Backtrack limit errors are specific to PCRE regex engine limits, while max execution time is about overall PHP script runtime regardless of what the script is doing"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

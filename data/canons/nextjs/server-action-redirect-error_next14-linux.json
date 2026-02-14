@@ -29,14 +29,18 @@
       "action": "Catching and ignoring the error",
       "why_fails": "The redirect never happens; the action appears to do nothing",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Using router.push() in the server action",
       "why_fails": "router is a client-side API; not available in server actions",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

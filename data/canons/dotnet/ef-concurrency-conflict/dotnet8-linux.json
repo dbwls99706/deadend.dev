@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,28 @@
     {
       "action": "Removing the [ConcurrencyCheck] or [Timestamp] attribute to suppress the exception",
       "why_fails": "Removing concurrency tokens eliminates the exception but introduces silent data loss through last-write-wins behavior. Concurrent updates will silently overwrite each other without any notification, which is far worse than a visible exception in most business scenarios",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Wrapping SaveChangesAsync in a try-catch that silently swallows DbUpdateConcurrencyException",
       "why_fails": "Silently swallowing the exception means the user's changes are discarded without notification. The entity in memory still holds stale data and the user believes their save succeeded. This leads to data inconsistency and confused users who cannot understand why their changes disappeared",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using Serializable transaction isolation level to prevent concurrent access",
       "why_fails": "Serializable isolation causes severe performance degradation and deadlocks under concurrent load. It converts optimistic concurrency to pessimistic locking, which does not scale and introduces lock timeout errors that are harder to handle than concurrency exceptions. The cure is worse than the disease for web applications",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.10, "condition": "when adding concurrency tokens requires a new migration that conflicts with existing schema"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when the retry logic disposes the DbContext before the retry attempt"}
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when adding concurrency tokens requires a new migration that conflicts with existing schema"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when the retry logic disposes the DbContext before the retry attempt"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when switching from no-tracking to tracked queries introduces concurrency token awareness"},
-      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.10, "condition": "when intermittent connection drops cause stale data that triggers concurrency conflicts on reconnection"}
+      {
+        "error_id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when switching from no-tracking to tracked queries introduces concurrency token awareness"
+      },
+      {
+        "error_id": "dotnet/sqlexception-connection/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when intermittent connection drops cause stale data that triggers concurrency conflicts on reconnection"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "distinction": "DbUpdateConcurrencyException is a runtime data conflict during SaveChanges when a concurrency token is stale; migration failures are schema-level errors during 'dotnet ef database update' that prevent structural changes from being applied"}
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "distinction": "DbUpdateConcurrencyException is a runtime data conflict during SaveChanges when a concurrency token is stale; migration failures are schema-level errors during 'dotnet ef database update' that prevent structural changes from being applied"
+      }
     ]
   },
   "metadata": {

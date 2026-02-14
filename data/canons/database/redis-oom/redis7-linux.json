@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "redis",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Redis has reached its maxmemory limit and the configured eviction policy does not allow freeing memory for the current command. Write commands are rejected. Caused by storing too much data without an eviction policy, memory leaks from accumulating keys, or maxmemory set too low."
@@ -26,14 +29,18 @@
       "action": "Setting maxmemory to 0 (unlimited) on a server with limited RAM",
       "why_fails": "Without a maxmemory limit, Redis will consume all available system memory until the Linux OOM killer terminates the process. This causes data loss and affects other processes on the same server.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting Redis without persistence to clear memory",
       "why_fails": "If Redis is configured without AOF or RDB persistence, restarting loses all data. Even with persistence, the same data will be reloaded and memory will fill up again immediately after restart.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.15, "condition": "when Redis crashes due to memory pressure and fails to restart"},
-      {"error_id": "database/redis-readonly/redis7-linux", "probability": 0.10, "condition": "when OOM on a primary causes failover to a replica that becomes read-only"}
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "probability": 0.15,
+        "condition": "when Redis crashes due to memory pressure and fails to restart"
+      },
+      {
+        "error_id": "database/redis-readonly/redis7-linux",
+        "probability": 0.1,
+        "condition": "when OOM on a primary causes failover to a replica that becomes read-only"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.10, "condition": "when Redis restarts after crash and rapidly fills memory again"}
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "probability": 0.1,
+        "condition": "when Redis restarts after crash and rapidly fills memory again"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/disk-full/pg16-linux", "distinction": "Redis OOM is an in-memory limit (maxmemory), while PostgreSQL disk full is a filesystem storage limit. Redis is memory-bound, PostgreSQL is disk-bound. Redis OOM is configurable and expected behavior with eviction policies."}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "distinction": "Redis OOM is an in-memory limit (maxmemory), while PostgreSQL disk full is a filesystem storage limit. Redis is memory-bound, PostgreSQL is disk-bound. Redis OOM is configurable and expected behavior with eviction policies."
+      }
     ]
   },
   "metadata": {

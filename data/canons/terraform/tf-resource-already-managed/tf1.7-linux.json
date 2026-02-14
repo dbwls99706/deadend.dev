@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "terraform", "version_range": ">=1.5,<2.0"},
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Attempted to import a resource that already exists in the Terraform state file."
@@ -26,42 +29,61 @@
       "action": "Import the resource again with a different address",
       "why_fails": "This creates a duplicate state entry for the same cloud resource, causing conflicts on apply",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Delete the state file and start fresh",
       "why_fails": "Deleting state makes Terraform unaware of all managed resources, potentially causing recreation of everything",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Check the state to confirm the resource is already tracked",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "terraform state show RESOURCE_ADDRESS to verify the resource is already in state with correct attributes",
-      "sources": ["https://developer.hashicorp.com/terraform/cli/commands/state/show"],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/show"
+      ],
       "condition": ""
     },
     {
       "action": "Use terraform state rm followed by re-import if the state entry is stale",
       "success_rate": 0.85,
       "how": "terraform state rm RESOURCE_ADDRESS to remove stale entry, then terraform import RESOURCE_ADDRESS RESOURCE_ID",
-      "sources": ["https://developer.hashicorp.com/terraform/cli/commands/state/rm"],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/rm"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "terraform/resource-already-exists/tf1-linux", "probability": 0.15, "condition": "After removing from state and re-importing, resource already exists in cloud"}
+      {
+        "error_id": "terraform/resource-already-exists/tf1-linux",
+        "probability": 0.15,
+        "condition": "After removing from state and re-importing, resource already exists in cloud"
+      }
     ],
     "preceded_by": [
-      {"error_id": "terraform/tf-import-resource-exists/tf1.7-linux", "probability": 0.25, "condition": "Import workflow encounters already-managed resource"}
+      {
+        "error_id": "terraform/tf-import-resource-exists/tf1.7-linux",
+        "probability": 0.25,
+        "condition": "Import workflow encounters already-managed resource"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "terraform/resource-already-exists/tf1-linux", "distinction": "Resource already exists means the cloud resource exists when Terraform tries to create it; already managed means the resource is already in the Terraform state"}
+      {
+        "error_id": "terraform/resource-already-exists/tf1-linux",
+        "distinction": "Resource already exists means the cloud resource exists when Terraform tries to create it; already managed means the resource is already in the Terraform state"
+      }
     ]
   },
   "metadata": {

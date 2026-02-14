@@ -58,7 +58,8 @@
       "sources": [
         "https://www.npmjs.com/package/tsx"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "npx tsx script.ts (faster, less config)"
     }
   ],
   "transition_graph": {

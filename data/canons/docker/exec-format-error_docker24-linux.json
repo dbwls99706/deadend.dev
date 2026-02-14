@@ -29,14 +29,18 @@
       "action": "Re-pulling the same image tag",
       "why_fails": "Same architecture will be pulled again",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Installing qemu-user without registering binfmt",
       "why_fails": "QEMU alone doesn't help; binfmt_misc must be registered",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

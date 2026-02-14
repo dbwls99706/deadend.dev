@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Kill all processes and hope the port is released",
       "why_fails": "Blindly killing processes can terminate unrelated critical services. If the port is in TIME_WAIT state from a recently closed connection, killing processes will not help because no process holds the port -- the kernel holds it for the TCP TIME_WAIT period (typically 60 seconds).",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Immediately change to a different port number to avoid the conflict",
       "why_fails": "This avoids the immediate error but does not fix the root cause. The original port may be required by clients, load balancers, or firewalls. If the stale process is still running on the original port, it will continue consuming resources and potentially serving stale responses.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.30, "condition": "when EADDRINUSE prevents the service from starting, causing clients to get connection refused"},
-      {"error_id": "networking/http-503-service-unavailable/http-linux", "probability": 0.15, "condition": "when a web server behind a load balancer fails to start due to port conflict"}
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.3,
+        "condition": "when EADDRINUSE prevents the service from starting, causing clients to get connection refused"
+      },
+      {
+        "error_id": "networking/http-503-service-unavailable/http-linux",
+        "probability": 0.15,
+        "condition": "when a web server behind a load balancer fails to start due to port conflict"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when a server crashes and the socket enters TIME_WAIT during restart"},
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.10, "condition": "when investigating why clients get refused reveals the service failed to bind"}
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.15,
+        "condition": "when a server crashes and the socket enters TIME_WAIT during restart"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.1,
+        "condition": "when investigating why clients get refused reveals the service failed to bind"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "EADDRINUSE is a server-side bind() error when starting a service; ECONNREFUSED is a client-side error when connecting to a port where nothing is listening"},
-      {"error_id": "networking/connection-reset/tcp-linux", "distinction": "EADDRINUSE prevents a service from starting; connection reset occurs on an active connection when the peer unexpectedly terminates it"}
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "distinction": "EADDRINUSE is a server-side bind() error when starting a service; ECONNREFUSED is a client-side error when connecting to a port where nothing is listening"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "distinction": "EADDRINUSE prevents a service from starting; connection reset occurs on an active connection when the peer unexpectedly terminates it"
+      }
     ]
   },
   "metadata": {

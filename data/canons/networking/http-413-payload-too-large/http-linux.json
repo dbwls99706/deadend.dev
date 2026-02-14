@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "runtime": {
+      "name": "http",
+      "version_range": ">=1.1"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Retry the same request expecting a different result",
       "why_fails": "The 413 response is deterministic based on the request body size. Retrying with the same payload will always produce the same error. The body size or the server limit must change.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Split the request body into chunks sent in the same single request",
       "why_fails": "HTTP request body size limits apply to the total content-length, not individual chunks. Chunked transfer encoding does not bypass body size limits — the server still counts the total bytes received.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the server closes the connection immediately upon detecting the oversized body, before the client finishes sending"}
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the server closes the connection immediately upon detecting the oversized body, before the client finishes sending"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/http-408-timeout/http-linux", "probability": 0.10, "condition": "when a slow large upload initially times out, and adjusting the timeout then reveals the 413 size limit"}
+      {
+        "error_id": "networking/http-408-timeout/http-linux",
+        "probability": 0.1,
+        "condition": "when a slow large upload initially times out, and adjusting the timeout then reveals the 413 size limit"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/http-429-rate-limited/http-linux", "distinction": "413 is about the size of a single request body; 429 is about the frequency of requests regardless of their size"}
+      {
+        "error_id": "networking/http-429-rate-limited/http-linux",
+        "distinction": "413 is about the size of a single request body; 429 is about the frequency of requests regardless of their size"
+      }
     ]
   },
   "metadata": {

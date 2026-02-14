@@ -29,21 +29,27 @@
       "action": "Enabling every experimental flag at once to avoid configuration errors",
       "why_fails": "Experimental flags can conflict with each other and may introduce breaking behavior changes. Some experimental features are mutually exclusive or modify the same build pipeline in incompatible ways. Enabling untested combinations can cause build failures, runtime errors, or silently incorrect behavior. Additionally, experimental features may be removed or renamed in future versions, creating upgrade burden",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading Next.js to a version where the feature was not experimental",
       "why_fails": "If the feature was experimental in the earlier version, it either did not exist or was in a less stable state. Downgrading typically moves you further from stability, not closer. Features graduate from experimental to stable in newer versions, so upgrading is usually the correct direction. Downgrading also forfeits security patches and bug fixes",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting the experimental flag in environment variables instead of next.config.js",
       "why_fails": "Next.js experimental flags must be set in next.config.js (or next.config.mjs/ts). They cannot be configured via environment variables, .env files, or command-line arguments. The Next.js config loader reads these flags from the config file directly during build initialization, before environment variable processing for runtime config",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],
@@ -85,7 +91,12 @@
         "condition": "when a package requires an experimental feature that has not been enabled"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/env-var-client-access/nextjs14-linux",
+        "distinction": "'Error: The experimental feature 'X' requires 'experimental.X' vs 'Error: Environment variable 'X' is not available on the clie': while both are nextjs errors in the configuration_error category, the former Next.js gates certain features behind experimental flags in next.config.js. When while the latter Next.js only exposes environment variables to client-side (browser) code if they."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

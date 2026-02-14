@@ -29,14 +29,18 @@
       "action": "Pulling without specifying a tag (defaults to :latest)",
       "why_fails": "latest tag may not exist; many repos don't publish it",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching Docker registries",
       "why_fails": "The image might exist in the specified registry but with a different tag",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

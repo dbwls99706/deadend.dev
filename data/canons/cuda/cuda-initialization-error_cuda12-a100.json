@@ -46,7 +46,8 @@
       "sources": [
         "https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__ERROR.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "sudo nvidia-smi --gpu-reset"
     },
     {
       "action": "If using multiprocessing, set start method to 'spawn' not 'fork'",

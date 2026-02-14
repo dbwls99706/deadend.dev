@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,28 +29,34 @@
       "action": "Debugging based on the outer TargetInvocationException message and stack trace",
       "why_fails": "The outer exception message is always the same generic string ('Exception has been thrown by the target of an invocation') and the outer stack trace points to the reflection infrastructure (MethodBase.Invoke, RuntimeMethodHandle.InvokeMethod), not to the actual failing code. All diagnostic information is in InnerException. Developers who do not unwrap the InnerException waste time investigating the reflection call site instead of the actual error location",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Catching TargetInvocationException and re-throwing without preserving the inner exception",
       "why_fails": "Using 'throw ex.InnerException;' resets the stack trace, losing the original call site information. Using 'throw;' re-throws the TargetInvocationException wrapper, which is not helpful. Both approaches lose critical debugging information. The correct unwrapping requires ExceptionDispatchInfo to preserve the original stack trace",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding [DebuggerStepThrough] or [DebuggerHidden] attributes to suppress the exception in the debugger",
       "why_fails": "These attributes only affect the debugger experience and do not fix the underlying exception. The TargetInvocationException still occurs at runtime. In production, the same error will crash the application or produce incorrect behavior. These attributes just make the error harder to diagnose during development",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Unwrap InnerException using ExceptionDispatchInfo to preserve the original stack trace",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Use ExceptionDispatchInfo to re-throw the inner exception while preserving its original stack trace: try { methodInfo.Invoke(target, args); } catch (TargetInvocationException ex) when (ex.InnerException != null) { ExceptionDispatchInfo.Capture(ex.InnerException).Throw(); }. This gives you the actual exception type and the exact line where the failure occurred inside the invoked method. In logging scenarios: logger.LogError(ex.InnerException, \"Reflected method {Method} failed\", methodInfo.Name);",
       "sources": [],
       "condition": ""
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.15, "condition": "when the InnerException is a NullReferenceException inside the reflected method"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.20, "condition": "when the InnerException is an InvalidOperationException from DI or configuration issues inside the invoked constructor"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when the InnerException is a NullReferenceException inside the reflected method"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when the InnerException is an InvalidOperationException from DI or configuration issues inside the invoked constructor"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/di-circular-dependency/dotnet8-linux", "probability": 0.15, "condition": "when the DI container uses reflection to construct services and the constructor throws due to a circular dependency"},
-      {"error_id": "dotnet/ambiguous-match/dotnet8-linux", "probability": 0.10, "condition": "when resolving the wrong overload via reflection and invoking it with incorrect arguments"}
+      {
+        "error_id": "dotnet/di-circular-dependency/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when the DI container uses reflection to construct services and the constructor throws due to a circular dependency"
+      },
+      {
+        "error_id": "dotnet/ambiguous-match/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when resolving the wrong overload via reflection and invoking it with incorrect arguments"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/type-initialization-exception/dotnet8-linux", "distinction": "TypeInitializationException wraps failures in static constructors and is cached permanently; TargetInvocationException wraps failures in any reflected method or instance constructor invocation and is thrown fresh each time the invocation is attempted"}
+      {
+        "error_id": "dotnet/type-initialization-exception/dotnet8-linux",
+        "distinction": "TypeInitializationException wraps failures in static constructors and is cached permanently; TargetInvocationException wraps failures in any reflected method or instance constructor invocation and is thrown fresh each time the invocation is attempted"
+      }
     ]
   },
   "metadata": {

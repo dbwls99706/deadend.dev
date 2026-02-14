@@ -42,7 +42,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "aws ecr get-login-password | docker login --username AWS --password-stdin"
     },
     {
       "action": "For Kubernetes, create an ECR pull secret or use IRSA for EKS",

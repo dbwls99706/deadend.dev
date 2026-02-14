@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.npmjs.com/cli/v10/commands/npm-run-script"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "npm run (no arguments lists all scripts)"
     },
     {
       "action": "For frameworks, use the right command: next dev, vite, react-scripts start",

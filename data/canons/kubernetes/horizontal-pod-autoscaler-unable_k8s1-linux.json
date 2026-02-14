@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl top pods"
     }
   ],
   "transition_graph": {

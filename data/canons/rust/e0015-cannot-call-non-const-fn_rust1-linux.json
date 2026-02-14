@@ -29,14 +29,18 @@
       "action": "Using unsafe to bypass the const restriction",
       "why_fails": "unsafe doesn't make non-const functions callable in const context",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Using a different type that has const constructors",
       "why_fails": "May not be functionally equivalent",
       "fail_rate": 0.45,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],

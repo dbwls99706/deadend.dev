@@ -29,14 +29,18 @@
       "action": "Canceling and restarting the pull",
       "why_fails": "Will hit the same issue if another pull is still running",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting all local images to force a fresh pull",
       "why_fails": "Wastes bandwidth; all images need to be re-downloaded",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Force pushing: git push -f",
       "why_fails": "Overwrites remote history; other collaborators' work may be lost",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting the remote branch and pushing fresh",
       "why_fails": "Loses all remote-only commits and breaks other clones",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

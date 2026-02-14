@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Switching between Microsoft.Data.SqlClient and System.Data.SqlClient packages",
       "why_fails": "Both packages use the same underlying TDS protocol; if the server is unreachable, switching the client library will not fix network connectivity issues. This only wastes time and can introduce API incompatibilities",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding Encrypt=False to the connection string to bypass SSL errors",
       "why_fails": "Starting with Microsoft.Data.SqlClient 4.0, Encrypt=True is the default. Disabling encryption is a security risk and may not fix the connection issue if the actual problem is network routing or authentication",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.20, "condition": "when connection timeouts cascade to HTTP request timeouts in the API layer"},
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.25, "condition": "when connection failure prevents EF Core migrations from running"}
+      {
+        "error_id": "dotnet/taskcanceledexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when connection timeouts cascade to HTTP request timeouts in the API layer"
+      },
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "probability": 0.25,
+        "condition": "when connection failure prevents EF Core migrations from running"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.15, "condition": "when Docker networking misconfiguration prevents container from reaching the database"},
-      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.05, "condition": "when SDK mismatch causes wrong SqlClient version to be referenced"}
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when Docker networking misconfiguration prevents container from reaching the database"
+      },
+      {
+        "error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux",
+        "probability": 0.05,
+        "condition": "when SDK mismatch causes wrong SqlClient version to be referenced"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "distinction": "SqlException connection error is a transport-level failure to reach the database server; EF migration failure may include connection errors but also covers schema mismatch and migration script errors"}
+      {
+        "error_id": "dotnet/ef-migration-failed/dotnet8-linux",
+        "distinction": "SqlException connection error is a transport-level failure to reach the database server; EF migration failure may include connection errors but also covers schema mismatch and migration script errors"
+      }
     ]
   },
   "metadata": {

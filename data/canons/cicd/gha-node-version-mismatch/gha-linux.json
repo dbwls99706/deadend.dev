@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Pin to a very specific patch version like 18.17.1 without checking availability",
       "why_fails": "Specific patch versions may not be available on GitHub-hosted runners; the version manifest is updated independently",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Manually install Node.js from source in a run step",
       "why_fails": "Compiling from source is extremely slow, fragile in CI, and conflicts with the runner's pre-installed tools",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.20, "condition": "When switching Node version causes lockfile compatibility issues"}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "probability": 0.2,
+        "condition": "When switching Node version causes lockfile compatibility issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.10, "condition": "When the node-version value is not quoted and YAML interprets it incorrectly"}
+      {
+        "error_id": "cicd/gha-workflow-syntax-error/gha-linux",
+        "probability": 0.1,
+        "condition": "When the node-version value is not quoted and YAML interprets it incorrectly"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "Node version mismatch is about the runtime not being available; npm ci failed is about package installation issues with an already-installed Node"}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "distinction": "Node version mismatch is about the runtime not being available; npm ci failed is about package installation issues with an already-installed Node"
+      }
     ]
   },
   "metadata": {

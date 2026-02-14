@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "redis",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Setting replica-read-only no on the replica to allow writes",
       "why_fails": "Allowing writes on a replica breaks replication consistency. Writes to the replica are not replicated to the primary or other replicas, and will be overwritten on the next sync. This creates data divergence and silent data loss.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Hardcoding the primary Redis host IP in the application",
       "why_fails": "After a failover, the primary role moves to a different node. A hardcoded IP will point to the old primary (now a replica). The application needs to discover the current primary dynamically.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.15, "condition": "when the application tries to reconnect after failover and the old primary is down"}
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "probability": 0.15,
+        "condition": "when the application tries to reconnect after failover and the old primary is down"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.15, "condition": "when OOM on primary causes Redis Sentinel to fail over to a replica"},
-      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.20, "condition": "when primary crashes and client reconnects to a replica"}
+      {
+        "error_id": "database/redis-oom/redis7-linux",
+        "probability": 0.15,
+        "condition": "when OOM on primary causes Redis Sentinel to fail over to a replica"
+      },
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "probability": 0.2,
+        "condition": "when primary crashes and client reconnects to a replica"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/sqlite-readonly/sqlite3-linux", "distinction": "Redis READONLY is a replication topology issue (writing to a replica). SQLite readonly is a file permission issue. Both prevent writes but for completely different architectural reasons."}
+      {
+        "error_id": "database/sqlite-readonly/sqlite3-linux",
+        "distinction": "Redis READONLY is a replication topology issue (writing to a replica). SQLite readonly is a file permission issue. Both prevent writes but for completely different architectural reasons."
+      }
     ]
   },
   "metadata": {

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "GD extension missing errors occur when PHP's GD image processing extension is not installed or not enabled. This is common in minimal Docker images and fresh server installations where PHP extensions must be explicitly installed."
   },
   "dead_ends": [
-    {"action": "Installing only php-gd without the required system libraries", "why_fails": "The GD extension depends on system libraries like libjpeg, libpng, libwebp, and libfreetype. Without them, GD installs but cannot process those image formats, causing runtime errors on specific image operations.", "fail_rate": 0.65, "sources": [], "condition": ""},
-    {"action": "Using a polyfill library to emulate GD functions without the extension", "why_fails": "GD polyfills are extremely slow and incomplete. They cannot match the performance or feature set of the native C extension, and many image operations will fail or produce incorrect results.", "fail_rate": 0.75, "sources": [], "condition": ""}
+    {
+      "action": "Installing only php-gd without the required system libraries",
+      "why_fails": "The GD extension depends on system libraries like libjpeg, libpng, libwebp, and libfreetype. Without them, GD installs but cannot process those image formats, causing runtime errors on specific image operations.",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using a polyfill library to emulate GD functions without the extension",
+      "why_fails": "GD polyfills are extremely slow and incomplete. They cannot match the performance or feature set of the native C extension, and many image operations will fail or produce incorrect results.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Install the php-gd extension with all required system libraries", "success_rate": 0.95, "how": "On Debian/Ubuntu: apt-get install php8.3-gd. On Alpine (Docker): apk add libpng-dev libjpeg-turbo-dev freetype-dev && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd. Restart PHP-FPM after installation.", "sources": [], "condition": ""},
-    {"action": "Use Imagick extension as an alternative to GD for advanced image processing", "success_rate": 0.88, "how": "Install: apt-get install php8.3-imagick (or pecl install imagick for Docker). Imagick provides more features than GD including support for over 200 image formats, better quality resizing, and SVG support.", "sources": [], "condition": ""}
+    {
+      "action": "Install the php-gd extension with all required system libraries",
+      "success_rate": 0.95,
+      "how": "On Debian/Ubuntu: apt-get install php8.3-gd. On Alpine (Docker): apk add libpng-dev libjpeg-turbo-dev freetype-dev && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd. Restart PHP-FPM after installation.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Imagick extension as an alternative to GD for advanced image processing",
+      "success_rate": 0.88,
+      "how": "Install: apt-get install php8.3-imagick (or pecl install imagick for Docker). Imagick provides more features than GD including support for over 200 image formats, better quality resizing, and SVG support.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.15, "condition": "when processing large images after GD is installed but memory_limit is not adjusted for image processing workloads"}],
-    "preceded_by": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.10, "condition": "when an image processing library class fails because its underlying GD dependency is missing"}],
-    "frequently_confused_with": [{"error_id": "php/call-to-undefined-function/php83-linux", "distinction": "GD missing is specifically about image functions from the GD extension, while call to undefined function can be any missing function from any source"}]
+    "leads_to": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.15,
+        "condition": "when processing large images after GD is installed but memory_limit is not adjusted for image processing workloads"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/class-not-found/php83-linux",
+        "probability": 0.1,
+        "condition": "when an image processing library class fails because its underlying GD dependency is missing"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/call-to-undefined-function/php83-linux",
+        "distinction": "GD missing is specifically about image functions from the GD extension, while call to undefined function can be any missing function from any source"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

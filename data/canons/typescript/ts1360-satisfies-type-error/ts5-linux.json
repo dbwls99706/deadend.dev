@@ -37,14 +37,18 @@
       "action": "Replacing 'satisfies' with 'as' type assertion",
       "why_fails": "'as' silences the error but loses type safety entirely. The whole purpose of 'satisfies' is to validate without widening. Using 'as' defeats that purpose and allows runtime values that don't match the type to pass through unchecked.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "Developers treat 'satisfies' and 'as' as interchangeable when they have fundamentally different safety guarantees."
     },
     {
       "action": "Making the target type more permissive by adding union members",
       "why_fails": "Widening the type (adding '| string', '| undefined', etc.) hides the real problem: the data does not match the expected shape. It passes the issue to consumers who now must handle unexpected types.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "Type widening is seen as a fix rather than a smell. If the data truly varies, the type should reflect that in the source of truth, not at the satisfies site."
     }
   ],

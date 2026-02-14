@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Redis connection errors in PHP occur when the Redis server closes the connection due to timeout, memory pressure, max client limit, or network issues. Long-lived PHP processes (workers, daemons) are especially susceptible because they hold connections across requests."
   },
   "dead_ends": [
-    {"action": "Setting Redis timeout to 0 (infinite) to prevent disconnections", "why_fails": "Disabling timeout allows dead connections to accumulate, eventually hitting Redis maxclients limit. The server becomes unable to accept new connections, affecting all applications.", "fail_rate": 0.70, "sources": [], "condition": ""},
-    {"action": "Creating a new Redis connection on every operation", "why_fails": "Establishing a new TCP connection for each Redis operation adds significant latency (1-3ms per connection). Under high load, this can exhaust ephemeral ports and create thousands of TIME_WAIT sockets.", "fail_rate": 0.65, "sources": [], "condition": ""}
+    {
+      "action": "Setting Redis timeout to 0 (infinite) to prevent disconnections",
+      "why_fails": "Disabling timeout allows dead connections to accumulate, eventually hitting Redis maxclients limit. The server becomes unable to accept new connections, affecting all applications.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Creating a new Redis connection on every operation",
+      "why_fails": "Establishing a new TCP connection for each Redis operation adds significant latency (1-3ms per connection). Under high load, this can exhaust ephemeral ports and create thousands of TIME_WAIT sockets.",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Implement connection retry with reconnection logic", "success_rate": 0.90, "how": "Use a Redis client wrapper that catches RedisException and automatically reconnects. For Predis: configure the connection with read_write_timeout = 0 and set tcp_keepalive = 60. For PhpRedis: use $redis->setOption(Redis::OPT_READ_TIMEOUT, -1) and implement retry logic.", "sources": [], "condition": ""},
-    {"action": "Use persistent connections with health checks in long-running workers", "success_rate": 0.85, "how": "Use pconnect() instead of connect() to reuse connections across requests. For queue workers, implement a periodic PING check before operations: if ($redis->ping() !== true) { $redis->connect(...); }. Set appropriate tcp-keepalive in redis.conf.", "sources": [], "condition": ""}
+    {
+      "action": "Implement connection retry with reconnection logic",
+      "success_rate": 0.9,
+      "how": "Use a Redis client wrapper that catches RedisException and automatically reconnects. For Predis: configure the connection with read_write_timeout = 0 and set tcp_keepalive = 60. For PhpRedis: use $redis->setOption(Redis::OPT_READ_TIMEOUT, -1) and implement retry logic.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use persistent connections with health checks in long-running workers",
+      "success_rate": 0.85,
+      "how": "Use pconnect() instead of connect() to reuse connections across requests. For queue workers, implement a periodic PING check before operations: if ($redis->ping() !== true) { $redis->connect(...); }. Set appropriate tcp-keepalive in redis.conf.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/session-expired/php83-linux", "probability": 0.20, "condition": "when Redis is used as the session handler and connection loss causes session data loss"}],
-    "preceded_by": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.10, "condition": "when PHP memory exhaustion kills the process, leaving orphaned Redis connections"}],
-    "frequently_confused_with": [{"error_id": "php/pdo-connection-failed/php83-linux", "distinction": "Redis gone away is about the Redis key-value store connection, while PDO connection failed is about relational database (MySQL/PostgreSQL) connections"}]
+    "leads_to": [
+      {
+        "error_id": "php/session-expired/php83-linux",
+        "probability": 0.2,
+        "condition": "when Redis is used as the session handler and connection loss causes session data loss"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.1,
+        "condition": "when PHP memory exhaustion kills the process, leaving orphaned Redis connections"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "distinction": "Redis gone away is about the Redis key-value store connection, while PDO connection failed is about relational database (MySQL/PostgreSQL) connections"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -11,28 +11,76 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "laravel", "version_range": ">=11.0,<12.0"},
+    "runtime": {
+      "name": "laravel",
+      "version_range": ">=11.0,<12.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.91,
     "last_updated": "2026-02-12",
     "summary": "The 419 CSRF token mismatch error in Laravel occurs when a POST/PUT/PATCH/DELETE request does not include a valid CSRF token. This happens when the session expires, the @csrf directive is missing from forms, or when AJAX requests do not include the X-CSRF-TOKEN header."
   },
   "dead_ends": [
-    {"action": "Disabling CSRF protection globally by removing VerifyCsrfToken middleware", "why_fails": "Removing CSRF protection exposes the application to cross-site request forgery attacks. Any malicious website can then submit forms on behalf of authenticated users, leading to unauthorized actions like data modification or account takeover.", "fail_rate": 0.90, "sources": [], "condition": ""},
-    {"action": "Adding every route to the CSRF exclusion list", "why_fails": "Excluding all routes from CSRF protection is equivalent to disabling it entirely. This provides no security benefit and leaves the application vulnerable. Only API routes with token-based auth should be excluded.", "fail_rate": 0.85, "sources": [], "condition": ""}
+    {
+      "action": "Disabling CSRF protection globally by removing VerifyCsrfToken middleware",
+      "why_fails": "Removing CSRF protection exposes the application to cross-site request forgery attacks. Any malicious website can then submit forms on behalf of authenticated users, leading to unauthorized actions like data modification or account takeover.",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Adding every route to the CSRF exclusion list",
+      "why_fails": "Excluding all routes from CSRF protection is equivalent to disabling it entirely. This provides no security benefit and leaves the application vulnerable. Only API routes with token-based auth should be excluded.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Include @csrf in all Blade forms and set up the X-CSRF-TOKEN meta tag for AJAX", "success_rate": 0.93, "how": "Add @csrf directive inside every <form> tag in Blade templates. For AJAX requests, add '<meta name=\"csrf-token\" content=\"{{ csrf_token() }}\">' to the layout head. Configure Axios/jQuery to read this meta tag and include it as X-CSRF-TOKEN header on every request.", "sources": [], "condition": ""},
-    {"action": "Fix session configuration to prevent premature expiration", "success_rate": 0.87, "how": "Check SESSION_DRIVER in .env (use 'database' or 'redis' instead of 'file' for multi-server setups). Increase SESSION_LIFETIME if sessions expire too quickly. Ensure the session storage is writable. For load-balanced environments, use a shared session store (Redis/database) so all servers can validate the same tokens.", "sources": [], "condition": ""}
+    {
+      "action": "Include @csrf in all Blade forms and set up the X-CSRF-TOKEN meta tag for AJAX",
+      "success_rate": 0.93,
+      "how": "Add @csrf directive inside every <form> tag in Blade templates. For AJAX requests, add '<meta name=\"csrf-token\" content=\"{{ csrf_token() }}\">' to the layout head. Configure Axios/jQuery to read this meta tag and include it as X-CSRF-TOKEN header on every request.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix session configuration to prevent premature expiration",
+      "success_rate": 0.87,
+      "how": "Check SESSION_DRIVER in .env (use 'database' or 'redis' instead of 'file' for multi-server setups). Increase SESSION_LIFETIME if sessions expire too quickly. Ensure the session storage is writable. For load-balanced environments, use a shared session store (Redis/database) so all servers can validate the same tokens.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/session-expired/php83-linux", "probability": 0.25, "condition": "when the CSRF mismatch is caused by an underlying session expiration problem"}],
-    "preceded_by": [{"error_id": "php/laravel-route-not-found/laravel11-linux", "probability": 0.10, "condition": "when fixing a route changes the HTTP method and CSRF token is not included in the new form"}],
-    "frequently_confused_with": [{"error_id": "php/laravel-route-not-found/laravel11-linux", "distinction": "CSRF mismatch returns HTTP 419 because the token is invalid while route not found returns HTTP 404 because no route matches the URL"}]
+    "leads_to": [
+      {
+        "error_id": "php/session-expired/php83-linux",
+        "probability": 0.25,
+        "condition": "when the CSRF mismatch is caused by an underlying session expiration problem"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/laravel-route-not-found/laravel11-linux",
+        "probability": 0.1,
+        "condition": "when fixing a route changes the HTTP method and CSRF token is not included in the new form"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/laravel-route-not-found/laravel11-linux",
+        "distinction": "CSRF mismatch returns HTTP 419 because the token is invalid while route not found returns HTTP 404 because no route matches the URL"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

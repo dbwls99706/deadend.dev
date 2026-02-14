@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Copying the native library to a random directory without updating java.library.path",
       "why_fails": "The JVM only searches directories listed in java.library.path (and LD_LIBRARY_PATH on Linux). Placing the .so file in an arbitrary directory will not make it discoverable.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using System.load() with a hardcoded absolute path in production code",
       "why_fails": "Hardcoded paths break portability across environments (dev, staging, production, containers). The path is different on each machine and this approach fails in containerized deployments.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Install the missing native system library package required by the JNI binding",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "1. Read the UnsatisfiedLinkError message for the library name. 2. Use 'apt-file search libfoo.so' (Debian/Ubuntu) or 'yum whatprovides */libfoo.so*' (RHEL/CentOS) to find the package. 3. Install with 'apt-get install libfoo-dev' or 'yum install libfoo-devel'. 4. In Docker, add the package to the Dockerfile. 5. Restart the JVM.",
       "sources": [],
       "condition": "when the native library is a system dependency"
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/native-library-not-found/jdk17-linux", "probability": 0.30, "condition": "when the JNI .so itself has unresolved native dependencies"}
+      {
+        "error_id": "java/native-library-not-found/jdk17-linux",
+        "probability": 0.3,
+        "condition": "when the JNI .so itself has unresolved native dependencies"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when the Java wrapper class for the JNI binding is missing"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when the Java wrapper class for the JNI binding is missing"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/native-library-not-found/jdk17-linux", "distinction": "JNI error (UnsatisfiedLinkError) means the Java-to-native bridge failed to load; native library not found specifically means the .so/.dll file cannot be located on the filesystem"}
+      {
+        "error_id": "java/native-library-not-found/jdk17-linux",
+        "distinction": "JNI error (UnsatisfiedLinkError) means the Java-to-native bridge failed to load; native library not found specifically means the .so/.dll file cannot be located on the filesystem"
+      }
     ]
   },
   "metadata": {

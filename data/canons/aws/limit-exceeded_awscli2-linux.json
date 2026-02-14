@@ -59,7 +59,8 @@
       "sources": [
         "https://docs.aws.amazon.com/cli/latest/reference/service-quotas/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "aws service-quotas list-service-quotas"
     },
     {
       "action": "Clean up unused resources to free capacity under the limit",

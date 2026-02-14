@@ -29,14 +29,18 @@
       "action": "Wrapping every write in try/catch",
       "why_fails": "Masks the lifecycle management bug",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Keeping a global reference to prevent garbage collection",
       "why_fails": "Socket is closed by the remote; keeping a reference doesn't reopen it",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

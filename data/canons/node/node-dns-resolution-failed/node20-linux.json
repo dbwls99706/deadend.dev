@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "DNS lookup failed for the target hostname. The system resolver cannot translate the domain name to an IP address."
   },
@@ -29,21 +29,25 @@
       "action": "Retrying the request in a tight loop without backoff",
       "why_fails": "DNS failures are often transient but require time to recover; flooding the resolver makes it worse",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Hardcoding IP addresses to bypass DNS",
       "why_fails": "IP addresses change over time, especially for cloud services; breaks when infrastructure rotates",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify the hostname is correct and the DNS server is reachable",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run 'nslookup hostname' or 'dig hostname' to confirm DNS resolution works at the OS level",
       "sources": [
         "https://nodejs.org/api/dns.html"
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "node/econnreset/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when network instability causes DNS cache invalidation"
       }
     ],

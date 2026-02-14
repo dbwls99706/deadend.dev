@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "ubuntu-latest"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Add --cache-to and --cache-from flags to a regular docker build command",
       "why_fails": "The classic 'docker build' command does not support buildx cache export/import flags. These flags require 'docker buildx build' with a compatible driver, not the legacy builder.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Set DOCKER_BUILDKIT=1 and assume cache export will work with the default driver",
       "why_fails": "DOCKER_BUILDKIT=1 enables BuildKit as the build engine but still uses the 'docker' driver, which does not support cache export. The driver type is what matters, not whether BuildKit is enabled.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Attempt to use --cache-to=type=local without switching the buildx driver",
       "why_fails": "All cache-to backends (local, registry, gha, inline) are blocked when using the docker driver. The error occurs before any cache type logic is evaluated because the driver itself lacks the capability.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -69,15 +78,33 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.20, "condition": "When lack of caching causes full Docker image rebuilds that exceed runner time limits"},
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.15, "condition": "When GHA cache backend is configured but the cache key has changed or expired"}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "probability": 0.2,
+        "condition": "When lack of caching causes full Docker image rebuilds that exceed runner time limits"
+      },
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "probability": 0.15,
+        "condition": "When GHA cache backend is configured but the cache key has changed or expired"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "When attempting to add caching to fix slow Docker builds in CI"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.15,
+        "condition": "When attempting to add caching to fix slow Docker builds in CI"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "distinction": "Buildx cache error is about the Docker buildx driver not supporting cache export at all; GHA cache miss is about the GitHub Actions cache action failing to find a matching cache key"},
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "Buildx cache error occurs specifically with cache configuration; Docker build failed covers general build failures like Dockerfile syntax errors or missing dependencies"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "distinction": "Buildx cache error is about the Docker buildx driver not supporting cache export at all; GHA cache miss is about the GitHub Actions cache action failing to find a matching cache key"
+      },
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "distinction": "Buildx cache error occurs specifically with cache configuration; Docker build failed covers general build failures like Dockerfile syntax errors or missing dependencies"
+      }
     ]
   },
   "metadata": {

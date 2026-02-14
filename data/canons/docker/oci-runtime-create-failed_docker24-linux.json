@@ -29,14 +29,18 @@
       "action": "Reinstalling Docker",
       "why_fails": "The issue is with the image, not Docker itself",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching to a different Docker version",
       "why_fails": "The binary is missing from the image, not a Docker engine issue",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

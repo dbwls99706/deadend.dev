@@ -60,7 +60,8 @@
       "sources": [
         "https://www.electronjs.org/docs/latest/tutorial/using-native-node-modules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "npx electron-rebuild"
     }
   ],
   "transition_graph": {

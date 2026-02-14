@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "Metaspace (the replacement for PermGen in JDK 8+) has been exhausted. This stores class metadata and is consumed by class loading. Common after many hot-deploys in application servers or when frameworks generate excessive dynamic classes."
@@ -26,14 +29,18 @@
       "action": "Setting -XX:MaxMetaspaceSize to an extremely large value without investigating the leak",
       "why_fails": "If classes are being loaded repeatedly without being unloaded (classloader leak), increasing MaxMetaspaceSize just delays the OOM. Native memory consumption grows unbounded and can crash the entire OS process.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": "when there is a classloader leak"
     },
     {
       "action": "Repeatedly redeploying the application to the same running application server",
       "why_fails": "Each hot-deploy can leak classloaders if the application does not properly clean up ThreadLocals, JDBC drivers, shutdown hooks, and static references. Metaspace usage grows with each redeploy until OOM.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": "in application server hot-deploy scenarios"
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/gc-overhead-limit/jdk17-linux", "probability": 0.15, "condition": "when Metaspace pressure causes frequent full GCs that also impact heap collection"},
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.10, "condition": "when class metadata explosion indirectly consumes heap space for class-related objects"}
+      {
+        "error_id": "java/gc-overhead-limit/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when Metaspace pressure causes frequent full GCs that also impact heap collection"
+      },
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when class metadata explosion indirectly consumes heap space for class-related objects"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.10, "condition": "when repeated Spring context refreshes create classloader leaks"}
+      {
+        "error_id": "java/spring-autowire-failed/spring6-linux",
+        "probability": 0.1,
+        "condition": "when repeated Spring context refreshes create classloader leaks"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "distinction": "Both refer to the same error; memory-leak-perm-gen focuses on the leak pattern (growing Metaspace over time) while outofmemoryerror-metaspace covers the immediate OOM condition"}
+      {
+        "error_id": "java/outofmemoryerror-metaspace/jdk17-linux",
+        "distinction": "Both refer to the same error; memory-leak-perm-gen focuses on the leak pattern (growing Metaspace over time) while outofmemoryerror-metaspace covers the immediate OOM condition"
+      }
     ]
   },
   "metadata": {

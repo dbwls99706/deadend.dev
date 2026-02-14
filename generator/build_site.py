@@ -275,11 +275,15 @@ def build_index_page(canons: list[dict], jinja_env: Environment) -> None:
         for c in recent
     ]
 
+    # Pick a representative example error for API/feature links
+    example_error_id = recent_entries[0]["id"] if recent_entries else canons[0]["id"]
+
     html = template.render(
         total_errors=len(canons),
         domains=domains,
         domain_stats=domain_stats,
         recent_entries=recent_entries,
+        example_error_id=example_error_id,
         google_verification=GOOGLE_VERIFICATION,
         bing_verification=BING_VERIFICATION,
     )

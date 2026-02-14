@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "react", "version_range": ">=18,<20"},
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "A React component suspended (threw a Promise) but there is no Suspense boundary ancestor to catch it and show a fallback UI, or a synchronous update caused a suspension that would replace visible content with a fallback. In React 18, components using React.lazy(), data fetching libraries with Suspense support, or the 'use' hook must be wrapped in a <Suspense> boundary. Without it, the thrown Promise propagates as an unhandled error."
@@ -26,14 +29,18 @@
       "action": "Wrapping the entire application in a single top-level Suspense boundary",
       "why_fails": "A single top-level Suspense boundary replaces the entire application UI with a loading indicator whenever any component suspends. This provides a poor user experience because unrelated parts of the UI disappear while one section loads. Suspense boundaries should be placed close to the components that suspend for granular loading states.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Converting async data fetching to useEffect + useState to avoid Suspense entirely",
       "why_fails": "While this avoids the need for Suspense boundaries, it reintroduces the problems Suspense was designed to solve: loading state management scattered across components, waterfall request patterns, and the need to handle loading/error/success states manually in every component. It also prevents use of React Server Components and streaming SSR.",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "react/react-error-boundary-fallback/react18-linux", "probability": 0.25, "condition": "when the unhandled suspension crashes the component tree and triggers an error boundary"},
-      {"error_id": "react/react-lazy-loading-failed/react18-linux", "probability": 0.20, "condition": "when the lazy-loaded chunk fails to download after the Suspense boundary is added"}
+      {
+        "error_id": "react/react-error-boundary-fallback/react18-linux",
+        "probability": 0.25,
+        "condition": "when the unhandled suspension crashes the component tree and triggers an error boundary"
+      },
+      {
+        "error_id": "react/react-lazy-loading-failed/react18-linux",
+        "probability": 0.2,
+        "condition": "when the lazy-loaded chunk fails to download after the Suspense boundary is added"
+      }
     ],
     "preceded_by": [
-      {"error_id": "react/react-lazy-loading-failed/react18-linux", "probability": 0.15, "condition": "when adding React.lazy without adding a corresponding Suspense boundary"}
+      {
+        "error_id": "react/react-lazy-loading-failed/react18-linux",
+        "probability": 0.15,
+        "condition": "when adding React.lazy without adding a corresponding Suspense boundary"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "react/react-error-boundary-fallback/react18-linux", "distinction": "Missing Suspense boundary means no <Suspense> component exists to handle a thrown Promise (loading state). Missing error boundary means no ErrorBoundary exists to handle a thrown Error (error state). Suspense handles Promises; Error Boundaries handle Errors. A component may need both."}
+      {
+        "error_id": "react/react-error-boundary-fallback/react18-linux",
+        "distinction": "Missing Suspense boundary means no <Suspense> component exists to handle a thrown Promise (loading state). Missing error boundary means no ErrorBoundary exists to handle a thrown Error (error state). Suspense handles Promises; Error Boundaries handle Errors. A component may need both."
+      }
     ]
   },
   "metadata": {

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Permission denied errors on storage directories occur when the PHP process (typically www-data or nginx user) does not have write permissions to the storage/logs, storage/framework/cache, or storage/framework/sessions directories. This is one of the most common deployment issues."
   },
   "dead_ends": [
-    {"action": "Setting chmod 777 recursively on the entire project directory", "why_fails": "chmod 777 makes all files world-readable, writable, and executable, creating a severe security vulnerability. Any user on the system can read configuration files with database credentials and modify application code. This is a critical security anti-pattern.", "fail_rate": 0.85, "sources": [], "condition": ""},
-    {"action": "Running the web server as root to bypass permission checks", "why_fails": "Running PHP-FPM or Apache as root means any vulnerability in the application gives the attacker full system access. If the application is compromised, the attacker can read/modify any file on the system, install backdoors, or pivot to other services.", "fail_rate": 0.92, "sources": [], "condition": ""}
+    {
+      "action": "Setting chmod 777 recursively on the entire project directory",
+      "why_fails": "chmod 777 makes all files world-readable, writable, and executable, creating a severe security vulnerability. Any user on the system can read configuration files with database credentials and modify application code. This is a critical security anti-pattern.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Running the web server as root to bypass permission checks",
+      "why_fails": "Running PHP-FPM or Apache as root means any vulnerability in the application gives the attacker full system access. If the application is compromised, the attacker can read/modify any file on the system, install backdoors, or pivot to other services.",
+      "fail_rate": 0.92,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Set correct ownership and permissions for the storage and bootstrap/cache directories", "success_rate": 0.94, "how": "Run 'chown -R www-data:www-data storage bootstrap/cache' to set the owner to the web server user. Then 'chmod -R 775 storage bootstrap/cache' to allow group write. Ensure the deploy user is in the www-data group. For Laravel, also run 'php artisan storage:link'.", "sources": [], "condition": ""},
-    {"action": "Use ACLs for fine-grained permission control in multi-user deployments", "success_rate": 0.88, "how": "Use POSIX ACLs to grant write access without changing ownership: 'setfacl -R -m u:www-data:rwX storage' and 'setfacl -R -d -m u:www-data:rwX storage'. This allows the deploy user to keep ownership while granting the web server write access. Verify with 'getfacl storage'.", "sources": [], "condition": ""}
+    {
+      "action": "Set correct ownership and permissions for the storage and bootstrap/cache directories",
+      "success_rate": 0.94,
+      "how": "Run 'chown -R www-data:www-data storage bootstrap/cache' to set the owner to the web server user. Then 'chmod -R 775 storage bootstrap/cache' to allow group write. Ensure the deploy user is in the www-data group. For Laravel, also run 'php artisan storage:link'.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use ACLs for fine-grained permission control in multi-user deployments",
+      "success_rate": 0.88,
+      "how": "Use POSIX ACLs to grant write access without changing ownership: 'setfacl -R -m u:www-data:rwX storage' and 'setfacl -R -d -m u:www-data:rwX storage'. This allows the deploy user to keep ownership while granting the web server write access. Verify with 'getfacl storage'.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/session-expired/php83-linux", "probability": 0.20, "condition": "when file-based sessions cannot be written due to permission issues causing all sessions to fail"}],
-    "preceded_by": [{"error_id": "php/laravel-migration-failed/laravel11-linux", "probability": 0.08, "condition": "when a deployment script runs migrations but does not fix storage permissions afterward"}],
-    "frequently_confused_with": [{"error_id": "php/laravel-csrf-token-mismatch/laravel11-linux", "distinction": "Permission denied is a filesystem error preventing writes while CSRF mismatch is a session/token validation error though permission issues on session storage can cause CSRF failures"}]
+    "leads_to": [
+      {
+        "error_id": "php/session-expired/php83-linux",
+        "probability": 0.2,
+        "condition": "when file-based sessions cannot be written due to permission issues causing all sessions to fail"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/laravel-migration-failed/laravel11-linux",
+        "probability": 0.08,
+        "condition": "when a deployment script runs migrations but does not fix storage permissions afterward"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/laravel-csrf-token-mismatch/laravel11-linux",
+        "distinction": "Permission denied is a filesystem error preventing writes while CSRF mismatch is a session/token validation error though permission issues on session storage can cause CSRF failures"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Manually editing the migration version table to skip failed migrations",
       "why_fails": "Stamping the version table without actually applying the migration leaves the schema in an inconsistent state. The database schema does not match what the migration tool expects, causing cascading failures in subsequent migrations.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Dropping all tables and re-running all migrations from scratch in production",
       "why_fails": "Dropping tables in production destroys all data. This approach is acceptable in development but catastrophic in production environments with live data.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.30, "condition": "when migration failure leaves expected tables uncreated"},
-      {"error_id": "database/unique-violation/pg16-linux", "probability": 0.15, "condition": "when partial migration leaves sequences desynchronized"}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "probability": 0.3,
+        "condition": "when migration failure leaves expected tables uncreated"
+      },
+      {
+        "error_id": "database/unique-violation/pg16-linux",
+        "probability": 0.15,
+        "condition": "when partial migration leaves sequences desynchronized"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when migration fails because PostgreSQL cannot write new tables/indexes to a full disk"},
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when migration tool cannot connect to the database"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.15,
+        "condition": "when migration fails because PostgreSQL cannot write new tables/indexes to a full disk"
+      },
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.2,
+        "condition": "when migration tool cannot connect to the database"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Migration failed is about the migration tool's state and process. Relation does not exist is a runtime query error. Migration failures can cause missing relations, but missing relations do not necessarily mean migration failed (could be wrong database or schema)."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "Migration failed is about the migration tool's state and process. Relation does not exist is a runtime query error. Migration failures can cause missing relations, but missing relations do not necessarily mean migration failed (could be wrong database or schema)."
+      }
     ]
   },
   "metadata": {

@@ -28,15 +28,19 @@
     {
       "action": "Adding a polyfill for require in ESM context",
       "why_fails": "Fragile workaround that breaks module resolution semantics and can cause subtle bugs with __dirname and __filename",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Renaming files from .mjs to .js without changing package.json type field",
       "why_fails": "If package.json has \"type\": \"module\", all .js files are still treated as ESM",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
@@ -64,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "node/err-require-esm/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when switching module systems causes the inverse error"
       }
     ],

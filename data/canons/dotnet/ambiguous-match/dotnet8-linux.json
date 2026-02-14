@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "AmbiguousMatchException occurs when ASP.NET Core routing cannot determine which endpoint should handle a request because multiple routes match the same URL pattern. Common with attribute routing, overlapping route templates, and controller action overloads. Fix by adding route constraints or making route templates unique."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Adding [Route] attributes to every action with fully explicit paths",
       "why_fails": "Over-specifying routes creates a maintenance burden and often introduces new ambiguities when combined with controller-level [Route] attributes. The resulting route paths become fragile and hard to reason about",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing [ApiController] attribute to disable automatic model binding and routing behavior",
       "why_fails": "Removing [ApiController] disables important features like automatic 400 responses for invalid models, attribute routing requirement, and binding source inference. It does not fix the ambiguous route templates",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Add route constraints to differentiate ambiguous endpoints",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Use route constraints to disambiguate: [HttpGet(\"{id:int}\")] for integer IDs vs [HttpGet(\"{slug:alpha}\")] for string slugs. Common constraints: :int, :guid, :alpha, :regex(). For complex cases, implement IRouteConstraint for custom matching logic",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when route ambiguity causes requests to match an unintended endpoint with different auth requirements"},
-      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.08, "condition": "when ambiguous routing causes CORS preflight to be handled by the wrong endpoint"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when route ambiguity causes requests to match an unintended endpoint with different auth requirements"
+      },
+      {
+        "error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux",
+        "probability": 0.08,
+        "condition": "when ambiguous routing causes CORS preflight to be handled by the wrong endpoint"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when middleware misconfiguration causes routing to behave unexpectedly"},
-      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.05, "condition": "when SDK upgrade changes routing behavior and introduces new ambiguities"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when middleware misconfiguration causes routing to behave unexpectedly"
+      },
+      {
+        "error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux",
+        "probability": 0.05,
+        "condition": "when SDK upgrade changes routing behavior and introduces new ambiguities"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "distinction": "AmbiguousMatchException is a routing-level error where multiple endpoints match the same URL; middleware order errors cause 401/403 responses because authentication/authorization runs in the wrong sequence"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "distinction": "AmbiguousMatchException is a routing-level error where multiple endpoints match the same URL; middleware order errors cause 401/403 responses because authentication/authorization runs in the wrong sequence"
+      }
     ]
   },
   "metadata": {

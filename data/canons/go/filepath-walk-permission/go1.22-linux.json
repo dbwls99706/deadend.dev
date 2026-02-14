@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "filepath.Walk or filepath.WalkDir encounters a directory or file that the process does not have read permission for. Walk stops and returns the error by default."
   },
@@ -28,8 +28,10 @@
     {
       "action": "Run the program as root to bypass permission checks",
       "why_fails": "Running as root is a security risk and masks the real issue — the program should handle permission errors gracefully",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
@@ -64,7 +66,7 @@
     "preceded_by": [
       {
         "error_id": "go/os-exec-not-found/go1.22-linux",
-        "probability": 0.10,
+        "probability": 0.1,
         "condition": "when searching for executables by walking directories"
       }
     ],

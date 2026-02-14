@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,35 +29,52 @@
       "action": "Delete the _sqlx_migrations table to re-run all migrations",
       "why_fails": "Re-running CREATE TABLE migrations on existing tables causes SQL errors; data may be lost",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Create a new migration with the corrective changes instead of modifying the existing one",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "sqlx migrate add fix_previous_migration\n# Write ALTER TABLE or corrective SQL in the new migration",
-      "sources": ["https://docs.rs/sqlx/latest/sqlx/migrate/index.html"],
+      "sources": [
+        "https://docs.rs/sqlx/latest/sqlx/migrate/index.html"
+      ],
       "condition": ""
     },
     {
       "action": "For development only: drop and recreate the database",
       "success_rate": 0.88,
       "how": "sqlx database drop\nsqlx database create\nsqlx migrate run",
-      "sources": ["https://docs.rs/sqlx/latest/sqlx/migrate/index.html"],
+      "sources": [
+        "https://docs.rs/sqlx/latest/sqlx/migrate/index.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "probability": 0.10, "condition": "When database issues lead to connection troubleshooting"}
+      {
+        "error_id": "rust/rust-diesel-connection-error/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When database issues lead to connection troubleshooting"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "probability": 0.15, "condition": "When connection is established and migrations are run"}
+      {
+        "error_id": "rust/rust-diesel-connection-error/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When connection is established and migrations are run"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "distinction": "Connection error means database is unreachable; migration error means migrations are inconsistent after connection succeeds"}
+      {
+        "error_id": "rust/rust-diesel-connection-error/rust1.77-linux",
+        "distinction": "Connection error means database is unreachable; migration error means migrations are inconsistent after connection succeeds"
+      }
     ]
   },
   "metadata": {

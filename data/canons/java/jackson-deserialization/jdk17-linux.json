@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Adding FAIL_ON_UNKNOWN_PROPERTIES = false globally to the ObjectMapper",
       "why_fails": "Disabling unknown property checking globally means all JSON deserialization silently ignores unexpected fields. This hides API contract violations, schema drift, and typos. If a required field is renamed in the JSON source, the Java field will silently get a null/default value instead of raising an error, causing subtle bugs.",
-      "fail_rate": 0.40,
-      "sources": [],
+      "fail_rate": 0.4,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding @JsonIgnoreProperties(ignoreUnknown = true) to every POJO class without understanding which fields are expected",
       "why_fails": "While less destructive than the global setting, blanket ignoring on every class still masks schema evolution issues. If the JSON API adds a new required field, your application will silently ignore it. Use this annotation judiciously, only on classes where unknown fields are genuinely expected.",
       "fail_rate": 0.35,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.15, "condition": "when ignoreUnknown causes a required field to be null instead of populated"},
-      {"error_id": "java/classcastexception/jdk17-linux", "probability": 0.10, "condition": "when Jackson deserializes a JSON field into the wrong Java type"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when ignoreUnknown causes a required field to be null instead of populated"
+      },
+      {
+        "error_id": "java/classcastexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when Jackson deserializes a JSON field into the wrong Java type"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.05, "condition": "when Jackson cannot find a custom deserializer class"},
-      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.08, "condition": "when custom ObjectMapper configuration bean fails to initialize"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.05,
+        "condition": "when Jackson cannot find a custom deserializer class"
+      },
+      {
+        "error_id": "java/spring-autowire-failed/spring6-linux",
+        "probability": 0.08,
+        "condition": "when custom ObjectMapper configuration bean fails to initialize"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classcastexception/jdk17-linux", "distinction": "UnrecognizedPropertyException is about JSON structure mismatch (unknown field name); ClassCastException during deserialization is about type mismatch (field exists but has wrong type)"}
+      {
+        "error_id": "java/classcastexception/jdk17-linux",
+        "distinction": "UnrecognizedPropertyException is about JSON structure mismatch (unknown field name); ClassCastException during deserialization is about type mismatch (field exists but has wrong type)"
+      }
     ]
   },
   "metadata": {

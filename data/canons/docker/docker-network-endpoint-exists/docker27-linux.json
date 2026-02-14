@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "A container with the same name is already connected to the target network. This often happens after a container crash or forced removal that left a stale network endpoint."
@@ -28,15 +28,19 @@
     {
       "action": "Deleting and recreating the entire Docker network",
       "why_fails": "All other containers on that network lose connectivity and must be reconnected",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Renaming the container to avoid the conflict",
       "why_fails": "The stale endpoint still occupies the network slot; the old endpoint must be cleaned up",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -64,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "docker/network-has-active-endpoints/docker24-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when trying to remove a network with stale endpoints"
       }
     ],

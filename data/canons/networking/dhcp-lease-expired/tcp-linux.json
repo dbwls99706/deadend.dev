@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.88,
     "last_updated": "2026-02-12",
     "summary": "The DHCP lease has expired and the client cannot obtain a new one. The host loses its IP address and all network connectivity until a lease is successfully renewed or a new one is acquired."
@@ -25,22 +28,26 @@
     {
       "action": "Manually assign the old DHCP address as a static IP without checking for conflicts",
       "why_fails": "The DHCP server may have already reassigned that IP to another host, causing an IP conflict. Additionally, DNS and gateway settings from DHCP will not be applied.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Repeatedly run dhclient without checking if the DHCP server is reachable",
       "why_fails": "If the DHCP server is down or unreachable (e.g., different VLAN, firewall blocking UDP 67/68), no amount of client retries will obtain a lease.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Release and renew the DHCP lease",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Release the current lease: sudo dhclient -r eth0\n2. Request a new lease: sudo dhclient eth0\n3. Check the assigned IP: ip addr show eth0\n4. Verify connectivity: ping -c 3 8.8.8.8\n5. If using NetworkManager: nmcli connection down eth0 && nmcli connection up eth0",
       "sources": [],
       "condition": "DHCP server must be reachable"
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/arp-conflict/tcp-linux", "probability": 0.15, "condition": "when the DHCP server reassigns the IP to another host while the old host still has it cached"},
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.25, "condition": "when the host loses its IP and can no longer reach DNS servers"}
+      {
+        "error_id": "networking/arp-conflict/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the DHCP server reassigns the IP to another host while the old host still has it cached"
+      },
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.25,
+        "condition": "when the host loses its IP and can no longer reach DNS servers"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when network timeouts indicate the DHCP server is becoming unreachable"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when network timeouts indicate the DHCP server is becoming unreachable"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "DHCP lease expiry is an address assignment failure; connection timeout is a transport-level failure on an already-addressed host"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "DHCP lease expiry is an address assignment failure; connection timeout is a transport-level failure on an already-addressed host"
+      }
     ]
   },
   "metadata": {

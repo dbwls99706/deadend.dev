@@ -60,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/services-networking/service/#endpoints"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl get endpoints my-service"
     }
   ],
   "transition_graph": {

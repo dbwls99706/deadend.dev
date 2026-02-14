@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Repeatedly retrying the same credentials hoping for a different result",
       "why_fails": "PostgreSQL authentication is deterministic. The same wrong password will always fail. Retrying wastes time and may trigger connection rate limiting.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the client driver version to fix authentication failures",
       "why_fails": "The authentication failure is server-side credential validation. Switching between psycopg2, asyncpg, or other drivers does not change the password check.",
       "fail_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.25, "condition": "when user authenticates to the wrong database that lacks expected tables"}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "probability": 0.25,
+        "condition": "when user authenticates to the wrong database that lacks expected tables"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.35, "condition": "when server is started and connection succeeds but credentials are wrong"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.35,
+        "condition": "when server is started and connection succeeds but credentials are wrong"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-access-denied/mysql8-linux", "distinction": "PostgreSQL uses 'FATAL: password authentication failed' while MySQL uses 'Access denied for user'. Both are credential failures but in different database systems."}
+      {
+        "error_id": "database/mysql-access-denied/mysql8-linux",
+        "distinction": "PostgreSQL uses 'FATAL: password authentication failed' while MySQL uses 'Access denied for user'. Both are credential failures but in different database systems."
+      }
     ]
   },
   "metadata": {

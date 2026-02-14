@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/addons.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "npm rebuild"
     },
     {
       "action": "Run with --report-on-fatalerror to get diagnostic report",

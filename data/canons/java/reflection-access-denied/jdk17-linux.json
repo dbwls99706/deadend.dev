@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Setting setAccessible(true) in code expecting it to override module restrictions",
       "why_fails": "On JDK 17+, setAccessible(true) throws InaccessibleObjectException for module-internal members. The module system prevents reflection from bypassing encapsulation, unlike on JDK 8 where setAccessible always worked.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using sun.misc.Unsafe to bypass module access checks",
       "why_fails": "sun.misc.Unsafe itself is in a restricted module on JDK 17+. Accessing it requires the same --add-opens flags. Additionally, using Unsafe for access control bypass is fragile and may break on any JDK update.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Add --add-opens flags for the specific module/package combinations needed",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Read the error message — it specifies the module and package (e.g., 'module java.base does not opens java.lang to unnamed module'). 2. Add --add-opens java.base/java.lang=ALL-UNNAMED to JVM arguments. 3. For Spring/Hibernate on JDK 17, common flags: --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED. 4. Add these to your application startup script or JAVA_OPTS environment variable.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/illegal-access-error/jdk17-linux", "probability": 0.20, "condition": "when fixing reflection access reveals compile-time access issues in the same module"}
+      {
+        "error_id": "java/illegal-access-error/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when fixing reflection access reveals compile-time access issues in the same module"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/unsupportedclassversionerror/jdk17-linux", "probability": 0.20, "condition": "when upgrading JDK to satisfy class version requirements triggers module access restrictions"}
+      {
+        "error_id": "java/unsupportedclassversionerror/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when upgrading JDK to satisfy class version requirements triggers module access restrictions"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/illegal-access-error/jdk17-linux", "distinction": "IllegalAccessError is a linkage error at class-load time for static access violations; InaccessibleObjectException is thrown at runtime when reflection specifically tries to access module-internal members"}
+      {
+        "error_id": "java/illegal-access-error/jdk17-linux",
+        "distinction": "IllegalAccessError is a linkage error at class-load time for static access violations; InaccessibleObjectException is thrown at runtime when reflection specifically tries to access module-internal members"
+      }
     ]
   },
   "metadata": {

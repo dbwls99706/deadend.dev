@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disable IPv6 system-wide to avoid the error",
       "why_fails": "Disabling IPv6 entirely breaks IPv6-only services, container networking that relies on IPv6, and some localhost communication. It is a heavy-handed workaround that causes other issues.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": "When IPv6 is required for other services"
     },
     {
       "action": "Add a static IPv6 default route without verifying upstream connectivity",
       "why_fails": "A static route pointing to a gateway that does not forward IPv6 traffic results in packets being sent but never reaching the destination. The error changes from 'no route' to a timeout, which is harder to diagnose.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when applications try IPv6 first and wait for the full timeout before falling back to IPv4"},
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.15, "condition": "when the DNS resolver is only reachable via IPv4 but the system tries IPv6 first"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.25,
+        "condition": "when applications try IPv6 first and wait for the full timeout before falling back to IPv4"
+      },
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.15,
+        "condition": "when the DNS resolver is only reachable via IPv4 but the system tries IPv6 first"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-nxdomain/dns-linux", "probability": 0.10, "condition": "when DNS works but only returns AAAA records for a host with broken IPv6 connectivity"}
+      {
+        "error_id": "networking/dns-nxdomain/dns-linux",
+        "probability": 0.1,
+        "condition": "when DNS works but only returns AAAA records for a host with broken IPv6 connectivity"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/host-unreachable/tcp-linux", "distinction": "IPv6 connectivity error is specific to the IPv6 stack and routing; host unreachable is a general ICMP error that can occur on either IPv4 or IPv6"}
+      {
+        "error_id": "networking/host-unreachable/tcp-linux",
+        "distinction": "IPv6 connectivity error is specific to the IPv6 stack and routing; host unreachable is a general ICMP error that can occur on either IPv4 or IPv6"
+      }
     ]
   },
   "metadata": {

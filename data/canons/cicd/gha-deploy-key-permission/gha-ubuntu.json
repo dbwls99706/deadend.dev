@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "ubuntu-latest"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.91,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-13",
     "summary": "Deploy key lacks write permission or is being used to access a second repository. GitHub deploy keys are read-only by default and each key can only be attached to a single repository, so push operations or cross-repo access will fail."
   },
@@ -26,21 +29,27 @@
       "action": "Add the same deploy key to a second repository for cross-repo access",
       "why_fails": "GitHub enforces that each SSH deploy key can only be registered to one repository. Attempting to add the same public key to another repo produces 'Key is already in use' error.",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Re-generate the deploy key without enabling write access",
       "why_fails": "Regenerating the key pair does not help if 'Allow write access' is not checked when adding the new public key to the repository deploy key settings. The default is read-only.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Use ssh-agent with the deploy key and assume git push will work",
       "why_fails": "Loading the key into ssh-agent does not override GitHub's server-side read-only restriction. The push is rejected by the remote regardless of local SSH configuration.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -69,14 +78,28 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-checkout-failed/gha-linux", "probability": 0.25, "condition": "When the deploy key also fails during actions/checkout for private submodules or secondary repos"}
+      {
+        "error_id": "cicd/gha-checkout-failed/gha-linux",
+        "probability": 0.25,
+        "condition": "When the deploy key also fails during actions/checkout for private submodules or secondary repos"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.20, "condition": "When the deploy key secret was not configured or has an incorrect name"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "probability": 0.2,
+        "condition": "When the deploy key secret was not configured or has an incorrect name"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Deploy key permission denied is about SSH key restrictions on git operations; GHA permission denied is about GITHUB_TOKEN API scope for GitHub REST/GraphQL endpoints"},
-      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "distinction": "Deploy key errors are about git SSH authentication; Docker login failures are about container registry credentials"}
+      {
+        "error_id": "cicd/gha-permission-denied/gha-linux",
+        "distinction": "Deploy key permission denied is about SSH key restrictions on git operations; GHA permission denied is about GITHUB_TOKEN API scope for GitHub REST/GraphQL endpoints"
+      },
+      {
+        "error_id": "cicd/gha-docker-login-failed/gha-linux",
+        "distinction": "Deploy key errors are about git SSH authentication; Docker login failures are about container registry credentials"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Using unsafe to force the move",
       "why_fails": "Creates a dangling reference; undefined behavior",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Using mem::replace with Default to swap out",
       "why_fails": "Only works if the type implements Default; may leave invalid state",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],

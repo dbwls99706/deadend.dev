@@ -60,7 +60,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/reference/requirement-specifiers/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install 'pkg; python_version"
     },
     {
       "action": "For platform-specific packages (e.g., Windows-only), check package docs",

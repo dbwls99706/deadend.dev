@@ -29,14 +29,18 @@
       "action": "Using a regular <img> tag instead",
       "why_fails": "Loses Next.js image optimization (lazy loading, resizing, WebP)",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting unoptimized={true} on the Image component",
       "why_fails": "Disables all optimization; images are served as-is",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

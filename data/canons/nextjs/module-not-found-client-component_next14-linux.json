@@ -29,14 +29,18 @@
       "action": "Polyfilling the Node.js module for the browser",
       "why_fails": "fs and child_process cannot be meaningfully polyfilled in browsers",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Installing the module from npm",
       "why_fails": "fs is a built-in Node module; npm install fs installs a shim that doesn't work",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

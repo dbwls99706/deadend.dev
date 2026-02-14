@@ -29,14 +29,18 @@
       "action": "Setting very high resource requests to get scheduled on bigger nodes",
       "why_fails": "Wastes cluster resources; doesn't fix the storage consumption",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling eviction thresholds on the kubelet",
       "why_fails": "Node can run out of disk and become unresponsive",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Adding res.headersSent check before every response",
       "why_fails": "Band-aid; masks the control flow bug",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Wrapping everything in try/catch",
       "why_fails": "The second write is intentional code, not an exception",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

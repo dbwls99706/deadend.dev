@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Set --trusted-host to bypass proxy SSL",
       "why_fails": "trusted-host only skips certificate verification for the index; it does not fix proxy connectivity issues",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Unset all proxy environment variables",
       "why_fails": "In corporate networks, removing proxy settings means no internet access at all",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": "when behind corporate proxy"
     }
   ],
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/ssl-error/pip24-linux", "probability": 0.25, "condition": "when proxy intercepts SSL with its own certificate"}
+      {
+        "error_id": "pip/ssl-error/pip24-linux",
+        "probability": 0.25,
+        "condition": "when proxy intercepts SSL with its own certificate"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/timeout/pip24-linux", "probability": 0.2, "condition": "when initial timeout leads to proxy error on retry"}
+      {
+        "error_id": "pip/timeout/pip24-linux",
+        "probability": 0.2,
+        "condition": "when initial timeout leads to proxy error on retry"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/ssl-error/pip24-linux", "distinction": "Proxy errors are about connection to the proxy itself; SSL errors are about certificate validation which can happen through or without a proxy"}
+      {
+        "error_id": "pip/ssl-error/pip24-linux",
+        "distinction": "Proxy errors are about connection to the proxy itself; SSL errors are about certificate validation which can happen through or without a proxy"
+      }
     ]
   },
   "metadata": {

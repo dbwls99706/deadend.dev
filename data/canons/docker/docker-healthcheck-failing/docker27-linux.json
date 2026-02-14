@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Docker container health check is returning non-zero exit codes consistently. The container is marked unhealthy, which can prevent dependent services from starting."
   },
@@ -29,21 +29,25 @@
       "action": "Removing the HEALTHCHECK instruction to avoid the error",
       "why_fails": "Hides the real problem; the service is genuinely unhealthy and orchestrators cannot detect failures",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting very long health check intervals to delay detection",
       "why_fails": "Slow detection means unhealthy containers serve traffic longer, degrading user experience",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Debug the health check command inside the container",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "docker exec <container> <healthcheck-command> to run the health check manually and see the actual error output",
       "sources": [
         "https://docs.docker.com/reference/dockerfile/#healthcheck"

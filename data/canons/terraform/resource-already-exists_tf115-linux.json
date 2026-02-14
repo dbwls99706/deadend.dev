@@ -29,14 +29,18 @@
       "action": "Deleting the existing resource manually",
       "why_fails": "May cause downtime; the resource may be in use by other systems",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the resource name in Terraform to avoid the conflict",
       "why_fails": "Creates a duplicate resource instead of managing the existing one",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Killing all GPU processes with nvidia-smi --gpu-reset",
       "why_fails": "May corrupt running training jobs; data loss",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting the CUDA driver",
       "why_fails": "Requires root; kills all GPU processes",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Force-pushing one branch over the other",
       "why_fails": "Destroys one side's entire history",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Creating a new repo and copying files",
       "why_fails": "Loses all git history from both repos",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

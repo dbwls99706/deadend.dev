@@ -29,14 +29,18 @@
       "action": "Force-deleting the namespace with kubectl delete ns --force --grace-period=0",
       "why_fails": "Does not work for stuck Terminating namespaces; finalizers still block",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Waiting indefinitely for it to resolve",
       "why_fails": "May never resolve if the finalizer controller is gone",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

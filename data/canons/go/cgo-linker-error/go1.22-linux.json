@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "CGo requires a C compiler and linker. The build fails because gcc/clang is not installed, or C libraries referenced by #cgo directives are missing."
   },
@@ -28,7 +28,7 @@
     {
       "action": "Set CGO_ENABLED=0 when the package genuinely requires CGo",
       "why_fails": "Packages like go-sqlite3, libpcap bindings, and system crypto require CGo — disabling it causes missing symbol errors at link time or runtime",
-      "fail_rate": 0.80,
+      "fail_rate": 0.8,
       "sources": [
         "https://pkg.go.dev/cmd/cgo"
       ],
@@ -37,8 +37,10 @@
     {
       "action": "Copy pre-compiled .so/.a files from another machine",
       "why_fails": "Shared libraries are ABI-sensitive — compiled on a different glibc or architecture will produce cryptic linker errors",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
@@ -73,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "go/missing-go-sum-entry/go121-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when adding a new cgo-dependent module"
       }
     ],

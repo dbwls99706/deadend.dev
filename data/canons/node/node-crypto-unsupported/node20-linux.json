@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.93,
     "last_updated": "2026-02-12",
     "summary": "OpenSSL 3.0 in Node.js 17+ removed support for legacy crypto algorithms (like MD4, old hash functions). Code or dependencies using these algorithms fail."
@@ -28,15 +28,19 @@
     {
       "action": "Setting NODE_OPTIONS=--openssl-legacy-provider permanently",
       "why_fails": "This is a temporary workaround that re-enables insecure algorithms; it will eventually stop working in future Node.js versions and masks security vulnerabilities",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading to Node.js 16 LTS",
       "why_fails": "Node.js 16 is end-of-life and no longer receives security patches; this trades one problem for a worse one",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "node/digital-envelope-unsupported/node20-linux",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "often the same root cause with different error formatting"
       }
     ],

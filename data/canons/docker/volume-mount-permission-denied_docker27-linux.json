@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.docker.com/engine/reference/run/#user"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "docker run --user $(id -u):$(id -g)"
     },
     {
       "action": "Set ownership in Dockerfile: RUN chown -R appuser:appgroup /app",

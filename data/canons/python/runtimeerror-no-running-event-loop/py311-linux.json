@@ -83,7 +83,7 @@
     },
     {
       "action": "Restructure code to maintain a clean sync/async boundary",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Identify the single entry point where async begins (e.g., asyncio.run(main()) in a script, or the framework's async handler in FastAPI/Django). Keep all code above the boundary synchronous and all code below it async. Use 'loop.run_in_executor(None, sync_function)' to call synchronous blocking code from async code. Use 'asyncio.run()' only once at the top level.",
       "tradeoff": "May require significant refactoring of existing codebases that mix sync and async patterns",
       "sources": [
@@ -95,7 +95,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/asyncio-no-running-event-loop/py311-linux",
+        "distinction": "'RuntimeError: no running event loop' vs 'RuntimeError: no running event loop': while both are python errors in the async_error category, the former This error occurs when async code is called without a running event loop, or whe while the latter Calling async code without an event loop. asyncio.get_event_loop() fails in thre."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

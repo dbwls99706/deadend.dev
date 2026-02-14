@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Hardcoding the value directly in the workflow YAML",
       "why_fails": "Sensitive values (API keys, passwords, tokens) should never be committed to version control. Even for non-sensitive values, hardcoding reduces portability across environments.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Setting the variable in one job expecting it to be available in another",
       "why_fails": "Each GitHub Actions job runs in a fresh VM. Environment variables set in one job are not available in other jobs unless explicitly passed via outputs or artifacts.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Use GitHub Actions environment variables for non-sensitive values",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Set variables at the appropriate scope. Workflow level: env: at the top of the YAML. Job level: jobs.<id>.env. Step level: steps[*].env. For dynamic values, use echo 'VAR=value' >> $GITHUB_ENV.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.25, "condition": "when the missing variable should have been a secret"},
-      {"error_id": "cicd/ansible-unreachable/ansible-linux", "probability": 0.15, "condition": "when missing SSH credentials variables cause Ansible connectivity failures"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "probability": 0.25,
+        "condition": "when the missing variable should have been a secret"
+      },
+      {
+        "error_id": "cicd/ansible-unreachable/ansible-linux",
+        "probability": 0.15,
+        "condition": "when missing SSH credentials variables cause Ansible connectivity failures"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.20, "condition": "when a secret is not found and the empty value propagates as an unset variable"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "probability": 0.2,
+        "condition": "when a secret is not found and the empty value propagates as an unset variable"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "distinction": "env-variable-not-set covers all environment variables; gha-secret-not-found specifically involves GitHub encrypted secrets not being accessible to the workflow"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "distinction": "env-variable-not-set covers all environment variables; gha-secret-not-found specifically involves GitHub encrypted secrets not being accessible to the workflow"
+      }
     ]
   },
   "metadata": {

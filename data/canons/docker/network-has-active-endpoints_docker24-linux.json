@@ -29,14 +29,18 @@
       "action": "Force-removing the network",
       "why_fails": "May orphan container networking; containers lose connectivity",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting Docker daemon",
       "why_fails": "Disruptive to all running containers",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

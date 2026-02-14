@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "npm", "version_range": ">=8.0"},
+    "runtime": {
+      "name": "npm",
+      "version_range": ">=8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Replace npm ci with npm install in CI pipelines",
       "why_fails": "npm install may resolve different dependency versions than what was tested locally, introducing non-deterministic builds and subtle bugs",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Delete package-lock.json and regenerate it in CI",
       "why_fails": "Regenerating the lockfile in CI defeats the purpose of deterministic builds; different npm versions may produce different lockfiles",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.20, "condition": "When lockfile changes cause cache key mismatch and full reinstall"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "probability": 0.2,
+        "condition": "When lockfile changes cause cache key mismatch and full reinstall"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-node-version-mismatch/gha-linux", "probability": 0.20, "condition": "When switching Node version in CI creates lockfile format incompatibility"}
+      {
+        "error_id": "cicd/gha-node-version-mismatch/gha-linux",
+        "probability": 0.2,
+        "condition": "When switching Node version in CI creates lockfile format incompatibility"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "npm ci failure is about Node.js package lockfile mismatch; Docker build failure is about container layer cache or build context issues"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "distinction": "npm ci failure is about Node.js package lockfile mismatch; Docker build failure is about container layer cache or build context issues"
+      }
     ]
   },
   "metadata": {

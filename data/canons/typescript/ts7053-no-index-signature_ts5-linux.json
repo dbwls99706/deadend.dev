@@ -29,14 +29,18 @@
       "action": "Adding // @ts-ignore above the line",
       "why_fails": "Hides the type error; any future type issues on this line are also silenced",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting noImplicitAny to false",
       "why_fails": "Disables a fundamental strictness check for the entire project",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],

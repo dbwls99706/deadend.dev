@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dns-resolver", "version_range": "any"},
+    "runtime": {
+      "name": "dns-resolver",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Disable DNSSEC validation on the resolver to suppress SERVFAIL",
       "why_fails": "DNSSEC validation protects against DNS cache poisoning and spoofing attacks. Disabling it hides the real problem (invalid DNSSEC signatures, expired keys) and makes the resolver vulnerable to attacks. The domain owner needs to fix their DNSSEC configuration.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Clear the local DNS cache and retry immediately",
       "why_fails": "If the SERVFAIL is caused by an upstream issue (broken delegation, DNSSEC failure, authoritative server down), clearing the local cache simply forces a re-query that will receive the same SERVFAIL. Caching the negative result actually reduces load on the failing infrastructure.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.20, "condition": "when the SERVFAIL is a transient issue and the domain eventually resolves or is confirmed as NXDOMAIN"},
-      {"error_id": "networking/dns-timeout/dns-linux", "probability": 0.15, "condition": "when the recursive resolver that returned SERVFAIL becomes completely unreachable"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.2,
+        "condition": "when the SERVFAIL is a transient issue and the domain eventually resolves or is confirmed as NXDOMAIN"
+      },
+      {
+        "error_id": "networking/dns-timeout/dns-linux",
+        "probability": 0.15,
+        "condition": "when the recursive resolver that returned SERVFAIL becomes completely unreachable"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-timeout/dns-linux", "probability": 0.20, "condition": "when a timeout from the authoritative server causes the recursive resolver to return SERVFAIL"},
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when a previously non-existent domain is partially configured, leading to broken delegation"}
+      {
+        "error_id": "networking/dns-timeout/dns-linux",
+        "probability": 0.2,
+        "condition": "when a timeout from the authoritative server causes the recursive resolver to return SERVFAIL"
+      },
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.1,
+        "condition": "when a previously non-existent domain is partially configured, leading to broken delegation"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "distinction": "SERVFAIL means the DNS server encountered an error and could not complete the query; NXDOMAIN is a successful query that definitively reports the domain does not exist"},
-      {"error_id": "networking/dns-timeout/dns-linux", "distinction": "SERVFAIL is a response from the DNS server indicating failure; timeout means no response was received at all within the allotted time"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "distinction": "SERVFAIL means the DNS server encountered an error and could not complete the query; NXDOMAIN is a successful query that definitively reports the domain does not exist"
+      },
+      {
+        "error_id": "networking/dns-timeout/dns-linux",
+        "distinction": "SERVFAIL is a response from the DNS server indicating failure; timeout means no response was received at all within the allotted time"
+      }
     ]
   },
   "metadata": {

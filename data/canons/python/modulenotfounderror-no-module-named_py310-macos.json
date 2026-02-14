@@ -29,14 +29,18 @@
       "action": "Installing globally with sudo pip install",
       "why_fails": "Installs in system Python which may be different from your project's Python",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#ModuleNotFoundError"
+      ],
       "condition": ""
     },
     {
       "action": "Adding the module to sys.path manually",
       "why_fails": "Fragile; path changes break the import",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#ModuleNotFoundError"
+      ],
       "condition": ""
     }
   ],

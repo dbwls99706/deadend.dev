@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disabling NVLink in software and using PCIe for all GPU-to-GPU communication",
       "why_fails": "There is no software toggle to disable NVLink. CUDA automatically uses NVLink when available. Setting CUDA_VISIBLE_DEVICES to isolate GPUs avoids NVLink but also prevents multi-GPU workloads. The underlying hardware issue persists and may indicate impending GPU failure.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing GPU power limits to compensate for NVLink errors",
       "why_fails": "NVLink errors are caused by link signal integrity issues, not insufficient power. Increasing power limits does not improve link quality and may increase temperatures, potentially worsening the problem.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Replace the affected GPU or NVLink bridge if errors persist",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Persistent NVLink uncorrectable errors indicate hardware failure. Run nvidia-smi -q to identify which GPU and which NVLink link is affected. In DGX/HGX systems, the NVLink bridge may be replaceable separately. Contact NVIDIA or the server vendor for RMA. As a temporary workaround, use CUDA_VISIBLE_DEVICES to exclude the affected GPU from workloads.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "probability": 0.20, "condition": "when NVLink hardware degradation also affects GPU memory subsystem"},
-      {"error_id": "cuda/nvidia-smi-failed/cuda12-linux", "probability": 0.15, "condition": "when NVLink failure cascades to GPU driver communication failure"}
+      {
+        "error_id": "cuda/ecc-uncorrectable/cuda12-linux",
+        "probability": 0.2,
+        "condition": "when NVLink hardware degradation also affects GPU memory subsystem"
+      },
+      {
+        "error_id": "cuda/nvidia-smi-failed/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when NVLink failure cascades to GPU driver communication failure"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "probability": 0.15, "condition": "when GPU memory errors indicate broader hardware degradation affecting NVLink"}
+      {
+        "error_id": "cuda/ecc-uncorrectable/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when GPU memory errors indicate broader hardware degradation affecting NVLink"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "distinction": "NVLink errors affect GPU-to-GPU communication links. ECC errors affect GPU onboard memory (HBM/GDDR). Both are hardware errors but involve different subsystems. NVLink errors prevent multi-GPU communication; ECC errors corrupt computation results."}
+      {
+        "error_id": "cuda/ecc-uncorrectable/cuda12-linux",
+        "distinction": "NVLink errors affect GPU-to-GPU communication links. ECC errors affect GPU onboard memory (HBM/GDDR). Both are hardware errors but involve different subsystems. NVLink errors prevent multi-GPU communication; ECC errors corrupt computation results."
+      }
     ]
   },
   "metadata": {

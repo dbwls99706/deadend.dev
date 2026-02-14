@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Downgrading the dependency that contains the incompatible class to an older version",
       "why_fails": "Downgrading dependencies can introduce security vulnerabilities, missing features, or incompatibilities with other dependencies that require the newer version. It is almost always better to upgrade your runtime JDK than to downgrade libraries.",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting -source and -target compiler flags without upgrading the JRE",
       "why_fails": "The -source and -target flags control what your code compiles to, but they do not affect third-party dependencies. If a dependency JAR was compiled with JDK 21 bytecode, your runtime JRE must be >= 21 to load it regardless of your own compilation flags.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.15, "condition": "when JDK upgrade introduces API changes that break compatibility with other libraries"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when JDK upgrade changes module visibility and classes become inaccessible"}
+      {
+        "error_id": "java/nosuchmethoderror/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when JDK upgrade introduces API changes that break compatibility with other libraries"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when JDK upgrade changes module visibility and classes become inaccessible"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.20, "condition": "when Maven resolves a newer version of a dependency compiled with a higher JDK"},
-      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.18, "condition": "when Gradle resolves a transitive dependency compiled with a higher JDK"}
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "probability": 0.2,
+        "condition": "when Maven resolves a newer version of a dependency compiled with a higher JDK"
+      },
+      {
+        "error_id": "java/gradle-dependency-resolution/gradle8-linux",
+        "probability": 0.18,
+        "condition": "when Gradle resolves a transitive dependency compiled with a higher JDK"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "UnsupportedClassVersionError means the class was found but its bytecode version is too new for the current JRE; ClassNotFoundException means the class was not found at all"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "UnsupportedClassVersionError means the class was found but its bytecode version is too new for the current JRE; ClassNotFoundException means the class was not found at all"
+      }
     ]
   },
   "metadata": {

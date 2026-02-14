@@ -26,7 +26,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.91,
     "last_updated": "2026-02-14",
     "summary": "Spring cannot create a bean because a required dependency is missing from the application context. This is typically caused by a missing @Component/@Service annotation, incorrect component scan paths, or circular dependencies. The error message identifies the bean name and the unsatisfied dependency type."
@@ -72,7 +72,7 @@
     },
     {
       "action": "Ensure the missing class has @Service, @Component, @Repository, or @Configuration annotation",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Check the class that Spring cannot find. It must have a stereotype annotation (@Service, @Component, @Repository, @Controller) or be declared as a @Bean in a @Configuration class. The error message 'No qualifying bean of type X' tells you the exact type to look for. Search your codebase for the class and add the appropriate annotation.",
       "sources": [
         "https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html#beans-stereotype-annotations"
@@ -105,7 +105,12 @@
         "condition": "When a dependency class is on the classpath at compile time but missing at runtime"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "distinction": "'Error creating bean with name 'X': Unsatisfied dependency ex' vs 'Dependency convergence error': while both are java errors, the former Spring cannot create a bean because a required dependency is missing from the ap while the latter Maven dependency convergence errors occur when different transitive dependency p."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

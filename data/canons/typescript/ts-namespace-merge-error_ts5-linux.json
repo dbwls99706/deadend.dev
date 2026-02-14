@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,36 +28,53 @@
     {
       "action": "Use allowSyntheticDefaultImports without understanding the module type",
       "why_fails": "Only helps with CJS modules that have a default export; doesn't fix true namespace-only modules",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use default import or named imports instead of namespace import",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "// Instead of: import * as lib from 'lib'; lib();\n// Use:\nimport lib from 'lib'; lib();\n// Or:\nimport { specificFn } from 'lib'; specificFn();",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/modules/reference.html"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
+      ],
       "condition": ""
     },
     {
       "action": "Enable esModuleInterop for CommonJS module compatibility",
       "success_rate": 0.85,
       "how": "// tsconfig.json:\n{\n  \"compilerOptions\": {\n    \"esModuleInterop\": true,\n    \"allowSyntheticDefaultImports\": true\n  }\n}",
-      "sources": ["https://www.typescriptlang.org/tsconfig#esModuleInterop"],
+      "sources": [
+        "https://www.typescriptlang.org/tsconfig#esModuleInterop"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux", "probability": 0.20, "condition": "When changing import style reveals esModuleInterop issues"}
+      {
+        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
+        "probability": 0.2,
+        "condition": "When changing import style reveals esModuleInterop issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "typescript/ts-module-augmentation-error/ts5-linux", "probability": 0.15, "condition": "When module augmentation changes namespace semantics"}
+      {
+        "error_id": "typescript/ts-module-augmentation-error/ts5-linux",
+        "probability": 0.15,
+        "condition": "When module augmentation changes namespace semantics"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux", "distinction": "TS1259 is about default import compatibility; namespace merge error is about namespace imports being called as functions"}
+      {
+        "error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux",
+        "distinction": "TS1259 is about default import compatibility; namespace merge error is about namespace imports being called as functions"
+      }
     ]
   },
   "metadata": {

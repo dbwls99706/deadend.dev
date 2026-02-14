@@ -29,14 +29,18 @@
       "action": "Running helm upgrade again without resolving the stuck release",
       "why_fails": "Helm will report 'another operation is in progress' because the previous release is in a pending state. The new upgrade cannot proceed until the stuck state is resolved.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Using helm delete --purge (Helm 2 syntax) in Helm 3",
       "why_fails": "Helm 3 does not support --purge flag. The correct command is helm uninstall <release>. Using Helm 2 syntax produces a flag parse error.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],

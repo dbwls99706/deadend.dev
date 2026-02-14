@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "runtime": {
+      "name": "http",
+      "version_range": ">=1.1"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.91,
     "last_updated": "2026-02-12",
     "summary": "The HTTP Upgrade handshake for WebSocket failed. The server did not respond with 101 Switching Protocols. Common causes include a reverse proxy stripping the Upgrade and Connection headers, the server not supporting WebSocket on the requested path, or HTTP/2 misconfiguration."
@@ -26,14 +29,18 @@
       "action": "Force WebSocket over HTTP/2 without checking server support",
       "why_fails": "WebSocket over HTTP/2 (RFC 8441) requires explicit server support via SETTINGS_ENABLE_CONNECT_PROTOCOL. Most reverse proxies and load balancers do not yet support this. Standard WebSocket uses HTTP/1.1 Upgrade.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Add Connection: Upgrade header manually when behind an HTTP/2 proxy",
       "why_fails": "HTTP/2 does not use the Connection and Upgrade headers — they are connection-level headers not valid in HTTP/2. The proxy strips them during HTTP/1.1 to HTTP/2 translation. The WebSocket negotiation must use a different mechanism.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": "When the proxy uses HTTP/2 upstream"
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.15, "condition": "when the proxy cannot establish an upstream WebSocket connection and returns 502"},
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.10, "condition": "when the server rejects the upgrade and forcefully closes the connection"}
+      {
+        "error_id": "networking/http-502-bad-gateway/http-linux",
+        "probability": 0.15,
+        "condition": "when the proxy cannot establish an upstream WebSocket connection and returns 502"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.1,
+        "condition": "when the server rejects the upgrade and forcefully closes the connection"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/cors-preflight-failed/http-linux", "probability": 0.15, "condition": "when CORS preflight fails before the WebSocket upgrade can be attempted"}
+      {
+        "error_id": "networking/cors-preflight-failed/http-linux",
+        "probability": 0.15,
+        "condition": "when CORS preflight fails before the WebSocket upgrade can be attempted"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/cors-preflight-failed/http-linux", "distinction": "WebSocket upgrade failure is about the HTTP 101 protocol switch; CORS preflight failure is about cross-origin access control policy, though both can block WebSocket connections from browsers"}
+      {
+        "error_id": "networking/cors-preflight-failed/http-linux",
+        "distinction": "WebSocket upgrade failure is about the HTTP 101 protocol switch; CORS preflight failure is about cross-origin access control policy, though both can block WebSocket connections from browsers"
+      }
     ]
   },
   "metadata": {

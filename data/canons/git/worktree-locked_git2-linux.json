@@ -42,7 +42,8 @@
       "sources": [
         "https://git-scm.com/docs/git-worktree"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git worktree unlock"
     },
     {
       "action": "Use git worktree prune to clean up stale worktree entries",

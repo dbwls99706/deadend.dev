@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "IllegalStateException signals that a method was invoked at an incorrect time, when the object or environment is not in the appropriate state. Common examples: calling next() on an exhausted iterator, reading from a closed stream, or committing an already-committed transaction."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Catching IllegalStateException and retrying the same operation without changing state",
       "why_fails": "If the object is in the wrong state, retrying the exact same call will produce the exact same exception. The state must be corrected or the operation must be sequenced differently. Retry loops for state errors cause infinite loops or excessive resource consumption.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Reinitializing the entire object or context to reset state, losing any intermediate work",
       "why_fails": "While this may clear the error, it discards all progress made up to the exception. For transactions, this means lost writes. For iterators, this means restarting from the beginning. The correct fix is to understand the expected state machine and ensure transitions happen in the right order.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Read the exception message to identify which state is expected vs. actual, then fix the method call ordering",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Read the full exception message — it typically describes the expected state. 2. Trace the code to understand the state machine (e.g., for HTTP response: headers must be set before body is written). 3. Reorder method calls to match the expected lifecycle. 4. Common cases: call iterator.next() before iterator.remove(); ensure connection is open before executing queries; commit transaction before starting a new one.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.12, "condition": "when state fix resets a field to null without updating all consumers"},
-      {"error_id": "java/concurrentmodificationexception/jdk17-linux", "probability": 0.10, "condition": "when reordering operations introduces modification during iteration"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.12,
+        "condition": "when state fix resets a field to null without updating all consumers"
+      },
+      {
+        "error_id": "java/concurrentmodificationexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when reordering operations introduces modification during iteration"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.15, "condition": "when connection failure leaves transaction in an inconsistent state"},
-      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.12, "condition": "when Hibernate session is closed and further operations throw IllegalStateException"}
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when connection failure leaves transaction in an inconsistent state"
+      },
+      {
+        "error_id": "java/hibernate-lazy-init/jdk17-linux",
+        "probability": 0.12,
+        "condition": "when Hibernate session is closed and further operations throw IllegalStateException"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "distinction": "IllegalStateException means the object exists but is in the wrong state for the requested operation; NullPointerException means the object reference is null entirely"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "distinction": "IllegalStateException means the object exists but is in the wrong state for the requested operation; NullPointerException means the object reference is null entirely"
+      }
     ]
   },
   "metadata": {

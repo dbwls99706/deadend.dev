@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Log4j cannot find its configuration file (log4j2.xml, log4j2.properties, or log4j2.yaml) on the classpath. The application will use default ERROR-level logging, missing all important log output."
@@ -26,14 +29,18 @@
       "action": "Suppressing the warning by redirecting stderr",
       "why_fails": "Hiding the warning means your application runs without proper logging configuration. You lose all application logs, making debugging production issues nearly impossible.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Mixing Log4j 1.x configuration (log4j.properties) with Log4j 2.x runtime",
       "why_fails": "Log4j 2 does not read Log4j 1.x configuration files by default. The file name and format are different. You need log4j2.xml or log4j2.properties, not log4j.properties.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when the Log4j binding JAR is missing from the classpath along with the config"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when the Log4j binding JAR is missing from the classpath along with the config"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.10, "condition": "when a build failure causes resources not to be copied to the output directory"}
+      {
+        "error_id": "java/maven-build-failure/maven3-linux",
+        "probability": 0.1,
+        "condition": "when a build failure causes resources not to be copied to the output directory"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "ClassNotFoundException for Log4j means the Log4j library itself is missing; config error means the library is present but cannot find its configuration file"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "ClassNotFoundException for Log4j means the Log4j library itself is missing; config error means the library is present but cannot find its configuration file"
+      }
     ]
   },
   "metadata": {

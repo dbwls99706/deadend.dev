@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.89,
     "last_updated": "2026-02-12",
     "summary": "Docker login fails in GitHub Actions when pushing images to a container registry. Usually caused by missing or incorrect registry credentials, expired tokens, or wrong registry URL."
@@ -25,15 +28,19 @@
     {
       "action": "Use docker login with plaintext password in a run step",
       "why_fails": "Password appears in workflow logs even with masking; insecure and often fails due to stdin issues in CI",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Assume GITHUB_TOKEN works for Docker Hub pushes",
       "why_fails": "GITHUB_TOKEN only authenticates to ghcr.io (GitHub Container Registry), not Docker Hub or other registries",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "When login succeeds but Docker build itself fails due to private base image pull issues"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.15,
+        "condition": "When login succeeds but Docker build itself fails due to private base image pull issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.30, "condition": "When Docker registry credentials secret was not configured"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "probability": 0.3,
+        "condition": "When Docker registry credentials secret was not configured"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Docker login failed is specifically about container registry authentication; permission denied is about GitHub API access"}
+      {
+        "error_id": "cicd/gha-permission-denied/gha-linux",
+        "distinction": "Docker login failed is specifically about container registry authentication; permission denied is about GitHub API access"
+      }
     ]
   },
   "metadata": {

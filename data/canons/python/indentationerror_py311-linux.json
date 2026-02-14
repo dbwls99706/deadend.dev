@@ -59,7 +59,8 @@
       "sources": [
         "https://docs.python.org/3/using/cmdline.html#cmdoption-tt"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "python -tt script.py to check for mixed tabs/spaces"
     }
   ],
   "transition_graph": {

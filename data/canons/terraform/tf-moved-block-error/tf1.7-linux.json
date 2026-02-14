@@ -38,7 +38,9 @@
       "action": "Use moved blocks to move resources between different state files",
       "why_fails": "Moved blocks only work within a single state file; cross-state moves require state mv or import",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -77,7 +79,12 @@
         "condition": "Destination address is already managed, conflicting with the move"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/moved-block-error/tf1-linux",
+        "distinction": "'Error: Moved object no longer exists or moved block is inval' vs 'Error: Moved object no longer exists': while both are terraform errors in the refactor_error category, the former A moved block references a source or destination that does not exist or is inval while the latter Terraform moved block references a resource that doesn't exist in state."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

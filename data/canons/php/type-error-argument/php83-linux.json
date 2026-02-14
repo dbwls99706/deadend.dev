@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "TypeErrors for function arguments became more common in PHP 8.x due to stricter type enforcement. Passing null to a non-nullable parameter, passing wrong scalar types with strict_types=1, or passing incorrect object types all trigger this error."
   },
   "dead_ends": [
-    {"action": "Removing type declarations from function signatures to avoid the error", "why_fails": "Removing type hints eliminates the safety net that type checking provides. The function may still fail downstream with harder-to-debug errors when receiving unexpected types. This also degrades IDE support and static analysis.", "fail_rate": 0.80, "sources": [], "condition": ""},
-    {"action": "Casting all arguments blindly before passing them", "why_fails": "Blindly casting (e.g., (string)$value) can produce incorrect results. Casting null to string gives empty string, casting an object to int gives 1, and casting an array to string triggers another error. The actual data flow issue is hidden.", "fail_rate": 0.65, "sources": [], "condition": ""}
+    {
+      "action": "Removing type declarations from function signatures to avoid the error",
+      "why_fails": "Removing type hints eliminates the safety net that type checking provides. The function may still fail downstream with harder-to-debug errors when receiving unexpected types. This also degrades IDE support and static analysis.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Casting all arguments blindly before passing them",
+      "why_fails": "Blindly casting (e.g., (string)$value) can produce incorrect results. Casting null to string gives empty string, casting an object to int gives 1, and casting an array to string triggers another error. The actual data flow issue is hidden.",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Make the parameter nullable or provide a default value when null is a valid input", "success_rate": 0.92, "how": "If null is a legitimate value, change the type hint to nullable: 'function process(?string $param)' or provide a default: 'function process(string $param = \"\")'. Update the function body to handle the null case appropriately.", "sources": [], "condition": ""},
-    {"action": "Fix the caller to pass the correct type by validating data earlier in the pipeline", "success_rate": 0.90, "how": "Trace back to where the incorrect value originates. Add validation at the source (form input, API response, database result) to ensure correct types before the data reaches the function. Use null coalescing or type conversion at the appropriate boundary.", "sources": [], "condition": ""}
+    {
+      "action": "Make the parameter nullable or provide a default value when null is a valid input",
+      "success_rate": 0.92,
+      "how": "If null is a legitimate value, change the type hint to nullable: 'function process(?string $param)' or provide a default: 'function process(string $param = \"\")'. Update the function body to handle the null case appropriately.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the caller to pass the correct type by validating data earlier in the pipeline",
+      "success_rate": 0.9,
+      "how": "Trace back to where the incorrect value originates. Add validation at the source (form input, API response, database result) to ensure correct types before the data reaches the function. Use null coalescing or type conversion at the appropriate boundary.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/undefined-variable/php83-linux", "probability": 0.12, "condition": "when developers remove the argument entirely to avoid the type error, creating an undefined variable"}],
-    "preceded_by": [{"error_id": "php/undefined-variable/php83-linux", "probability": 0.22, "condition": "when an undefined variable evaluates to null and is passed to a type-hinted parameter"}],
-    "frequently_confused_with": [{"error_id": "php/class-not-found/php83-linux", "distinction": "TypeError is about passing the wrong type to an existing function while class not found means the type itself does not exist"}]
+    "leads_to": [
+      {
+        "error_id": "php/undefined-variable/php83-linux",
+        "probability": 0.12,
+        "condition": "when developers remove the argument entirely to avoid the type error, creating an undefined variable"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/undefined-variable/php83-linux",
+        "probability": 0.22,
+        "condition": "when an undefined variable evaluates to null and is passed to a type-hinted parameter"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/class-not-found/php83-linux",
+        "distinction": "TypeError is about passing the wrong type to an existing function while class not found means the type itself does not exist"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

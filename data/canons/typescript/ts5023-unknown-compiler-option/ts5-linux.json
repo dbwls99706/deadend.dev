@@ -37,21 +37,27 @@
       "action": "Downgrading TypeScript to make the unknown option valid",
       "why_fails": "Downgrading introduces incompatibilities with the rest of the codebase and dependencies that may require newer TS features. The option may have been removed entirely, so no version makes it valid.",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "Developers assume the option existed in older versions and was removed, when often it was added in newer versions and their installed TS is too old."
     },
     {
       "action": "Copying tsconfig.json from a tutorial without checking TS version",
       "why_fails": "Tutorial configs often use bleeding-edge options like verbatimModuleSyntax (TS 5.0+), moduleDetection (TS 4.7+), or allowImportingTsExtensions (TS 5.0+). The option does not exist in the installed version.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "tsconfig options are assumed to be universal across all TypeScript versions."
     },
     {
       "action": "Adding skipLibCheck or @ts-ignore to suppress the error",
       "why_fails": "TS5023 is a config-level parse error, not a type error in source code. skipLibCheck and @ts-ignore only suppress type-checking errors. Config errors cannot be suppressed.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "Developers conflate TypeScript config errors with type-checking errors. Config errors are fatal and cannot be ignored."
     }
   ],

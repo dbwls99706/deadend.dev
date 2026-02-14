@@ -29,21 +29,25 @@
       "action": "Running the container with --privileged to bypass cgroup limits",
       "why_fails": "Privileged mode does not bypass cgroup memory limits; it grants device access but the OOM killer still enforces memory constraints",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling the OOM killer with --oom-kill-disable without setting memory limits",
       "why_fails": "Without memory limits, the container can consume all host memory and freeze the entire system",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Increase the container memory limit: docker run -m 2g",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "docker run -m 2g --memory-swap 4g <image> — sets 2GB RAM limit with 4GB total (including swap)",
       "sources": [
         "https://docs.docker.com/config/containers/resource_constraints/"

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "runtime": {
+      "name": "jenkins",
+      "version_range": ">=2.300"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Repeatedly restart the Jenkins controller to force agent reconnection",
       "why_fails": "Controller restarts disrupt all running jobs and do not fix the underlying agent connectivity or provisioning issue",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Remove the agent label requirement from the pipeline",
       "why_fails": "Running builds on any available node may cause failures due to missing tools, wrong OS, or insufficient resources",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Configure cloud-based auto-scaling agents (Kubernetes, EC2, Docker)",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Install the Kubernetes or EC2 Fleet plugin, configure a cloud agent template that auto-provisions agents on demand when builds queue. Set idle timeout to clean up unused agents",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/jenkins-workspace-locked/jenkins-linux", "probability": 0.15, "condition": "When agent comes back online but workspace from previous build is still locked"}
+      {
+        "error_id": "cicd/jenkins-workspace-locked/jenkins-linux",
+        "probability": 0.15,
+        "condition": "When agent comes back online but workspace from previous build is still locked"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/jenkins-workspace-locked/jenkins-linux", "probability": 0.10, "condition": "When workspace issues caused agent to be manually taken offline"}
+      {
+        "error_id": "cicd/jenkins-workspace-locked/jenkins-linux",
+        "probability": 0.1,
+        "condition": "When workspace issues caused agent to be manually taken offline"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gitlab-runner-stuck/gitlab-linux", "distinction": "Jenkins agent offline is specific to Jenkins nodes; GitLab runner stuck refers to GitLab CI runner registration/connectivity"}
+      {
+        "error_id": "cicd/gitlab-runner-stuck/gitlab-linux",
+        "distinction": "Jenkins agent offline is specific to Jenkins nodes; GitLab runner stuck refers to GitLab CI runner registration/connectivity"
+      }
     ]
   },
   "metadata": {

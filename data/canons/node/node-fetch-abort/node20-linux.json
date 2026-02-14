@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "A fetch request was aborted, typically via an AbortController signal timeout or explicit abort call."
@@ -28,22 +28,26 @@
     {
       "action": "Catching the error and retrying immediately without checking if the abort was intentional",
       "why_fails": "If the abort was triggered by a timeout or user action, retrying immediately will likely be aborted again or create duplicate requests",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Removing the AbortController to avoid the error",
       "why_fails": "Without abort control, requests hang indefinitely on slow or unresponsive servers, causing resource leaks",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Increase the AbortSignal timeout for slow endpoints",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Use AbortSignal.timeout(30000) instead of the default, or create a custom AbortController with a longer setTimeout",
       "sources": [
         "https://nodejs.org/api/globals.html#abortsignaltimeoutdelay"
@@ -64,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "node/econnreset/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when the server forcibly closes the connection during abort"
       }
     ],

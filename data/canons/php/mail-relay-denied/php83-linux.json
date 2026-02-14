@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Mail relay denied errors occur when PHP's mail() function or SMTP library cannot connect to or authenticate with the mail server. Common causes include missing SMTP configuration, blocked port 25, or the mail server rejecting relay from unauthorized senders."
   },
   "dead_ends": [
-    {"action": "Using PHP's built-in mail() function for production email delivery", "why_fails": "The mail() function relies on the system's sendmail binary and local SMTP configuration. It provides no authentication, no TLS, poor deliverability, and emails frequently end up in spam folders or are rejected entirely.", "fail_rate": 0.75, "sources": [], "condition": ""},
-    {"action": "Opening port 25 on cloud instances to send mail directly", "why_fails": "Most cloud providers (AWS, GCP, Azure) block outbound port 25 by default. Even if unblocked, sending email directly from application servers results in poor deliverability due to missing SPF/DKIM/DMARC records.", "fail_rate": 0.80, "sources": [], "condition": ""}
+    {
+      "action": "Using PHP's built-in mail() function for production email delivery",
+      "why_fails": "The mail() function relies on the system's sendmail binary and local SMTP configuration. It provides no authentication, no TLS, poor deliverability, and emails frequently end up in spam folders or are rejected entirely.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Opening port 25 on cloud instances to send mail directly",
+      "why_fails": "Most cloud providers (AWS, GCP, Azure) block outbound port 25 by default. Even if unblocked, sending email directly from application servers results in poor deliverability due to missing SPF/DKIM/DMARC records.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Use a library like PHPMailer or Symfony Mailer with authenticated SMTP", "success_rate": 0.92, "how": "Install PHPMailer: composer require phpmailer/phpmailer. Configure it with authenticated SMTP: set Host, Port (587 for TLS), SMTPAuth = true, Username and Password. This bypasses the mail() function entirely and provides proper SMTP authentication.", "sources": [], "condition": ""},
-    {"action": "Use a transactional email service (SendGrid, Mailgun, SES) via their API", "success_rate": 0.90, "how": "Sign up for a transactional email service and use their PHP SDK or HTTP API. For example, with Symfony Mailer: composer require symfony/mailer symfony/amazon-mailer and configure MAILER_DSN=ses+smtp://ACCESS_KEY:SECRET@default?region=us-east-1.", "sources": [], "condition": ""}
+    {
+      "action": "Use a library like PHPMailer or Symfony Mailer with authenticated SMTP",
+      "success_rate": 0.92,
+      "how": "Install PHPMailer: composer require phpmailer/phpmailer. Configure it with authenticated SMTP: set Host, Port (587 for TLS), SMTPAuth = true, Username and Password. This bypasses the mail() function entirely and provides proper SMTP authentication.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a transactional email service (SendGrid, Mailgun, SES) via their API",
+      "success_rate": 0.9,
+      "how": "Sign up for a transactional email service and use their PHP SDK or HTTP API. For example, with Symfony Mailer: composer require symfony/mailer symfony/amazon-mailer and configure MAILER_DSN=ses+smtp://ACCESS_KEY:SECRET@default?region=us-east-1.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/curl-timeout/php83-linux", "probability": 0.15, "condition": "when switching to HTTP-based email APIs introduces network timeout issues"}],
-    "preceded_by": [{"error_id": "php/openssl-verify-failed/php83-linux", "probability": 0.20, "condition": "when SMTP TLS connection fails due to certificate verification errors"}],
-    "frequently_confused_with": [{"error_id": "php/curl-ssl-error/php83-linux", "distinction": "Mail relay errors are about SMTP server connectivity and authorization, while cURL SSL errors are about HTTPS certificate validation for web requests"}]
+    "leads_to": [
+      {
+        "error_id": "php/curl-timeout/php83-linux",
+        "probability": 0.15,
+        "condition": "when switching to HTTP-based email APIs introduces network timeout issues"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/openssl-verify-failed/php83-linux",
+        "probability": 0.2,
+        "condition": "when SMTP TLS connection fails due to certificate verification errors"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/curl-ssl-error/php83-linux",
+        "distinction": "Mail relay errors are about SMTP server connectivity and authorization, while cURL SSL errors are about HTTPS certificate validation for web requests"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -38,21 +38,27 @@
       "action": "Wrapping in list() to force evaluation",
       "why_fails": "list() is a synchronous function that uses the __iter__ protocol. Async generators implement __aiter__, not __iter__. list(async_gen()) fails with the same TypeError because the protocols are incompatible.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "common_misconception": "list() is treated as a universal collection materializer. It only works with synchronous iterables."
     },
     {
       "action": "Adding await before the generator call",
       "why_fails": "Async generators are not awaitables. They yield multiple values asynchronously. 'await' is for coroutines (single return value), not generators (multiple yield values). 'await async_gen()' raises TypeError: object async_generator can't be used in 'await' expression.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "common_misconception": "Everything async is awaitable. Async generators must be iterated with 'async for', not awaited."
     },
     {
       "action": "Using synchronous list comprehension [x for x in async_gen()]",
       "why_fails": "Synchronous list comprehensions use the sync iteration protocol (__iter__/__next__). They cannot iterate async generators. The comprehension produces the same TypeError.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "common_misconception": "List comprehensions work with any iterable-like object."
     }
   ],

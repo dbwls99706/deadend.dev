@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "circleci", "version_range": ">=2.1"},
+    "runtime": {
+      "name": "circleci",
+      "version_range": ">=2.1"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Use the resource class name from documentation without checking plan availability",
       "why_fails": "Resource classes like 'large', 'xlarge', '2xlarge' and ARM resource classes are only available on paid plans; free tier is limited to 'small' and 'medium'",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Try to use Docker executor resource classes with machine executor or vice versa",
       "why_fails": "Resource classes are executor-specific; Docker executor and machine executor have completely different resource class names and availability",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Upgrade the CircleCI plan or request the resource class to be enabled",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Go to CircleCI Organization Settings > Plan to upgrade. For custom resource classes on dedicated plans, contact CircleCI support to enable them for your organization",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.20, "condition": "When using a smaller resource class causes tests to run slower and hit timeouts"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.2,
+        "condition": "When using a smaller resource class causes tests to run slower and hit timeouts"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.15, "condition": "When timeout issues prompt upgrading to a larger resource class that is not available"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.15,
+        "condition": "When timeout issues prompt upgrading to a larger resource class that is not available"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gitlab-runner-stuck/gitlab-linux", "distinction": "CircleCI resource class is about machine size availability on the platform; GitLab runner stuck is about runner registration and connectivity"}
+      {
+        "error_id": "cicd/gitlab-runner-stuck/gitlab-linux",
+        "distinction": "CircleCI resource class is about machine size availability on the platform; GitLab runner stuck is about runner registration and connectivity"
+      }
     ]
   },
   "metadata": {

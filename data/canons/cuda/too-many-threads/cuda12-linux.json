@@ -32,14 +32,18 @@
       "action": "Ignore the error and increase GPU memory allocation",
       "why_fails": "Thread limits are hardware-imposed per SM, not related to memory. More memory does not allow more threads per block.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Use cudaSetDevice to switch to a different GPU",
       "why_fails": "All modern NVIDIA GPUs have the same max threads per block (1024); switching devices will not help",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

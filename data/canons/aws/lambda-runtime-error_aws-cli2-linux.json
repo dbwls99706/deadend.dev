@@ -29,14 +29,18 @@
       "action": "Increasing Lambda memory/timeout",
       "why_fails": "Handler import is a packaging issue, not a resource issue",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the runtime version",
       "why_fails": "Rarely helps unless using runtime-specific syntax",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

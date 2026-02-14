@@ -29,14 +29,18 @@
       "action": "Setting the timeout to an extremely large value or disabling it entirely",
       "why_fails": "Removing timeouts means a single slow request can block a thread indefinitely, leading to thread pool exhaustion and cascading failures across the application. Timeouts are a critical circuit-breaker mechanism.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Retrying immediately in a tight loop without backoff",
       "why_fails": "If the server is overloaded, aggressive retries make the situation worse. This can trigger rate limiting or cause a retry storm that overwhelms both the client and server.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],

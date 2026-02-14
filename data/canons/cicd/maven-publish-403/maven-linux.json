@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "maven", "version_range": ">=3.6"},
+    "runtime": {
+      "name": "maven",
+      "version_range": ">=3.6"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Re-deploying the same non-SNAPSHOT version",
       "why_fails": "Most repositories (Maven Central, Nexus, Artifactory) forbid overwriting released artifacts. A 403 for released versions is permanent unless the artifact is explicitly deleted first.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Adding credentials to pom.xml instead of settings.xml",
       "why_fails": "Maven ignores server credentials in pom.xml. Credentials must be in ~/.m2/settings.xml or passed via environment variables. Also, credentials in pom.xml get committed to version control.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/semantic-release-failed/gha-linux", "probability": 0.15, "condition": "when automated versioning and publishing pipelines encounter repository permissions issues"}
+      {
+        "error_id": "cicd/semantic-release-failed/gha-linux",
+        "probability": 0.15,
+        "condition": "when automated versioning and publishing pipelines encounter repository permissions issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.20, "condition": "when Maven credentials environment variables are not set in CI"}
+      {
+        "error_id": "cicd/env-variable-not-set/gha-linux",
+        "probability": 0.2,
+        "condition": "when Maven credentials environment variables are not set in CI"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/npm-audit-critical/gha-linux", "distinction": "maven-publish-403 is about artifact publishing permissions; npm-audit-critical is about dependency vulnerability scanning failures"}
+      {
+        "error_id": "cicd/npm-audit-critical/gha-linux",
+        "distinction": "maven-publish-403 is about artifact publishing permissions; npm-audit-critical is about dependency vulnerability scanning failures"
+      }
     ]
   },
   "metadata": {

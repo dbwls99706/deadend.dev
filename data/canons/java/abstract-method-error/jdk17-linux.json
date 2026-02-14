@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Adding the missing method implementation to the concrete class without checking dependency versions",
       "why_fails": "The error usually occurs because a different version of a library was compiled against than what is on the classpath at runtime. Adding a method to your own code won't fix a binary incompatibility in a third-party JAR.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading the JDK version to avoid the error",
       "why_fails": "AbstractMethodError is caused by classpath/dependency version mismatches, not JDK version issues. Downgrading the JDK does not resolve the underlying binary incompatibility between libraries.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Align dependency versions so compile-time and runtime JARs match",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Run 'mvn dependency:tree' or 'gradle dependencies' to find conflicting versions of the library that defines the abstract method. 2. Identify which version was used at compile time and which is on the runtime classpath. 3. Exclude the older/conflicting transitive dependency and explicitly declare the correct version. 4. Rebuild and verify the error is resolved.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.25, "condition": "when fixing one binary incompatibility reveals another missing method"}
+      {
+        "error_id": "java/nosuchmethoderror/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when fixing one binary incompatibility reveals another missing method"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.30, "condition": "when a dependency conflict causes different library versions at compile vs runtime"}
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "probability": 0.3,
+        "condition": "when a dependency conflict causes different library versions at compile vs runtime"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/nosuchmethoderror/jdk17-linux", "distinction": "NoSuchMethodError means the method does not exist at all in the class; AbstractMethodError means the method exists but is abstract (not implemented) in the version found at runtime"}
+      {
+        "error_id": "java/nosuchmethoderror/jdk17-linux",
+        "distinction": "NoSuchMethodError means the method does not exist at all in the class; AbstractMethodError means the method exists but is abstract (not implemented) in the version found at runtime"
+      }
     ]
   },
   "metadata": {

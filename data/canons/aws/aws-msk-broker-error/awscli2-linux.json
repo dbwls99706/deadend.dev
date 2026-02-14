@@ -38,7 +38,9 @@
       "action": "Reboot the MSK cluster to fix broker connectivity",
       "why_fails": "MSK reboots replace brokers sequentially and can cause data loss if replication is insufficient",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

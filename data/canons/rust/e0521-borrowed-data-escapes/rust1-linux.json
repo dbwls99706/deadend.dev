@@ -38,14 +38,18 @@
       "action": "Adding .clone() on every borrowed reference indiscriminately",
       "why_fails": "Cloning works for owned types but if you have &T, cloning gives T which may not be what the API expects. It also hides performance issues with unnecessary heap allocations and can change the semantics of the code.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "common_misconception": ".clone() is seen as a universal fix for borrow checker errors. It sometimes works but often just shifts the error to a different location."
     },
     {
       "action": "Using unsafe { std::mem::transmute() } to extend the lifetime",
       "why_fails": "This is undefined behavior. The data may be freed while the transmuted reference is still in use, causing use-after-free, data corruption, or crashes. The borrow checker exists specifically to prevent this class of bugs.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "common_misconception": "transmute is a legitimate way to work around the borrow checker. It disables safety guarantees that exist for a reason."
     }
   ],

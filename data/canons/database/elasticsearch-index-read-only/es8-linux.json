@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "elasticsearch", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "elasticsearch",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Repeatedly removing the read-only block without addressing disk space",
       "why_fails": "If disk usage is still above the flood_stage watermark, Elasticsearch will immediately re-apply the read-only block after it is removed. The block is a protective mechanism; removing it without freeing disk space results in an infinite loop of blocking and unblocking.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting the index and recreating it to remove the block",
       "why_fails": "Deleting the index removes all data permanently. The new index may also become read-only immediately if disk space is still insufficient. This destroys data without solving the root cause.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.10, "condition": "when the same server hosts both Elasticsearch and PostgreSQL, and disk space issues affect both"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.1,
+        "condition": "when the same server hosts both Elasticsearch and PostgreSQL, and disk space issues affect both"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.05, "condition": "when Redis OOM dumps data to disk, consuming space that pushes Elasticsearch past the flood stage"}
+      {
+        "error_id": "database/redis-oom/redis7-linux",
+        "probability": 0.05,
+        "condition": "when Redis OOM dumps data to disk, consuming space that pushes Elasticsearch past the flood stage"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/redis-readonly/redis7-linux", "distinction": "Elasticsearch read-only is triggered by disk space watermarks as a protective measure. Redis READONLY is triggered by replication (writes to a replica) or explicit configuration. Both prevent writes but for completely different reasons."}
+      {
+        "error_id": "database/redis-readonly/redis7-linux",
+        "distinction": "Elasticsearch read-only is triggered by disk space watermarks as a protective measure. Redis READONLY is triggered by replication (writes to a replica) or explicit configuration. Both prevent writes but for completely different reasons."
+      }
     ]
   },
   "metadata": {

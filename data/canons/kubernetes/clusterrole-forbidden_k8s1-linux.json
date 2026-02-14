@@ -68,7 +68,8 @@
       "sources": [
         "https://kubernetes.io/docs/reference/access-authn-authz/authorization/#checking-api-access"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl auth can-i --list"
     }
   ],
   "transition_graph": {

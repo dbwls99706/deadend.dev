@@ -29,14 +29,18 @@
       "action": "Delete the .terraform directory and reinitialize without migrating",
       "why_fails": "Skipping migration loses the existing state file, making Terraform think no resources exist",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Manually copy the state file to the new backend location",
       "why_fails": "Manual copies miss metadata, may corrupt state, and do not handle locking correctly",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -63,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-resource-already-managed/tf1.7-linux",
+        "distinction": "'Error: Backend configuration changed: backend migration is r' vs 'Error: Resource already managed by Terraform: this resource ': while both are terraform errors in the state_error category, the former Terraform backend configuration changed and state needs to be migrated to the ne while the latter Attempted to import a resource that already exists in the Terraform state file."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

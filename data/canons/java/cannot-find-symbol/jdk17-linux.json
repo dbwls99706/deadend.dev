@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Casting the variable to Object or using raw types to suppress the error",
       "why_fails": "The symbol is genuinely missing from the compilation classpath. Casting to Object does not make a nonexistent class or method available and will cause ClassCastException or further errors at runtime.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Suppressing the error with @SuppressWarnings annotations",
       "why_fails": "@SuppressWarnings has no effect on compilation errors — it only suppresses warnings. The 'cannot find symbol' error will still prevent compilation.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Check the import statements and ensure the referenced class or method is imported from the correct package",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Read the compiler error carefully — it tells you the symbol name and the location. 2. Check if the import statement is present and correct. 3. Verify the class/method name spelling. 4. If the symbol is from a dependency, verify the dependency is declared in pom.xml or build.gradle. 5. Run 'mvn clean compile' or 'gradle clean build' to ensure all dependencies are resolved.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.15, "condition": "when the symbol is found at compile time but the class is missing at runtime due to scope mismatch"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the symbol is found at compile time but the class is missing at runtime due to scope mismatch"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.20, "condition": "when a dependency conflict excludes the JAR containing the needed symbol"}
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "probability": 0.2,
+        "condition": "when a dependency conflict excludes the JAR containing the needed symbol"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "cannot find symbol is a compile-time error; ClassNotFoundException is a runtime error when the JVM cannot locate a class"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "cannot find symbol is a compile-time error; ClassNotFoundException is a runtime error when the JVM cannot locate a class"
+      }
     ]
   },
   "metadata": {

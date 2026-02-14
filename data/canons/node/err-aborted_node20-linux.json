@@ -29,14 +29,18 @@
       "action": "Removing the AbortController to prevent the error",
       "why_fails": "Loses the ability to cancel long-running requests; potential memory leaks",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Catching and ignoring all AbortError",
       "why_fails": "May hide other abort-related bugs",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

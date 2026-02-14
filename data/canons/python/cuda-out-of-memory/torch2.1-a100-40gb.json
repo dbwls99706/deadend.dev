@@ -94,7 +94,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/cuda-out-of-memory/torch2.1-rtx3090",
+        "distinction": "'RuntimeError: CUDA out of memory. Tried to allocate X GiB' vs 'RuntimeError: CUDA out of memory. Tried to allocate X GiB': while both are python errors in the resource_exhaustion category, the former In this environment, allocation failures of 2GiB+ are not resolved by batch_size while the latter RTX 3090 has 24GB VRAM — significantly less than A100-40GB. Models above 7B para."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

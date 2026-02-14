@@ -29,14 +29,18 @@
       "action": "Repeatedly clicking Sync in the ArgoCD UI without fixing the manifests",
       "why_fails": "If the manifests are invalid or the cluster state prevents application, retrying sync produces the same error",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Using --force flag to override sync conflicts",
       "why_fails": "Force sync can delete and recreate resources, causing downtime and data loss. It masks the underlying issue without resolving it.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],

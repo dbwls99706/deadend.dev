@@ -29,21 +29,25 @@
       "action": "Calling cluster.disconnect() before workers have fully initialized",
       "why_fails": "Workers that haven't bound to a port yet will silently fail to clean up, leaving orphaned connections",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using process.exit() in workers instead of graceful shutdown",
       "why_fails": "Abrupt exit drops in-flight requests and can corrupt shared state or IPC channels",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Listen for 'disconnect' and 'exit' events on the cluster and fork replacement workers",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "cluster.on('exit', (worker, code) => { if (!worker.exitedAfterDisconnect) cluster.fork(); });",
       "sources": [
         "https://nodejs.org/api/cluster.html#event-exit"
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "node/err-worker-out-of-memory/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when OOM kills a cluster worker"
       }
     ],

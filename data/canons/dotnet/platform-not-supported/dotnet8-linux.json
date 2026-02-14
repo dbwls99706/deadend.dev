@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.75,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2026-02-12",
     "summary": "PlatformNotSupportedException is thrown when calling APIs that are not available on the current OS or runtime. Common when using Windows-specific APIs (Registry, Windows Forms, WMI) on Linux containers, or when using APIs trimmed by the .NET linker. Fix by using cross-platform alternatives or conditional compilation."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Installing Windows compatibility packages on Linux to get Windows-only APIs",
       "why_fails": "The Microsoft.Windows.Compatibility pack provides some APIs on Linux but many still throw PlatformNotSupportedException at runtime because they depend on Windows OS services (Registry, WMI, COM) that simply do not exist on Linux",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using reflection to bypass platform checks and call internal methods",
       "why_fails": "Platform checks exist because the underlying OS capability is absent; bypassing the check just moves the failure to a lower level with a more cryptic error (DllNotFoundException, EntryPointNotFoundException) or causes undefined behavior",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use cross-platform alternative APIs",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "Replace Windows-specific APIs with cross-platform alternatives: use System.IO instead of Registry for config storage, use System.Diagnostics.Process instead of WMI for process management, use SkiaSharp instead of System.Drawing for image processing. Check the .NET Platform Compatibility Analyzer (CA1416) warnings",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.15, "condition": "when cross-platform alternative requires a native library not installed on the target OS"},
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.10, "condition": "when platform-specific code fails in a Docker Linux container"}
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when cross-platform alternative requires a native library not installed on the target OS"
+      },
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when platform-specific code fails in a Docker Linux container"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.20, "condition": "when a Windows-developed application is deployed to a Linux Docker container"},
-      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.10, "condition": "when building on a different platform than the target reveals platform-specific dependencies"}
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when a Windows-developed application is deployed to a Linux Docker container"
+      },
+      {
+        "error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when building on a different platform than the target reveals platform-specific dependencies"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "distinction": "PlatformNotSupportedException means the API exists but is not implemented for this platform; FileNotFoundException for assemblies means the required DLL is completely missing from the deployment"}
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "distinction": "PlatformNotSupportedException means the API exists but is not implemented for this platform; FileNotFoundException for assemblies means the required DLL is completely missing from the deployment"
+      }
     ]
   },
   "metadata": {

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.1,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.1,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,19 +25,82 @@
     "summary": "This fatal error is triggered when PHP exceeds the maximum function nesting depth, typically enforced by Xdebug (default limit: 256) or by PHP's own stack size limits. Common causes include: infinite recursion from missing or incorrect base cases, circular method calls in ORM relationship loading (e.g., model A loads model B which loads model A), recursive Blade/Twig template includes, __toString() or __debugInfo() methods that trigger additional serialization of the same object, and event listener loops where event A dispatches event B which dispatches event A."
   },
   "dead_ends": [
-    {"action": "Increasing xdebug.max_nesting_level to a very high value like 10000", "why_fails": "If the recursion is truly infinite (missing base case, circular dependency), increasing the nesting limit only delays the crash. PHP will eventually exhaust the C-level call stack or available memory, producing a segfault or OOM kill instead of the informative Xdebug error. The Xdebug limit exists specifically to catch runaway recursion before it causes catastrophic failure. A legitimate call stack rarely exceeds 100-200 levels.", "fail_rate": 0.80, "sources": [], "condition": ""},
-    {"action": "Disabling Xdebug entirely to remove the nesting limit check", "why_fails": "Without Xdebug's nesting limit, PHP will recurse until it exhausts the process stack memory, typically resulting in a segmentation fault with no error message, stack trace, or useful diagnostic output. Xdebug's nesting limit provides the most debuggable failure mode for recursion. Removing it makes the problem harder to diagnose, not easier to fix. In production (where Xdebug should already be disabled), PHP 8.x fiber stack or memory exhaustion provides the eventual stop.", "fail_rate": 0.85, "sources": [], "condition": ""},
-    {"action": "Wrapping the recursive call in a try-catch to suppress the fatal error", "why_fails": "Maximum nesting level is a fatal error in PHP, not an exception. It cannot be caught by try-catch blocks. Even with a custom error handler registered via set_error_handler(), fatal errors bypass the handler. The script terminates regardless. In PHP 8.x, some fatal errors are thrown as Error objects, but stack exhaustion still terminates the process.", "fail_rate": 0.95, "sources": [], "condition": ""}
+    {
+      "action": "Increasing xdebug.max_nesting_level to a very high value like 10000",
+      "why_fails": "If the recursion is truly infinite (missing base case, circular dependency), increasing the nesting limit only delays the crash. PHP will eventually exhaust the C-level call stack or available memory, producing a segfault or OOM kill instead of the informative Xdebug error. The Xdebug limit exists specifically to catch runaway recursion before it causes catastrophic failure. A legitimate call stack rarely exceeds 100-200 levels.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disabling Xdebug entirely to remove the nesting limit check",
+      "why_fails": "Without Xdebug's nesting limit, PHP will recurse until it exhausts the process stack memory, typically resulting in a segmentation fault with no error message, stack trace, or useful diagnostic output. Xdebug's nesting limit provides the most debuggable failure mode for recursion. Removing it makes the problem harder to diagnose, not easier to fix. In production (where Xdebug should already be disabled), PHP 8.x fiber stack or memory exhaustion provides the eventual stop.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrapping the recursive call in a try-catch to suppress the fatal error",
+      "why_fails": "Maximum nesting level is a fatal error in PHP, not an exception. It cannot be caught by try-catch blocks. Even with a custom error handler registered via set_error_handler(), fatal errors bypass the handler. The script terminates regardless. In PHP 8.x, some fatal errors are thrown as Error objects, but stack exhaustion still terminates the process.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Identify the recursion cycle using the stack trace and add proper base cases or cycle detection", "success_rate": 0.90, "how": "The error message or Xdebug output includes a stack trace showing the repeating function calls. Look for patterns like A() -> B() -> C() -> A() which reveal the cycle. For self-recursion, add a missing base case: if ($depth > MAX_DEPTH) return $default;. For mutual recursion, pass a $visited set: if (in_array($id, $visited)) return; $visited[] = $id;. In ORM contexts like Laravel Eloquent, use $this->relationLoaded('items') to check before eager-loading and prevent circular relationship resolution. Run 'php -d xdebug.max_nesting_level=50 script.php' to get a shorter, more readable stack trace.", "sources": [], "condition": ""},
-    {"action": "Convert recursive algorithms to iterative equivalents using an explicit stack or queue", "success_rate": 0.88, "how": "Replace recursive function calls with a while loop and an explicit data structure. For tree traversal: $stack = [$root]; while ($node = array_pop($stack)) { process($node); foreach ($node->children as $child) $stack[] = $child; }. For directory scanning: use a queue instead of recursive scandir(). For nested category rendering: build a flat list with depth indicators instead of recursively including templates. This eliminates call stack growth entirely and handles arbitrarily deep structures. PHP's SplStack and SplQueue classes are optimized for this pattern.", "sources": [], "condition": ""},
-    {"action": "Break circular dependencies in ORM models and event systems with lazy loading and guards", "success_rate": 0.85, "how": "For ORM circular references (e.g., User hasMany Posts, Post belongsTo User): use lazy loading (remove the relationship from $with array) and load relationships explicitly only when needed with $user->load('posts'). Add the $hidden property to prevent infinite recursion during JSON serialization: protected $hidden = ['user']; on the Post model. For event listener loops: add a static guard flag: static $processing = false; if ($processing) return; $processing = true; ... $processing = false;. For Blade templates: replace @include recursion with a flat @foreach loop or use a component with a max-depth prop.", "sources": [], "condition": ""}
+    {
+      "action": "Identify the recursion cycle using the stack trace and add proper base cases or cycle detection",
+      "success_rate": 0.9,
+      "how": "The error message or Xdebug output includes a stack trace showing the repeating function calls. Look for patterns like A() -> B() -> C() -> A() which reveal the cycle. For self-recursion, add a missing base case: if ($depth > MAX_DEPTH) return $default;. For mutual recursion, pass a $visited set: if (in_array($id, $visited)) return; $visited[] = $id;. In ORM contexts like Laravel Eloquent, use $this->relationLoaded('items') to check before eager-loading and prevent circular relationship resolution. Run 'php -d xdebug.max_nesting_level=50 script.php' to get a shorter, more readable stack trace.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Convert recursive algorithms to iterative equivalents using an explicit stack or queue",
+      "success_rate": 0.88,
+      "how": "Replace recursive function calls with a while loop and an explicit data structure. For tree traversal: $stack = [$root]; while ($node = array_pop($stack)) { process($node); foreach ($node->children as $child) $stack[] = $child; }. For directory scanning: use a queue instead of recursive scandir(). For nested category rendering: build a flat list with depth indicators instead of recursively including templates. This eliminates call stack growth entirely and handles arbitrarily deep structures. PHP's SplStack and SplQueue classes are optimized for this pattern.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Break circular dependencies in ORM models and event systems with lazy loading and guards",
+      "success_rate": 0.85,
+      "how": "For ORM circular references (e.g., User hasMany Posts, Post belongsTo User): use lazy loading (remove the relationship from $with array) and load relationships explicitly only when needed with $user->load('posts'). Add the $hidden property to prevent infinite recursion during JSON serialization: protected $hidden = ['user']; on the Post model. For event listener loops: add a static guard flag: static $processing = false; if ($processing) return; $processing = true; ... $processing = false;. For Blade templates: replace @include recursion with a flat @foreach loop or use a component with a max-depth prop.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.35, "condition": "when the recursion creates objects or arrays at each level, exhausting memory before hitting the nesting limit"}],
-    "preceded_by": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.08, "condition": "when a missing class fallback triggers a __autoload chain that becomes circular"}],
-    "frequently_confused_with": [{"error_id": "php/memory-limit-exhausted/php83-linux", "distinction": "Maximum nesting level is about call stack depth (number of nested function calls), while memory limit exhausted is about total heap memory usage. Recursion can trigger either error: deep recursion with small frames hits nesting limits first, while shallow recursion that allocates large data at each level hits memory limits first. The fix for nesting is breaking the recursion cycle; the fix for memory is reducing per-call allocation or increasing memory_limit."}, {"error_id": "php/max-execution-time/php83-linux", "distinction": "Max execution time is about wall-clock duration, while nesting level is about call stack depth. Infinite recursion typically hits the nesting limit within milliseconds, long before max_execution_time expires. If recursion causes max_execution_time instead, the nesting limit may be disabled."}]
+    "leads_to": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.35,
+        "condition": "when the recursion creates objects or arrays at each level, exhausting memory before hitting the nesting limit"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/class-not-found/php83-linux",
+        "probability": 0.08,
+        "condition": "when a missing class fallback triggers a __autoload chain that becomes circular"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "distinction": "Maximum nesting level is about call stack depth (number of nested function calls), while memory limit exhausted is about total heap memory usage. Recursion can trigger either error: deep recursion with small frames hits nesting limits first, while shallow recursion that allocates large data at each level hits memory limits first. The fix for nesting is breaking the recursion cycle; the fix for memory is reducing per-call allocation or increasing memory_limit."
+      },
+      {
+        "error_id": "php/max-execution-time/php83-linux",
+        "distinction": "Max execution time is about wall-clock duration, while nesting level is about call stack depth. Infinite recursion typically hits the nesting limit within milliseconds, long before max_execution_time expires. If recursion causes max_execution_time instead, the nesting limit may be disabled."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -29,14 +29,18 @@
       "action": "Making the RDS instance publicly accessible",
       "why_fails": "Security risk; database exposed to the internet",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Opening all ports in the security group (0.0.0.0/0)",
       "why_fails": "Exposes all services; major security vulnerability",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

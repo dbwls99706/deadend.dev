@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Copying the extension .control and .sql files manually from another PostgreSQL installation",
       "why_fails": "Extension files must match the exact PostgreSQL version and be compiled for the target architecture. Copying files from a different version leads to ABI incompatibility, crashes, or silent data corruption. Extensions with C shared libraries will fail to load.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Running CREATE EXTENSION repeatedly hoping it will work after a PostgreSQL restart",
       "why_fails": "The extension control file is a filesystem dependency, not a PostgreSQL runtime state. Restarting PostgreSQL does not install OS packages. The file must exist on disk before CREATE EXTENSION can find it.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.30, "condition": "when a migration script depends on an extension that is not installed"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.3,
+        "condition": "when a migration script depends on an extension that is not installed"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.10, "condition": "when setting up a new PostgreSQL instance and extensions are missing from the base image"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.1,
+        "condition": "when setting up a new PostgreSQL instance and extensions are missing from the base image"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/pg-function-does-not-exist/pg16-linux", "distinction": "Extension not found means the extension package is not installed at the OS level. Function does not exist means the extension may be installed but CREATE EXTENSION was not run in the current database, or the function signature is wrong."}
+      {
+        "error_id": "database/pg-function-does-not-exist/pg16-linux",
+        "distinction": "Extension not found means the extension package is not installed at the OS level. Function does not exist means the extension may be installed but CREATE EXTENSION was not run in the current database, or the function signature is wrong."
+      }
     ]
   },
   "metadata": {

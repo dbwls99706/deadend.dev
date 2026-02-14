@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,7 +29,9 @@
       "action": "Use std::panic::catch_unwind at the scope level only",
       "why_fails": "catch_unwind on the scope catches the propagated panic but the child thread's state is already corrupted",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Use catch_unwind inside each scoped thread",
       "success_rate": 0.87,
       "how": "crossbeam::scope(|s| {\n    s.spawn(|_| {\n        if let Err(e) = std::panic::catch_unwind(|| {\n            // thread work here\n        }) {\n            eprintln!(\"Thread panicked: {:?}\", e);\n        }\n    });\n}).unwrap();",
-      "sources": ["https://docs.rs/crossbeam/latest/crossbeam/fn.scope.html"],
+      "sources": [
+        "https://docs.rs/crossbeam/latest/crossbeam/fn.scope.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use std::thread::scope (Rust 1.63+) which has built-in panic handling",
       "success_rate": 0.85,
       "how": "std::thread::scope(|s| {\n    let handle = s.spawn(|| { /* work */ });\n    match handle.join() {\n        Ok(result) => { /* success */ },\n        Err(e) => { /* handle panic */ },\n    }\n});",
-      "sources": ["https://doc.rust-lang.org/std/thread/fn.scope.html"],
+      "sources": [
+        "https://doc.rust-lang.org/std/thread/fn.scope.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux", "probability": 0.15, "condition": "When panicked thread drops its channel sender"}
+      {
+        "error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When panicked thread drops its channel sender"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux", "probability": 0.10, "condition": "When Arc unwrap panic occurs inside a scoped thread"}
+      {
+        "error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When Arc unwrap panic occurs inside a scoped thread"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux", "distinction": "Tokio runtime shutdown is async; crossbeam scope panic is synchronous thread-based concurrency"}
+      {
+        "error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux",
+        "distinction": "Tokio runtime shutdown is async; crossbeam scope panic is synchronous thread-based concurrency"
+      }
     ]
   },
   "metadata": {

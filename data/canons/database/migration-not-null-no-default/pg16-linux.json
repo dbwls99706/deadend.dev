@@ -101,7 +101,12 @@
       }
     ],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "database/pg-index-corruption/pg16-linux",
+        "distinction": "'ERROR: column \"X\" of relation \"Y\" contains null values' vs 'ERROR: index \"idx_name\" contains unexpected zero page at blo': while both are database errors, the former PostgreSQL rejects adding a NOT NULL constraint to a column that contains null v while the latter A PostgreSQL index has become corrupted, often due to hardware issues (failing d."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

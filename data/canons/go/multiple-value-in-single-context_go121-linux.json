@@ -29,7 +29,9 @@
       "action": "Wrapping the function to discard the error",
       "why_fails": "Silently ignores errors, leading to nil pointer panics",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

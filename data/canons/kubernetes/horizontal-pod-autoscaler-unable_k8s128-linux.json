@@ -29,14 +29,18 @@
       "action": "Setting arbitrary resource requests",
       "why_fails": "Over or under-provisioning; either wastes resources or causes OOM",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using memory-based scaling instead",
       "why_fails": "Memory scaling is less responsive than CPU for most workloads",
       "fail_rate": 0.45,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "mongodb",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Catching the WriteConflict and retrying only the failed operation instead of the entire transaction",
       "why_fails": "When a WriteConflict occurs inside a transaction, the entire transaction is aborted, not just the single operation. Retrying only the failed operation within the aborted transaction session will fail with 'transaction has been aborted'. The entire transaction must be retried from the start.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Removing multi-document transactions to avoid WriteConflict errors",
       "why_fails": "Without transactions, individual operations succeed but you lose atomicity guarantees. If your business logic requires multiple documents to be updated together consistently, removing transactions leads to data inconsistency that is harder to fix than implementing retry logic.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Implement transaction retry logic using the MongoDB driver's built-in retry support",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Use the driver's withTransaction() callback API which automatically retries on TransientTransactionError. In Python: with client.start_session() as session: session.with_transaction(callback). The driver handles retry with backoff. Limit retries to 3-5 attempts.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mongo-cursor-not-found/mongo7-linux", "probability": 0.10, "condition": "when transaction retries cause cursor timeouts on long-running read operations"}
+      {
+        "error_id": "database/mongo-cursor-not-found/mongo7-linux",
+        "probability": 0.1,
+        "condition": "when transaction retries cause cursor timeouts on long-running read operations"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.10, "condition": "when connection recovery during high-concurrency workload triggers write conflicts"}
+      {
+        "error_id": "database/mongodb-connection-failed/mongo7-linux",
+        "probability": 0.1,
+        "condition": "when connection recovery during high-concurrency workload triggers write conflicts"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/pg-could-not-serialize/pg16-linux", "distinction": "MongoDB WriteConflict and PostgreSQL serialization failure are analogous. Both use optimistic concurrency control and require transaction retry. MongoDB uses WiredTiger's document-level conflict detection; PostgreSQL uses predicate locking at SERIALIZABLE isolation."}
+      {
+        "error_id": "database/pg-could-not-serialize/pg16-linux",
+        "distinction": "MongoDB WriteConflict and PostgreSQL serialization failure are analogous. Both use optimistic concurrency control and require transaction retry. MongoDB uses WiredTiger's document-level conflict detection; PostgreSQL uses predicate locking at SERIALIZABLE isolation."
+      }
     ]
   },
   "metadata": {

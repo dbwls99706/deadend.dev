@@ -29,14 +29,18 @@
       "action": "Deleting the tag and recreating",
       "why_fails": "If already pushed, other clones still have the old tag pointing to the old commit",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Using git tag -f to force-update",
       "why_fails": "Changes tag for you locally but remote and others still have the old one",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

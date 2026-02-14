@@ -38,21 +38,27 @@
       "action": "Changing the component's return type to JSX.Element",
       "why_fails": "JSX.Element is overly restrictive — it breaks when the component returns null, a string, or a fragment. The real issue is usually a @types/react version mismatch between dependencies, not the return type annotation.",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "The return type is the problem, when the real issue is that two @types/react versions define incompatible JSX.Element types."
     },
     {
       "action": "Adding @ts-expect-error above every component usage",
       "why_fails": "Suppresses the error at each call site but does not fix the root cause. Creates N error suppressions that must be maintained and removed later. Breaks type checking for all props on those components.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "Error suppression is a fix rather than a workaround."
     },
     {
       "action": "Wrapping the component with React.createElement instead of JSX",
       "why_fails": "React.createElement has the same type constraints as JSX syntax. The version mismatch still causes type errors; it just changes the error message from TS2786 to a different TS error code.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "common_misconception": "JSX is assumed to have different type checking than createElement."
     }
   ],

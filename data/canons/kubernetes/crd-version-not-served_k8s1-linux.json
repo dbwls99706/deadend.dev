@@ -60,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl convert -f old.yaml --output-version apps/v1"
     },
     {
       "action": "Check deprecation notices: kubectl api-resources to see current API groups",
@@ -68,7 +69,8 @@
       "sources": [
         "https://kubernetes.io/docs/reference/using-api/deprecation-policy/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl api-resources to see current API groups"
     }
   ],
   "transition_graph": {

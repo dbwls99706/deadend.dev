@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.docker.com/reference/cli/docker/compose/logs/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "docker compose logs"
     }
   ],
   "transition_graph": {

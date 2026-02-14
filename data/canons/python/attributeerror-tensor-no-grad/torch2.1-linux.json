@@ -87,7 +87,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/attributeerror-tensor-no-grad/torch2.0-linux",
+        "distinction": "'AttributeError: 'Tensor' object has no attribute 'grad'' vs 'AttributeError: 'Tensor' object has no attribute 'grad'': while both are python errors in the autograd_error category, the former The tensor's .grad attribute is None (or inaccessible) because requires_grad was while the latter In PyTorch 2.0, this error can occur both from the standard requires_grad miscon."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

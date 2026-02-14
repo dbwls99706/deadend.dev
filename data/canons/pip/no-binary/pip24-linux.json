@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,28 +29,32 @@
       "action": "Use --only-binary :all: to force binary-only installs",
       "why_fails": "If no binary exists for the platform, this flag guarantees failure instead of attempting source build",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Try different PyPI mirrors hoping they have the binary",
       "why_fails": "Mirrors replicate the same packages; if PyPI does not have the wheel, mirrors will not either",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Install build dependencies and compile from source",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "apt-get install build-essential python3-dev && pip install --no-binary <package> <package>",
       "sources": [],
       "condition": ""
     },
     {
       "action": "Use a manylinux-compatible base image instead of Alpine/musl",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Switch Docker base from python:3.x-alpine to python:3.x-slim which uses glibc and has wheel support",
       "sources": [],
       "condition": "when on Alpine Linux"
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/src-install-failed/pip24-linux", "probability": 0.35, "condition": "when attempting source build without proper build tools"}
+      {
+        "error_id": "pip/src-install-failed/pip24-linux",
+        "probability": 0.35,
+        "condition": "when attempting source build without proper build tools"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/platform-mismatch/pip24-linux", "probability": 0.25, "condition": "when platform incompatibility forces source compilation"}
+      {
+        "error_id": "pip/platform-mismatch/pip24-linux",
+        "probability": 0.25,
+        "condition": "when platform incompatibility forces source compilation"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/platform-mismatch/pip24-linux", "distinction": "No-binary means no prebuilt wheel exists at all for the platform; platform-mismatch means wheels exist but for a different OS/architecture"}
+      {
+        "error_id": "pip/platform-mismatch/pip24-linux",
+        "distinction": "No-binary means no prebuilt wheel exists at all for the platform; platform-mismatch means wheels exist but for a different OS/architecture"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Wrapping in try/catch and calling a fallback",
       "why_fails": "Masks the import/API issue; fallback may not be equivalent",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Adding typeof checks before every function call",
       "why_fails": "Boilerplate; hides the root cause",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

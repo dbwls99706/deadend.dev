@@ -51,7 +51,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-timeout"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install --timeout 120"
     },
     {
       "action": "Use a mirror: pip install -i https://pypi.tuna.tsinghua.edu.cn/simple <package>",
@@ -59,7 +60,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-i"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install -i https://pypi.tuna.tsinghua.edu.cn/simple"
     },
     {
       "action": "Retry — PyPI may have temporary issues",

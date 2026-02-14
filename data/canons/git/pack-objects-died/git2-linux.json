@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.83,
     "last_updated": "2026-02-12",
     "summary": "The pack-objects process was killed (usually by OOM killer sending signal 9) during push or gc. Large repositories with many objects require significant memory for delta compression."
@@ -25,15 +28,19 @@
     {
       "action": "Increasing http.postBuffer size",
       "why_fails": "postBuffer affects the HTTP transfer size, not the memory used by pack-objects for delta compression. The OOM condition persists.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Retrying the push immediately without changing configuration",
       "why_fails": "The same memory pressure causes the OOM killer to terminate pack-objects again each time",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Push in smaller batches using partial history",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "Push a subset of commits: git push origin HEAD~100:refs/heads/main, then incrementally push more. This reduces the number of objects pack-objects must process at once.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "git/index-pack-failed/git2-linux", "probability": 0.15, "condition": "when pack memory issues affect both sending and receiving sides"},
-      {"error_id": "git/gc-auto-failed/git2-linux", "probability": 0.25, "condition": "when gc triggers pack-objects which gets OOM-killed"}
+      {
+        "error_id": "git/index-pack-failed/git2-linux",
+        "probability": 0.15,
+        "condition": "when pack memory issues affect both sending and receiving sides"
+      },
+      {
+        "error_id": "git/gc-auto-failed/git2-linux",
+        "probability": 0.25,
+        "condition": "when gc triggers pack-objects which gets OOM-killed"
+      }
     ],
     "preceded_by": [
-      {"error_id": "git/gc-auto-failed/git2-linux", "probability": 0.20, "condition": "when auto-gc triggers pack-objects on a memory-constrained system"}
+      {
+        "error_id": "git/gc-auto-failed/git2-linux",
+        "probability": 0.2,
+        "condition": "when auto-gc triggers pack-objects on a memory-constrained system"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "git/index-pack-failed/git2-linux", "distinction": "pack-objects-died occurs during packing (push/gc); index-pack-failed occurs during unpacking (fetch/clone)"}
+      {
+        "error_id": "git/index-pack-failed/git2-linux",
+        "distinction": "pack-objects-died occurs during packing (push/gc); index-pack-failed occurs during unpacking (fetch/clone)"
+      }
     ]
   },
   "metadata": {

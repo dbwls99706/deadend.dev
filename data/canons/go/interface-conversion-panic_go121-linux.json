@@ -29,14 +29,18 @@
       "action": "Using recover() globally to catch the panic",
       "why_fails": "Masks the nil interface bug; inconsistent state continues",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Checking for nil after the assertion",
       "why_fails": "Panic already happened; nil check is too late",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

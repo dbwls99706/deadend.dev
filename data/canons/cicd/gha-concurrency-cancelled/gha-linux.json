@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Remove the concurrency configuration entirely",
       "why_fails": "Without concurrency controls, multiple runs pile up consuming runner resources and potentially deploying out of order",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Set a unique concurrency group per run using run_id",
       "why_fails": "Using a unique key per run effectively disables concurrency control, defeating its purpose entirely",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use branch-aware concurrency groups with cancel-in-progress only for non-default branches",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Set 'concurrency: group: ${{ github.workflow }}-${{ github.ref }}' with 'cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}' to only cancel in-progress runs on feature branches",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "probability": 0.10, "condition": "When a deployment run is cancelled mid-deploy, leaving infrastructure in an inconsistent state"}
+      {
+        "error_id": "cicd/deploy-rollback-failed/ci-linux",
+        "probability": 0.1,
+        "condition": "When a deployment run is cancelled mid-deploy, leaving infrastructure in an inconsistent state"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.10, "condition": "When rapid fix-push-fix cycles for syntax errors trigger multiple concurrent runs"}
+      {
+        "error_id": "cicd/gha-workflow-syntax-error/gha-linux",
+        "probability": 0.1,
+        "condition": "When rapid fix-push-fix cycles for syntax errors trigger multiple concurrent runs"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "Concurrency cancelled means a newer run superseded this one; timeout means the job ran too long"}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "distinction": "Concurrency cancelled means a newer run superseded this one; timeout means the job ran too long"
+      }
     ]
   },
   "metadata": {

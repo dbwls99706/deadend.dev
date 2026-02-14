@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Git HTTPS authentication failed because password-based authentication was deprecated by major hosts (GitHub, GitLab, Bitbucket). A personal access token or SSH key is required instead."
@@ -26,14 +29,18 @@
       "action": "Repeatedly entering the same username/password when prompted",
       "why_fails": "Password authentication is permanently disabled on the remote; no password will be accepted regardless of correctness",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Clearing the credential cache expecting it to fix the issue",
       "why_fails": "The problem is not cached bad credentials; the authentication method itself (password) is no longer accepted by the server",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Switch to SSH-based authentication",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Generate SSH key: ssh-keygen -t ed25519. Add to agent: ssh-add ~/.ssh/id_ed25519. Add public key to the platform. Change remote: git remote set-url origin git@github.com:user/repo.git",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "git/permission-denied-publickey/git2-linux", "probability": 0.20, "condition": "when switching to SSH without properly configuring SSH keys"},
-      {"error_id": "git/unable-to-access-https/git2-linux", "probability": 0.10, "condition": "when credential helpers interfere with HTTPS connections"}
+      {
+        "error_id": "git/permission-denied-publickey/git2-linux",
+        "probability": 0.2,
+        "condition": "when switching to SSH without properly configuring SSH keys"
+      },
+      {
+        "error_id": "git/unable-to-access-https/git2-linux",
+        "probability": 0.1,
+        "condition": "when credential helpers interfere with HTTPS connections"
+      }
     ],
     "preceded_by": [
-      {"error_id": "git/unable-to-access-https/git2-linux", "probability": 0.15, "condition": "when access issues are actually authentication failures misreported as connectivity problems"}
+      {
+        "error_id": "git/unable-to-access-https/git2-linux",
+        "probability": 0.15,
+        "condition": "when access issues are actually authentication failures misreported as connectivity problems"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "git/permission-denied-publickey/git2-linux", "distinction": "credential-rejected is HTTPS auth failure; permission-denied-publickey is SSH auth failure. Different protocols, different fix paths."}
+      {
+        "error_id": "git/permission-denied-publickey/git2-linux",
+        "distinction": "credential-rejected is HTTPS auth failure; permission-denied-publickey is SSH auth failure. Different protocols, different fix paths."
+      }
     ]
   },
   "metadata": {

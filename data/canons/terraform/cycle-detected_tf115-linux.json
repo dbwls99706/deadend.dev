@@ -29,14 +29,18 @@
       "action": "Adding depends_on to both resources",
       "why_fails": "Explicitly creates the cycle that Terraform detected",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Using terraform taint on one of the resources",
       "why_fails": "Does not break the cycle; just marks for recreation",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

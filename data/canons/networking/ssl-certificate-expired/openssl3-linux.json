@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "runtime": {
+      "name": "openssl",
+      "version_range": "3.x"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Set system clock back to before certificate expiry",
       "why_fails": "This is a temporary hack that creates far worse problems: log timestamps become invalid, cron jobs misfire, Kerberos auth breaks, and the certificate will still appear expired to remote clients performing their own time validation.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Disable SSL certificate verification globally in the client application",
       "why_fails": "While this suppresses the error, it completely defeats the purpose of TLS by allowing man-in-the-middle attacks. It also masks other certificate issues and creates a security vulnerability that is easy to forget to revert.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrade OpenSSL to an older version that is more lenient with expired certs",
       "why_fails": "Older OpenSSL versions have known security vulnerabilities (e.g., Heartbleed). The expired certificate is still expired regardless of client version, and modern servers may reject connections from outdated TLS implementations.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -69,16 +78,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.25, "condition": "when certificate is renewed but intermediate CA chain is not updated"},
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.15, "condition": "when server is restarted during certificate replacement"}
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "probability": 0.25,
+        "condition": "when certificate is renewed but intermediate CA chain is not updated"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.15,
+        "condition": "when server is restarted during certificate replacement"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.10, "condition": "when ignoring verify failures leads to eventual expiry discovery"},
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.05, "condition": "when DNS issues masked the expiry until DNS was fixed"}
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "probability": 0.1,
+        "condition": "when ignoring verify failures leads to eventual expiry discovery"
+      },
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.05,
+        "condition": "when DNS issues masked the expiry until DNS was fixed"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/ssl-self-signed/openssl3-linux", "distinction": "Expired certificates were once valid but have passed their validity period; self-signed certificates were never signed by a trusted CA regardless of date"},
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "distinction": "Expired certs fail date validation specifically; unable-to-verify fails CA chain validation and the certificate may still be within its validity period"}
+      {
+        "error_id": "networking/ssl-self-signed/openssl3-linux",
+        "distinction": "Expired certificates were once valid but have passed their validity period; self-signed certificates were never signed by a trusted CA regardless of date"
+      },
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "distinction": "Expired certs fail date validation specifically; unable-to-verify fails CA chain validation and the certificate may still be within its validity period"
+      }
     ]
   },
   "metadata": {

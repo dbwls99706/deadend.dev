@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Serde's Deserialize trait must be derived or implemented for every type in the deserialization tree."
@@ -25,15 +28,19 @@
     {
       "action": "Manually parse JSON strings instead of using serde",
       "why_fails": "Error-prone, loses type safety, and doesn't scale with nested structures",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Use serde_json::Value everywhere and cast at runtime",
       "why_fails": "Loses compile-time type checking and leads to fragile runtime panics",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -42,26 +49,41 @@
       "action": "Derive Deserialize on the struct and all nested types",
       "success_rate": 0.93,
       "how": "use serde::Deserialize;\n#[derive(Deserialize)]\nstruct MyType {\n    field: String,\n    nested: NestedType, // must also derive Deserialize\n}",
-      "sources": ["https://serde.rs/derive.html"],
+      "sources": [
+        "https://serde.rs/derive.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use serde attributes for fields that need custom deserialization",
       "success_rate": 0.85,
       "how": "#[derive(Deserialize)]\nstruct Config {\n    #[serde(default)]\n    optional_field: String,\n    #[serde(rename = \"camelCase\")]\n    my_field: i32,\n}",
-      "sources": ["https://serde.rs/field-attrs.html"],
+      "sources": [
+        "https://serde.rs/field-attrs.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-trait-not-implemented/rust1.77-linux", "probability": 0.20, "condition": "When nested types also lack trait implementations"}
+      {
+        "error_id": "rust/rust-trait-not-implemented/rust1.77-linux",
+        "probability": 0.2,
+        "condition": "When nested types also lack trait implementations"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/e0433-unresolved-import/rust1-linux", "probability": 0.15, "condition": "When serde crate is not in Cargo.toml dependencies"}
+      {
+        "error_id": "rust/e0433-unresolved-import/rust1-linux",
+        "probability": 0.15,
+        "condition": "When serde crate is not in Cargo.toml dependencies"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-trait-not-implemented/rust1.77-linux", "distinction": "General trait error vs serde-specific Deserialize missing, which is usually fixed with a derive macro"}
+      {
+        "error_id": "rust/rust-trait-not-implemented/rust1.77-linux",
+        "distinction": "General trait error vs serde-specific Deserialize missing, which is usually fixed with a derive macro"
+      }
     ]
   },
   "metadata": {

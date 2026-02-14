@@ -29,14 +29,18 @@
       "action": "Setting --max-old-space-size=16384 without investigating the leak",
       "why_fails": "Delays the crash but the leak still grows unbounded",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Splitting the process into workers without fixing the memory issue",
       "why_fails": "Each worker will also eventually OOM",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

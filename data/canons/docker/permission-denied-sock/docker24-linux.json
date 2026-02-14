@@ -67,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/permission-denied-sock/docker24-wsl2",
+        "distinction": "'Got permission denied while trying to connect to the Docker ' vs 'Got permission denied while trying to connect to the Docker ': while both are docker errors in the permissions category, the former This error occurs when the current user does not have permission to access the D while the latter Docker socket permission denied on WSL2 has multiple root causes beyond the stan."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

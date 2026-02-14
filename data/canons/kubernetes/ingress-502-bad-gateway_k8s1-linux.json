@@ -42,7 +42,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl get ep"
     },
     {
       "action": "Check pod readiness — unready pods are removed from endpoints",

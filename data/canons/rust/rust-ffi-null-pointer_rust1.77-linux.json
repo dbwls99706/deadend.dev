@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,8 +28,10 @@
     {
       "action": "Ignore the null check because the C library 'should never return null'",
       "why_fails": "C libraries return null on error conditions; assuming non-null leads to segfaults",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Use NonNull or Option<NonNull> for FFI pointer types",
       "success_rate": 0.88,
       "how": "use std::ptr::NonNull;\nlet ptr = NonNull::new(unsafe { ffi_function() })\n    .ok_or(\"FFI returned null\")?;",
-      "sources": ["https://doc.rust-lang.org/std/ptr/struct.NonNull.html"],
+      "sources": [
+        "https://doc.rust-lang.org/std/ptr/struct.NonNull.html"
+      ],
       "condition": ""
     },
     {
       "action": "Wrap FFI calls in a safe Rust API that validates all pointers",
       "success_rate": 0.85,
       "how": "pub fn safe_wrapper() -> Result<SafeType, Error> {\n    let raw = unsafe { ffi_call() };\n    if raw.is_null() { return Err(Error::NullPointer); }\n    Ok(unsafe { SafeType::from_raw(raw) })\n}",
-      "sources": ["https://doc.rust-lang.org/nomicon/ffi.html"],
+      "sources": [
+        "https://doc.rust-lang.org/nomicon/ffi.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux", "probability": 0.10, "condition": "When wrapping FFI in Arc introduces ownership issues"}
+      {
+        "error_id": "rust/rust-arc-cannot-unwrap/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When wrapping FFI in Arc introduces ownership issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "probability": 0.10, "condition": "When linking against C libraries requires specific features"}
+      {
+        "error_id": "rust/cargo-feature-not-found/rust1-linux",
+        "probability": 0.1,
+        "condition": "When linking against C libraries requires specific features"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux", "distinction": "E0507 is a compile-time borrow error; null pointer FFI is a runtime segfault from unchecked C pointers"}
+      {
+        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
+        "distinction": "E0507 is a compile-time borrow error; null pointer FFI is a runtime segfault from unchecked C pointers"
+      }
     ]
   },
   "metadata": {

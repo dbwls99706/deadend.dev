@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,28 @@
     {
       "action": "Wrapping every member access in try-catch NullReferenceException blocks",
       "why_fails": "Masks the root cause and creates performance overhead; the null propagates further and causes harder-to-debug failures elsewhere",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding null checks at every single call site without tracing the source of the null value",
       "why_fails": "Leads to excessive defensive coding without fixing the actual source of the null; the real bug remains and surfaces in different locations",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Suppressing nullable warnings with the null-forgiving operator (!) throughout the codebase",
       "why_fails": "Disables compiler safety checks that would catch the problem at build time; effectively hides the bug rather than fixing it",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.20, "condition": "when null check is added but underlying state is still invalid"},
-      {"error_id": "dotnet/argumentexception/dotnet8-linux", "probability": 0.15, "condition": "when null values are passed to methods that validate arguments"}
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when null check is added but underlying state is still invalid"
+      },
+      {
+        "error_id": "dotnet/argumentexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when null values are passed to methods that validate arguments"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.10, "condition": "when a navigation property was not included in the query and is accessed as null"},
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.08, "condition": "when deserialized objects have null properties due to serialization configuration"}
+      {
+        "error_id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when a navigation property was not included in the query and is accessed as null"
+      },
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.08,
+        "condition": "when deserialized objects have null properties due to serialization configuration"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "NullReferenceException is specifically about accessing a member on a null reference, while InvalidOperationException indicates the object exists but is in a wrong state"}
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "distinction": "NullReferenceException is specifically about accessing a member on a null reference, while InvalidOperationException indicates the object exists but is in a wrong state"
+      }
     ]
   },
   "metadata": {

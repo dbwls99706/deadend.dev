@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "export AWS_DEFAULT_REGION=us-east-1"
     },
     {
       "action": "Configure in ~/.aws/config: aws configure set region us-east-1",
@@ -59,7 +60,8 @@
       "sources": [
         "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "aws configure set region us-east-1"
     },
     {
       "action": "Set in boto3 client: boto3.client('s3', region_name='us-east-1')",

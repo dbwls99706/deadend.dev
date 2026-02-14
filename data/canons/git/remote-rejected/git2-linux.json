@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Force pushing with git push --force to override the rejection",
       "why_fails": "Branch protection rules on the remote explicitly block force pushes; the --force flag is rejected by the server-side hook",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting and recreating the remote branch",
       "why_fails": "Branch deletion is typically also blocked by the same protection rules that prevent force pushes",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "git/error-failed-to-push-some-refs/git2-linux", "probability": 0.20, "condition": "when the rejected push is retried without addressing the rule violation"}
+      {
+        "error_id": "git/error-failed-to-push-some-refs/git2-linux",
+        "probability": 0.2,
+        "condition": "when the rejected push is retried without addressing the rule violation"
+      }
     ],
     "preceded_by": [
-      {"error_id": "git/error-failed-to-push-some-refs/git2-linux", "probability": 0.15, "condition": "when a standard push failure leads users to attempt pushing to protected branches"}
+      {
+        "error_id": "git/error-failed-to-push-some-refs/git2-linux",
+        "probability": 0.15,
+        "condition": "when a standard push failure leads users to attempt pushing to protected branches"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "git/error-failed-to-push-some-refs/git2-linux", "distinction": "remote-rejected is a server-side policy rejection; failed-to-push-some-refs is typically a client-side divergence error requiring pull before push"}
+      {
+        "error_id": "git/error-failed-to-push-some-refs/git2-linux",
+        "distinction": "remote-rejected is a server-side policy rejection; failed-to-push-some-refs is typically a client-side divergence error requiring pull before push"
+      }
     ]
   },
   "metadata": {

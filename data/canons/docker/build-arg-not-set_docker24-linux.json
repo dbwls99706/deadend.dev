@@ -29,14 +29,18 @@
       "action": "Ignoring the warning",
       "why_fails": "The build arg isn't being used; the feature it should configure isn't applied",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting build args as ENV instead",
       "why_fails": "ENV is baked into the image at runtime; different semantics from build-time ARG",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

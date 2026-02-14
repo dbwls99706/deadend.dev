@@ -29,14 +29,18 @@
       "action": "Creating a new event loop with asyncio.new_event_loop()",
       "why_fails": "May cause resource leaks and conflicts with the existing loop",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#RuntimeError"
+      ],
       "condition": ""
     },
     {
       "action": "Using threading to run a separate event loop",
       "why_fails": "Overly complex; creates concurrency issues",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#RuntimeError"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Using kill -9 on the container PID from the host",
       "why_fails": "May leave Docker's state inconsistent; container appears running",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Rebooting the host",
       "why_fails": "Disruptive to all running containers and services",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

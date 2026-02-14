@@ -29,14 +29,18 @@
       "action": "Using try() function to suppress the error",
       "why_fails": "Silently returns null; downstream resources get wrong values",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Adding a variable with the same name",
       "why_fails": "Variables and resource attributes are different namespaces",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

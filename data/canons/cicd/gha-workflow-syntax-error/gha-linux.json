@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Blindly re-indent the entire YAML file with a text editor auto-format",
       "why_fails": "Auto-formatters can break YAML anchors, multi-line strings, and GitHub Actions-specific syntax like ${{ }} expressions",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Copy a workflow template from an outdated blog post without adapting it",
       "why_fails": "GitHub Actions syntax evolves; older templates may use deprecated keys or removed features",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Ignore the error and re-run the workflow hoping it passes",
       "why_fails": "Syntax errors are deterministic and will never self-resolve on retry",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -62,13 +71,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-permission-denied/gha-linux", "probability": 0.15, "condition": "When fixing syntax reveals permission issues in the corrected workflow"}
+      {
+        "error_id": "cicd/gha-permission-denied/gha-linux",
+        "probability": 0.15,
+        "condition": "When fixing syntax reveals permission issues in the corrected workflow"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-node-version-mismatch/gha-linux", "probability": 0.10, "condition": "When editing workflow to fix Node version and introducing YAML syntax errors"}
+      {
+        "error_id": "cicd/gha-node-version-mismatch/gha-linux",
+        "probability": 0.1,
+        "condition": "When editing workflow to fix Node version and introducing YAML syntax errors"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "distinction": "GitHub Actions uses YAML workflow files while Jenkins uses Groovy-based Jenkinsfile syntax"}
+      {
+        "error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux",
+        "distinction": "GitHub Actions uses YAML workflow files while Jenkins uses Groovy-based Jenkinsfile syntax"
+      }
     ]
   },
   "metadata": {

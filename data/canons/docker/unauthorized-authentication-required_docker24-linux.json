@@ -29,14 +29,18 @@
       "action": "Making the registry public",
       "why_fails": "Exposes all images to anyone; security risk",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Storing credentials in Dockerfile",
       "why_fails": "Credentials are baked into the image layer and visible to anyone",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

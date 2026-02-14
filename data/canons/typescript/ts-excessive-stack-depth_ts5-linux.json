@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,7 +29,9 @@
       "action": "Use @ts-ignore to suppress the error",
       "why_fails": "The underlying type will be any, and the infinite recursion may slow down the IDE",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Add a recursion depth limit using a counter type",
       "success_rate": 0.85,
       "how": "type DeepFlatten<T, Depth extends number[] = []> =\n  Depth['length'] extends 10 ? T : // limit recursion\n  T extends Array<infer U> ? DeepFlatten<U, [...Depth, 0]> : T;",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/2/conditional-types.html"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/conditional-types.html"
+      ],
       "condition": ""
     },
     {
       "action": "Simplify the type by reducing nesting or using intermediate type aliases",
       "success_rate": 0.82,
       "how": "// Break complex recursive type into smaller parts\ntype Step1<T> = /* first transformation */;\ntype Step2<T> = /* second transformation */;\ntype Final<T> = Step2<Step1<T>>;",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "typescript/ts-circular-reference/ts5-linux", "probability": 0.20, "condition": "When depth limit fix reveals circular references"}
+      {
+        "error_id": "typescript/ts-circular-reference/ts5-linux",
+        "probability": 0.2,
+        "condition": "When depth limit fix reveals circular references"
+      }
     ],
     "preceded_by": [
-      {"error_id": "typescript/ts-conditional-type-error/ts5-linux", "probability": 0.20, "condition": "When recursive conditional types exceed depth"}
+      {
+        "error_id": "typescript/ts-conditional-type-error/ts5-linux",
+        "probability": 0.2,
+        "condition": "When recursive conditional types exceed depth"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "typescript/ts2589-excessive-stack-depth/ts5-linux", "distinction": "Same underlying error code; this entry covers the general pattern while ts2589 covers specific instances"}
+      {
+        "error_id": "typescript/ts2589-excessive-stack-depth/ts5-linux",
+        "distinction": "Same underlying error code; this entry covers the general pattern while ts2589 covers specific instances"
+      }
     ]
   },
   "metadata": {

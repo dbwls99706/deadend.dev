@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "sonarqube", "version_range": ">=9.0"},
+    "runtime": {
+      "name": "sonarqube",
+      "version_range": ">=9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.84,
     "last_updated": "2026-02-12",
     "summary": "SonarQube Quality Gate check failed because one or more metrics (coverage, duplication, reliability, security, maintainability) did not meet the configured thresholds for new code."
@@ -25,15 +28,19 @@
     {
       "action": "Lowering Quality Gate thresholds to make the pipeline pass",
       "why_fails": "This defeats the purpose of quality gates. Technical debt accumulates, and code quality degrades continuously.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Skipping SonarQube analysis on the branch",
       "why_fails": "This bypasses the quality gate entirely. If the branch is merged, low-quality code enters the main branch without review.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "probability": 0.25, "condition": "when SonarQube coverage failures also trigger test runner coverage threshold failures"}
+      {
+        "error_id": "cicd/coverage-threshold-failed/gha-linux",
+        "probability": 0.25,
+        "condition": "when SonarQube coverage failures also trigger test runner coverage threshold failures"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "probability": 0.20, "condition": "when low coverage detected by test runner is also reported by SonarQube"}
+      {
+        "error_id": "cicd/coverage-threshold-failed/gha-linux",
+        "probability": 0.2,
+        "condition": "when low coverage detected by test runner is also reported by SonarQube"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "distinction": "sonarqube-quality-gate checks multiple metrics (coverage, bugs, vulnerabilities, code smells); coverage-threshold-failed is purely about code coverage percentage from the test runner"}
+      {
+        "error_id": "cicd/coverage-threshold-failed/gha-linux",
+        "distinction": "sonarqube-quality-gate checks multiple metrics (coverage, bugs, vulnerabilities, code smells); coverage-threshold-failed is purely about code coverage percentage from the test runner"
+      }
     ]
   },
   "metadata": {

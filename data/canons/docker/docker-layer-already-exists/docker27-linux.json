@@ -29,14 +29,18 @@
       "action": "Rebuilding the entire image with --no-cache to force new layers",
       "why_fails": "Creates entirely new layers that must all be re-uploaded, wasting bandwidth and time without fixing the actual push issue",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting remote repository and re-pushing everything",
       "why_fails": "Destroys all existing tags and digests; other consumers of the image will break",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

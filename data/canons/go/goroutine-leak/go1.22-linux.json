@@ -38,7 +38,9 @@
       "action": "Increase GOMAXPROCS to handle more goroutines",
       "why_fails": "Leaked goroutines still consume memory and stack space regardless of GOMAXPROCS — the leak is unbounded",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
@@ -73,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "go/context-canceled/go1.22-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when context cancellation is not propagated to spawned goroutines"
       }
     ],

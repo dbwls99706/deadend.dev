@@ -29,14 +29,18 @@
       "action": "Using --no-binary :all: to force source builds",
       "why_fails": "Actually makes the problem worse by requiring compilation for all packages",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Installing an older version of the package",
       "why_fails": "Older versions may have the same build requirements",
       "fail_rate": 0.45,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],

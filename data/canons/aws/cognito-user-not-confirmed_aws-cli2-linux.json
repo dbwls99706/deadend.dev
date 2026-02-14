@@ -29,14 +29,18 @@
       "action": "Deleting and recreating the user",
       "why_fails": "Loses any associated data; user must re-register",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling email verification on the user pool",
       "why_fails": "Removes a security measure; can't retroactively confirm existing users",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

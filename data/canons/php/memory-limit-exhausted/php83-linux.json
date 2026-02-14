@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Memory exhaustion in PHP typically results from loading large datasets into memory at once, infinite loops, circular references, or insufficient memory_limit configuration. The fix depends on whether the root cause is a code issue or a configuration issue."
   },
   "dead_ends": [
-    {"action": "Continuously increasing memory_limit in php.ini without investigating root cause", "why_fails": "Simply raising memory_limit masks the underlying problem. If the code has a memory leak or loads unbounded data, the error will return with larger datasets. Eventually system OOM killer may terminate the process.", "fail_rate": 0.72, "sources": [], "condition": ""},
-    {"action": "Using ini_set('memory_limit', '-1') in production code", "why_fails": "Setting unlimited memory in production risks crashing the entire server when a runaway process consumes all available RAM. This is a dangerous workaround that can cause cascading failures.", "fail_rate": 0.80, "sources": [], "condition": ""}
+    {
+      "action": "Continuously increasing memory_limit in php.ini without investigating root cause",
+      "why_fails": "Simply raising memory_limit masks the underlying problem. If the code has a memory leak or loads unbounded data, the error will return with larger datasets. Eventually system OOM killer may terminate the process.",
+      "fail_rate": 0.72,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using ini_set('memory_limit', '-1') in production code",
+      "why_fails": "Setting unlimited memory in production risks crashing the entire server when a runaway process consumes all available RAM. This is a dangerous workaround that can cause cascading failures.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Use generators or chunked processing for large datasets", "success_rate": 0.91, "how": "Replace array-based data loading with PHP generators (yield) or process data in chunks. For database queries, use cursor-based pagination or LIMIT/OFFSET. For file processing, use fgets() line-by-line instead of file_get_contents().", "sources": [], "condition": ""},
-    {"action": "Profile memory usage to find the leak and set an appropriate memory_limit", "success_rate": 0.87, "how": "Use memory_get_usage() and memory_get_peak_usage() at key points to identify where memory grows. Check for circular references and unset large variables when no longer needed. Then set memory_limit to a reasonable value (e.g., 256M) in php.ini.", "sources": [], "condition": ""}
+    {
+      "action": "Use generators or chunked processing for large datasets",
+      "success_rate": 0.91,
+      "how": "Replace array-based data loading with PHP generators (yield) or process data in chunks. For database queries, use cursor-based pagination or LIMIT/OFFSET. For file processing, use fgets() line-by-line instead of file_get_contents().",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Profile memory usage to find the leak and set an appropriate memory_limit",
+      "success_rate": 0.87,
+      "how": "Use memory_get_usage() and memory_get_peak_usage() at key points to identify where memory grows. Check for circular references and unset large variables when no longer needed. Then set memory_limit to a reasonable value (e.g., 256M) in php.ini.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/max-execution-time/php83-linux", "probability": 0.20, "condition": "when the memory issue is caused by an infinite loop that also exceeds time limits"}],
-    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.10, "condition": "when reconnection retry logic accumulates connections in memory"}],
-    "frequently_confused_with": [{"error_id": "php/segfault-extension/php83-linux", "distinction": "Memory exhaustion produces a clear PHP fatal error message while segfaults from extensions crash without a PHP-level error message"}]
+    "leads_to": [
+      {
+        "error_id": "php/max-execution-time/php83-linux",
+        "probability": 0.2,
+        "condition": "when the memory issue is caused by an infinite loop that also exceeds time limits"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "probability": 0.1,
+        "condition": "when reconnection retry logic accumulates connections in memory"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/segfault-extension/php83-linux",
+        "distinction": "Memory exhaustion produces a clear PHP fatal error message while segfaults from extensions crash without a PHP-level error message"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

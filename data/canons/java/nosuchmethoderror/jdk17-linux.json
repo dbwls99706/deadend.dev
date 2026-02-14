@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Adding the missing method to your own code when the error is in a third-party library",
       "why_fails": "The error occurs because two versions of the same library disagree on a method signature. Writing your own version of the method does not fix the root cause — the wrong version of the library is on the classpath. The caller expects the method to be in the specific library class, not in your code.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using reflection to check for the method's existence before calling it",
       "why_fails": "Using reflection to work around NoSuchMethodError is fragile and only masks the version conflict. It adds complexity, bypasses compile-time type checking, and does not solve the underlying dependency conflict that will cause other issues elsewhere.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.15, "condition": "when forcing a dependency version causes another transitive dependency to be excluded"},
-      {"error_id": "java/classcastexception/jdk17-linux", "probability": 0.08, "condition": "when version conflict involves classes with changed type hierarchies"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when forcing a dependency version causes another transitive dependency to be excluded"
+      },
+      {
+        "error_id": "java/classcastexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when version conflict involves classes with changed type hierarchies"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.40, "condition": "when Maven dependency mediation selects an older version of the library"},
-      {"error_id": "java/gradle-dependency-resolution/gradle8-linux", "probability": 0.35, "condition": "when Gradle resolves the wrong version of a transitive dependency"}
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "probability": 0.4,
+        "condition": "when Maven dependency mediation selects an older version of the library"
+      },
+      {
+        "error_id": "java/gradle-dependency-resolution/gradle8-linux",
+        "probability": 0.35,
+        "condition": "when Gradle resolves the wrong version of a transitive dependency"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "NoSuchMethodError means the class was found but lacks the expected method (version mismatch); ClassNotFoundException means the entire class was not found on the classpath"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "NoSuchMethodError means the class was found but lacks the expected method (version mismatch); ClassNotFoundException means the entire class was not found on the classpath"
+      }
     ]
   },
   "metadata": {

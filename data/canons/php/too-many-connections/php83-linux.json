@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.1,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.1,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,19 +25,78 @@
     "summary": "MySQL error 1040 occurs when the number of active connections exceeds the server's max_connections limit (default 151). In PHP applications this is commonly caused by: not closing database connections in long-running scripts, opening a new connection on every request without connection pooling, persistent connections accumulating beyond the limit, or multiple worker processes each holding their own connection. The fix involves both application-level connection management and MySQL server tuning."
   },
   "dead_ends": [
-    {"action": "Simply increasing max_connections in MySQL to a very high value like 10000", "why_fails": "Each MySQL connection consumes memory (approximately 10-20MB per thread). Setting max_connections extremely high without increasing available RAM causes MySQL to run out of memory and crash or trigger the OOM killer. This trades a connection limit error for a far worse total database outage. The underlying connection leak or mismanagement remains unfixed.", "fail_rate": 0.78, "sources": [], "condition": ""},
-    {"action": "Adding sleep() and retry loops around the database connection attempt", "why_fails": "If connections are leaking, retrying just adds more connections to the pool. Each retry attempt from each PHP process compounds the problem. Under load, retry storms accelerate exhaustion rather than relieving it. The application stalls while sleeping, degrading user experience without solving the root cause.", "fail_rate": 0.82, "sources": [], "condition": ""},
-    {"action": "Switching to persistent connections (PDO::ATTR_PERSISTENT) without understanding the implications", "why_fails": "Persistent connections survive between requests and are reused per PHP-FPM worker. However, if the worker pool size exceeds max_connections, the same exhaustion occurs. Persistent connections also retain transaction state, lock state, and session variables from previous requests, causing subtle data corruption or deadlocks. Without careful pool sizing this makes the problem worse.", "fail_rate": 0.70, "sources": [], "condition": ""}
+    {
+      "action": "Simply increasing max_connections in MySQL to a very high value like 10000",
+      "why_fails": "Each MySQL connection consumes memory (approximately 10-20MB per thread). Setting max_connections extremely high without increasing available RAM causes MySQL to run out of memory and crash or trigger the OOM killer. This trades a connection limit error for a far worse total database outage. The underlying connection leak or mismanagement remains unfixed.",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Adding sleep() and retry loops around the database connection attempt",
+      "why_fails": "If connections are leaking, retrying just adds more connections to the pool. Each retry attempt from each PHP process compounds the problem. Under load, retry storms accelerate exhaustion rather than relieving it. The application stalls while sleeping, degrading user experience without solving the root cause.",
+      "fail_rate": 0.82,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Switching to persistent connections (PDO::ATTR_PERSISTENT) without understanding the implications",
+      "why_fails": "Persistent connections survive between requests and are reused per PHP-FPM worker. However, if the worker pool size exceeds max_connections, the same exhaustion occurs. Persistent connections also retain transaction state, lock state, and session variables from previous requests, causing subtle data corruption or deadlocks. Without careful pool sizing this makes the problem worse.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Implement a singleton or shared database connection pattern and explicitly close connections after use", "success_rate": 0.90, "how": "Ensure each PHP request uses a single database connection instead of opening multiple. Use a dependency injection container or singleton pattern for the PDO instance. In long-running scripts or queue workers, explicitly call $pdo = null to close the connection when database work is complete. In frameworks like Laravel, call DB::disconnect() after processing each job in a queue worker. Verify connections are properly released by monitoring with 'SHOW PROCESSLIST' during load testing.", "sources": [], "condition": ""},
-    {"action": "Tune max_connections relative to PHP-FPM worker count and add a connection proxy like ProxySQL", "success_rate": 0.88, "how": "Set MySQL max_connections to at least (number of PHP-FPM workers) + (number of other clients) + 10 (reserved for admin). Check current usage with 'SHOW STATUS LIKE \"Max_used_connections\"'. For high-traffic applications, deploy ProxySQL or MySQL Router as a connection pooler between PHP and MySQL. ProxySQL multiplexes hundreds of application connections onto a smaller pool of actual MySQL connections, dramatically reducing server-side resource usage. Configure with: 'mysql_variables: {max_connections: 500}' in ProxySQL and keep MySQL max_connections at a safe level.", "sources": [], "condition": ""},
-    {"action": "Identify and terminate leaked connections, then fix the application code causing the leak", "success_rate": 0.85, "how": "Run 'SHOW FULL PROCESSLIST' to see all active connections and identify which application or user is consuming the most. Kill idle connections with 'KILL <process_id>'. Set wait_timeout and interactive_timeout in MySQL (e.g., 'SET GLOBAL wait_timeout = 300') to automatically close idle connections after 5 minutes. Then trace the leak in PHP: look for database connections created inside loops, connections in __construct() without corresponding cleanup, and PDO instances stored in static variables that prevent garbage collection. In Laravel, check for DB::connection() calls that create new connections instead of reusing the default.", "sources": [], "condition": ""}
+    {
+      "action": "Implement a singleton or shared database connection pattern and explicitly close connections after use",
+      "success_rate": 0.9,
+      "how": "Ensure each PHP request uses a single database connection instead of opening multiple. Use a dependency injection container or singleton pattern for the PDO instance. In long-running scripts or queue workers, explicitly call $pdo = null to close the connection when database work is complete. In frameworks like Laravel, call DB::disconnect() after processing each job in a queue worker. Verify connections are properly released by monitoring with 'SHOW PROCESSLIST' during load testing.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Tune max_connections relative to PHP-FPM worker count and add a connection proxy like ProxySQL",
+      "success_rate": 0.88,
+      "how": "Set MySQL max_connections to at least (number of PHP-FPM workers) + (number of other clients) + 10 (reserved for admin). Check current usage with 'SHOW STATUS LIKE \"Max_used_connections\"'. For high-traffic applications, deploy ProxySQL or MySQL Router as a connection pooler between PHP and MySQL. ProxySQL multiplexes hundreds of application connections onto a smaller pool of actual MySQL connections, dramatically reducing server-side resource usage. Configure with: 'mysql_variables: {max_connections: 500}' in ProxySQL and keep MySQL max_connections at a safe level.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Identify and terminate leaked connections, then fix the application code causing the leak",
+      "success_rate": 0.85,
+      "how": "Run 'SHOW FULL PROCESSLIST' to see all active connections and identify which application or user is consuming the most. Kill idle connections with 'KILL <process_id>'. Set wait_timeout and interactive_timeout in MySQL (e.g., 'SET GLOBAL wait_timeout = 300') to automatically close idle connections after 5 minutes. Then trace the leak in PHP: look for database connections created inside loops, connections in __construct() without corresponding cleanup, and PDO instances stored in static variables that prevent garbage collection. In Laravel, check for DB::connection() calls that create new connections instead of reusing the default.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.30, "condition": "when max_connections is reached, subsequent connection attempts receive connection refused errors instead of the 1040 error"}],
-    "preceded_by": [{"error_id": "php/fpm-pool-exhausted/php83-linux", "probability": 0.20, "condition": "when a large spike in PHP-FPM workers each open their own database connection simultaneously"}],
-    "frequently_confused_with": [{"error_id": "php/pdo-connection-failed/php83-linux", "distinction": "Too many connections (1040) means the MySQL server is running and reachable but has hit its connection limit, while PDO connection failed (2002) means the MySQL server is unreachable, not running, or the connection was refused at the network level."}]
+    "leads_to": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "probability": 0.3,
+        "condition": "when max_connections is reached, subsequent connection attempts receive connection refused errors instead of the 1040 error"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/fpm-pool-exhausted/php83-linux",
+        "probability": 0.2,
+        "condition": "when a large spike in PHP-FPM workers each open their own database connection simultaneously"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "distinction": "Too many connections (1040) means the MySQL server is running and reachable but has hit its connection limit, while PDO connection failed (2002) means the MySQL server is unreachable, not running, or the connection was refused at the network level."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

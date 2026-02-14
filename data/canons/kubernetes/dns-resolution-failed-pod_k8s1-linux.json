@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl get pods -n kube-system -l k8s-app=kube-dns"
     },
     {
       "action": "Test DNS from inside the pod: kubectl exec <pod> -- nslookup <service-name>",
@@ -59,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl exec"
     },
     {
       "action": "Use FQDN: service-name.namespace.svc.cluster.local for cross-namespace access",

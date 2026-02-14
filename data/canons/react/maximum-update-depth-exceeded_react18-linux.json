@@ -29,14 +29,18 @@
       "action": "Adding a counter to limit the number of updates",
       "why_fails": "Adds complexity without fixing the root cause; effect still fires unnecessarily",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing the useEffect entirely",
       "why_fails": "May break the feature that needs the side effect",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

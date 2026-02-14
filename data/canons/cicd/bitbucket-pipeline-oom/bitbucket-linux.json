@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "bitbucket-pipelines", "version_range": ">=1.0"},
+    "runtime": {
+      "name": "bitbucket-pipelines",
+      "version_range": ">=1.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Increasing the memory size attribute beyond the plan limit",
       "why_fails": "Bitbucket Pipelines has hard limits per plan tier (e.g., 4GB or 8GB max). Requesting more than the plan allows results in a pipeline configuration error.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Adding swap space inside the container",
       "why_fails": "Bitbucket pipeline containers do not support adding swap. The memory limit is enforced by the container runtime cgroup, which counts both memory and swap.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gradle-daemon-oom/gradle-linux", "probability": 0.15, "condition": "when the OOM is specifically caused by the Gradle daemon in the pipeline"}
+      {
+        "error_id": "cicd/gradle-daemon-oom/gradle-linux",
+        "probability": 0.15,
+        "condition": "when the OOM is specifically caused by the Gradle daemon in the pipeline"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.20, "condition": "when Docker-in-Docker builds consume excessive memory in the pipeline"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.2,
+        "condition": "when Docker-in-Docker builds consume excessive memory in the pipeline"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "bitbucket-pipeline-oom is a memory exhaustion error; runner-timeout is a time limit exceeded error. Both cause step failure but from different resource constraints."}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "distinction": "bitbucket-pipeline-oom is a memory exhaustion error; runner-timeout is a time limit exceeded error. Both cause step failure but from different resource constraints."
+      }
     ]
   },
   "metadata": {

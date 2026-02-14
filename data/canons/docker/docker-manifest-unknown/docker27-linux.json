@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "The specified image tag or digest does not exist in the registry. The image may have been deleted, the tag misspelled, or the platform architecture not available."
   },
@@ -28,22 +28,26 @@
     {
       "action": "Pulling with --platform flag when the image simply does not exist for that architecture",
       "why_fails": "If the image maintainer never published an arm64 variant, no platform flag will make it appear",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Clearing local Docker cache hoping it will fix the pull",
       "why_fails": "The issue is server-side; the manifest genuinely does not exist in the registry",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify the exact image name, tag, and registry URL",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Check the registry web UI or use: docker manifest inspect <image>:<tag> to confirm the manifest exists",
       "sources": [
         "https://docs.docker.com/reference/cli/docker/manifest/inspect/"
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "docker/unauthorized-authentication-required/docker24-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when authentication fails first, then manifest lookup fails"
       }
     ],

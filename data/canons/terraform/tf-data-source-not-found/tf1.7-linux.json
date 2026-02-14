@@ -29,14 +29,18 @@
       "action": "Add a depends_on to make the data source wait",
       "why_fails": "If the resource simply does not exist, waiting will not help; depends_on cannot create missing resources",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Use try() to ignore the missing data source error",
       "why_fails": "try() cannot suppress provider-level errors from data sources, only expression evaluation errors",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -75,7 +79,12 @@
         "condition": "Wrong credentials point to wrong account where resource does not exist"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-import-resource-exists/tf1.7-linux",
+        "distinction": "'Error: No matching resource found or data source returned no' vs 'Error: Resource already managed by Terraform or import ID no': while both are terraform errors, the former A data source query returned no results because the referenced resource does not while the latter Terraform import failed because the resource already exists in state or the impo."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

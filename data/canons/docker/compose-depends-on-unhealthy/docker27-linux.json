@@ -38,21 +38,27 @@
       "action": "Adding sleep commands in entrypoint scripts as a wait mechanism",
       "why_fails": "Sleep-based waits are brittle and slow. They do not actually check service health and fail silently if the dependency takes longer than the sleep duration. Docker Compose v2 has native health-check-based waiting.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "Fixed-duration sleeps are treated as reliable service readiness checks."
     },
     {
       "action": "Removing depends_on to let services start in parallel",
       "why_fails": "Services start simultaneously with no ordering, causing 'connection refused' errors when the application starts before the database is ready. This makes the problem worse by trading a clear error for intermittent failures.",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "Removing dependencies eliminates dependency-related errors."
     },
     {
       "action": "Setting restart: always to keep retrying the dependent service",
       "why_fails": "Creates an infinite restart loop: service fails → restarts → fails again. The dependency never becomes healthy just because the dependent restarts. Consumes resources and fills logs with repeated failures.",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "common_misconception": "Restart policies are a substitute for proper startup ordering."
     }
   ],

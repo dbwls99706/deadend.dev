@@ -59,7 +59,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "terraform force-unlock"
     },
     {
       "action": "Check CI/CD for parallel Terraform runs that need serialization",

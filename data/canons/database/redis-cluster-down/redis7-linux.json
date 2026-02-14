@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "redis",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Restarting all cluster nodes simultaneously to fix the cluster state",
       "why_fails": "Restarting all nodes at once causes a full cluster outage and can lead to data loss if nodes have unsaved data. Cluster state recovery depends on node gossip, and a full restart can cause split-brain if nodes come up at different times with stale cluster state.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Setting cluster-require-full-coverage to no as a permanent solution",
       "why_fails": "With cluster-require-full-coverage no, the cluster accepts commands for available slots but returns errors for keys in unavailable slots. This causes partial failures that are difficult for applications to handle correctly. It masks the real problem (missing slots) instead of fixing it.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.20, "condition": "when individual cluster nodes become unreachable after cluster failure"}
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "probability": 0.2,
+        "condition": "when individual cluster nodes become unreachable after cluster failure"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.20, "condition": "when a cluster node runs out of memory and crashes, leaving its slots unserved"}
+      {
+        "error_id": "database/redis-oom/redis7-linux",
+        "probability": 0.2,
+        "condition": "when a cluster node runs out of memory and crashes, leaving its slots unserved"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/redis-connection-refused/redis7-linux", "distinction": "CLUSTERDOWN means the cluster topology is broken (missing hash slots). Connection refused means a specific Redis node is not reachable. A cluster can be down even when all reachable nodes accept connections, if slot coverage is incomplete."}
+      {
+        "error_id": "database/redis-connection-refused/redis7-linux",
+        "distinction": "CLUSTERDOWN means the cluster topology is broken (missing hash slots). Connection refused means a specific Redis node is not reachable. A cluster can be down even when all reachable nodes accept connections, if slot coverage is incomplete."
+      }
     ]
   },
   "metadata": {

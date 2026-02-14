@@ -38,21 +38,27 @@
       "action": "Catching the error and retrying the same create operation",
       "why_fails": "A unique constraint violation is deterministic for the same input. Retrying with identical data produces the same error every time. This wastes database connections and creates confusing log noise.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "Unique constraint failures are treated as transient errors that may resolve on retry."
     },
     {
       "action": "Removing the @unique attribute from the Prisma schema",
       "why_fails": "Removes a critical data integrity constraint. Duplicate records cause cascading bugs in queries, authentication, and foreign key relationships. The constraint exists to protect data consistency.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "Removing the constraint fixes the 'error' when the constraint is actually protecting against a real application logic bug."
     },
     {
       "action": "Using upsert without matching on the correct unique field",
       "why_fails": "prisma.model.upsert requires the 'where' clause to match on the unique constraint field. If you match on 'id' instead of 'email', you create duplicates because the 'where' misses the conflicting record.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "Upsert automatically handles all unique constraints. It only handles the one matched in the 'where' clause."
     }
   ],

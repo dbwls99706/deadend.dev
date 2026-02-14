@@ -72,7 +72,8 @@
       "sources": [
         "https://pytorch.org/get-started/locally/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install torch --index-url "
     }
   ],
   "transition_graph": {

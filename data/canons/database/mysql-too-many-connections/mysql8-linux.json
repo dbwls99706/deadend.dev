@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "All MySQL connection slots (max_connections, default 151) are in use. No new connections can be established including admin connections. Caused by connection leaks, missing connection pooling, or sudden traffic spikes."
@@ -25,15 +28,19 @@
     {
       "action": "Setting max_connections extremely high (e.g., 10000) without corresponding OS and hardware tuning",
       "why_fails": "Each MySQL connection uses a thread with its own memory allocation. High max_connections without increasing open_files_limit, thread stack, and available RAM leads to OOM or 'Can't create a new thread' errors.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Rapidly restarting MySQL to reset connections",
       "why_fails": "Restarting kills all connections and in-flight transactions abruptly. Without fixing the root cause, connections exhaust again within minutes. Repeated restarts cause data corruption risk with InnoDB recovery.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.20, "condition": "when high connection count causes more concurrent transactions competing for locks"}
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.2,
+        "condition": "when high connection count causes more concurrent transactions competing for locks"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.25, "condition": "when lock contention causes transactions to pile up holding connections"}
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.25,
+        "condition": "when lock contention causes transactions to pile up holding connections"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/too-many-connections/pg16-linux", "distinction": "MySQL ERROR 1040 and PostgreSQL 'too many connections' are the same concept in different databases. MySQL default is 151, PostgreSQL default is 100. MySQL reserves one connection for SUPER users, PostgreSQL has superuser_reserved_connections (default 3)."}
+      {
+        "error_id": "database/too-many-connections/pg16-linux",
+        "distinction": "MySQL ERROR 1040 and PostgreSQL 'too many connections' are the same concept in different databases. MySQL default is 151, PostgreSQL default is 100. MySQL reserves one connection for SUPER users, PostgreSQL has superuser_reserved_connections (default 3)."
+      }
     ]
   },
   "metadata": {

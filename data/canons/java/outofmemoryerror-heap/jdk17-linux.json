@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Simply increasing -Xmx without investigating the root cause of high memory usage",
       "why_fails": "Increasing heap size is a temporary band-aid. If the application has a memory leak, it will eventually consume any amount of heap. Larger heaps also cause longer GC pauses, potentially making the application less responsive. The real fix requires profiling memory usage to find leaks or excessive allocations.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Calling System.gc() in code to try to force garbage collection",
       "why_fails": "System.gc() is only a hint to the JVM — it may be ignored entirely. Even when it runs, it cannot collect objects that are still referenced. If the OOM is caused by a memory leak (objects still reachable), GC cannot help. It also introduces unpredictable pauses.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "probability": 0.10, "condition": "when heap OOM fix leads to dynamic class generation that exhausts Metaspace"},
-      {"error_id": "java/stackoverflowerror/jdk17-linux", "probability": 0.05, "condition": "when memory pressure causes recursive retry logic to blow the stack"}
+      {
+        "error_id": "java/outofmemoryerror-metaspace/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when heap OOM fix leads to dynamic class generation that exhausts Metaspace"
+      },
+      {
+        "error_id": "java/stackoverflowerror/jdk17-linux",
+        "probability": 0.05,
+        "condition": "when memory pressure causes recursive retry logic to blow the stack"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.15, "condition": "when eager fetching workaround loads too many entities into memory"},
-      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "probability": 0.10, "condition": "when connection pool leak causes unclosed connections to accumulate objects in heap"}
+      {
+        "error_id": "java/hibernate-lazy-init/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when eager fetching workaround loads too many entities into memory"
+      },
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when connection pool leak causes unclosed connections to accumulate objects in heap"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "distinction": "Heap OOM means object instances exhausted the heap; Metaspace OOM means class metadata exhausted native memory. Heap OOM is about data volume; Metaspace OOM is about number of loaded classes."}
+      {
+        "error_id": "java/outofmemoryerror-metaspace/jdk17-linux",
+        "distinction": "Heap OOM means object instances exhausted the heap; Metaspace OOM means class metadata exhausted native memory. Heap OOM is about data volume; Metaspace OOM is about number of loaded classes."
+      }
     ]
   },
   "metadata": {

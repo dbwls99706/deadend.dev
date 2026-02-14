@@ -59,7 +59,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/installation/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install --upgrade pip"
     }
   ],
   "transition_graph": {

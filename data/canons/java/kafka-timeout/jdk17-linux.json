@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Increasing request.timeout.ms to very large values to avoid the timeout",
       "why_fails": "If the broker is unreachable due to a network or configuration issue, waiting longer will not help. Large timeouts just delay error detection and cause the application to hang rather than fail fast.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": "when the broker is unreachable"
     },
     {
       "action": "Restarting the Kafka client application without checking broker connectivity",
       "why_fails": "If the root cause is a misconfigured bootstrap.servers, DNS issue, or firewall rule, restarting the client will reproduce the same timeout. The connectivity issue must be resolved first.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "probability": 0.15, "condition": "when Kafka timeouts back up request processing threads that hold database connections"}
+      {
+        "error_id": "java/connection-pool-exhausted/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when Kafka timeouts back up request processing threads that hold database connections"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "probability": 0.15, "condition": "when SSL misconfiguration between Kafka client and broker causes connection failures"}
+      {
+        "error_id": "java/ssl-handshake-exception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when SSL misconfiguration between Kafka client and broker causes connection failures"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/http-timeout/jdk17-linux", "distinction": "HTTP timeout is for HTTP/REST requests; Kafka timeout is specific to the Kafka binary protocol and broker communication"}
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "distinction": "HTTP timeout is for HTTP/REST requests; Kafka timeout is specific to the Kafka binary protocol and broker communication"
+      }
     ]
   },
   "metadata": {

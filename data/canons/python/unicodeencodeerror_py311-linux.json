@@ -29,14 +29,18 @@
       "action": "Using .encode('ascii', errors='ignore')",
       "why_fails": "Silently drops characters; corrupts the data",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     },
     {
       "action": "Replacing with .encode('latin-1')",
       "why_fails": "Only supports 0-255 codepoints; still fails for CJK, emoji, etc.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     }
   ],

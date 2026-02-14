@@ -29,14 +29,18 @@
       "action": "Removing HEALTHCHECK from Dockerfile",
       "why_fails": "Container appears healthy but may not actually be serving traffic",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Setting the health check to always return 0",
       "why_fails": "Defeats the purpose; orchestrators think the container is always healthy",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

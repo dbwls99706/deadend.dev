@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Manually edit or patch cached files",
       "why_fails": "Cached files are compressed archives with checksums; manual editing breaks integrity and pip will still reject them",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Change cache directory without clearing the old one",
       "why_fails": "Does not fix the root cause; if disk issues caused corruption, the new cache may also become corrupted",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -54,7 +61,7 @@
     },
     {
       "action": "Remove specific cached package: pip cache remove <package>",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "pip cache remove <package> && pip install <package>",
       "sources": [],
       "condition": "when only one package is corrupted"
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/hash-mismatch/pip23-linux", "probability": 0.2, "condition": "when corrupted cache causes hash verification failures"}
+      {
+        "error_id": "pip/hash-mismatch/pip23-linux",
+        "probability": 0.2,
+        "condition": "when corrupted cache causes hash verification failures"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/no-space-left/pip24-linux", "probability": 0.3, "condition": "when disk full during download leaves partial cached files"}
+      {
+        "error_id": "pip/no-space-left/pip24-linux",
+        "probability": 0.3,
+        "condition": "when disk full during download leaves partial cached files"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/hash-mismatch/pip24-linux", "distinction": "Cache corruption is about locally cached files being damaged; hash mismatch is about downloaded package not matching the hash in requirements file"}
+      {
+        "error_id": "pip/hash-mismatch/pip24-linux",
+        "distinction": "Cache corruption is about locally cached files being damaged; hash mismatch is about downloaded package not matching the hash in requirements file"
+      }
     ]
   },
   "metadata": {

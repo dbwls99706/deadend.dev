@@ -29,14 +29,18 @@
       "action": "Using useEffect + useState to subscribe to the external store instead of useSyncExternalStore",
       "why_fails": "useEffect subscriptions have a timing gap: the store can change between render and the effect running, causing the component to show stale data for one frame (the tearing problem that useSyncExternalStore was designed to fix). In concurrent mode, this gap can cause visible UI inconsistencies where components show different values from the same store.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling concurrent features (using ReactDOM.render instead of createRoot) to avoid tearing",
       "why_fails": "ReactDOM.render uses synchronous rendering where tearing cannot occur, but it disables all React 18 features (automatic batching, transitions, Suspense for data fetching, streaming SSR). This is a regression to React 17 behavior and the legacy API is deprecated.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

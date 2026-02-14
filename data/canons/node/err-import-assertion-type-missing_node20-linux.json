@@ -29,14 +29,18 @@
       "action": "Converting the JSON file to a .js module that exports the data",
       "why_fails": "Extra build step; breaks co-located config patterns",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Switching back to CommonJS to use require()",
       "why_fails": "Loses ESM benefits for the whole project",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

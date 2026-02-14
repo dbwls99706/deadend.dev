@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Retry the connection repeatedly without addressing the routing issue",
       "why_fails": "EHOSTUNREACH is a definitive routing error. The kernel or an intermediate router has determined there is no path to the destination. Retrying does nothing unless the network topology changes, which requires manual intervention or automated failover to trigger.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Change the application-level protocol or port number",
       "why_fails": "Host unreachable is a network-layer (IP/ICMP) error that occurs before any port or protocol negotiation. The issue is that IP packets cannot reach the host at all, so changing the destination port or switching between HTTP/HTTPS has no effect.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when routing is partially restored but firewall silently drops packets"},
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.20, "condition": "when routing is fixed and the host is reachable but the service is not running"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.25,
+        "condition": "when routing is partially restored but firewall silently drops packets"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.2,
+        "condition": "when routing is fixed and the host is reachable but the service is not running"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS resolves to a non-routable or decommissioned IP address"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when a route change converts a previously timed-out path into a definitively unreachable one"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.1,
+        "condition": "when DNS resolves to a non-routable or decommissioned IP address"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when a route change converts a previously timed-out path into a definitively unreachable one"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "Host unreachable is an active ICMP response indicating no route exists; timeout is the absence of any response, often caused by firewalls silently dropping packets"},
-      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "Host unreachable means the host cannot be reached at the IP level; connection refused means the host was reached and actively rejected the TCP connection on a specific port"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "Host unreachable is an active ICMP response indicating no route exists; timeout is the absence of any response, often caused by firewalls silently dropping packets"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "distinction": "Host unreachable means the host cannot be reached at the IP level; connection refused means the host was reached and actively rejected the TCP connection on a specific port"
+      }
     ]
   },
   "metadata": {

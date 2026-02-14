@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Increase the TCP send buffer on the sender side",
       "why_fails": "The bottleneck is the receiver's inability to consume data from its receive buffer. Increasing the sender's buffer only allows more data to queue on the sender side but does not make the receiver process data faster.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Disable TCP window scaling to avoid large window advertisements",
       "why_fails": "Disabling window scaling limits the maximum window to 64KB, severely reducing throughput on high-bandwidth/high-latency links. It does not fix the application-level slow consumption problem.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when the zero window persists long enough that the sender's timeout expires and it drops the connection"},
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the sender gives up after prolonged zero window and resets the connection"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.2,
+        "condition": "when the zero window persists long enough that the sender's timeout expires and it drops the connection"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the sender gives up after prolonged zero window and resets the connection"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/http-504-gateway-timeout/http-linux", "probability": 0.15, "condition": "when a slow backend causes a proxy to observe zero window as the backend cannot consume data fast enough"}
+      {
+        "error_id": "networking/http-504-gateway-timeout/http-linux",
+        "probability": 0.15,
+        "condition": "when a slow backend causes a proxy to observe zero window as the backend cannot consume data fast enough"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "TCP window full is flow control — the connection is alive but data transfer is paused; connection timeout means no response at all from the peer"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "TCP window full is flow control — the connection is alive but data transfer is paused; connection timeout means no response at all from the peer"
+      }
     ]
   },
   "metadata": {

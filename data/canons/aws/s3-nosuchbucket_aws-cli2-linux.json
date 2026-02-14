@@ -29,14 +29,18 @@
       "action": "Creating a new bucket with the same name",
       "why_fails": "S3 bucket names are globally unique; may be taken",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the bucket policy",
       "why_fails": "Bucket doesn't exist; no policy to change",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

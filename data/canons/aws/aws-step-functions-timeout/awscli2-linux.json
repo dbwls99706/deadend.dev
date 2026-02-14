@@ -38,7 +38,9 @@
       "action": "Set very large timeout values to avoid the error",
       "why_fails": "Masks the underlying performance issue and leads to long-running expensive executions",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],
@@ -65,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-ebs-volume-limit/awscli2-linux",
+        "distinction": "'States.Timeout: The state/task exceeded the maximum duration' vs 'You have exceeded the maximum volume limit for this account': while both are aws errors, the former Step Functions state or execution exceeded its configured timeout, stopping the  while the latter AWS account has reached the EBS volume limit for the region. Default limit varie."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

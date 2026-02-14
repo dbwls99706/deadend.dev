@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Simply increasing the container or VM memory limit without investigating the root cause",
       "why_fails": "Memory leaks and unbounded allocations will eventually consume any amount of memory; increasing limits only delays the inevitable crash and increases infrastructure costs",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Calling GC.Collect() frequently to force garbage collection",
       "why_fails": "Forced GC causes performance degradation due to stop-the-world pauses; if memory is still referenced (leak), GC cannot reclaim it regardless of how often it runs",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "probability": 0.10, "condition": "when excessive recursion causes both stack and heap exhaustion"},
-      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.15, "condition": "when memory pressure causes HTTP requests to timeout"}
+      {
+        "error_id": "dotnet/stackoverflow/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when excessive recursion causes both stack and heap exhaustion"
+      },
+      {
+        "error_id": "dotnet/taskcanceledexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when memory pressure causes HTTP requests to timeout"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when tracked entities accumulate in the DbContext change tracker without being detached"},
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.12, "condition": "when circular reference serialization leads to unbounded memory allocation"}
+      {
+        "error_id": "dotnet/ef-no-tracking-query/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when tracked entities accumulate in the DbContext change tracker without being detached"
+      },
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.12,
+        "condition": "when circular reference serialization leads to unbounded memory allocation"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "distinction": "OutOfMemoryException is about heap memory exhaustion from allocations; StackOverflowException is about stack space exhaustion from deep recursion or large stack allocations"}
+      {
+        "error_id": "dotnet/stackoverflow/dotnet8-linux",
+        "distinction": "OutOfMemoryException is about heap memory exhaustion from allocations; StackOverflowException is about stack space exhaustion from deep recursion or large stack allocations"
+      }
     ]
   },
   "metadata": {

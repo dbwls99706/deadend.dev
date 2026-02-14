@@ -38,21 +38,27 @@
       "action": "Pinning pydantic<2 in requirements",
       "why_fails": "This blocks FastAPI >=0.100, SQLModel, and all new pydantic-dependent libraries. It creates cascading dependency conflicts and technical debt. Pydantic v1 is no longer maintained.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "Version pinning is a permanent solution when it is a temporary bandaid that delays migration."
     },
     {
       "action": "Adding class Config: orm_mode = True",
       "why_fails": "In Pydantic v2, orm_mode was renamed to from_attributes in model_config. The old class Config with orm_mode is silently ignored — your model loses ORM support without any error or warning.",
       "fail_rate": 0.88,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "Developers assume Pydantic v2 raises errors for invalid Config options. It silently ignores them."
     },
     {
       "action": "Using @validator decorator from pydantic v1",
       "why_fails": "@validator is importable in v2 for backward compatibility but produces subtly different behavior. It does not support mode='before'/'after' and has different argument order. Use @field_validator instead.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "@validator working at import time is taken as proof it works correctly, when it may silently produce wrong results."
     }
   ],

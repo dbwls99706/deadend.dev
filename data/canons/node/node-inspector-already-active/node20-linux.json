@@ -28,15 +28,19 @@
     {
       "action": "Running multiple --inspect processes without specifying different ports",
       "why_fails": "All default to port 9229; only the first one succeeds, the rest fail with this error",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Killing all Node.js processes to free the port",
       "why_fails": "Kills production processes along with debug ones; overly destructive approach",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],
@@ -52,7 +56,7 @@
     },
     {
       "action": "Find and kill the process using port 9229",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "lsof -i :9229 to find the PID, then kill <PID>",
       "sources": [
         "https://nodejs.org/api/debugger.html"
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "node/eaddrinuse-port/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when developers start debugging port-in-use issues"
       }
     ],

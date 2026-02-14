@@ -95,7 +95,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "go/context-deadline-exceeded/go1-linux",
+        "distinction": "'context deadline exceeded' vs 'context deadline exceeded': while both are go errors in the timeout_error category, the former The context's deadline expired before the operation completed. This can indicate while the latter Operation timed out via context.WithTimeout/WithDeadline. Server call or DB quer."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

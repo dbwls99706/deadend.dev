@@ -38,7 +38,9 @@
       "action": "Increasing disk size without pruning",
       "why_fails": "Docker will fill the new space too if images are not cleaned up",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

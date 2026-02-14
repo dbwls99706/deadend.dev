@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Granting privileges without first creating the user or fixing the password",
       "why_fails": "GRANT statements require the user to already exist in MySQL 8+. Running GRANT on a non-existent user fails. Even if the user exists, GRANT does not change the password.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Editing the mysql.user table directly with UPDATE statements",
       "why_fails": "Directly modifying mysql.user without running FLUSH PRIVILEGES is ineffective. Additionally, MySQL 8 uses caching_sha2_password by default, and manually editing password hashes is error-prone and insecure.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "probability": 0.20, "condition": "when user authenticates but connects to the wrong database lacking expected tables"}
+      {
+        "error_id": "database/mysql-table-doesnt-exist/mysql8-linux",
+        "probability": 0.2,
+        "condition": "when user authenticates but connects to the wrong database lacking expected tables"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "probability": 0.10, "condition": "when connection limit is hit and user creates a new account to bypass, but with wrong privileges"}
+      {
+        "error_id": "database/mysql-too-many-connections/mysql8-linux",
+        "probability": 0.1,
+        "condition": "when connection limit is hit and user creates a new account to bypass, but with wrong privileges"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/authentication-failed/pg16-linux", "distinction": "MySQL uses ERROR 1045 'Access denied for user' while PostgreSQL uses 'FATAL: password authentication failed'. MySQL error includes the host part (@'localhost') which is significant for access control."}
+      {
+        "error_id": "database/authentication-failed/pg16-linux",
+        "distinction": "MySQL uses ERROR 1045 'Access denied for user' while PostgreSQL uses 'FATAL: password authentication failed'. MySQL error includes the host part (@'localhost') which is significant for access control."
+      }
     ]
   },
   "metadata": {

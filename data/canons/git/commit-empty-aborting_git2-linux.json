@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--mltmsggt"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git commit -m 'your message'"
     },
     {
       "action": "Set your preferred editor: git config --global core.editor 'code --wait'",
@@ -59,7 +60,8 @@
       "sources": [
         "https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git config --global core.editor 'code --wait'"
     }
   ],
   "transition_graph": {

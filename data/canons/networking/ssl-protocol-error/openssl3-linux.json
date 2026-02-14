@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "runtime": {
+      "name": "openssl",
+      "version_range": "3.x"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Force the client to use SSL 3.0 or TLS 1.0 to maximize compatibility",
       "why_fails": "SSL 3.0 is vulnerable to POODLE and TLS 1.0 to BEAST. Most modern servers disable these protocols entirely, so forcing them will result in the same handshake failure or a different error. OpenSSL 3.x has removed SSL 3.0 support by default.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Disable all cipher suite restrictions to allow any cipher",
       "why_fails": "Setting cipher strings to ALL or COMPLEMENTOFALL enables insecure ciphers that servers may still reject. OpenSSL 3.x has deprecated many legacy ciphers, and enabling them requires loading the legacy provider which introduces security risks.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/tls-version-unsupported/openssl3-linux", "probability": 0.25, "condition": "when the protocol error is specifically due to TLS version mismatch"},
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the server abruptly terminates the connection after handshake failure"}
+      {
+        "error_id": "networking/tls-version-unsupported/openssl3-linux",
+        "probability": 0.25,
+        "condition": "when the protocol error is specifically due to TLS version mismatch"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the server abruptly terminates the connection after handshake failure"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/tls-version-unsupported/openssl3-linux", "probability": 0.20, "condition": "when attempting to work around version issues introduces cipher mismatches"},
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.10, "condition": "when updating OpenSSL to fix verification changes default protocol settings"}
+      {
+        "error_id": "networking/tls-version-unsupported/openssl3-linux",
+        "probability": 0.2,
+        "condition": "when attempting to work around version issues introduces cipher mismatches"
+      },
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "probability": 0.1,
+        "condition": "when updating OpenSSL to fix verification changes default protocol settings"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/tls-version-unsupported/openssl3-linux", "distinction": "Protocol errors cover all handshake failures including cipher mismatches; TLS version unsupported is specifically about the TLS version negotiation failing"},
-      {"error_id": "networking/connection-reset/tcp-linux", "distinction": "Protocol errors occur during TLS negotiation; connection reset is a TCP-level event that can happen at any point and may have non-TLS causes"}
+      {
+        "error_id": "networking/tls-version-unsupported/openssl3-linux",
+        "distinction": "Protocol errors cover all handshake failures including cipher mismatches; TLS version unsupported is specifically about the TLS version negotiation failing"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "distinction": "Protocol errors occur during TLS negotiation; connection reset is a TCP-level event that can happen at any point and may have non-TLS causes"
+      }
     ]
   },
   "metadata": {

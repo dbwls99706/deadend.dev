@@ -29,14 +29,18 @@
       "action": "Using reflect to modify the field",
       "why_fails": "Overly complex; bypasses type safety",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Using unsafe.Pointer to get the address",
       "why_fails": "Map values may move during rehashing; undefined behavior",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "File upload size limit errors occur when the uploaded file exceeds PHP's post_max_size or upload_max_filesize directive. Both directives must be set, and the web server (nginx/apache) may also impose its own limits."
   },
   "dead_ends": [
-    {"action": "Only increasing upload_max_filesize without also increasing post_max_size", "why_fails": "post_max_size must be larger than upload_max_filesize. If post_max_size is smaller, the POST body is rejected before PHP even processes the file upload, and $_FILES will be empty with no clear error.", "fail_rate": 0.78, "sources": [], "condition": ""},
-    {"action": "Setting PHP directives via ini_set() in the upload handler script", "why_fails": "post_max_size and upload_max_filesize cannot be set at runtime with ini_set() because they are PHP_INI_PERDIR directives. The POST body is already rejected before the script starts executing.", "fail_rate": 0.85, "sources": [], "condition": ""}
+    {
+      "action": "Only increasing upload_max_filesize without also increasing post_max_size",
+      "why_fails": "post_max_size must be larger than upload_max_filesize. If post_max_size is smaller, the POST body is rejected before PHP even processes the file upload, and $_FILES will be empty with no clear error.",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Setting PHP directives via ini_set() in the upload handler script",
+      "why_fails": "post_max_size and upload_max_filesize cannot be set at runtime with ini_set() because they are PHP_INI_PERDIR directives. The POST body is already rejected before the script starts executing.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Set upload_max_filesize, post_max_size, and web server limits together", "success_rate": 0.95, "how": "In php.ini: set upload_max_filesize = 64M, post_max_size = 70M (slightly larger). For Nginx, set client_max_body_size 70m in the server block. For Apache, set LimitRequestBody. Restart PHP-FPM and the web server.", "sources": [], "condition": ""},
-    {"action": "Implement chunked file uploads for large files", "success_rate": 0.88, "how": "Use a JavaScript uploader like Resumable.js or tus-js-client to split files into small chunks (e.g., 2MB each). The server receives each chunk separately and assembles them. This avoids hitting PHP limits entirely and supports resume on failure.", "sources": [], "condition": ""}
+    {
+      "action": "Set upload_max_filesize, post_max_size, and web server limits together",
+      "success_rate": 0.95,
+      "how": "In php.ini: set upload_max_filesize = 64M, post_max_size = 70M (slightly larger). For Nginx, set client_max_body_size 70m in the server block. For Apache, set LimitRequestBody. Restart PHP-FPM and the web server.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement chunked file uploads for large files",
+      "success_rate": 0.88,
+      "how": "Use a JavaScript uploader like Resumable.js or tus-js-client to split files into small chunks (e.g., 2MB each). The server receives each chunk separately and assembles them. This avoids hitting PHP limits entirely and supports resume on failure.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.20, "condition": "when upload limits are raised but PHP memory_limit is not increased to handle the larger file in memory"}],
-    "preceded_by": [{"error_id": "php/permission-denied-storage/php83-linux", "probability": 0.10, "condition": "when upload directory permissions were being investigated and the size limit was the actual issue"}],
-    "frequently_confused_with": [{"error_id": "php/max-execution-time/php83-linux", "distinction": "Upload size limit errors reject the request immediately with a size message, while max execution time errors occur after the timeout period during processing"}]
+    "leads_to": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.2,
+        "condition": "when upload limits are raised but PHP memory_limit is not increased to handle the larger file in memory"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/permission-denied-storage/php83-linux",
+        "probability": 0.1,
+        "condition": "when upload directory permissions were being investigated and the size limit was the actual issue"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/max-execution-time/php83-linux",
+        "distinction": "Upload size limit errors reject the request immediately with a size message, while max execution time errors occur after the timeout period during processing"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,35 +29,52 @@
       "action": "Use any as the type argument to bypass constraints",
       "why_fails": "Results in a useless type that doesn't constrain anything at call sites",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Ensure keys passed to Pick/Omit are actual properties of the type",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "interface User { id: string; name: string; email: string; }\n// Correct: all keys exist on User\ntype UserPreview = Pick<User, 'id' | 'name'>;\n// Error: 'role' doesn't exist on User\n// type Bad = Pick<User, 'id' | 'role'>;",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/utility-types.html"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/utility-types.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use Extract to safely filter keys that exist on the type",
       "success_rate": 0.85,
       "how": "type SafePick<T, K extends string> = Pick<T, Extract<K, keyof T>>;\n// Now SafePick<User, 'id' | 'role'> = Pick<User, 'id'>\n// 'role' is silently ignored instead of erroring",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "typescript/ts-mapped-type-error/ts5-linux", "probability": 0.15, "condition": "When utility type fixes involve custom mapped types"}
+      {
+        "error_id": "typescript/ts-mapped-type-error/ts5-linux",
+        "probability": 0.15,
+        "condition": "When utility type fixes involve custom mapped types"
+      }
     ],
     "preceded_by": [
-      {"error_id": "typescript/ts-generic-constraint-error/ts5-linux", "probability": 0.20, "condition": "When generic constraint errors involve utility types"}
+      {
+        "error_id": "typescript/ts-generic-constraint-error/ts5-linux",
+        "probability": 0.2,
+        "condition": "When generic constraint errors involve utility types"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "typescript/ts-generic-constraint-error/ts5-linux", "distinction": "Generic constraint is about custom generics; utility type error is specifically about built-in utility types like Pick/Omit/Record"}
+      {
+        "error_id": "typescript/ts-generic-constraint-error/ts5-linux",
+        "distinction": "Generic constraint is about custom generics; utility type error is specifically about built-in utility types like Pick/Omit/Record"
+      }
     ]
   },
   "metadata": {

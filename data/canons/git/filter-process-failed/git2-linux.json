@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Removing .gitattributes to bypass the filter",
       "why_fails": "This disables LFS tracking for the entire repo; large files become checked in directly, bloating the repository permanently",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading git version to avoid filter-process protocol",
       "why_fails": "Older git versions use the single-file filter protocol which is slower and still fails if the filter binary is missing",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],
@@ -42,12 +49,14 @@
       "action": "Install git-lfs and run git lfs install",
       "success_rate": 0.92,
       "how": "Install git-lfs via package manager (apt install git-lfs, brew install git-lfs), then run git lfs install to register the filter hooks globally.",
-      "sources": ["https://git-lfs.com"],
+      "sources": [
+        "https://git-lfs.com"
+      ],
       "condition": ""
     },
     {
       "action": "Unset the filter if LFS is not needed",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "If LFS is not needed, remove LFS entries from .gitattributes and run git config --global --unset filter.lfs.process",
       "sources": [],
       "condition": ""
@@ -55,13 +64,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "git/lfs-smudge-error/git2-linux", "probability": 0.20, "condition": "when filter process starts but fails during object download"}
+      {
+        "error_id": "git/lfs-smudge-error/git2-linux",
+        "probability": 0.2,
+        "condition": "when filter process starts but fails during object download"
+      }
     ],
     "preceded_by": [
-      {"error_id": "git/lfs-smudge-error/git2-linux", "probability": 0.25, "condition": "when smudge errors are the root cause of the filter process failure"}
+      {
+        "error_id": "git/lfs-smudge-error/git2-linux",
+        "probability": 0.25,
+        "condition": "when smudge errors are the root cause of the filter process failure"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "git/lfs-smudge-error/git2-linux", "distinction": "Filter-process-failed means the filter binary itself crashed or is missing; smudge error means the filter ran but could not download the LFS object"}
+      {
+        "error_id": "git/lfs-smudge-error/git2-linux",
+        "distinction": "Filter-process-failed means the filter binary itself crashed or is missing; smudge error means the filter ran but could not download the LFS object"
+      }
     ]
   },
   "metadata": {

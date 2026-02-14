@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Deleting WAL segments manually from pg_wal directory",
       "why_fails": "Manually removing WAL files corrupts the replication stream and can make the database unrecoverable. PostgreSQL manages WAL files internally and requires them for crash recovery and replication. The slot will still retain its position, so new WAL segments will continue to accumulate.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Setting max_slot_wal_keep_size without also monitoring and dropping unused slots",
       "why_fails": "max_slot_wal_keep_size caps WAL retention per slot, but when the limit is reached, the slot becomes invalidated and the subscriber must be re-initialized from scratch. This does not fix the root cause of why the slot consumer is not keeping up.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.35, "condition": "when accumulated WAL from inactive slot fills the disk"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.35,
+        "condition": "when accumulated WAL from inactive slot fills the disk"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when subscriber loses connection to primary and the replication slot becomes inactive"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.2,
+        "condition": "when subscriber loses connection to primary and the replication slot becomes inactive"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/pg-wal-level-insufficient/pg16-linux", "distinction": "WAL level insufficient means wal_level is not set to 'logical' for logical replication. Replication slot inactive is about a slot that exists but has no active consumer. Both relate to replication but have different root causes."}
+      {
+        "error_id": "database/pg-wal-level-insufficient/pg16-linux",
+        "distinction": "WAL level insufficient means wal_level is not set to 'logical' for logical replication. Replication slot inactive is about a slot that exists but has no active consumer. Both relate to replication but have different root causes."
+      }
     ]
   },
   "metadata": {

@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "PostgreSQL cannot find a function with the given name and argument types. This usually means: the function was not created in the current database/schema, the argument types do not exactly match (PostgreSQL does strict type matching), or the search_path does not include the schema where the function exists. Also common when an extension providing the function was not installed."
@@ -25,22 +28,26 @@
     {
       "action": "Casting all arguments to text to bypass type matching",
       "why_fails": "Casting to text may call a different overloaded function or fail entirely. PostgreSQL's function resolution depends on exact type matching. Casting loses type safety and can cause incorrect results or runtime errors inside the function.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Creating the function in the public schema assuming all databases share it",
       "why_fails": "PostgreSQL functions are per-database, not cluster-wide. Creating a function in database A does not make it available in database B. Each database that needs the function must have it created separately.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify the function exists and check the search_path",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Check if the function exists: SELECT proname, proargtypes FROM pg_proc WHERE proname = 'my_function'; Check search_path: SHOW search_path; If the function is in a non-default schema, either qualify the call (schema.function()) or add the schema to search_path: SET search_path TO public, my_schema;",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.20, "condition": "when application code calls functions that migrations failed to create"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.2,
+        "condition": "when application code calls functions that migrations failed to create"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/pg-extension-not-found/pg16-linux", "probability": 0.25, "condition": "when the function is provided by an extension that was never installed"}
+      {
+        "error_id": "database/pg-extension-not-found/pg16-linux",
+        "probability": 0.25,
+        "condition": "when the function is provided by an extension that was never installed"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Function does not exist is about missing functions or wrong argument types. Relation does not exist is about missing tables or views. Both can be caused by wrong search_path or missing migrations."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "Function does not exist is about missing functions or wrong argument types. Relation does not exist is about missing tables or views. Both can be caused by wrong search_path or missing migrations."
+      }
     ]
   },
   "metadata": {

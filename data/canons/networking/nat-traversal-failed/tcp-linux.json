@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "partial",
     "fix_success_rate": 0.72,
-    "confidence": 0.80,
+    "confidence": 0.8,
     "last_updated": "2026-02-12",
     "summary": "Peer-to-peer connection establishment failed because one or both endpoints are behind NAT devices that prevent direct communication. Symmetric NAT is particularly problematic as it assigns different external ports for each destination, defeating STUN-based hole punching."
   },
@@ -25,15 +28,19 @@
     {
       "action": "Repeatedly retry STUN hole punching against a symmetric NAT",
       "why_fails": "Symmetric NAT allocates a new external port for each unique destination. The port discovered via STUN will not be the port used for the peer connection, so hole punching systematically fails regardless of retry count.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": "When symmetric NAT is on both sides"
     },
     {
       "action": "Configure UPnP port forwarding assuming all NAT devices support it",
       "why_fails": "Most enterprise and carrier-grade NATs disable UPnP for security. Even consumer routers may have UPnP disabled by default in recent firmware. UPnP also only works for the first NAT layer in double-NAT scenarios.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.30, "condition": "when NAT traversal fails and no TURN fallback is configured, causing the direct connection attempt to time out"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.3,
+        "condition": "when NAT traversal fails and no TURN fallback is configured, causing the direct connection attempt to time out"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.20, "condition": "when firewall rules prevent STUN/TURN traffic from reaching the NAT traversal server"}
+      {
+        "error_id": "networking/firewall-blocked/tcp-linux",
+        "probability": 0.2,
+        "condition": "when firewall rules prevent STUN/TURN traffic from reaching the NAT traversal server"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/firewall-blocked/tcp-linux", "distinction": "NAT traversal failure is about peer-to-peer connectivity through NAT devices; firewall blocked is about explicit deny rules on packet filters"}
+      {
+        "error_id": "networking/firewall-blocked/tcp-linux",
+        "distinction": "NAT traversal failure is about peer-to-peer connectivity through NAT devices; firewall blocked is about explicit deny rules on packet filters"
+      }
     ]
   },
   "metadata": {

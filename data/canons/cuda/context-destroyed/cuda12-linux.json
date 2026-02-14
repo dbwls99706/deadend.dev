@@ -11,9 +11,14 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
     "os": "linux",
-    "hardware": {"gpu": "any"}
+    "hardware": {
+      "gpu": "any"
+    }
   },
   "verdict": {
     "resolvable": "true",
@@ -26,15 +31,19 @@
     {
       "action": "Catch the error and retry the CUDA operation",
       "why_fails": "Once the context is destroyed, all associated allocations, streams, and modules are invalidated; retrying on the same context is impossible",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Increase GPU memory to prevent context destruction",
       "why_fails": "Context destruction is not caused by memory pressure; it is caused by explicit destruction or driver timeout",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],
@@ -48,14 +57,14 @@
     },
     {
       "action": "Use spawn instead of fork for multiprocessing to avoid context inheritance issues",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "import multiprocessing; multiprocessing.set_start_method('spawn') before creating any CUDA contexts",
       "sources": [],
       "condition": "when using Python multiprocessing"
     },
     {
       "action": "Increase TDR timeout on systems with display timeout (Windows) or check nvidia-persistenced (Linux)",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "On Linux: systemctl enable nvidia-persistenced. This prevents the driver from destroying idle contexts.",
       "sources": [],
       "condition": "when context is destroyed by driver timeout"
@@ -63,13 +72,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.25, "condition": "when code continues to use pointers from the destroyed context"}
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-linux",
+        "probability": 0.25,
+        "condition": "when code continues to use pointers from the destroyed context"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cuda/device-side-assert/cuda12-linux", "probability": 0.2, "condition": "when a device-side assert corrupts the context leading to destruction"}
+      {
+        "error_id": "cuda/device-side-assert/cuda12-linux",
+        "probability": 0.2,
+        "condition": "when a device-side assert corrupts the context leading to destruction"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cuda/not-initialized/cuda12-linux", "distinction": "Context-destroyed means a context existed and was torn down; not-initialized means no context was ever created"}
+      {
+        "error_id": "cuda/not-initialized/cuda12-linux",
+        "distinction": "Context-destroyed means a context existed and was torn down; not-initialized means no context was ever created"
+      }
     ]
   },
   "metadata": {

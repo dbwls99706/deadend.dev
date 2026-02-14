@@ -29,14 +29,18 @@
       "action": "Using recover() to catch all nil pointer panics",
       "why_fails": "Masks bugs; recover should only be used at API boundaries",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Initializing all pointers to empty structs",
       "why_fails": "Hides nil-state bugs; empty struct may not be a valid state",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

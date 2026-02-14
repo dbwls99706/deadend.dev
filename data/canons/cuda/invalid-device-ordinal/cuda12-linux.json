@@ -32,14 +32,18 @@
       "action": "Set CUDA_VISIBLE_DEVICES to include the requested device number",
       "why_fails": "CUDA_VISIBLE_DEVICES remaps device ordinals; device N in the visible set becomes device 0,1,2... in order. Setting it to '2' makes that GPU device 0, not device 2.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Install more GPU drivers hoping the device appears",
       "why_fails": "The device ordinal is about physical hardware; drivers cannot create GPUs that do not exist",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],
@@ -81,7 +85,12 @@
         "condition": "when driver issues cause some GPUs to not be visible"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/cooperative-launch-too-large/cuda12-linux",
+        "distinction": "'CUDA error: invalid device ordinal (cudaErrorInvalidDevice)' vs 'CUDA error: cooperative launch of kernel exceeds device occu': while both are cuda errors, the former Code requested a GPU device number that does not exist. For example, requesting  while the latter A cooperative kernel launch (cudaLaunchCooperativeKernel) requires all thread bl."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

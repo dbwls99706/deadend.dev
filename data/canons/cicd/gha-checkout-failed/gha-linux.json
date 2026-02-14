@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Use git clone with hardcoded credentials in a run step",
       "why_fails": "Credentials are exposed in workflow logs and violate security best practices; also breaks when credentials rotate",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Disable checkout entirely and fetch code manually without proper auth",
       "why_fails": "Manual git operations without proper token setup face the same authentication issues",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-permission-denied/gha-linux", "probability": 0.20, "condition": "When checkout succeeds but subsequent API calls fail due to token scope limitations"}
+      {
+        "error_id": "cicd/gha-permission-denied/gha-linux",
+        "probability": 0.2,
+        "condition": "When checkout succeeds but subsequent API calls fail due to token scope limitations"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "probability": 0.25, "condition": "When the PAT secret needed for checkout was not configured"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "probability": 0.25,
+        "condition": "When the PAT secret needed for checkout was not configured"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Checkout failed is about git clone authentication; permission denied is about GitHub API resource access scopes"}
+      {
+        "error_id": "cicd/gha-permission-denied/gha-linux",
+        "distinction": "Checkout failed is about git clone authentication; permission denied is about GitHub API resource access scopes"
+      }
     ]
   },
   "metadata": {

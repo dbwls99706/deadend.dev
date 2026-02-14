@@ -29,14 +29,18 @@
       "action": "Restarting the kubelet",
       "why_fails": "The issue is authentication or image reference, not the kubelet",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Waiting for it to resolve itself",
       "why_fails": "ImagePullBackOff has exponential backoff but won't fix auth issues",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

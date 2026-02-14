@@ -29,14 +29,18 @@
       "action": "Suppressing with suppressHydrationWarning on every element",
       "why_fails": "Masks real bugs; mismatches can cause UI inconsistencies",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Forcing client-side only rendering for the whole page",
       "why_fails": "Loses SSR benefits (SEO, performance)",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

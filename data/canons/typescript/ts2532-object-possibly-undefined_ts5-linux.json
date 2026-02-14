@@ -29,14 +29,18 @@
       "action": "Using the non-null assertion operator (!) everywhere",
       "why_fails": "Tells TypeScript 'trust me' — runtime errors when wrong",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling strictNullChecks",
       "why_fails": "Disables a critical safety feature; null/undefined bugs become runtime crashes",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],

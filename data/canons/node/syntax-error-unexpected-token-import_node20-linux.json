@@ -29,14 +29,18 @@
       "action": "Transpiling everything to require()",
       "why_fails": "Loses ESM benefits; extra build step for simple projects",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Adding --experimental-modules flag",
       "why_fails": "Flag was removed in Node 14+; not needed",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

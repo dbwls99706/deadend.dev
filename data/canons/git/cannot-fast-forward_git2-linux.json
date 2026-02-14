@@ -29,14 +29,18 @@
       "action": "Using git push -f to overwrite remote",
       "why_fails": "Destroys remote history; other collaborators lose work",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting the local branch and re-checking out",
       "why_fails": "Loses local unpushed commits",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

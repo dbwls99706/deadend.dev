@@ -51,7 +51,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/topics/secure-installs/#hash-checking-mode"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip-compile --generate-hashes requirements.in"
     },
     {
       "action": "Pin exact versions with hashes: pip hash <package>.whl",

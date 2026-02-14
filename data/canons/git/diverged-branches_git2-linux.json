@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebase"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git pull --rebase origin main"
     },
     {
       "action": "Or merge: git pull origin main (creates a merge commit)",
@@ -59,7 +60,8 @@
       "sources": [
         "https://git-scm.com/docs/git-pull"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git pull origin main (creates a merge commit)"
     },
     {
       "action": "For feature branches, rebase onto main: git rebase main",
@@ -67,7 +69,8 @@
       "sources": [
         "https://git-scm.com/docs/git-rebase"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git rebase main"
     }
   ],
   "transition_graph": {

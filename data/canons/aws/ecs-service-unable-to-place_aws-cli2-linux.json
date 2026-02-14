@@ -29,14 +29,18 @@
       "action": "Increasing the desired count further",
       "why_fails": "More tasks compete for the same insufficient resources",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Terminating and relaunching the ECS service",
       "why_fails": "Service recreates but the capacity problem remains",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

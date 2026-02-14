@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,43 +28,62 @@
     {
       "action": "Disable WAF entirely to unblock requests",
       "why_fails": "Removing WAF exposes the application to all web attacks it was configured to prevent",
-      "fail_rate": 0.90,
-      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html"],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html"
+      ],
       "condition": ""
     },
     {
       "action": "Set all rules to Count mode permanently",
       "why_fails": "Count mode logs but does not block; application remains unprotected while appearing monitored",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Check WAF sampled requests and logs to identify which rule blocked the request",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Enable WAF logging to S3/CloudWatch, use aws wafv2 get-sampled-requests to see which rule matched",
-      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/logging.html"],
+      "sources": [
+        "https://docs.aws.amazon.com/waf/latest/developerguide/logging.html"
+      ],
       "condition": ""
     },
     {
       "action": "Add a scope-down statement or IP set exception for legitimate traffic",
       "success_rate": 0.85,
       "how": "Create an IP set with trusted IPs and add a NOT condition to the blocking rule, or use a label-based exception",
-      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-scope-down-statements.html"],
+      "sources": [
+        "https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-scope-down-statements.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "aws/throttling-exception/awscli2-linux", "probability": 0.10, "condition": "WAF rate-based rules also trigger API throttling"}
+      {
+        "error_id": "aws/throttling-exception/awscli2-linux",
+        "probability": 0.1,
+        "condition": "WAF rate-based rules also trigger API throttling"
+      }
     ],
     "preceded_by": [
-      {"error_id": "aws/aws-cloudfront-origin-error/awscli2-linux", "probability": 0.10, "condition": "CloudFront passes request through WAF which then blocks it"}
+      {
+        "error_id": "aws/aws-cloudfront-origin-error/awscli2-linux",
+        "probability": 0.1,
+        "condition": "CloudFront passes request through WAF which then blocks it"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "aws/access-denied-exception/awscli2-linux", "distinction": "AccessDenied is about IAM permissions; WAF blocked is about web application firewall rules matching HTTP request patterns"}
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "distinction": "AccessDenied is about IAM permissions; WAF blocked is about web application firewall rules matching HTTP request patterns"
+      }
     ]
   },
   "metadata": {

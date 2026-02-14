@@ -29,14 +29,18 @@
       "action": "Wrapping in try/catch",
       "why_fails": "setState on unmounted component is not an exception; try/catch won't help",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring the warning since React 18 removed it",
       "why_fails": "React 18 removed the warning but the memory leak from the async operation still exists",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

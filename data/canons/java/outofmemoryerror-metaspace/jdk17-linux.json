@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "OutOfMemoryError: Metaspace is thrown when the JVM runs out of native memory allocated for class metadata. This typically occurs due to classloader leaks, excessive dynamic class generation (e.g., via reflection proxies, CGLIB, Groovy scripts), or too many classes being loaded in the application."
@@ -26,14 +29,18 @@
       "action": "Increasing -XX:MaxMetaspaceSize without investigating the classloader leak",
       "why_fails": "If the root cause is a classloader leak (common in application server redeployments or dynamic scripting), increasing Metaspace only delays the inevitable. Leaked classloaders prevent their classes from being unloaded, and Metaspace will eventually fill regardless of size.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting the application on a schedule to avoid the OOM",
       "why_fails": "Scheduled restarts are an operational band-aid. They cause downtime, data loss in in-flight requests, and do not address the underlying leak. As the application grows or traffic increases, the restart interval shrinks until restarts become impractical.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.10, "condition": "when Metaspace fix triggers excessive object caching that fills the heap"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.08, "condition": "when classloader cleanup is too aggressive and unloads needed classes"}
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when Metaspace fix triggers excessive object caching that fills the heap"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when classloader cleanup is too aggressive and unloads needed classes"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.10, "condition": "when repeated Spring context refreshes leak classloaders"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.08, "condition": "when workaround creates custom classloaders that are never garbage collected"}
+      {
+        "error_id": "java/spring-bean-not-found/spring6-linux",
+        "probability": 0.1,
+        "condition": "when repeated Spring context refreshes leak classloaders"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when workaround creates custom classloaders that are never garbage collected"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "distinction": "Metaspace OOM is about class metadata in native memory; Heap OOM is about object instances in the Java heap. Metaspace issues relate to class/classloader count; Heap issues relate to data volume."}
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "distinction": "Metaspace OOM is about class metadata in native memory; Heap OOM is about object instances in the Java heap. Metaspace issues relate to class/classloader count; Heap issues relate to data volume."
+      }
     ]
   },
   "metadata": {

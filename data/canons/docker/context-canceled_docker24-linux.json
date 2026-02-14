@@ -29,14 +29,18 @@
       "action": "Increasing Docker memory limit without checking actual usage",
       "why_fails": "If the build legitimately needs more memory, this helps; but often it's a build cache issue",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching from buildkit to legacy builder",
       "why_fails": "Legacy builder is deprecated and slower",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

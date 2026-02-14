@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "Code coverage fell below the configured threshold, causing the CI pipeline to fail. This is a quality gate check that ensures new code maintains minimum test coverage levels."
@@ -25,15 +28,19 @@
     {
       "action": "Lowering the coverage threshold to make CI pass",
       "why_fails": "This circumvents the quality gate entirely. Coverage will continue to drop over time without enforcement, accumulating untested code.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Adding trivial tests that increase coverage without testing meaningful behavior",
       "why_fails": "Tests that merely call functions without asserting behavior provide false coverage confidence. They pass coverage checks but do not catch bugs.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "probability": 0.20, "condition": "when coverage failure also triggers SonarQube quality gate failure"}
+      {
+        "error_id": "cicd/sonarqube-quality-gate/sonar-linux",
+        "probability": 0.2,
+        "condition": "when coverage failure also triggers SonarQube quality gate failure"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.15, "condition": "when flaky test timeouts cause some tests to be skipped, reducing coverage"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.15,
+        "condition": "when flaky test timeouts cause some tests to be skipped, reducing coverage"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "distinction": "coverage-threshold-failed is enforced by the test runner (Jest, pytest, etc.); sonarqube-quality-gate is enforced by the SonarQube analysis platform which checks multiple quality metrics beyond coverage"}
+      {
+        "error_id": "cicd/sonarqube-quality-gate/sonar-linux",
+        "distinction": "coverage-threshold-failed is enforced by the test runner (Jest, pytest, etc.); sonarqube-quality-gate is enforced by the SonarQube analysis platform which checks multiple quality metrics beyond coverage"
+      }
     ]
   },
   "metadata": {

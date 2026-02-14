@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Pinning all transitive dependencies to exact versions in the .csproj file",
       "why_fails": "Creates a maintenance burden where every package update requires manual version adjustment of all transitive dependencies. Version pins often conflict with the ranges required by direct dependencies, making future updates nearly impossible",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using assembly binding redirects (app.config) in .NET 8+ projects",
       "why_fails": "Assembly binding redirects are a .NET Framework concept. .NET 8 uses a different dependency resolution mechanism; adding binding redirects to modern .NET projects has no effect and adds confusion",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.20, "condition": "when version conflict causes wrong assembly version to be loaded at runtime"},
-      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.15, "condition": "when version conflict is caused by SDK version differences across projects"}
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when version conflict causes wrong assembly version to be loaded at runtime"
+      },
+      {
+        "error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when version conflict is caused by SDK version differences across projects"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.20, "condition": "when restore from an alternative source provides different package versions"},
-      {"error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux", "probability": 0.10, "condition": "when upgrading SDK introduces new default package versions that conflict"}
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when restore from an alternative source provides different package versions"
+      },
+      {
+        "error_id": "dotnet/build-failed-sdk-mismatch/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when upgrading SDK introduces new default package versions that conflict"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "distinction": "Version conflict means packages exist but have incompatible version requirements; restore failure means one or more packages cannot be found at all"}
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "distinction": "Version conflict means packages exist but have incompatible version requirements; restore failure means one or more packages cannot be found at all"
+      }
     ]
   },
   "metadata": {

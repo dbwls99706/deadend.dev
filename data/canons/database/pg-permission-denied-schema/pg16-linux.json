@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Running the application as the postgres superuser to bypass permission checks",
       "why_fails": "Running applications as superuser violates the principle of least privilege and creates a security risk. Any SQL injection or application bug has full database access. This also masks permission issues that will resurface during security audits or role changes.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Granting ALL PRIVILEGES on all schemas to the application role",
       "why_fails": "Overly broad grants give the application role access to system schemas (pg_catalog, information_schema) and other application schemas. This creates security vulnerabilities and makes it harder to audit access. Grant only the specific privileges needed on specific schemas.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Create a dedicated schema for the application with proper ownership",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "CREATE SCHEMA app_schema AUTHORIZATION app_role; Then configure the application to use this schema: SET search_path TO app_schema, public; In connection strings, add ?options=-csearch_path%3Dapp_schema,public. The app_role has full control over schemas it owns.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.35, "condition": "when migration tool cannot create tables due to missing schema privileges"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.35,
+        "condition": "when migration tool cannot create tables due to missing schema privileges"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/authentication-failed/pg16-linux", "probability": 0.15, "condition": "when a new role is created but schema privileges are not configured"}
+      {
+        "error_id": "database/authentication-failed/pg16-linux",
+        "probability": 0.15,
+        "condition": "when a new role is created but schema privileges are not configured"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Permission denied means the schema exists but the role lacks access. Relation does not exist means the table is not found (could be wrong schema in search_path). Permission denied is a privilege issue; relation not found is a naming/path issue."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "Permission denied means the schema exists but the role lacks access. Relation does not exist means the table is not found (could be wrong schema in search_path). Permission denied is a privilege issue; relation not found is a naming/path issue."
+      }
     ]
   },
   "metadata": {

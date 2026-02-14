@@ -11,28 +11,76 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "ZipArchive errors occur when PHP cannot create, open, or extract ZIP files due to missing php-zip extension, file permission issues, missing directories, disk space constraints, or corrupted ZIP files."
   },
   "dead_ends": [
-    {"action": "Using shell_exec('unzip ...') as a fallback when ZipArchive fails", "why_fails": "Calling shell commands introduces command injection vulnerabilities if file paths contain user input. It also makes the application dependent on system binaries that may not be available in all environments (e.g., minimal Docker images).", "fail_rate": 0.70, "sources": [], "condition": ""},
-    {"action": "Ignoring ZipArchive::open() return value and proceeding with operations", "why_fails": "When open() fails, the ZipArchive object is in an invalid state. Subsequent operations like addFile() or extractTo() will fail silently or produce corrupted output without clear error messages.", "fail_rate": 0.82, "sources": [], "condition": ""}
+    {
+      "action": "Using shell_exec('unzip ...') as a fallback when ZipArchive fails",
+      "why_fails": "Calling shell commands introduces command injection vulnerabilities if file paths contain user input. It also makes the application dependent on system binaries that may not be available in all environments (e.g., minimal Docker images).",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignoring ZipArchive::open() return value and proceeding with operations",
+      "why_fails": "When open() fails, the ZipArchive object is in an invalid state. Subsequent operations like addFile() or extractTo() will fail silently or produce corrupted output without clear error messages.",
+      "fail_rate": 0.82,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Install php-zip extension and check return values properly", "success_rate": 0.92, "how": "Install: apt-get install php8.3-zip (or docker-php-ext-install zip in Docker). Always check the return value: $result = $zip->open($path, ZipArchive::CREATE); if ($result !== true) { throw new RuntimeException('ZIP error: ' . $result); }. Use ZipArchive constants to decode error codes.", "sources": [], "condition": ""},
-    {"action": "Ensure parent directories exist and have write permissions before creating ZIP files", "success_rate": 0.90, "how": "Before creating a ZIP: $dir = dirname($zipPath); if (!is_dir($dir)) { mkdir($dir, 0755, true); } Check disk space: if (disk_free_space($dir) < $estimatedSize) { throw new RuntimeException('Insufficient disk space'); }", "sources": [], "condition": ""}
+    {
+      "action": "Install php-zip extension and check return values properly",
+      "success_rate": 0.92,
+      "how": "Install: apt-get install php8.3-zip (or docker-php-ext-install zip in Docker). Always check the return value: $result = $zip->open($path, ZipArchive::CREATE); if ($result !== true) { throw new RuntimeException('ZIP error: ' . $result); }. Use ZipArchive constants to decode error codes.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure parent directories exist and have write permissions before creating ZIP files",
+      "success_rate": 0.9,
+      "how": "Before creating a ZIP: $dir = dirname($zipPath); if (!is_dir($dir)) { mkdir($dir, 0755, true); } Check disk space: if (disk_free_space($dir) < $estimatedSize) { throw new RuntimeException('Insufficient disk space'); }",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.20, "condition": "when creating large ZIP files in memory without streaming"}],
-    "preceded_by": [{"error_id": "php/permission-denied-storage/php83-linux", "probability": 0.25, "condition": "when the ZIP output directory has incorrect file permissions"}],
-    "frequently_confused_with": [{"error_id": "php/permission-denied-storage/php83-linux", "distinction": "ZipArchive errors encompass various ZIP operation failures (corrupt file, missing extension, disk full), while permission denied is specifically about filesystem access rights"}]
+    "leads_to": [
+      {
+        "error_id": "php/memory-limit-exhausted/php83-linux",
+        "probability": 0.2,
+        "condition": "when creating large ZIP files in memory without streaming"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/permission-denied-storage/php83-linux",
+        "probability": 0.25,
+        "condition": "when the ZIP output directory has incorrect file permissions"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/permission-denied-storage/php83-linux",
+        "distinction": "ZipArchive errors encompass various ZIP operation failures (corrupt file, missing extension, disk full), while permission denied is specifically about filesystem access rights"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

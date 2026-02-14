@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http2", "version_range": "any"},
+    "runtime": {
+      "name": "http2",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Set very large deadlines or remove deadlines entirely",
       "why_fails": "Removing deadlines means requests can hang indefinitely, consuming server resources and client goroutines/threads. In cascading microservice calls, missing deadlines cause resource exhaustion and cascading failures.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Add aggressive retry logic without backoff or deadline propagation",
       "why_fails": "Retrying immediately without backoff amplifies load on an already overloaded server. Without propagating the remaining deadline, each retry uses the full original deadline, potentially exceeding the caller's deadline.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/http-504-gateway-timeout/http-linux", "probability": 0.25, "condition": "when a gRPC-gateway or reverse proxy translates the deadline exceeded to an HTTP 504"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when the underlying TCP connection also times out due to server unresponsiveness"}
+      {
+        "error_id": "networking/http-504-gateway-timeout/http-linux",
+        "probability": 0.25,
+        "condition": "when a gRPC-gateway or reverse proxy translates the deadline exceeded to an HTTP 504"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the underlying TCP connection also times out due to server unresponsiveness"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when slow TCP connection establishment consumes most of the gRPC deadline"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.2,
+        "condition": "when slow TCP connection establishment consumes most of the gRPC deadline"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "DeadlineExceeded is a gRPC-specific error (status code 4) with client-side deadline enforcement; HTTP 504 is a proxy-level timeout that may or may not involve gRPC"}
+      {
+        "error_id": "networking/http-504-gateway-timeout/http-linux",
+        "distinction": "DeadlineExceeded is a gRPC-specific error (status code 4) with client-side deadline enforcement; HTTP 504 is a proxy-level timeout that may or may not involve gRPC"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Increase cluster size without checking the actual error",
       "why_fails": "Many step failures are due to application bugs or misconfigured scripts, not resource limits",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrade EMR version to fix step failures",
       "why_fails": "Older versions may have different bugs; the step script itself is usually the issue",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

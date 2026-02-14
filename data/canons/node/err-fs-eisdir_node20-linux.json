@@ -29,14 +29,18 @@
       "action": "Adding recursive option to the read call",
       "why_fails": "fs.readFile doesn't support reading directories; recursive is for mkdir/rmdir",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Catching the error and skipping",
       "why_fails": "The file you need isn't being read; the feature is broken",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

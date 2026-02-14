@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dns", "version_range": "any"},
+    "runtime": {
+      "name": "dns",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "The DNS server authoritatively responded that the queried domain name does not exist. Unlike SERVFAIL, this is a definitive answer: the domain is not registered, is misspelled, or the DNS zone does not contain the requested record."
@@ -25,15 +28,19 @@
     {
       "action": "Switch to a different public DNS resolver expecting the domain to resolve",
       "why_fails": "NXDOMAIN is an authoritative answer propagated by the domain's nameservers. All recursive resolvers will return the same NXDOMAIN because the record genuinely does not exist in the authoritative zone.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": "Unless the previous resolver was returning stale cached NXDOMAIN after a recent record creation"
     },
     {
       "action": "Retry the query repeatedly hoping for a different result",
       "why_fails": "NXDOMAIN is a definitive negative answer, often with a negative TTL. Retrying produces the same result until the domain is actually created or the record is added to the zone.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,28 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.10, "condition": "when DNS is fixed but the target service is not running on the resolved host"}
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.1,
+        "condition": "when DNS is fixed but the target service is not running on the resolved host"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.20, "condition": "when a general DNS resolution failure is narrowed down to an NXDOMAIN response"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.2,
+        "condition": "when a general DNS resolution failure is narrowed down to an NXDOMAIN response"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/dns-servfail/dns-linux", "distinction": "NXDOMAIN means the domain definitively does not exist; SERVFAIL means the DNS server encountered an error and could not answer the query"},
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "distinction": "NXDOMAIN is a specific DNS response code; general resolution failure includes timeouts, SERVFAIL, and network errors"}
+      {
+        "error_id": "networking/dns-servfail/dns-linux",
+        "distinction": "NXDOMAIN means the domain definitively does not exist; SERVFAIL means the DNS server encountered an error and could not answer the query"
+      },
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "distinction": "NXDOMAIN is a specific DNS response code; general resolution failure includes timeouts, SERVFAIL, and network errors"
+      }
     ]
   },
   "metadata": {

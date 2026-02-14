@@ -29,14 +29,18 @@
       "action": "Adding 'type': 'commonjs' to package.json",
       "why_fails": "Switches the entire project back to CJS; breaks ES imports",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using require() instead of import",
       "why_fails": "Mixing module systems causes more problems",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

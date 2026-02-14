@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Two columns or expressions in a query use incompatible collations and MySQL cannot determine which collation to use for comparison. Common when joining tables that were created with different default collations, or after upgrading from MySQL 5.7 (utf8/utf8_general_ci default) to MySQL 8.0 (utf8mb4/utf8mb4_0900_ai_ci default)."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Using CONVERT() or COLLATE on every query to work around the mismatch",
       "why_fails": "Adding COLLATE or CONVERT to queries is a per-query workaround that prevents index usage on the converted column (causes full table scans). It must be added to every query that compares mismatched columns, creating maintenance burden and performance issues.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the server default character set without converting existing tables",
       "why_fails": "The server default only affects new tables and columns. Existing tables retain their original character set and collation. The mismatch between old and new tables persists, and the error continues for queries joining them.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Convert all tables to a consistent character set and collation",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Choose a target: utf8mb4 with utf8mb4_unicode_ci (or utf8mb4_0900_ai_ci for MySQL 8.0+). Convert each table: ALTER TABLE t CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; Set database default: ALTER DATABASE db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; Warning: this locks each table during conversion.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.10, "condition": "when ALTER TABLE for charset conversion locks tables during peak traffic"}
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.1,
+        "condition": "when ALTER TABLE for charset conversion locks tables during peak traffic"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "probability": 0.10, "condition": "when recreating tables after a failed migration introduces different charset defaults"}
+      {
+        "error_id": "database/mysql-table-doesnt-exist/mysql8-linux",
+        "probability": 0.1,
+        "condition": "when recreating tables after a failed migration introduces different charset defaults"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-max-allowed-packet/mysql8-linux", "distinction": "Charset mismatch is about incompatible collations between columns. Max allowed packet is about data size limits. Both can occur during data import but have completely different causes and fixes."}
+      {
+        "error_id": "database/mysql-max-allowed-packet/mysql8-linux",
+        "distinction": "Charset mismatch is about incompatible collations between columns. Max allowed packet is about data size limits. Both can occur during data import but have completely different causes and fixes."
+      }
     ]
   },
   "metadata": {

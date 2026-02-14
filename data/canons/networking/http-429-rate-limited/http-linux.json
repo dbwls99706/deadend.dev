@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "runtime": {
+      "name": "http",
+      "version_range": ">=1.1"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "The server is rate-limiting the client due to too many requests in a given time window. The response typically includes a Retry-After header indicating when the client can retry. Common with API services, CDNs, and reverse proxies with rate limiting enabled."
@@ -25,15 +28,19 @@
     {
       "action": "Immediately retry the request without respecting the Retry-After header",
       "why_fails": "Ignoring the Retry-After header and retrying immediately increases the request rate, extending the rate limit window or escalating to a longer ban. Many APIs implement progressive penalties for clients that ignore rate limits.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Rotate API keys or IP addresses to circumvent rate limits",
       "why_fails": "Most APIs explicitly prohibit rate limit circumvention in their terms of service. This can result in permanent bans, account termination, and legal consequences. It also does not scale sustainably.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Implement client-side rate limiting to stay within the API's limits proactively",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Check the API documentation for rate limit quotas (e.g., 100 req/min)\n2. Implement a token bucket or sliding window rate limiter in the client\n3. Queue requests and dispatch them at a rate below the limit\n4. Use bulk/batch API endpoints where available to reduce request count\n5. Cache responses to avoid repeated identical requests\n6. Monitor X-RateLimit-Remaining headers to track quota usage in real time",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/http-503-service-unavailable/http-linux", "probability": 0.15, "condition": "when persistent rate limit violations escalate to a temporary IP ban returning 503"},
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.10, "condition": "when the server starts dropping connections from rate-limited clients entirely"}
+      {
+        "error_id": "networking/http-503-service-unavailable/http-linux",
+        "probability": 0.15,
+        "condition": "when persistent rate limit violations escalate to a temporary IP ban returning 503"
+      },
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.1,
+        "condition": "when the server starts dropping connections from rate-limited clients entirely"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.10, "condition": "when recovering from 502 errors by retrying aggressively, triggering rate limits"}
+      {
+        "error_id": "networking/http-502-bad-gateway/http-linux",
+        "probability": 0.1,
+        "condition": "when recovering from 502 errors by retrying aggressively, triggering rate limits"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/http-503-service-unavailable/http-linux", "distinction": "429 means the client sent too many requests and is being throttled; 503 means the server is genuinely overloaded or in maintenance regardless of client request rate"}
+      {
+        "error_id": "networking/http-503-service-unavailable/http-linux",
+        "distinction": "429 means the client sent too many requests and is being throttled; 503 means the server is genuinely overloaded or in maintenance regardless of client request rate"
+      }
     ]
   },
   "metadata": {

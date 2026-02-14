@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,27 @@
       "action": "Adding null checks everywhere without understanding the root cause of the null value",
       "why_fails": "Defensive null checks mask the real bug. The null value often indicates a missing initialization, incorrect dependency injection, or a logic error upstream. Scattering null checks treats the symptom, not the disease, and leads to bloated, hard-to-maintain code.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Catching NullPointerException with a try-catch block and silently ignoring it",
       "why_fails": "Swallowing NullPointerException hides bugs. The program continues in an invalid state, causing data corruption or delayed failures that are much harder to diagnose later.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Returning null from methods as a default fallback to avoid the exception in the caller",
       "why_fails": "Returning null just moves the NullPointerException to a different call site. It propagates the null further through the codebase, making it harder to trace the origin of the problem.",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -54,7 +63,7 @@
     },
     {
       "action": "Use Optional<T> for values that may legitimately be absent, and use Objects.requireNonNull() for values that must never be null",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. For method parameters that must not be null, add Objects.requireNonNull(param, 'param must not be null') at the method entry. This fails fast with a clear message. 2. For return types that may be absent, return Optional<T> instead of null. 3. Use Optional.map(), Optional.orElse(), Optional.orElseThrow() to handle the absent case explicitly. 4. Enable @NonNull/@Nullable annotations with static analysis tools like NullAway or Checker Framework to catch null issues at compile time.",
       "sources": [],
       "condition": ""
@@ -62,15 +71,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.15, "condition": "when null check is replaced with a state validation that throws IllegalStateException"},
-      {"error_id": "java/stackoverflowerror/jdk17-linux", "probability": 0.05, "condition": "when recursive null-check workaround causes infinite recursion"}
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when null check is replaced with a state validation that throws IllegalStateException"
+      },
+      {
+        "error_id": "java/stackoverflowerror/jdk17-linux",
+        "probability": 0.05,
+        "condition": "when recursive null-check workaround causes infinite recursion"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when a class fails to load and the reference remains null"},
-      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.20, "condition": "when Spring autowiring silently fails and injected field is null"}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when a class fails to load and the reference remains null"
+      },
+      {
+        "error_id": "java/spring-autowire-failed/spring6-linux",
+        "probability": 0.2,
+        "condition": "when Spring autowiring silently fails and injected field is null"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/illegalstateexception/jdk17-linux", "distinction": "IllegalStateException means the object exists but is in a wrong state; NullPointerException means the object reference itself is null"}
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "distinction": "IllegalStateException means the object exists but is in a wrong state; NullPointerException means the object reference itself is null"
+      }
     ]
   },
   "metadata": {

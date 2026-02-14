@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "redis",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Changing Redis client library configuration (timeouts, retry settings) when the server is not running",
       "why_fails": "Client-side configuration changes cannot make a connection to a server that is not listening. The error is at the TCP level; no amount of client tuning can establish a connection to a closed port.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Reinstalling Redis client packages to fix connection refused",
       "why_fails": "The client library correctly reports that the server is unreachable. The issue is server-side; reinstalling the client package has no effect on server availability.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,28 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.10, "condition": "when Redis starts successfully but is immediately overwhelmed with data exceeding maxmemory"}
+      {
+        "error_id": "database/redis-oom/redis7-linux",
+        "probability": 0.1,
+        "condition": "when Redis starts successfully but is immediately overwhelmed with data exceeding maxmemory"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.20, "condition": "when Redis crashes due to OOM and fails to restart"}
+      {
+        "error_id": "database/redis-oom/redis7-linux",
+        "probability": 0.2,
+        "condition": "when Redis crashes due to OOM and fails to restart"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/connection-refused/pg16-linux", "distinction": "Both are TCP connection refused errors but for different services. Redis defaults to port 6379, PostgreSQL to 5432. Redis connection refused is often due to protected-mode, while PostgreSQL is more commonly due to listen_addresses."},
-      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "distinction": "Redis gives an immediate connection refused, while MongoDB wraps it in a ServerSelectionTimeoutError that waits before failing."}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "distinction": "Both are TCP connection refused errors but for different services. Redis defaults to port 6379, PostgreSQL to 5432. Redis connection refused is often due to protected-mode, while PostgreSQL is more commonly due to listen_addresses."
+      },
+      {
+        "error_id": "database/mongodb-connection-failed/mongo7-linux",
+        "distinction": "Redis gives an immediate connection refused, while MongoDB wraps it in a ServerSelectionTimeoutError that waits before failing."
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Killing the process on that port without checking what it is",
       "why_fails": "May kill a critical service",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using SO_REUSEADDR as the only fix",
       "why_fails": "Masks the problem if the old process is still running and handling connections",
       "fail_rate": 0.4,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     }
   ],

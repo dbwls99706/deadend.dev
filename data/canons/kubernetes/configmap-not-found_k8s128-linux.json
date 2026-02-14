@@ -29,14 +29,18 @@
       "action": "Creating an empty ConfigMap to satisfy the reference",
       "why_fails": "Pod starts but gets empty config; may crash on missing keys",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Making the ConfigMap reference optional without checking implications",
       "why_fails": "optional: true means the pod starts without the config — may misbehave silently",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

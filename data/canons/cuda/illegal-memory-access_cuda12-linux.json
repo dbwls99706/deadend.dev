@@ -29,14 +29,18 @@
       "action": "Catching the error and continuing training",
       "why_fails": "GPU is in error state; all subsequent CUDA operations will fail",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing GPU memory allocation",
       "why_fails": "Illegal access is about address validity, not memory quantity",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

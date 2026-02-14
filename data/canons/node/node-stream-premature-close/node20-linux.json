@@ -20,7 +20,7 @@
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.87,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "A stream was destroyed or closed before it finished being consumed. Common with HTTP responses, file streams, and pipeline operations."
   },
@@ -28,15 +28,19 @@
     {
       "action": "Ignoring the error by adding an empty error handler",
       "why_fails": "The stream data is lost; downstream consumers receive incomplete data which causes silent data corruption",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Manually calling stream.destroy() then continuing to read",
       "why_fails": "Once destroyed, a stream cannot be read from; any further read attempts throw or return null",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Upgrading pip repeatedly",
       "why_fails": "The issue is in the package's build system, not pip itself",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using --no-build-isolation",
       "why_fails": "May work but can conflict with system packages",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],

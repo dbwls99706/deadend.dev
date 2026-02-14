@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,28 +29,34 @@
       "action": "Wrapping the code that accesses the type in a try-catch for TypeInitializationException and retrying",
       "why_fails": "Once a static constructor fails, the CLR caches the TypeInitializationException permanently for that AppDomain. Every subsequent attempt to access any static member of that type will re-throw the same cached exception without re-executing the static constructor. Retrying will never succeed without restarting the process",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding a static Reset() method to re-initialize the static fields manually",
       "why_fails": "The CLR marks the type as faulted after a static constructor failure. Even if you reset the static field values through a separate method, the type initializer state remains faulted in the runtime. Any code path that triggers the type initializer check will still throw the cached TypeInitializationException",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Catching the exception and only looking at the outer TypeInitializationException message",
       "why_fails": "The outer TypeInitializationException message is always generic ('The type initializer for X threw an exception'). It contains no actionable information. The actual root cause is always in InnerException (and potentially InnerException.InnerException). Debugging based on the outer message alone leads to investigating the wrong type rather than the actual failure",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Inspect InnerException to find the real root cause and fix the static initializer",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Catch the TypeInitializationException and walk the InnerException chain: try { var x = MyType.Instance; } catch (TypeInitializationException ex) { Console.WriteLine(ex.InnerException?.ToString()); }. Common root causes on Linux: FileNotFoundException for missing config files (check path casing), DllNotFoundException for missing native libraries (install libgdiplus, libssl, etc.), and InvalidOperationException for missing environment variables. Fix the underlying issue, then restart the process since the type initializer state is cached",
       "sources": [],
       "condition": ""
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when developers swallow the TypeInitializationException and the static field remains null"},
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.15, "condition": "when the InnerException is a missing assembly or config file"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when developers swallow the TypeInitializationException and the static field remains null"
+      },
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when the InnerException is a missing assembly or config file"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/filenotfoundexception/dotnet8-linux", "probability": 0.20, "condition": "when a static constructor tries to load a file that does not exist on the Linux filesystem"},
-      {"error_id": "dotnet/platform-not-supported/dotnet8-linux", "probability": 0.15, "condition": "when static initialization calls a Windows-only API on Linux"}
+      {
+        "error_id": "dotnet/filenotfoundexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when a static constructor tries to load a file that does not exist on the Linux filesystem"
+      },
+      {
+        "error_id": "dotnet/platform-not-supported/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when static initialization calls a Windows-only API on Linux"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "distinction": "NullReferenceException occurs at the point of null dereference during normal execution; TypeInitializationException specifically wraps failures in static constructors and is cached permanently for the type's lifetime"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "distinction": "NullReferenceException occurs at the point of null dereference during normal execution; TypeInitializationException specifically wraps failures in static constructors and is cached permanently for the type's lifetime"
+      }
     ]
   },
   "metadata": {

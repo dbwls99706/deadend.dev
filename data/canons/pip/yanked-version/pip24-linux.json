@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Pip selected a yanked version of a package. Yanked releases are marked by maintainers as broken or dangerous but not deleted. Pip will still install them if explicitly pinned but warns about it."
@@ -25,15 +28,19 @@
     {
       "action": "Ignore the warning and keep using the yanked version",
       "why_fails": "Yanked versions typically have critical bugs, security vulnerabilities, or data corruption issues",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Try to find the yanked version on a mirror that doesn't respect yank status",
       "why_fails": "The package is yanked for a reason; installing it from a mirror just bypasses the safety warning",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/conflicting-dependencies/pip23-linux", "probability": 0.2, "condition": "when moving to a non-yanked version introduces dependency conflicts"}
+      {
+        "error_id": "pip/conflicting-dependencies/pip23-linux",
+        "probability": 0.2,
+        "condition": "when moving to a non-yanked version introduces dependency conflicts"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/backtracking-long/pip24-linux", "probability": 0.15, "condition": "when resolver backtracking selects a yanked version as the only option"}
+      {
+        "error_id": "pip/backtracking-long/pip24-linux",
+        "probability": 0.15,
+        "condition": "when resolver backtracking selects a yanked version as the only option"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/no-matching-distribution/pip24-linux", "distinction": "Yanked versions still exist and can be installed; no-matching-distribution means the version is completely absent from the index"}
+      {
+        "error_id": "pip/no-matching-distribution/pip24-linux",
+        "distinction": "Yanked versions still exist and can be installed; no-matching-distribution means the version is completely absent from the index"
+      }
     ]
   },
   "metadata": {

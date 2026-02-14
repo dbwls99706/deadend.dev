@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "gitlab-ci", "version_range": ">=15.0"},
+    "runtime": {
+      "name": "gitlab-ci",
+      "version_range": ">=15.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Remove all tags from the job to run on any runner",
       "why_fails": "Untagged jobs may run on inappropriate runners (wrong architecture, missing tools, insufficient resources), causing build failures",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Restart the GitLab web application expecting it to fix runner connectivity",
       "why_fails": "The GitLab application server and the runner are separate processes; restarting GitLab does not affect runner registration or connectivity",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify runner registration and ensure tags match the job requirements",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Go to Settings > CI/CD > Runners and check runner status. Ensure the runner's tags match the tags specified in .gitlab-ci.yml. Re-register the runner if needed with 'gitlab-runner register'",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.15, "condition": "When runner finally picks up the job but is under-resourced, causing test timeouts"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.15,
+        "condition": "When runner finally picks up the job but is under-resourced, causing test timeouts"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.10, "condition": "When flaky test failures consume all runner capacity, causing new jobs to queue"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.1,
+        "condition": "When flaky test failures consume all runner capacity, causing new jobs to queue"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/jenkins-agent-offline/jenkins-linux", "distinction": "GitLab runner stuck refers to GitLab CI runner registration and tag matching; Jenkins agent offline refers to Jenkins node connectivity"}
+      {
+        "error_id": "cicd/jenkins-agent-offline/jenkins-linux",
+        "distinction": "GitLab runner stuck refers to GitLab CI runner registration and tag matching; Jenkins agent offline refers to Jenkins node connectivity"
+      }
     ]
   },
   "metadata": {

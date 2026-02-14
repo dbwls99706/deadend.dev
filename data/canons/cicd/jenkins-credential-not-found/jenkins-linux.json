@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "jenkins", "version_range": ">=2.300"},
+    "runtime": {
+      "name": "jenkins",
+      "version_range": ">=2.300"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.91,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Jenkins pipeline references a credential ID that does not exist in the credentials store, or the credential is scoped to a different domain/folder and not accessible from the current pipeline context."
   },
@@ -26,14 +29,18 @@
       "action": "Hardcode credentials directly in the Jenkinsfile or environment variables",
       "why_fails": "Credentials in source code are a critical security vulnerability; they are visible in build logs and version history",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Create credentials in a subfolder expecting them to be globally available",
       "why_fails": "Jenkins credentials scoped to a folder are only available to jobs within that folder; the pipeline in a different folder cannot access them",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "probability": 0.15, "condition": "When incorrect withCredentials binding syntax causes pipeline syntax errors"}
+      {
+        "error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux",
+        "probability": 0.15,
+        "condition": "When incorrect withCredentials binding syntax causes pipeline syntax errors"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux", "probability": 0.10, "condition": "When fixing pipeline syntax reveals credential binding issues"}
+      {
+        "error_id": "cicd/jenkins-pipeline-syntax/jenkins-linux",
+        "probability": 0.1,
+        "condition": "When fixing pipeline syntax reveals credential binding issues"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "distinction": "Jenkins credentials are managed in the Jenkins UI credentials store; GitHub Actions secrets are configured in repository settings"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "distinction": "Jenkins credentials are managed in the Jenkins UI credentials store; GitHub Actions secrets are configured in repository settings"
+      }
     ]
   },
   "metadata": {

@@ -72,7 +72,12 @@
         "condition": "Push rejected, pull causes merge conflict"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "git/merge-conflict-markers/git2-linux",
+        "distinction": "'CONFLICT (content): Merge conflict in file.txt' vs 'CONFLICT (content): Merge conflict in file.txt': while both are git errors, the former Same file modified on both branches. Must be resolved manually while the latter Git cannot automatically merge changes — both branches modified the same lines."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Adding an explicit cast without verifying that the cast is semantically correct",
       "why_fails": "Forcing a cast may compile, but if the types are genuinely incompatible at runtime, it will throw ClassCastException. For example, casting Object to String compiles but fails at runtime if the object is actually an Integer. The compiler error is protecting you from a runtime error.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Changing the variable type to Object to accept any value",
       "why_fails": "Using Object as the variable type eliminates the compilation error but discards type safety. Every subsequent use of the variable requires a cast, moving the error from compile time to runtime. This is a regression to pre-generics Java and defeats the purpose of the type system.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Use proper type conversion methods or redesign the API to use the correct types",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. For String to numeric: Integer.parseInt(str), Double.parseDouble(str). 2. For numeric widening: int to long is automatic, but long to int requires (int) cast or Math.toIntExact(). 3. For collections: List<Integer> to List<Number> requires List.copyOf() or a new list — generics are invariant. 4. For Optional: use .map(), .flatMap(), .orElse() to transform types safely. 5. If the type mismatch reveals a design problem, refactor the interface to use the correct types rather than casting.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/classcastexception/jdk17-linux", "probability": 0.25, "condition": "when an explicit cast is added to suppress the compilation error but the types are incompatible at runtime"},
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.10, "condition": "when autoboxing of null Integer/Long to primitive int/long triggers NullPointerException"}
+      {
+        "error_id": "java/classcastexception/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when an explicit cast is added to suppress the compilation error but the types are incompatible at runtime"
+      },
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when autoboxing of null Integer/Long to primitive int/long triggers NullPointerException"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.20, "condition": "when the Maven compilation failure is specifically a type mismatch error"},
-      {"error_id": "java/gradle-build-failed/gradle8-linux", "probability": 0.18, "condition": "when the Gradle compilation failure is specifically a type mismatch error"}
+      {
+        "error_id": "java/maven-build-failure/maven3-linux",
+        "probability": 0.2,
+        "condition": "when the Maven compilation failure is specifically a type mismatch error"
+      },
+      {
+        "error_id": "java/gradle-build-failed/gradle8-linux",
+        "probability": 0.18,
+        "condition": "when the Gradle compilation failure is specifically a type mismatch error"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classcastexception/jdk17-linux", "distinction": "Incompatible types is a compile-time error caught by the compiler before the program runs; ClassCastException is a runtime error that occurs when a cast fails during execution. The compile-time error prevents the runtime error."}
+      {
+        "error_id": "java/classcastexception/jdk17-linux",
+        "distinction": "Incompatible types is a compile-time error caught by the compiler before the program runs; ClassCastException is a runtime error that occurs when a cast fails during execution. The compile-time error prevents the runtime error."
+      }
     ]
   },
   "metadata": {

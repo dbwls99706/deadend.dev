@@ -72,7 +72,12 @@
       }
     ],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/manifest-unknown/docker24-linux",
+        "distinction": "'Error response from daemon: manifest for image:tag not found' vs 'Error response from daemon: manifest for image:tag not found': while both are docker errors, the former Docker image tag doesn't exist in registry. Common after version bumps or archit while the latter The specified image tag does not exist in the registry."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

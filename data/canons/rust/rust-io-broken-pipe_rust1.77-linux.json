@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,36 +28,53 @@
     {
       "action": "Ignore SIGPIPE signal globally",
       "why_fails": "Rust already ignores SIGPIPE by default; the issue is not handling the resulting io::Error",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Handle BrokenPipe errors gracefully in write operations",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "use std::io::{self, Write};\nif let Err(e) = writeln!(stdout, \"{}\", data) {\n    if e.kind() == io::ErrorKind::BrokenPipe {\n        std::process::exit(0); // Normal exit for piped commands\n    }\n    return Err(e.into());\n}",
-      "sources": ["https://doc.rust-lang.org/std/io/enum.ErrorKind.html"],
+      "sources": [
+        "https://doc.rust-lang.org/std/io/enum.ErrorKind.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use BufWriter with explicit error handling for stdout",
       "success_rate": 0.85,
       "how": "let stdout = io::stdout();\nlet mut writer = io::BufWriter::new(stdout.lock());\n// Flush and handle BrokenPipe at the end",
-      "sources": ["https://doc.rust-lang.org/std/io/struct.BufWriter.html"],
+      "sources": [
+        "https://doc.rust-lang.org/std/io/struct.BufWriter.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-hyper-connection-reset/rust1.77-linux", "probability": 0.15, "condition": "When broken pipe in network context manifests as connection reset"}
+      {
+        "error_id": "rust/rust-hyper-connection-reset/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When broken pipe in network context manifests as connection reset"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux", "probability": 0.10, "condition": "When channel disconnection leads to pipe write failures"}
+      {
+        "error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When channel disconnection leads to pipe write failures"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux", "distinction": "BrokenPipe is OS-level pipe I/O error; channel disconnect is Rust's in-process mpsc channel error"}
+      {
+        "error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux",
+        "distinction": "BrokenPipe is OS-level pipe I/O error; channel disconnect is Rust's in-process mpsc channel error"
+      }
     ]
   },
   "metadata": {

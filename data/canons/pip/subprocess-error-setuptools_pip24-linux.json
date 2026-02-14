@@ -60,7 +60,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-prefer-binary"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install --prefer-binary"
     },
     {
       "action": "Install package-specific system deps (e.g., libpq-dev for psycopg2, libxml2-dev for lxml)",

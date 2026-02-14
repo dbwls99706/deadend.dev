@@ -29,21 +29,27 @@
       "action": "Increasing the Node.js --max-old-space-size to fix the timeout",
       "why_fails": "The static generation timeout is time-based, not memory-based. Increasing the heap size only helps if the timeout is caused by garbage collection pauses, which is rare. Most timeout issues are caused by slow data fetching during page rendering, excessive page count, or CPU-bound rendering. Increasing memory without addressing the root cause (slow renders or too many pages) does not help and may actually slow down builds due to GC overhead on oversized heaps",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": "Unless the build is specifically failing with JavaScript heap out of memory"
     },
     {
       "action": "Setting staticPageGenerationTimeout to an extremely high value (e.g., 600+ seconds)",
       "why_fails": "While Next.js allows configuring staticPageGenerationTimeout in next.config.js, setting it very high masks the underlying performance problem. CI/CD pipelines have their own timeouts (typically 10-30 minutes for a build step), and individual page renders taking minutes indicate a fundamental issue with data fetching or rendering logic. The build will still be impractically slow even if it eventually completes",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": "When individual pages take more than 60 seconds to render"
     },
     {
       "action": "Parallelizing static generation by running multiple build processes concurrently",
       "why_fails": "Next.js already parallelizes static generation internally using worker threads. Running multiple next build processes concurrently on the same project causes file system conflicts, corrupted build output, and race conditions in the .next directory. Additionally, multiple processes competing for the same CPU and memory resources will likely make each individual build slower rather than faster",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],
@@ -85,7 +91,12 @@
         "condition": "when adding generateStaticParams to fix the missing params error but returning too many parameter combinations"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/dynamic-server-usage/nextjs14-linux",
+        "distinction": "'Error: Export encountered errors on following pages: generat' vs 'Error: Dynamic server usage: Route couldn't be rendered stat': while both are nextjs errors in the build_error category, the former This error occurs during next build or next export when static page generation t while the latter Using dynamic APIs (cookies, headers, searchParams) in statically rendered route."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

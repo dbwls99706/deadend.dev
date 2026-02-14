@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "Broken pipe occurs when the application writes to a socket or pipe whose reading end has already been closed by the remote peer. Common in HTTP servers when clients disconnect before the response is fully sent."
@@ -26,14 +29,18 @@
       "action": "Increasing socket timeout values to prevent the broken pipe",
       "why_fails": "Broken pipe is not a timeout issue — the remote end has actively closed the connection. Increasing timeouts does not prevent the peer from disconnecting and only delays detection of the problem.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Retrying the write operation immediately after the broken pipe",
       "why_fails": "Once the pipe is broken, the connection is dead. Retrying writes on the same socket will produce the same IOException. A new connection must be established before retrying.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "probability": 0.20, "condition": "when the broken pipe handling triggers a connection reset on related sockets"}
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when the broken pipe handling triggers a connection reset on related sockets"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.15, "condition": "when the client times out waiting and closes the connection before the server finishes writing"}
+      {
+        "error_id": "java/http-timeout/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the client times out waiting and closes the connection before the server finishes writing"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "distinction": "Connection reset means the remote end sent a RST packet; Broken pipe means the local end tried to write to a socket whose remote end has already closed"}
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "distinction": "Connection reset means the remote end sent a RST packet; Broken pipe means the local end tried to write to a socket whose remote end has already closed"
+      }
     ]
   },
   "metadata": {

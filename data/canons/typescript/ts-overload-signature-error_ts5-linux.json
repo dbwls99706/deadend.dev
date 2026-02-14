@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "The implementation signature must be compatible with all overload signatures. It must accept a superset of all parameter types."
   },
@@ -26,7 +29,9 @@
       "action": "Make each overload signature identical to the implementation",
       "why_fails": "Defeats the purpose of overloads; overloads should provide narrower type signatures for callers",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Ensure the implementation signature accepts all overload parameter types",
       "success_rate": 0.92,
       "how": "function parse(input: string): Document;\nfunction parse(input: Buffer): Document;\nfunction parse(input: string | Buffer): Document {\n  // implementation handles both types\n  const text = typeof input === 'string' ? input : input.toString();\n  return parseDocument(text);\n}",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads"
+      ],
       "condition": ""
     },
     {
       "action": "Use a union type in the implementation for return types",
       "success_rate": 0.85,
       "how": "function getValue(key: 'name'): string;\nfunction getValue(key: 'age'): number;\nfunction getValue(key: 'name' | 'age'): string | number {\n  // implementation return type is union of all overload returns\n}",
-      "sources": ["https://www.typescriptlang.org/docs/handbook/2/functions.html#overload-signatures-and-the-implementation-signature"],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/functions.html#overload-signatures-and-the-implementation-signature"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "typescript/ts2769-no-overload-matches/ts5-linux", "probability": 0.20, "condition": "When fixing overload signatures changes caller compatibility"}
+      {
+        "error_id": "typescript/ts2769-no-overload-matches/ts5-linux",
+        "probability": 0.2,
+        "condition": "When fixing overload signatures changes caller compatibility"
+      }
     ],
     "preceded_by": [
-      {"error_id": "typescript/ts2769-no-overload-matches/ts5-linux", "probability": 0.15, "condition": "When adding new overloads to fix call-site errors"}
+      {
+        "error_id": "typescript/ts2769-no-overload-matches/ts5-linux",
+        "probability": 0.15,
+        "condition": "When adding new overloads to fix call-site errors"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "typescript/ts2769-no-overload-matches/ts5-linux", "distinction": "TS2769 is at the call site (caller doesn't match any overload); TS2394 is at the definition (overload doesn't match implementation)"}
+      {
+        "error_id": "typescript/ts2769-no-overload-matches/ts5-linux",
+        "distinction": "TS2769 is at the call site (caller doesn't match any overload); TS2394 is at the definition (overload doesn't match implementation)"
+      }
     ]
   },
   "metadata": {

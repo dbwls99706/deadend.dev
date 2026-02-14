@@ -29,14 +29,18 @@
       "action": "Adding the function to a different package without importing",
       "why_fails": "Go requires explicit imports between packages",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Using go:linkname to access unexported symbols",
       "why_fails": "Compiler hack; breaks with Go version updates",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Reordering imports alphabetically",
       "why_fails": "Does not break the cycle; both modules still depend on each other",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#ImportError"
+      ],
       "condition": ""
     },
     {
       "action": "Using importlib.reload()",
       "why_fails": "Does not break circular dependency; may cause duplicate state",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#ImportError"
+      ],
       "condition": ""
     }
   ],

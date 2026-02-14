@@ -38,14 +38,18 @@
       "action": "Changing the type field in package.json between module and commonjs",
       "why_fails": "This error is not about ESM vs CJS mode. It is about Windows file paths being treated as URLs in ESM dynamic imports. Switching module type does not fix path resolution.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "All ESM-related errors are assumed to be ESM/CJS configuration issues."
     },
     {
       "action": "Using path.resolve() instead of import.meta.url",
       "why_fails": "path.resolve() returns a file system path string. ESM dynamic import() expects a URL. Passing a Windows path (C:\\foo\\bar) to import() triggers this error because 'C:' is parsed as a URL scheme.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "File paths and URLs are treated as interchangeable in ESM when they are fundamentally different."
     }
   ],

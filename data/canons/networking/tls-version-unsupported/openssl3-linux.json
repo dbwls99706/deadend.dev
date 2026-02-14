@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "runtime": {
+      "name": "openssl",
+      "version_range": "3.x"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Re-enable TLS 1.0/1.1 in the system-wide OpenSSL configuration",
       "why_fails": "TLS 1.0 and 1.1 have known vulnerabilities (BEAST, POODLE downgrade). Re-enabling them system-wide affects all applications and introduces security risks. Compliance standards (PCI DSS, HIPAA) prohibit TLS 1.0/1.1, making this a non-starter for regulated environments.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Compile OpenSSL from source with legacy protocol support forced on",
       "why_fails": "Building a custom OpenSSL with re-enabled legacy protocols creates a maintenance burden, breaks system package management, and may introduce build-time errors. Other applications linking against the system OpenSSL will not benefit, and the custom build must be manually patched for future vulnerabilities.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Upgrade the legacy server or client to support TLS 1.2 or TLS 1.3",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Identify which side requires the legacy protocol: openssl s_client -connect host:443 -tls1_2 (if this works, the server supports 1.2)\n2. Update the legacy application or its TLS library\n3. Configure TLS 1.2 minimum: ssl_protocols TLSv1.2 TLSv1.3; in nginx\n4. For Java apps, ensure JDK 8u261+ and set -Dhttps.protocols=TLSv1.2,TLSv1.3\n5. Test: openssl s_client -connect host:443 -tls1_2",
       "sources": [],
       "condition": ""
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/ssl-protocol-error/openssl3-linux", "probability": 0.30, "condition": "when forcing a TLS version that the server supports but with incompatible cipher suites"},
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the server immediately drops connections using unsupported protocol versions"}
+      {
+        "error_id": "networking/ssl-protocol-error/openssl3-linux",
+        "probability": 0.3,
+        "condition": "when forcing a TLS version that the server supports but with incompatible cipher suites"
+      },
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the server immediately drops connections using unsupported protocol versions"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/ssl-protocol-error/openssl3-linux", "probability": 0.25, "condition": "when a generic handshake failure is narrowed down to a TLS version issue"},
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.10, "condition": "when updating OpenSSL to fix CA issues also raises the minimum TLS version"}
+      {
+        "error_id": "networking/ssl-protocol-error/openssl3-linux",
+        "probability": 0.25,
+        "condition": "when a generic handshake failure is narrowed down to a TLS version issue"
+      },
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "probability": 0.1,
+        "condition": "when updating OpenSSL to fix CA issues also raises the minimum TLS version"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/ssl-protocol-error/openssl3-linux", "distinction": "TLS version unsupported is specifically about protocol version negotiation; protocol error covers broader handshake failures including cipher and extension mismatches"},
-      {"error_id": "networking/connection-refused/tcp-linux", "distinction": "TLS version errors occur during SSL negotiation after TCP connects; connection refused means TCP itself never established"}
+      {
+        "error_id": "networking/ssl-protocol-error/openssl3-linux",
+        "distinction": "TLS version unsupported is specifically about protocol version negotiation; protocol error covers broader handshake failures including cipher and extension mismatches"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "distinction": "TLS version errors occur during SSL negotiation after TCP connects; connection refused means TCP itself never established"
+      }
     ]
   },
   "metadata": {

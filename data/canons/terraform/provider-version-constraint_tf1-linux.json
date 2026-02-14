@@ -51,7 +51,8 @@
       "sources": [
         "https://registry.terraform.io/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "terraform providers --help or browse the registry"
     },
     {
       "action": "Relax version constraint: use ~> for minor version flexibility",

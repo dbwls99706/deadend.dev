@@ -29,14 +29,18 @@
       "action": "Using defaultdict everywhere",
       "why_fails": "Changes the dict behavior globally; may mask missing data issues",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#KeyError"
+      ],
       "condition": ""
     },
     {
       "action": "Adding all possible keys with None defaults upfront",
       "why_fails": "Hides missing data; downstream code gets None instead of useful errors",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#KeyError"
+      ],
       "condition": ""
     }
   ],

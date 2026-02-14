@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Downgrading isolation level to READ COMMITTED globally to avoid serialization failures",
       "why_fails": "READ COMMITTED eliminates serialization errors but introduces phantom reads and non-repeatable reads. If the application logic depends on consistent snapshots (e.g., financial calculations, inventory checks), this leads to data corruption bugs that are much harder to debug than retry logic.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Adding SELECT FOR UPDATE locks everywhere to prevent concurrent modifications",
       "why_fails": "Excessive pessimistic locking defeats the purpose of MVCC, reduces throughput significantly, and can introduce deadlocks. It converts optimistic concurrency control into pessimistic, negating the benefits of SERIALIZABLE isolation.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Implement automatic transaction retry with exponential backoff",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Catch SQLSTATE 40001 (serialization_failure) in your application code and retry the entire transaction (not just the failed statement). Use exponential backoff: 50ms, 100ms, 200ms with jitter. Limit retries to 3-5 attempts. Most serialization failures succeed on the first retry.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when retry logic with pessimistic locking introduces deadlock potential"}
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "probability": 0.15,
+        "condition": "when retry logic with pessimistic locking introduces deadlock potential"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.20, "condition": "when high concurrency saturates connection pool causing more serialization conflicts"}
+      {
+        "error_id": "database/connection-pool-exhausted/pg16-linux",
+        "probability": 0.2,
+        "condition": "when high concurrency saturates connection pool causing more serialization conflicts"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/deadlock-detected/pg16-linux", "distinction": "Serialization failure (40001) means a concurrent transaction already committed conflicting changes. Deadlock (40P01) means two transactions are waiting on each other. Both require retry, but serialization failures are expected at SERIALIZABLE isolation."}
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "distinction": "Serialization failure (40001) means a concurrent transaction already committed conflicting changes. Deadlock (40P01) means two transactions are waiting on each other. Both require retry, but serialization failures are expected at SERIALIZABLE isolation."
+      }
     ]
   },
   "metadata": {

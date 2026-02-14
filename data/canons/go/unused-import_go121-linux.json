@@ -29,7 +29,9 @@
       "action": "Aliasing to blank identifier permanently: _ 'fmt'",
       "why_fails": "Keeps unnecessary import; adds dead code",
       "fail_rate": 0.5,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

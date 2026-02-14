@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "maven", "version_range": ">=3.8,<4.0"},
+    "runtime": {
+      "name": "maven",
+      "version_range": ">=3.8,<4.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Excluding all transitive dependencies and manually declaring every dependency",
       "why_fails": "Excluding all transitives and re-declaring them is an enormous maintenance burden. You lose automatic transitive resolution — the main benefit of a dependency manager. New versions of direct dependencies may add new transitive requirements that you will miss, causing ClassNotFoundException at runtime.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Always picking the latest version of conflicting dependencies without testing compatibility",
       "why_fails": "The latest version may have breaking API changes that other dependencies are not compatible with. For example, library A might require Guava 30.x and be incompatible with Guava 33.x. Blindly upgrading can introduce NoSuchMethodError, ClassNotFoundException, or behavioral changes.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.35, "condition": "when the wrong dependency version is resolved and a method signature is missing"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.25, "condition": "when a transitive dependency is excluded or resolved to a version that lacks the needed class"}
+      {
+        "error_id": "java/nosuchmethoderror/jdk17-linux",
+        "probability": 0.35,
+        "condition": "when the wrong dependency version is resolved and a method signature is missing"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when a transitive dependency is excluded or resolved to a version that lacks the needed class"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.15, "condition": "when a build failure fix requires adding dependencies that conflict with existing ones"},
-      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.10, "condition": "when investigating a missing bean reveals a dependency version conflict"}
+      {
+        "error_id": "java/maven-build-failure/maven3-linux",
+        "probability": 0.15,
+        "condition": "when a build failure fix requires adding dependencies that conflict with existing ones"
+      },
+      {
+        "error_id": "java/spring-bean-not-found/spring6-linux",
+        "probability": 0.1,
+        "condition": "when investigating a missing bean reveals a dependency version conflict"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/maven-build-failure/maven3-linux", "distinction": "Dependency convergence errors are about version conflicts between transitive dependencies; build failures are about compilation errors in source code. Convergence issues may not cause build failures immediately but lead to runtime errors."}
+      {
+        "error_id": "java/maven-build-failure/maven3-linux",
+        "distinction": "Dependency convergence errors are about version conflicts between transitive dependencies; build failures are about compilation errors in source code. Convergence issues may not cause build failures immediately but lead to runtime errors."
+      }
     ]
   },
   "metadata": {

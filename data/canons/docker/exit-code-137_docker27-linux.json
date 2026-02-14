@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.docker.com/engine/containers/resource_constraints/#limit-a-containers-access-to-memory"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "docker run --memory=2g or in compose: mem_limit: 2g"
     },
     {
       "action": "Profile application memory to find leaks or reduce footprint",

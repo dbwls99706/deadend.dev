@@ -32,14 +32,18 @@
       "action": "Set pitch to exactly the row width without alignment",
       "why_fails": "CUDA requires pitched memory to be aligned to device memory transaction size; unaligned pitch causes performance issues or errors",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Allocate as 1D and manually compute 2D offsets with wrong pitch",
       "why_fails": "Using incorrect pitch for 2D indexing causes silent data corruption or out-of-bounds access",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

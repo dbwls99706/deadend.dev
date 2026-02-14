@@ -51,7 +51,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/topics/yanked/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install 'pkg!=yanked_version'"
     },
     {
       "action": "Check PyPI for the reason it was yanked and the recommended replacement version",
@@ -67,7 +68,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip install --upgrade pkg"
     }
   ],
   "transition_graph": {

@@ -29,14 +29,18 @@
       "action": "Using unsafe.Pointer to convert between types",
       "why_fails": "Bypasses type safety; leads to memory corruption if types differ",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Adding type conversion without checking compatibility",
       "why_fails": "Some conversions compile but lose data (e.g., int64 to int32)",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Installing nvidia-driver instead of CUDA toolkit",
       "why_fails": "The driver enables GPU compute but doesn't include nvcc or development tools",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding a random path to PATH hoping it has nvcc",
       "why_fails": "Wrong CUDA version's nvcc may be incompatible",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

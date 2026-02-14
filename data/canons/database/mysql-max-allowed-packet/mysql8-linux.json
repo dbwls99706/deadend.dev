@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Setting max_allowed_packet on the client side only",
       "why_fails": "max_allowed_packet must be set on both the server and the client. The effective limit is the minimum of the two values. Setting it only on the client does nothing if the server limit is lower, and vice versa.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Setting max_allowed_packet to 1GB to never hit the limit",
       "why_fails": "max_allowed_packet is allocated per connection. With many concurrent connections, setting it very high can exhaust server memory. MySQL allocates the buffer dynamically but large packets require large allocations. A more targeted approach is to set it to the actual maximum expected data size plus a small margin.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "probability": 0.10, "condition": "when large packet allocations consume memory that could serve additional connections"}
+      {
+        "error_id": "database/mysql-too-many-connections/mysql8-linux",
+        "probability": 0.1,
+        "condition": "when large packet allocations consume memory that could serve additional connections"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-charset-mismatch/mysql8-linux", "probability": 0.05, "condition": "when charset conversion increases data size beyond the packet limit"}
+      {
+        "error_id": "database/mysql-charset-mismatch/mysql8-linux",
+        "probability": 0.05,
+        "condition": "when charset conversion increases data size beyond the packet limit"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "distinction": "Max allowed packet is about the size of a single query or result. Too many connections is about the number of concurrent connections. Both are server resource limits but control completely different resources."}
+      {
+        "error_id": "database/mysql-too-many-connections/mysql8-linux",
+        "distinction": "Max allowed packet is about the size of a single query or result. Too many connections is about the number of concurrent connections. Both are server resource limits but control completely different resources."
+      }
     ]
   },
   "metadata": {

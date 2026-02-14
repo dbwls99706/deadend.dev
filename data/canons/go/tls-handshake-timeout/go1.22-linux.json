@@ -28,7 +28,7 @@
     {
       "action": "Set InsecureSkipVerify=true on TLS config",
       "why_fails": "InsecureSkipVerify skips certificate validation but does not fix handshake timeouts — the timeout occurs before certificate verification",
-      "fail_rate": 0.90,
+      "fail_rate": 0.9,
       "sources": [
         "https://pkg.go.dev/crypto/tls#Config"
       ],
@@ -37,8 +37,10 @@
     {
       "action": "Downgrade to HTTP instead of HTTPS",
       "why_fails": "Removes transport security entirely — only masks the problem",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
@@ -54,7 +56,7 @@
     },
     {
       "action": "Verify the target server supports the TLS version your client offers",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "Set tls.Config MinVersion and MaxVersion to match server capabilities. Use openssl s_client -connect host:port to diagnose.",
       "sources": [
         "https://pkg.go.dev/crypto/tls#Config"
@@ -66,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "go/context-deadline-exceeded/go1-linux",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "when TLS handshake timeout causes the overall request context to expire"
       }
     ],

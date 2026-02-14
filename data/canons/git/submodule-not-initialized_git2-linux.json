@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-submodule"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git submodule init && git submodule update"
     },
     {
       "action": "Or clone with submodules included: git clone --recurse-submodules <url>",
@@ -59,7 +60,8 @@
       "sources": [
         "https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---recurse-submodules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git clone --recurse-submodules"
     },
     {
       "action": "Update to latest: git submodule update --init --recursive",
@@ -67,7 +69,8 @@
       "sources": [
         "https://git-scm.com/docs/git-submodule"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git submodule update --init --recursive"
     }
   ],
   "transition_graph": {

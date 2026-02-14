@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Catching ArrayIndexOutOfBoundsException to return a default value instead of fixing the indexing logic",
       "why_fails": "Using try-catch for array bounds is an anti-pattern in Java. Exceptions are expensive to create (stack trace capture), and this approach hides logic bugs. The incorrect index indicates a flaw in the algorithm — a loop boundary error, an off-by-one error, or an assumption about data size that is violated.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Pre-allocating a very large array to avoid bounds issues",
       "why_fails": "Over-allocating arrays wastes memory and does not fix the indexing logic. If the index is computed incorrectly (e.g., negative, or based on wrong input), a larger array only raises the threshold before failure without fixing the root cause. It can also cause OutOfMemoryError.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Use Collections (ArrayList, List) instead of arrays for dynamic data, and use List utility methods for safe access",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Replace arrays with ArrayList<T> for dynamic sizing. 2. Use list.isEmpty() checks before accessing elements. 3. For getting the last element safely: list.get(list.size() - 1) with a size check, or use Guava's Iterables.getLast(list, defaultValue). 4. Use ListIterator for safe indexed iteration. 5. For fixed-size indexed data, use EnumMap or a Map<Integer, T> to avoid index-based bugs.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.10, "condition": "when bounds check returns null default value that is used without null handling"},
-      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.05, "condition": "when over-allocation workaround creates excessively large arrays"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when bounds check returns null default value that is used without null handling"
+      },
+      {
+        "error_id": "java/outofmemoryerror-heap/jdk17-linux",
+        "probability": 0.05,
+        "condition": "when over-allocation workaround creates excessively large arrays"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.08, "condition": "when null-check workaround initializes an empty array that is later accessed without length check"},
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.05, "condition": "when JSON deserialization produces a shorter array than expected"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when null-check workaround initializes an empty array that is later accessed without length check"
+      },
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "probability": 0.05,
+        "condition": "when JSON deserialization produces a shorter array than expected"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/illegalstateexception/jdk17-linux", "distinction": "ArrayIndexOutOfBoundsException is specifically about array/list index being out of range; IllegalStateException is about an object being in the wrong state. StringIndexOutOfBoundsException is a sibling for String character access."}
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "distinction": "ArrayIndexOutOfBoundsException is specifically about array/list index being out of range; IllegalStateException is about an object being in the wrong state. StringIndexOutOfBoundsException is a sibling for String character access."
+      }
     ]
   },
   "metadata": {

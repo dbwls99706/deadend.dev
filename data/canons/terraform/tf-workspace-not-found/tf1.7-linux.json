@@ -29,14 +29,18 @@
       "action": "Edit the .terraform/environment file to force-set the workspace",
       "why_fails": "If the workspace does not exist in the backend, manually setting the file creates an invalid state",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Use terraform.workspace in conditions without creating the workspace first",
       "why_fails": "References to terraform.workspace assume the workspace exists; plan fails if it does not",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -69,7 +73,12 @@
         "condition": "Backend migration to new backend does not migrate workspaces automatically"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-import-resource-exists/tf1.7-linux",
+        "distinction": "'Error: Workspace not found: the workspace does not exist' vs 'Error: Resource already managed by Terraform or import ID no': while both are terraform errors in the state_error category, the former Terraform workspace referenced in configuration or CLI does not exist in the bac while the latter Terraform import failed because the resource already exists in state or the impo."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

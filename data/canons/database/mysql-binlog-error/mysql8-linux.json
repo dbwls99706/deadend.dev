@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Resetting the replica's binary log position with CHANGE MASTER TO without re-initializing data",
       "why_fails": "Pointing the replica to a new binlog position without a fresh data snapshot creates data drift. The replica misses all changes between the old (purged) position and the new position, leading to silent data inconsistency that is extremely difficult to detect and fix.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling binlog purging entirely to prevent future occurrences",
       "why_fails": "Without binlog purging, binary logs accumulate indefinitely and will fill the disk. This trades a replication error for a disk full outage, which is worse. Instead, configure a reasonable retention period and monitor replication lag.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Re-initialize the replica from a fresh backup of the primary",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Take a consistent snapshot: mysqldump --single-transaction --source-data=2 --all-databases > dump.sql (or use xtrabackup for faster backups). Restore on replica. Use the binlog position from the backup to set up replication: CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE='binlog.000123', SOURCE_LOG_POS=456; START REPLICA;",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.25, "condition": "when re-initialization causes the replica to replay a large backlog of transactions"}
+      {
+        "error_id": "database/mysql-replication-lag/mysql8-linux",
+        "probability": 0.25,
+        "condition": "when re-initialization causes the replica to replay a large backlog of transactions"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.30, "condition": "when a lagging replica falls so far behind that the primary purges the needed binlogs"}
+      {
+        "error_id": "database/mysql-replication-lag/mysql8-linux",
+        "probability": 0.3,
+        "condition": "when a lagging replica falls so far behind that the primary purges the needed binlogs"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-replication-lag/mysql8-linux", "distinction": "Binlog error means the required binlog files are completely gone from the primary. Replication lag means the replica is behind but can still catch up because the binlogs still exist. Binlog error is unrecoverable without re-init; lag is self-resolving."}
+      {
+        "error_id": "database/mysql-replication-lag/mysql8-linux",
+        "distinction": "Binlog error means the required binlog files are completely gone from the primary. Replication lag means the replica is behind but can still catch up because the binlogs still exist. Binlog error is unrecoverable without re-init; lag is self-resolving."
+      }
     ]
   },
   "metadata": {

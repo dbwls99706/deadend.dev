@@ -11,28 +11,76 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.91,
     "last_updated": "2026-02-12",
     "summary": "Call to undefined function errors occur when PHP tries to call a function that does not exist in the current scope. Common causes include missing PHP extensions, missing use/import statements for namespaced functions, typos in function names, and calling functions removed in newer PHP versions."
   },
   "dead_ends": [
-    {"action": "Adding a polyfill function definition without checking if the extension should be installed", "why_fails": "Writing a userland polyfill for a function that should come from a PHP extension (e.g., json_encode, curl_init) creates an incomplete and potentially buggy replacement. The extension provides optimized C-level implementation that a polyfill cannot replicate fully.", "fail_rate": 0.70, "sources": [], "condition": ""},
-    {"action": "Downgrading PHP version to restore a removed function", "why_fails": "Downgrading PHP to get back a deprecated/removed function creates security risks and breaks compatibility with modern dependencies. The function was removed for a reason and should be replaced with its modern equivalent.", "fail_rate": 0.76, "sources": [], "condition": ""}
+    {
+      "action": "Adding a polyfill function definition without checking if the extension should be installed",
+      "why_fails": "Writing a userland polyfill for a function that should come from a PHP extension (e.g., json_encode, curl_init) creates an incomplete and potentially buggy replacement. The extension provides optimized C-level implementation that a polyfill cannot replicate fully.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Downgrading PHP version to restore a removed function",
+      "why_fails": "Downgrading PHP to get back a deprecated/removed function creates security risks and breaks compatibility with modern dependencies. The function was removed for a reason and should be replaced with its modern equivalent.",
+      "fail_rate": 0.76,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Install the missing PHP extension that provides the function", "success_rate": 0.91, "how": "Identify which extension provides the function (check php.net docs). Install it with 'apt-get install php8.3-{extension}' or enable it in php.ini. Restart PHP-FPM or the web server. Verify with 'php -m | grep {extension}'.", "sources": [], "condition": ""},
-    {"action": "Check namespace imports and function name spelling", "success_rate": 0.88, "how": "Verify the function name is spelled correctly. If using a namespaced function, add the proper 'use function' import statement. Check if the function was renamed or moved in the current PHP version using the PHP migration guides.", "sources": [], "condition": ""}
+    {
+      "action": "Install the missing PHP extension that provides the function",
+      "success_rate": 0.91,
+      "how": "Identify which extension provides the function (check php.net docs). Install it with 'apt-get install php8.3-{extension}' or enable it in php.ini. Restart PHP-FPM or the web server. Verify with 'php -m | grep {extension}'.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check namespace imports and function name spelling",
+      "success_rate": 0.88,
+      "how": "Verify the function name is spelled correctly. If using a namespaced function, add the proper 'use function' import statement. Check if the function was renamed or moved in the current PHP version using the PHP migration guides.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.15, "condition": "when the missing function is a static method and the developer tries to use the class instead"}],
-    "preceded_by": [{"error_id": "php/composer-dependency-conflict/composer2-linux", "probability": 0.12, "condition": "when a dependency that provided the function was removed during composer update"}],
-    "frequently_confused_with": [{"error_id": "php/undefined-variable/php83-linux", "distinction": "Undefined function is a fatal error from calling a non-existent function while undefined variable is a warning from accessing a non-existent variable"}]
+    "leads_to": [
+      {
+        "error_id": "php/class-not-found/php83-linux",
+        "probability": 0.15,
+        "condition": "when the missing function is a static method and the developer tries to use the class instead"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/composer-dependency-conflict/composer2-linux",
+        "probability": 0.12,
+        "condition": "when a dependency that provided the function was removed during composer update"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/undefined-variable/php83-linux",
+        "distinction": "Undefined function is a fatal error from calling a non-existent function while undefined variable is a warning from accessing a non-existent variable"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

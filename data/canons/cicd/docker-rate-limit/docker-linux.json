@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "docker", "version_range": ">=20.0"},
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Docker Hub rate limits were exceeded for anonymous or free-tier pulls. Anonymous pulls are limited to 100 per 6 hours per IP; authenticated free users get 200. CI environments sharing IPs hit this quickly."
@@ -25,22 +28,26 @@
     {
       "action": "Waiting for the rate limit to reset without implementing a long-term fix",
       "why_fails": "The rate limit will be hit again on the next CI run cycle since the underlying pull pattern has not changed",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Using a VPN or rotating IPs to bypass the rate limit",
       "why_fails": "This violates Docker Hub terms of service and is unreliable. Shared CI runner IPs still converge on the same rate limits.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Authenticate with Docker Hub to increase the rate limit",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Create a Docker Hub account and add credentials to CI. For GitHub Actions: store DOCKER_USERNAME and DOCKER_PASSWORD as secrets, add a docker/login-action step before pulls. This doubles the rate limit to 200 pulls/6hr.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.30, "condition": "when rate-limited base image pulls cause Dockerfile FROM to fail"},
-      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.15, "condition": "when attempting to authenticate to avoid rate limits but credentials are misconfigured"}
+      {
+        "error_id": "cicd/docker-build-failed-ci/docker-linux",
+        "probability": 0.3,
+        "condition": "when rate-limited base image pulls cause Dockerfile FROM to fail"
+      },
+      {
+        "error_id": "cicd/gha-docker-login-failed/gha-linux",
+        "probability": 0.15,
+        "condition": "when attempting to authenticate to avoid rate limits but credentials are misconfigured"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.20, "condition": "when failed authentication falls back to anonymous pulls which then hit rate limits"}
+      {
+        "error_id": "cicd/gha-docker-login-failed/gha-linux",
+        "probability": 0.2,
+        "condition": "when failed authentication falls back to anonymous pulls which then hit rate limits"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "distinction": "docker-rate-limit is about exceeding pull quotas; docker-login-failed is about authentication credential errors"}
+      {
+        "error_id": "cicd/gha-docker-login-failed/gha-linux",
+        "distinction": "docker-rate-limit is about exceeding pull quotas; docker-login-failed is about authentication credential errors"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Using useRef to track which hooks to call",
       "why_fails": "Adds complexity; still violates hook ordering rules",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Converting to class components to avoid hooks entirely",
       "why_fails": "Loses functional component benefits; class components are less ergonomic",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/"
+      ],
       "condition": ""
     }
   ],

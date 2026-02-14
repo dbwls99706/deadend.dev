@@ -29,7 +29,9 @@
       "action": "Force-checking out the branch",
       "why_fails": "git checkout -f discards all uncommitted changes",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

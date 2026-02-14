@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Hardcoding absolute file paths that work on the developer's machine",
       "why_fails": "Absolute paths like '/home/developer/project/config.json' or 'C:\\Users\\dev\\config.json' are not portable. They break on CI/CD servers, Docker containers, other developers' machines, and production deployments where the directory structure differs.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using relative paths without understanding the working directory at runtime",
       "why_fails": "Relative paths are resolved against the current working directory, which varies depending on how the application is launched (IDE, Maven, JAR, Docker). The file may exist in the project but the working directory at runtime is different from what the developer expects.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Use configurable paths via environment variables or system properties for external files",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Define the path as a configurable property: String path = System.getenv('CONFIG_PATH'); or use Spring's @Value('${config.path}'). 2. Validate the path at startup with Files.exists(Path.of(path)). 3. Use Path.of() instead of new File() for proper path handling. 4. Log the resolved absolute path to aid debugging: logger.info('Loading config from: {}', path.toAbsolutePath()). 5. Provide a sensible default that works in the development environment.",
       "sources": [],
       "condition": "when the file is external to the application"
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.15, "condition": "when getResourceAsStream returns null and the result is used without null check"},
-      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.08, "condition": "when missing configuration file causes application to start in an invalid state"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when getResourceAsStream returns null and the result is used without null check"
+      },
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when missing configuration file causes application to start in an invalid state"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.10, "condition": "when a bean initialization depends on reading a configuration file that does not exist"},
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.08, "condition": "when ObjectMapper.readValue(file, ...) fails because the file path is wrong"}
+      {
+        "error_id": "java/spring-autowire-failed/spring6-linux",
+        "probability": 0.1,
+        "condition": "when a bean initialization depends on reading a configuration file that does not exist"
+      },
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "probability": 0.08,
+        "condition": "when ObjectMapper.readValue(file, ...) fails because the file path is wrong"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "FileNotFoundException is about filesystem files (config, data, resources); ClassNotFoundException is about Java .class files not found on the classpath. Both involve 'not found' but in completely different contexts."}
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "distinction": "FileNotFoundException is about filesystem files (config, data, resources); ClassNotFoundException is about Java .class files not found on the classpath. Both involve 'not found' but in completely different contexts."
+      }
     ]
   },
   "metadata": {

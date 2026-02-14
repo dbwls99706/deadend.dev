@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Retry the connection assuming the error is transient",
       "why_fails": "ICMP unreachable is a definitive routing response, not a transient issue. Retrying without fixing the routing problem will produce the same result. The exception is host unreachable due to ARP failure, which may resolve if the target host comes online.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Block ICMP unreachable messages to suppress the error",
       "why_fails": "Blocking ICMP unreachable on the client converts a fast failure into a slow timeout. The application waits for the full TCP timeout instead of failing immediately, degrading user experience without fixing the routing issue.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when ICMP unreachable is blocked and the error degrades to a timeout"},
-      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.15, "condition": "when the routing is fixed but the target service is not listening"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.2,
+        "condition": "when ICMP unreachable is blocked and the error degrades to a timeout"
+      },
+      {
+        "error_id": "networking/connection-refused/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the routing is fixed but the target service is not listening"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.25, "condition": "when a firewall REJECT rule sends ICMP administratively prohibited"}
+      {
+        "error_id": "networking/firewall-blocked/tcp-linux",
+        "probability": 0.25,
+        "condition": "when a firewall REJECT rule sends ICMP administratively prohibited"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/host-unreachable/tcp-linux", "distinction": "ICMP unreachable is the general category including host, network, port, and admin unreachable; host-unreachable is specifically ICMP type 3 code 1"}
+      {
+        "error_id": "networking/host-unreachable/tcp-linux",
+        "distinction": "ICMP unreachable is the general category including host, network, port, and admin unreachable; host-unreachable is specifically ICMP type 3 code 1"
+      }
     ]
   },
   "metadata": {

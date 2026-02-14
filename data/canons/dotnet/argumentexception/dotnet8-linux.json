@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Passing empty strings or placeholder values to bypass argument validation",
       "why_fails": "The method expects meaningful values; passing empty or dummy values causes logic errors or silent data corruption downstream",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing argument validation from the method to suppress the exception",
       "why_fails": "Removes a safety net that prevents invalid data from entering the system; the invalid argument will cause harder-to-debug errors deeper in the call stack",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Register missing services in the DI container",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "If the ArgumentNullException occurs in a constructor injected by DI, check Program.cs or Startup.cs for missing service registrations. Add builder.Services.AddScoped<IMyService, MyService>() or equivalent registration",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when the null argument is silently accepted without validation and used later"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when invalid argument puts object into bad state for subsequent operations"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when the null argument is silently accepted without validation and used later"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when invalid argument puts object into bad state for subsequent operations"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.12, "condition": "when a null reference is passed as an argument to a validating method"},
-      {"error_id": "dotnet/nuget-restore-failed/dotnet8-linux", "probability": 0.08, "condition": "when missing packages cause unresolved dependencies leading to null injections"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.12,
+        "condition": "when a null reference is passed as an argument to a validating method"
+      },
+      {
+        "error_id": "dotnet/nuget-restore-failed/dotnet8-linux",
+        "probability": 0.08,
+        "condition": "when missing packages cause unresolved dependencies leading to null injections"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "distinction": "ArgumentNullException is explicitly thrown by validation code to reject null inputs; NullReferenceException is an unhandled dereference of a null value that was not caught by validation"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "distinction": "ArgumentNullException is explicitly thrown by validation code to reject null inputs; NullReferenceException is an unhandled dereference of a null value that was not caught by validation"
+      }
     ]
   },
   "metadata": {

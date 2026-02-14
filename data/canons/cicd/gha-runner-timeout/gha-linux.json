@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Simply increase timeout-minutes to a very large value",
       "why_fails": "Masks the underlying issue (hanging process, inefficient build); wastes CI minutes and delays feedback; GitHub has a hard cap of 360 minutes",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Re-run the workflow without investigating the root cause",
       "why_fails": "Timeouts from hangs or slow builds are deterministic and will recur on every run",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.25, "condition": "When the timeout is caused by a specific flaky test hanging"}
+      {
+        "error_id": "cicd/test-flaky-timeout/ci-linux",
+        "probability": 0.25,
+        "condition": "When the timeout is caused by a specific flaky test hanging"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.20, "condition": "When cache miss causes full rebuild, significantly increasing build time"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "probability": 0.2,
+        "condition": "When cache miss causes full rebuild, significantly increasing build time"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-concurrency-cancelled/gha-linux", "distinction": "Timeout means the job ran too long; concurrency cancellation means the job was actively cancelled by a newer run"}
+      {
+        "error_id": "cicd/gha-concurrency-cancelled/gha-linux",
+        "distinction": "Timeout means the job ran too long; concurrency cancellation means the job was actively cancelled by a newer run"
+      }
     ]
   },
   "metadata": {

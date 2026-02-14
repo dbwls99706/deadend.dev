@@ -29,14 +29,18 @@
       "action": "Installing a different CUDA toolkit version",
       "why_fails": "The toolkit version doesn't determine compiled architectures",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using CUDA_VISIBLE_DEVICES to select a different GPU",
       "why_fails": "All GPUs on the machine likely have the same architecture",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

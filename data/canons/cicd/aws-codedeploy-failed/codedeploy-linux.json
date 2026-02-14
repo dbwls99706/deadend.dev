@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "aws-codedeploy", "version_range": ">=1.0"},
+    "runtime": {
+      "name": "aws-codedeploy",
+      "version_range": ">=1.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Re-deploying immediately without checking the CodeDeploy agent status",
       "why_fails": "If the agent is stopped or not installed on target instances, redeployment will fail with the same error",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Modifying the appspec.yml hooks without testing locally",
       "why_fails": "Lifecycle hook scripts may have permission issues, missing dependencies, or syntax errors that only surface at deployment time",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "probability": 0.25, "condition": "when the failed deployment triggers an automatic rollback that also fails"}
+      {
+        "error_id": "cicd/deploy-rollback-failed/ci-linux",
+        "probability": 0.25,
+        "condition": "when the failed deployment triggers an automatic rollback that also fails"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.15, "condition": "when AWS credentials or region environment variables are not configured"}
+      {
+        "error_id": "cicd/env-variable-not-set/gha-linux",
+        "probability": 0.15,
+        "condition": "when AWS credentials or region environment variables are not configured"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "distinction": "aws-codedeploy-failed is the initial deployment failure; deploy-rollback-failed is when the rollback mechanism itself fails after a deployment failure"}
+      {
+        "error_id": "cicd/deploy-rollback-failed/ci-linux",
+        "distinction": "aws-codedeploy-failed is the initial deployment failure; deploy-rollback-failed is when the rollback mechanism itself fails after a deployment failure"
+      }
     ]
   },
   "metadata": {

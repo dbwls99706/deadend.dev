@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.83,
     "last_updated": "2026-02-12",
     "summary": "Tower's Service trait has strict type requirements for Request and Response types. Ensure your service implementation matches the expected types."
@@ -25,8 +28,10 @@
     {
       "action": "Implement Service manually for complex middleware stacks",
       "why_fails": "Manual Service impls are error-prone and hard to maintain; tower layers handle this better",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -35,26 +40,41 @@
       "action": "Use tower::ServiceBuilder to compose layers properly",
       "success_rate": 0.87,
       "how": "use tower::ServiceBuilder;\nlet svc = ServiceBuilder::new()\n    .timeout(Duration::from_secs(30))\n    .layer(my_layer)\n    .service(my_handler);",
-      "sources": ["https://docs.rs/tower/latest/tower/struct.ServiceBuilder.html"],
+      "sources": [
+        "https://docs.rs/tower/latest/tower/struct.ServiceBuilder.html"
+      ],
       "condition": ""
     },
     {
       "action": "Ensure Request and Response body types match between layers",
       "success_rate": 0.85,
       "how": "// All layers must agree on the body type\nuse http_body::Body;\n// Use BoxBody or a unified body type across all services",
-      "sources": ["https://docs.rs/tower-http/latest/tower_http/"],
+      "sources": [
+        "https://docs.rs/tower-http/latest/tower_http/"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-hyper-connection-reset/rust1.77-linux", "probability": 0.15, "condition": "When service configuration issues lead to runtime connection problems"}
+      {
+        "error_id": "rust/rust-hyper-connection-reset/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When service configuration issues lead to runtime connection problems"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-trait-not-implemented/rust1.77-linux", "probability": 0.20, "condition": "When generic trait bound errors involve tower Service"}
+      {
+        "error_id": "rust/rust-trait-not-implemented/rust1.77-linux",
+        "probability": 0.2,
+        "condition": "When generic trait bound errors involve tower Service"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-trait-not-implemented/rust1.77-linux", "distinction": "General trait error vs tower-specific Service trait implementation requirements"}
+      {
+        "error_id": "rust/rust-trait-not-implemented/rust1.77-linux",
+        "distinction": "General trait error vs tower-specific Service trait implementation requirements"
+      }
     ]
   },
   "metadata": {

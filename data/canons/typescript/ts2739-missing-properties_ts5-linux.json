@@ -29,14 +29,18 @@
       "action": "Making all properties optional with Partial<T>",
       "why_fails": "Changes the contract; callers may pass incomplete objects",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     },
     {
       "action": "Using type assertion: {} as T",
       "why_fails": "Compiles but fails at runtime when properties are accessed",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/"
+      ],
       "condition": ""
     }
   ],

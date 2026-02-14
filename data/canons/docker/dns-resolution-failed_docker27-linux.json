@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.docker.com/engine/daemon/networking/#dns-services"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "docker run --dns 8.8.8.8"
     },
     {
       "action": "Check Docker daemon DNS config in /etc/docker/daemon.json",

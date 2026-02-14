@@ -29,14 +29,18 @@
       "action": "Killing random processes on the port",
       "why_fails": "May kill a critical service",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling the host firewall",
       "why_fails": "Unrelated to port binding; security risk",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],

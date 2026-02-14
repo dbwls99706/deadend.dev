@@ -29,14 +29,18 @@
       "action": "Deleting package.json and running npm init",
       "why_fails": "Loses all dependency declarations and scripts",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring the error with --force flag",
       "why_fails": "Dependency resolution will be broken",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

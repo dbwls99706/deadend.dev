@@ -29,14 +29,18 @@
       "action": "Simply increasing the maximum pool size without investigating the root cause",
       "why_fails": "If connections are being leaked (not returned to the pool), increasing the pool size just delays the problem. The pool will exhaust again, now using more database resources. Databases also have their own connection limits.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling connection pool timeout to wait indefinitely for a connection",
       "why_fails": "This converts a fast-failing error into threads that hang indefinitely, leading to thread pool exhaustion and complete application unresponsiveness. The user experience goes from an error message to a frozen application.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Running npm audit fix --force blindly",
       "why_fails": "The --force flag applies breaking changes by upgrading to major versions. This can introduce incompatible APIs, breaking the build or runtime behavior.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring all audit warnings by removing the audit step from CI",
       "why_fails": "This eliminates the security gate entirely. Critical vulnerabilities in production dependencies can be exploited.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/pnpm-lockfile-mismatch/gha-linux", "probability": 0.15, "condition": "when fixing audit issues changes the lockfile"},
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.10, "condition": "when audit fix modifies package-lock.json causing npm ci to fail"}
+      {
+        "error_id": "cicd/pnpm-lockfile-mismatch/gha-linux",
+        "probability": 0.15,
+        "condition": "when fixing audit issues changes the lockfile"
+      },
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "probability": 0.1,
+        "condition": "when audit fix modifies package-lock.json causing npm ci to fail"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.15, "condition": "when npm ci succeeds but the subsequent audit step finds vulnerabilities"}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "probability": 0.15,
+        "condition": "when npm ci succeeds but the subsequent audit step finds vulnerabilities"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "distinction": "npm-audit-critical is specifically about npm dependency vulnerabilities; sonarqube-quality-gate covers broader code quality metrics including security, bugs, and code smells"}
+      {
+        "error_id": "cicd/sonarqube-quality-gate/sonar-linux",
+        "distinction": "npm-audit-critical is specifically about npm dependency vulnerabilities; sonarqube-quality-gate covers broader code quality metrics including security, bugs, and code smells"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Attaching AdministratorAccess to the calling identity",
       "why_fails": "Excessive permissions; violates least privilege",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Modifying the role trust policy to allow all principals",
       "why_fails": "Any AWS account could assume the role",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Manually editing .terraform directory files",
       "why_fails": "May corrupt the local state cache",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Copying state files between backends manually",
       "why_fails": "Easy to lose state or corrupt it; use terraform init -migrate-state instead",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

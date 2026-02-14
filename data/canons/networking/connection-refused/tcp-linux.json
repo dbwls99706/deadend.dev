@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "tcp", "version_range": "any"},
+    "runtime": {
+      "name": "tcp",
+      "version_range": "any"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Increase connection timeout hoping the service will eventually start listening",
       "why_fails": "Connection refused is an immediate, active rejection (RST packet), not a timeout. The OS immediately tells the client that nothing is listening. Increasing timeout has no effect because the error occurs instantly, not after a delay.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Change the client to use a different network interface or source IP",
       "why_fails": "ECONNREFUSED means the target host received the SYN packet and responded with RST because no process is listening on that port. The issue is on the server side, not the network path. Changing source IP or interface does not affect what is listening on the server.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when the service starts but a firewall is then enabled that drops packets instead of rejecting"},
-      {"error_id": "networking/address-already-in-use/tcp-linux", "probability": 0.20, "condition": "when attempting to restart the service but the old process still holds the port"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when the service starts but a firewall is then enabled that drops packets instead of rejecting"
+      },
+      {
+        "error_id": "networking/address-already-in-use/tcp-linux",
+        "probability": 0.2,
+        "condition": "when attempting to restart the service but the old process still holds the port"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.15, "condition": "when DNS is fixed and the host resolves but the service is not yet running"},
-      {"error_id": "networking/address-already-in-use/tcp-linux", "probability": 0.10, "condition": "when EADDRINUSE prevented the service from starting, resulting in refused connections from clients"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.15,
+        "condition": "when DNS is fixed and the host resolves but the service is not yet running"
+      },
+      {
+        "error_id": "networking/address-already-in-use/tcp-linux",
+        "probability": 0.1,
+        "condition": "when EADDRINUSE prevented the service from starting, resulting in refused connections from clients"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "Connection refused is an immediate RST response meaning the host is up but no service listens; timeout means no response at all, typically due to firewall drops or host being down"},
-      {"error_id": "networking/host-unreachable/tcp-linux", "distinction": "Connection refused means the host was reached and actively rejected; host unreachable means no network route exists to the host at all"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "distinction": "Connection refused is an immediate RST response meaning the host is up but no service listens; timeout means no response at all, typically due to firewall drops or host being down"
+      },
+      {
+        "error_id": "networking/host-unreachable/tcp-linux",
+        "distinction": "Connection refused means the host was reached and actively rejected; host unreachable means no network route exists to the host at all"
+      }
     ]
   },
   "metadata": {

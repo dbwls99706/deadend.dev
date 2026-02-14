@@ -29,14 +29,18 @@
       "action": "Downgrading cuDNN to an older version",
       "why_fails": "Older versions have fewer supported configurations, not more",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling cuDNN entirely with torch.backends.cudnn.enabled = False",
       "why_fails": "Huge performance degradation; cuDNN is critical for conv ops",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+      ],
       "condition": ""
     }
   ],

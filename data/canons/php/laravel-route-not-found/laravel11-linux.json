@@ -11,28 +11,76 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "laravel", "version_range": ">=11.0,<12.0"},
+    "runtime": {
+      "name": "laravel",
+      "version_range": ">=11.0,<12.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.91,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Laravel 404 route not found errors occur when a request URL does not match any registered route. Common causes include missing route definitions, incorrect HTTP method, route caching with stale cache, or middleware groups excluding routes."
   },
   "dead_ends": [
-    {"action": "Adding a catch-all route at the top of the routes file", "why_fails": "A catch-all route defined early in the routes file will intercept all requests, preventing any routes defined after it from ever matching. This effectively breaks the entire application routing.", "fail_rate": 0.85, "sources": [], "condition": ""},
-    {"action": "Disabling route caching entirely in production", "why_fails": "Route caching provides significant performance improvements in Laravel. Disabling it does not fix the underlying route definition issue and degrades performance. The real fix is to clear and regenerate the cache.", "fail_rate": 0.60, "sources": [], "condition": ""}
+    {
+      "action": "Adding a catch-all route at the top of the routes file",
+      "why_fails": "A catch-all route defined early in the routes file will intercept all requests, preventing any routes defined after it from ever matching. This effectively breaks the entire application routing.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disabling route caching entirely in production",
+      "why_fails": "Route caching provides significant performance improvements in Laravel. Disabling it does not fix the underlying route definition issue and degrades performance. The real fix is to clear and regenerate the cache.",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Clear route cache and verify route registration with artisan", "success_rate": 0.92, "how": "Run 'php artisan route:clear' to clear cached routes. Then run 'php artisan route:list' to see all registered routes and verify your route exists. Check the HTTP method (GET/POST) matches. If routes look correct, run 'php artisan route:cache' to regenerate the cache.", "sources": [], "condition": ""},
-    {"action": "Check route definition, middleware groups, and route file loading", "success_rate": 0.88, "how": "Verify the route is defined in the correct file (routes/web.php or routes/api.php). Check that the route file is loaded in bootstrap/app.php (Laravel 11) or RouteServiceProvider. Ensure the route is not excluded by middleware groups. For API routes, check the /api prefix is included in the URL.", "sources": [], "condition": ""}
+    {
+      "action": "Clear route cache and verify route registration with artisan",
+      "success_rate": 0.92,
+      "how": "Run 'php artisan route:clear' to clear cached routes. Then run 'php artisan route:list' to see all registered routes and verify your route exists. Check the HTTP method (GET/POST) matches. If routes look correct, run 'php artisan route:cache' to regenerate the cache.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check route definition, middleware groups, and route file loading",
+      "success_rate": 0.88,
+      "how": "Verify the route is defined in the correct file (routes/web.php or routes/api.php). Check that the route file is loaded in bootstrap/app.php (Laravel 11) or RouteServiceProvider. Ensure the route is not excluded by middleware groups. For API routes, check the /api prefix is included in the URL.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/laravel-csrf-token-mismatch/laravel11-linux", "probability": 0.12, "condition": "when the developer fixes the route but forgets to include CSRF token for POST requests"}],
-    "preceded_by": [{"error_id": "php/laravel-model-not-found/laravel11-linux", "probability": 0.10, "condition": "when a model not found error redirects to a non-existent error page route"}],
-    "frequently_confused_with": [{"error_id": "php/laravel-csrf-token-mismatch/laravel11-linux", "distinction": "Route not found returns 404 because the URL has no matching route while CSRF mismatch returns 419 because the route exists but the CSRF token is invalid"}]
+    "leads_to": [
+      {
+        "error_id": "php/laravel-csrf-token-mismatch/laravel11-linux",
+        "probability": 0.12,
+        "condition": "when the developer fixes the route but forgets to include CSRF token for POST requests"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/laravel-model-not-found/laravel11-linux",
+        "probability": 0.1,
+        "condition": "when a model not found error redirects to a non-existent error page route"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/laravel-csrf-token-mismatch/laravel11-linux",
+        "distinction": "Route not found returns 404 because the URL has no matching route while CSRF mismatch returns 419 because the route exists but the CSRF token is invalid"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

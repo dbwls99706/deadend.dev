@@ -29,14 +29,18 @@
       "action": "Republish the same message repeatedly to a disabled endpoint",
       "why_fails": "Disabled endpoints reject all messages; republishing without re-enabling won't help",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Delete and recreate the SNS topic to fix delivery issues",
       "why_fails": "Recreating the topic loses all subscriptions and requires reconfiguring all subscribers",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],
@@ -69,7 +73,12 @@
         "condition": "SNS topic policy denies the publishing principal"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-codepipeline-action-failed/awscli2-linux",
+        "distinction": "'SNS delivery to endpoint failed: Endpoint is disabled or doe' vs 'Action execution failed: The action failed because either th': while both are aws errors, the former SNS message delivery to a subscription endpoint failed due to disabled endpoint, while the latter A CodePipeline action stage failed due to provider misconfiguration, IAM issues,."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

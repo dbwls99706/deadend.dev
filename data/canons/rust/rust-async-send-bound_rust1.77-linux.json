@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Wrap non-Send type in unsafe impl Send",
       "why_fails": "Data races will occur because the type is intentionally not Send for safety",
       "fail_rate": 0.92,
-      "sources": ["https://doc.rust-lang.org/nomicon/send-and-sync.html"],
+      "sources": [
+        "https://doc.rust-lang.org/nomicon/send-and-sync.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use tokio::task::spawn_blocking to bypass Send requirement",
       "why_fails": "spawn_blocking still requires Send for the closure; only the inner code can be non-async",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
@@ -42,26 +49,41 @@
       "action": "Replace Rc with Arc and RefCell with Mutex/RwLock",
       "success_rate": 0.91,
       "how": "use std::sync::Arc;\nuse tokio::sync::Mutex;\nlet shared = Arc::new(Mutex::new(data));",
-      "sources": ["https://tokio.rs/tokio/tutorial/shared-state"],
+      "sources": [
+        "https://tokio.rs/tokio/tutorial/shared-state"
+      ],
       "condition": ""
     },
     {
       "action": "Use tokio::task::spawn_local for single-threaded execution",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "let local = tokio::task::LocalSet::new();\nlocal.run_until(async { tokio::task::spawn_local(my_future).await }).await;",
-      "sources": ["https://docs.rs/tokio/latest/tokio/task/struct.LocalSet.html"],
+      "sources": [
+        "https://docs.rs/tokio/latest/tokio/task/struct.LocalSet.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/e0277-send-not-satisfied/rust1-linux", "probability": 0.30, "condition": "When more Send bounds surface after initial fix"}
+      {
+        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
+        "probability": 0.3,
+        "condition": "When more Send bounds surface after initial fix"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux", "probability": 0.15, "condition": "When runtime issues lead to refactoring async code"}
+      {
+        "error_id": "rust/rust-tokio-runtime-shutdown/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When runtime issues lead to refactoring async code"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/e0277-send-not-satisfied/rust1-linux", "distinction": "E0277 Send is the generic trait bound error; this specifically refers to futures held across await points"}
+      {
+        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
+        "distinction": "E0277 Send is the generic trait bound error; this specifically refers to futures held across await points"
+      }
     ]
   },
   "metadata": {

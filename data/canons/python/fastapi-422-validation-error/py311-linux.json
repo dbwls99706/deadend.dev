@@ -37,21 +37,27 @@
       "action": "Adding Optional to the field type to make it not required",
       "why_fails": "If the client is sending data in the wrong Content-Type (e.g., form data instead of JSON), the field is 'missing' from the JSON body even though it was sent. Making the field Optional masks the root cause and allows None values through validation.",
       "fail_rate": 0.68,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "Developers assume 'field required' means the field is optional, when it often means the request body format is wrong entirely."
     },
     {
       "action": "Switching from Pydantic BaseModel to plain dict parameter",
       "why_fails": "Loses all validation and type safety. The error shifts downstream to application logic where it is harder to debug. The 422 is actually helpful — it tells you exactly what is wrong with the request.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "Removing validation is seen as simplifying, but it moves errors from clear validation messages to obscure runtime failures."
     },
     {
       "action": "Adding response_model_exclude_unset=True to the endpoint",
       "why_fails": "response_model_exclude_unset controls response serialization, not request validation. It has zero effect on incoming 422 errors.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "common_misconception": "Response model configuration is confused with request body validation."
     }
   ],

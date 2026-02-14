@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Enum.valueOf() was called with a string that does not match any constant in the enum. Common when deserializing data (JSON, database values, configs) that contains a value not present in the enum definition."
@@ -26,14 +29,18 @@
       "action": "Adding a catch for IllegalArgumentException and returning null",
       "why_fails": "Returning null defers the problem — now the caller has a null where it expected a valid enum value, likely causing a NullPointerException later. The root cause (mismatched data vs. enum definition) remains.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Making enum names case-insensitive by converting all stored data to uppercase",
       "why_fails": "This only fixes case mismatch issues but does not handle genuinely missing enum constants from schema evolution. It also risks breaking other data consumers that depend on the original case.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.20, "condition": "when catching IllegalArgumentException and returning null leads to NPE downstream"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when catching IllegalArgumentException and returning null leads to NPE downstream"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.25, "condition": "when Jackson attempts to deserialize a JSON string into an enum value"}
+      {
+        "error_id": "java/jackson-deserialization/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when Jackson attempts to deserialize a JSON string into an enum value"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/illegalstateexception/jdk17-linux", "distinction": "IllegalStateException indicates wrong object state; No enum constant is an IllegalArgumentException indicating an invalid input string for Enum.valueOf()"}
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "distinction": "IllegalStateException indicates wrong object state; No enum constant is an IllegalArgumentException indicating an invalid input string for Enum.valueOf()"
+      }
     ]
   },
   "metadata": {

@@ -29,14 +29,18 @@
       "action": "Editing the state file to change the version number",
       "why_fails": "Corrupts the state file; Terraform may not understand newer format",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Creating a new state with terraform init",
       "why_fails": "Loses track of all existing infrastructure; resources become unmanaged",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

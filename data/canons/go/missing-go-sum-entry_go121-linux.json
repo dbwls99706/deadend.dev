@@ -29,14 +29,18 @@
       "action": "Deleting go.sum and recreating",
       "why_fails": "Removes all verified checksums; next build verifies from scratch against a potentially compromised source",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Setting GONOSUMCHECK to skip verification",
       "why_fails": "Disables tamper detection for dependencies",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

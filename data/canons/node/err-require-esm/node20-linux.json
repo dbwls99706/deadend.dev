@@ -18,13 +18,18 @@
     "os": "linux",
     "python": "",
     "additional": {
-      "common_contexts": ["esm migration", "jest", "typescript", "commonjs project"]
+      "common_contexts": [
+        "esm migration",
+        "jest",
+        "typescript",
+        "commonjs project"
+      ]
     }
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.87,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-01",
     "summary": "A CJS project is trying to require() a dependency that has migrated to ESM-only. Solutions: use dynamic import(), pin the last CJS version, or migrate the project to ESM."
   },
@@ -33,21 +38,27 @@
       "action": "Adding type: module to package.json without updating require() calls",
       "why_fails": "Setting type: module makes ALL .js files in the project ESM. Every require() call breaks with 'require is not defined in ES module scope'. This requires a full codebase migration, not a one-line config change.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "type: module is a simple toggle that enables ESM support without affecting existing code."
     },
     {
       "action": "Using dynamic import() synchronously in CJS code",
       "why_fails": "import() returns a Promise and is always asynchronous. It cannot be used as a drop-in replacement for synchronous require(). Code that depends on the module being available synchronously must be restructured to use async/await.",
       "fail_rate": 0.88,
-      "sources": ["https://nodejs.org/api/esm.html#import-expressions"],
+      "sources": [
+        "https://nodejs.org/api/esm.html#import-expressions"
+      ],
       "common_misconception": "import() can be used synchronously like require()."
     },
     {
       "action": "Transpiling the ESM dependency back to CJS with babel",
       "why_fails": "Transpiling node_modules is fragile, slow, and may break the dependency's internal ESM imports. Most bundlers exclude node_modules by default for good reason.",
       "fail_rate": 0.72,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "Transpilation can undo a dependency's ESM migration."
     }
   ],
@@ -57,7 +68,9 @@
       "how": "Replace const pkg = require('pkg') with const { default: pkg } = await import('pkg'). In CJS top-level code, wrap in async IIFE: (async () => { const pkg = await import('pkg'); })(); Note: import() returns a module namespace object.",
       "success_rate": 0.88,
       "tradeoff": "Dynamic import is async; requires restructuring synchronous code paths",
-      "sources": ["https://nodejs.org/api/esm.html#import-expressions"]
+      "sources": [
+        "https://nodejs.org/api/esm.html#import-expressions"
+      ]
     },
     {
       "action": "Pin the last CJS version of the dependency",
@@ -71,7 +84,9 @@
       "how": "Set type: module in package.json. Replace all require() with import. Replace __dirname with import.meta.dirname (Node 21.2+) or fileURLToPath(import.meta.url). Replace module.exports with export default. Update jest/test config for ESM.",
       "success_rate": 0.85,
       "tradeoff": "Full project migration; may break other CJS-only dependencies in the chain",
-      "sources": ["https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c"]
+      "sources": [
+        "https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c"
+      ]
     }
   ],
   "transition_graph": {
@@ -83,7 +98,7 @@
       },
       {
         "error_id": "node/err-module-not-found/node20-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "ESM conversion changes module resolution rules"
       }
     ],

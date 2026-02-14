@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,42 +29,61 @@
       "action": "Hardcode database credentials in source code",
       "why_fails": "Security risk and doesn't fix the underlying connectivity issue",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     },
     {
       "action": "Retry connection in a loop without fixing the URL",
       "why_fails": "If the URL is wrong or the server is down, infinite retries waste resources",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify DATABASE_URL format and connectivity",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "# Check .env file has correct format:\n# DATABASE_URL=postgres://user:pass@localhost:5432/dbname\n# Test connectivity: psql $DATABASE_URL",
-      "sources": ["https://diesel.rs/guides/getting-started.html"],
+      "sources": [
+        "https://diesel.rs/guides/getting-started.html"
+      ],
       "condition": ""
     },
     {
       "action": "Install required system libraries for diesel (libpq-dev, libmysqlclient-dev, or libsqlite3-dev)",
       "success_rate": 0.85,
       "how": "# For PostgreSQL:\nsudo apt-get install libpq-dev\n# For MySQL:\nsudo apt-get install libmysqlclient-dev\n# For SQLite:\nsudo apt-get install libsqlite3-dev",
-      "sources": ["https://diesel.rs/guides/getting-started.html"],
+      "sources": [
+        "https://diesel.rs/guides/getting-started.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-sqlx-migration-error/rust1.77-linux", "probability": 0.20, "condition": "After connection works, migration issues may surface"}
+      {
+        "error_id": "rust/rust-sqlx-migration-error/rust1.77-linux",
+        "probability": 0.2,
+        "condition": "After connection works, migration issues may surface"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "probability": 0.15, "condition": "When diesel feature flags are misconfigured"}
+      {
+        "error_id": "rust/cargo-feature-not-found/rust1-linux",
+        "probability": 0.15,
+        "condition": "When diesel feature flags are misconfigured"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-sqlx-migration-error/rust1.77-linux", "distinction": "Migration errors occur after successful connection; connection errors mean the database is unreachable"}
+      {
+        "error_id": "rust/rust-sqlx-migration-error/rust1.77-linux",
+        "distinction": "Migration errors occur after successful connection; connection errors mean the database is unreachable"
+      }
     ]
   },
   "metadata": {

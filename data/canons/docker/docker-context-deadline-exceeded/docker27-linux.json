@@ -28,15 +28,19 @@
     {
       "action": "Repeatedly retrying the same pull without addressing network conditions",
       "why_fails": "If the registry is throttling or the network is congested, retries without backoff make it worse",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing Docker daemon timeout to very large values",
       "why_fails": "Masks underlying network or registry issues; operations that genuinely fail will hang for excessive periods",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -64,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "docker/dns-resolution-failed/docker27-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when the timeout is caused by DNS failures"
       }
     ],

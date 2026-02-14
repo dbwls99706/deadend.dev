@@ -29,14 +29,18 @@
       "action": "Casting to float first",
       "why_fails": "Loses precision for very large integers",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     },
     {
       "action": "Upgrading to 64-bit Python",
       "why_fails": "Does not help — C long is already 64-bit on 64-bit Linux; the int is simply too large",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     }
   ],

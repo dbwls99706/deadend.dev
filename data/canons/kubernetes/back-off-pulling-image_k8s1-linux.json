@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/containers/images/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "docker pull"
     },
     {
       "action": "For private registries, create imagePullSecret and reference it in the pod spec",
@@ -68,7 +69,8 @@
       "sources": [
         "https://kubernetes.io/docs/reference/kubectl/generated/kubectl_describe/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl describe pod"
     }
   ],
   "transition_graph": {

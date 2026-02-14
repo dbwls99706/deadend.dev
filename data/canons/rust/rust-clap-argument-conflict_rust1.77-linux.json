@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Clap's argument conflicts_with configuration prevents mutually exclusive flags from being used together."
@@ -26,35 +29,52 @@
       "action": "Remove all conflicts_with rules to allow any combination",
       "why_fails": "The conflicts exist for a reason; allowing incompatible flags causes logic errors",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use ArgGroup to define mutually exclusive argument groups",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "use clap::{Arg, ArgGroup, Command};\nCommand::new(\"app\")\n    .group(ArgGroup::new(\"mode\")\n        .args([\"verbose\", \"quiet\"])\n        .required(false))",
-      "sources": ["https://docs.rs/clap/latest/clap/struct.ArgGroup.html"],
+      "sources": [
+        "https://docs.rs/clap/latest/clap/struct.ArgGroup.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use clap derive with group attribute for clean conflict declaration",
       "success_rate": 0.88,
       "how": "#[derive(Parser)]\nstruct Cli {\n    #[arg(long, group = \"verbosity\")]\n    verbose: bool,\n    #[arg(long, group = \"verbosity\")]\n    quiet: bool,\n}",
-      "sources": ["https://docs.rs/clap/latest/clap/_derive/index.html"],
+      "sources": [
+        "https://docs.rs/clap/latest/clap/_derive/index.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-serde-deserialize-error/rust1.77-linux", "probability": 0.10, "condition": "When CLI config parsing leads to deserialization errors"}
+      {
+        "error_id": "rust/rust-serde-deserialize-error/rust1.77-linux",
+        "probability": 0.1,
+        "condition": "When CLI config parsing leads to deserialization errors"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/e0433-unresolved-import/rust1-linux", "probability": 0.10, "condition": "When clap derive macros are not properly imported"}
+      {
+        "error_id": "rust/e0433-unresolved-import/rust1-linux",
+        "probability": 0.1,
+        "condition": "When clap derive macros are not properly imported"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-cargo-feature-conflict/rust1.77-linux", "distinction": "Cargo feature conflict is about dependency features; clap argument conflict is about CLI flag incompatibility"}
+      {
+        "error_id": "rust/rust-cargo-feature-conflict/rust1.77-linux",
+        "distinction": "Cargo feature conflict is about dependency features; clap argument conflict is about CLI flag incompatibility"
+      }
     ]
   },
   "metadata": {

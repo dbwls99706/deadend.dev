@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "gradle", "version_range": ">=7.0"},
+    "runtime": {
+      "name": "gradle",
+      "version_range": ">=7.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disabling the Gradle daemon in CI without adjusting JVM args",
       "why_fails": "Running without a daemon (--no-daemon) creates a new JVM for each build. Without increasing memory for the direct JVM, builds still OOM since the same workload needs the same memory.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Setting extremely large heap sizes (e.g., -Xmx8g) on a 4GB CI runner",
       "why_fails": "If the JVM heap exceeds the container memory limit, the container runtime (Docker/K8s) kills the process via OOM killer, producing a more cryptic exit code 137 error",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux", "probability": 0.20, "condition": "when Gradle daemon OOM causes the entire CI container to exceed memory limits"}
+      {
+        "error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux",
+        "probability": 0.2,
+        "condition": "when Gradle daemon OOM causes the entire CI container to exceed memory limits"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/cache-key-not-found/gha-linux", "probability": 0.10, "condition": "when missing Gradle caches force full recompilation which uses more memory"}
+      {
+        "error_id": "cicd/cache-key-not-found/gha-linux",
+        "probability": 0.1,
+        "condition": "when missing Gradle caches force full recompilation which uses more memory"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux", "distinction": "gradle-daemon-oom is specifically JVM heap exhaustion in Gradle; bitbucket-pipeline-oom is the container-level memory limit being exceeded by any process"}
+      {
+        "error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux",
+        "distinction": "gradle-daemon-oom is specifically JVM heap exhaustion in Gradle; bitbucket-pipeline-oom is the container-level memory limit being exceeded by any process"
+      }
     ]
   },
   "metadata": {

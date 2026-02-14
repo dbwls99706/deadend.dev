@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "All available PostgreSQL connection slots are occupied. Default max_connections is 100. Caused by connection leaks in application code, missing connection pooling, or too many application instances."
@@ -26,14 +29,18 @@
       "action": "Setting max_connections to an extremely high value (e.g., 10000) without connection pooling",
       "why_fails": "Each PostgreSQL connection consumes significant memory (~10MB). Setting max_connections very high without adequate RAM causes OOM kills or severe performance degradation from context switching.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting PostgreSQL repeatedly as a fix for connection exhaustion",
       "why_fails": "Restarting forcibly disconnects all clients, causing data loss in active transactions. Without fixing the leak or adding pooling, connections will be exhausted again shortly after restart.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when PostgreSQL crashes under connection pressure and stops accepting any connections"},
-      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.30, "condition": "when connection pooler itself becomes saturated"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.2,
+        "condition": "when PostgreSQL crashes under connection pressure and stops accepting any connections"
+      },
+      {
+        "error_id": "database/connection-pool-exhausted/pg16-linux",
+        "probability": 0.3,
+        "condition": "when connection pooler itself becomes saturated"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.25, "condition": "when pool exhaustion causes application to open direct connections bypassing the pool"}
+      {
+        "error_id": "database/connection-pool-exhausted/pg16-linux",
+        "probability": 0.25,
+        "condition": "when pool exhaustion causes application to open direct connections bypassing the pool"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/connection-pool-exhausted/pg16-linux", "distinction": "too many connections is a PostgreSQL server-level limit (max_connections), while connection pool exhausted is an application-level pool limit. The pool error occurs before hitting PostgreSQL's limit."}
+      {
+        "error_id": "database/connection-pool-exhausted/pg16-linux",
+        "distinction": "too many connections is a PostgreSQL server-level limit (max_connections), while connection pool exhausted is an application-level pool limit. The pool error occurs before hitting PostgreSQL's limit."
+      }
     ]
   },
   "metadata": {

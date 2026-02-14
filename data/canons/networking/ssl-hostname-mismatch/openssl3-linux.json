@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "openssl", "version_range": "3.x"},
+    "runtime": {
+      "name": "openssl",
+      "version_range": "3.x"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Add the mismatched hostname to /etc/hosts to force DNS resolution to the IP",
       "why_fails": "DNS resolution is not the problem. The TLS client validates the hostname against the certificate fields, not against DNS. Changing /etc/hosts does not modify the certificate's CN or SANs, so the mismatch error persists.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Disable SNI (Server Name Indication) in the client",
       "why_fails": "Disabling SNI does not fix hostname validation. SNI tells the server which certificate to present in multi-tenant setups; disabling it may cause the server to return the wrong certificate entirely, making the mismatch worse.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     }
   ],
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.20, "condition": "when reissuing the certificate with a different CA and the chain is incomplete"},
-      {"error_id": "networking/ssl-self-signed/openssl3-linux", "probability": 0.15, "condition": "when generating a quick self-signed cert to fix the mismatch"}
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "probability": 0.2,
+        "condition": "when reissuing the certificate with a different CA and the chain is incomplete"
+      },
+      {
+        "error_id": "networking/ssl-self-signed/openssl3-linux",
+        "probability": 0.15,
+        "condition": "when generating a quick self-signed cert to fix the mismatch"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.10, "condition": "when DNS was reconfigured and the new hostname does not match the certificate"},
-      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.10, "condition": "when renewing an expired cert with incorrect CN/SANs"}
+      {
+        "error_id": "networking/dns-resolution-failed/dns-linux",
+        "probability": 0.1,
+        "condition": "when DNS was reconfigured and the new hostname does not match the certificate"
+      },
+      {
+        "error_id": "networking/ssl-certificate-expired/openssl3-linux",
+        "probability": 0.1,
+        "condition": "when renewing an expired cert with incorrect CN/SANs"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/ssl-self-signed/openssl3-linux", "distinction": "Hostname mismatch means the certificate is signed by a trusted CA but lists different domain names; self-signed means the certificate itself has no trusted CA signature"},
-      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "distinction": "Hostname mismatch is a name validation failure; unable-to-verify is a chain-of-trust validation failure where the issuing CA cannot be found"}
+      {
+        "error_id": "networking/ssl-self-signed/openssl3-linux",
+        "distinction": "Hostname mismatch means the certificate is signed by a trusted CA but lists different domain names; self-signed means the certificate itself has no trusted CA signature"
+      },
+      {
+        "error_id": "networking/ssl-unable-to-verify/openssl3-linux",
+        "distinction": "Hostname mismatch is a name validation failure; unable-to-verify is a chain-of-trust validation failure where the issuing CA cannot be found"
+      }
     ]
   },
   "metadata": {

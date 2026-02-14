@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "mongodb",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Explicitly creating the collection before every operation as a defensive measure",
       "why_fails": "MongoDB auto-creates collections on first write. Explicitly creating collections before every operation adds unnecessary overhead and complexity. The real issue is usually that you are running the operation against the wrong database or collection name.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring the error and assuming the collection will appear eventually",
       "why_fails": "If the namespace is wrong (typo, wrong database), the collection will never appear. Silently ignoring the error means operations against the intended collection are not executing.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Create the collection explicitly if it should exist but was dropped",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run: db.createCollection('mycollection'); or simply insert a document: db.mycollection.insertOne({ init: true }); then db.mycollection.deleteOne({ init: true }); For operations like drop, check if the collection exists first: if (db.getCollectionNames().includes('mycollection')) { db.mycollection.drop(); }",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mongodb-duplicate-key/mongo7-linux", "probability": 0.10, "condition": "when recreating a collection and re-inserting data without proper deduplication"}
+      {
+        "error_id": "database/mongodb-duplicate-key/mongo7-linux",
+        "probability": 0.1,
+        "condition": "when recreating a collection and re-inserting data without proper deduplication"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mongodb-authentication-failed/mongo7-linux", "probability": 0.15, "condition": "when user authenticates to the wrong database and then queries non-existent collections"}
+      {
+        "error_id": "database/mongodb-authentication-failed/mongo7-linux",
+        "probability": 0.15,
+        "condition": "when user authenticates to the wrong database and then queries non-existent collections"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "MongoDB 'ns not found' (code 26) is similar to PostgreSQL 'relation does not exist'. However, MongoDB auto-creates collections on insert, so this error only appears for specific operations (drop, certain index operations), not on regular queries against non-existent collections (which return empty results)."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "MongoDB 'ns not found' (code 26) is similar to PostgreSQL 'relation does not exist'. However, MongoDB auto-creates collections on insert, so this error only appears for specific operations (drop, certain index operations), not on regular queries against non-existent collections (which return empty results)."
+      }
     ]
   },
   "metadata": {

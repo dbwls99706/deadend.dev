@@ -38,7 +38,9 @@
       "action": "Nest dynamic blocks more than two levels deep",
       "why_fails": "Deeply nested dynamic blocks become unreadable and error-prone; refactor into modules instead",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -65,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/count-and-for-each-conflict/tf1-linux",
+        "distinction": "'Error: Unsupported block type or invalid dynamic block itera' vs 'Error: Invalid combination of 'count' and 'for_each'': while both are terraform errors in the config_error category, the former Dynamic block used with an unsupported block type or has incorrect iterator/cont while the latter Can't use both count and for_each on the same resource. They're mutually exclusi."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

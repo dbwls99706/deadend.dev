@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "terraform", "version_range": ">=1.5,<2.0"},
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "Terraform plan includes destroying a resource that has prevent_destroy lifecycle rule enabled."
@@ -25,15 +28,19 @@
     {
       "action": "Use terraform destroy -target to bypass prevent_destroy",
       "why_fails": "The -target flag does not override lifecycle rules; prevent_destroy still blocks the destroy",
-      "fail_rate": 0.90,
-      "sources": ["https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"
+      ],
       "condition": ""
     },
     {
       "action": "Modify the state file directly to remove the resource",
       "why_fails": "Direct state modification is error-prone and the resource still exists in the cloud, creating drift",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -42,26 +49,41 @@
       "action": "Remove or set prevent_destroy = false before destroying",
       "success_rate": 0.92,
       "how": "Update the lifecycle block: lifecycle { prevent_destroy = false }, then run terraform apply, then destroy",
-      "sources": ["https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle"
+      ],
       "condition": ""
     },
     {
       "action": "Use terraform state rm to remove from state without destroying the actual resource",
       "success_rate": 0.85,
       "how": "terraform state rm RESOURCE_ADDRESS removes the resource from Terraform management without destroying it in the cloud",
-      "sources": ["https://developer.hashicorp.com/terraform/cli/commands/state/rm"],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/state/rm"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "terraform/resource-already-exists/tf1-linux", "probability": 0.15, "condition": "After state rm, re-creating the resource fails because it still exists"}
+      {
+        "error_id": "terraform/resource-already-exists/tf1-linux",
+        "probability": 0.15,
+        "condition": "After state rm, re-creating the resource fails because it still exists"
+      }
     ],
     "preceded_by": [
-      {"error_id": "terraform/tf-moved-block-error/tf1.7-linux", "probability": 0.10, "condition": "Moving a resource that has prevent_destroy triggers the lifecycle check"}
+      {
+        "error_id": "terraform/tf-moved-block-error/tf1.7-linux",
+        "probability": 0.1,
+        "condition": "Moving a resource that has prevent_destroy triggers the lifecycle check"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "terraform/resource-already-exists/tf1-linux", "distinction": "Resource already exists is about cloud-side conflicts; prevent_destroy is a Terraform-side safety mechanism"}
+      {
+        "error_id": "terraform/resource-already-exists/tf1-linux",
+        "distinction": "Resource already exists is about cloud-side conflicts; prevent_destroy is a Terraform-side safety mechanism"
+      }
     ]
   },
   "metadata": {

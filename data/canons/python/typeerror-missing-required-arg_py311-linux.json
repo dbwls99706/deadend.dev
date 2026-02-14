@@ -29,14 +29,18 @@
       "action": "Making all arguments optional with defaults",
       "why_fails": "Hides API contract; None defaults cause AttributeError later",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "condition": ""
     },
     {
       "action": "Using *args to absorb extra/missing arguments",
       "why_fails": "Breaks function signatures; IDE help becomes useless",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html#TypeError"
+      ],
       "condition": ""
     }
   ],

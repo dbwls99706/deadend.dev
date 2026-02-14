@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "kubectl describe quota -n"
     },
     {
       "action": "Request quota increase from cluster admin",

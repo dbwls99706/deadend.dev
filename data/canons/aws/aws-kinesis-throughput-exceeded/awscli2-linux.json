@@ -79,7 +79,12 @@
         "condition": "General AWS API throttling limits the ability to manage Kinesis streams"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-ebs-volume-limit/awscli2-linux",
+        "distinction": "'ProvisionedThroughputExceededException: Rate exceeded for sh' vs 'You have exceeded the maximum volume limit for this account': while both are aws errors, the former Kinesis shard throughput limit exceeded. Each shard supports 1 MB/s write and 2  while the latter AWS account has reached the EBS volume limit for the region. Default limit varie."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

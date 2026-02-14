@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "docker", "version_range": ">=20.10"},
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=20.10"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disable Docker BuildKit to use the legacy builder",
       "why_fails": "Legacy builder is deprecated, slower, and lacks multi-stage build optimizations; does not fix the root cause of missing files or cache issues",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Add --no-cache flag to every build in CI",
       "why_fails": "Disabling cache entirely makes builds significantly slower (10x+ in many cases) and wastes CI resources without addressing the underlying issue",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Fix .dockerignore and ensure build context contains all required files",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Check that .dockerignore does not exclude files needed by COPY/ADD instructions. Verify the build context path matches the Dockerfile expectations. Use 'docker build --progress=plain' for verbose output",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "probability": 0.15, "condition": "When Docker build failure prevents creation of the container image artifact"}
+      {
+        "error_id": "cicd/gha-artifact-not-found/gha-linux",
+        "probability": 0.15,
+        "condition": "When Docker build failure prevents creation of the container image artifact"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.15, "condition": "When Docker login issues prevent pulling cached base images"}
+      {
+        "error_id": "cicd/gha-docker-login-failed/gha-linux",
+        "probability": 0.15,
+        "condition": "When Docker login issues prevent pulling cached base images"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "Docker build failure is about container image layer caching; npm ci failure is about Node.js package installation within a build step"}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "distinction": "Docker build failure is about container image layer caching; npm ci failure is about Node.js package installation within a build step"
+      }
     ]
   },
   "metadata": {

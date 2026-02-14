@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "mysql",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Using SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1 repeatedly to skip past errors",
       "why_fails": "Skipping binlog events causes the replica to diverge from the primary. Skipped writes mean data exists on the primary but not the replica. Accumulated divergence can cause increasingly frequent errors and makes the replica unreliable for reads or failover. Each skip makes the problem worse.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Setting slave_skip_errors to auto-skip all duplicate key errors",
       "why_fails": "slave_skip_errors=1062 silently skips all duplicate key errors during replication. While this keeps replication running, it hides data inconsistencies. The replica silently diverges from the primary, making it unsafe for failover or read scaling. When promoted to primary, missing or stale data causes application errors.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.30, "condition": "when the replica SQL thread recovers but has fallen far behind the primary during the downtime"},
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.10, "condition": "when a large transaction from the primary causes lock contention on the replica during apply"}
+      {
+        "error_id": "database/mysql-replication-lag/mysql8-linux",
+        "probability": 0.3,
+        "condition": "when the replica SQL thread recovers but has fallen far behind the primary during the downtime"
+      },
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "probability": 0.1,
+        "condition": "when a large transaction from the primary causes lock contention on the replica during apply"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mysql-duplicate-entry/mysql8-linux", "probability": 0.20, "condition": "when a duplicate key insert on the primary also causes a duplicate on the replica that already has the row"},
-      {"error_id": "database/mysql-binlog-error/mysql8-linux", "probability": 0.15, "condition": "when binlog corruption causes an invalid event that the replica SQL thread cannot apply"}
+      {
+        "error_id": "database/mysql-duplicate-entry/mysql8-linux",
+        "probability": 0.2,
+        "condition": "when a duplicate key insert on the primary also causes a duplicate on the replica that already has the row"
+      },
+      {
+        "error_id": "database/mysql-binlog-error/mysql8-linux",
+        "probability": 0.15,
+        "condition": "when binlog corruption causes an invalid event that the replica SQL thread cannot apply"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-replication-lag/mysql8-linux", "distinction": "SQL thread stopped means replication is broken and the error must be resolved before replication resumes. Replication lag means replication is working but the replica is falling behind. The former requires intervention; the latter may resolve on its own when the primary's write load decreases."}
+      {
+        "error_id": "database/mysql-replication-lag/mysql8-linux",
+        "distinction": "SQL thread stopped means replication is broken and the error must be resolved before replication resumes. Replication lag means replication is working but the replica is falling behind. The former requires intervention; the latter may resolve on its own when the primary's write load decreases."
+      }
     ]
   },
   "metadata": {

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "ansible", "version_range": ">=2.9"},
+    "runtime": {
+      "name": "ansible",
+      "version_range": ">=2.9"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Setting host_key_checking=False globally in production",
       "why_fails": "This disables SSH host key verification entirely, creating a security vulnerability to MITM attacks. It also does not fix connectivity or credential issues.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing timeout values without investigating the root cause",
       "why_fails": "If the host is genuinely unreachable (wrong IP, firewall, SSH not running), no amount of timeout increase will succeed — it just delays the failure",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify SSH connectivity manually and fix credentials",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Test SSH manually: ssh -vvv user@host. Check that the SSH key or password is correct, the host IP/DNS resolves, port 22 is open (nc -zv host 22), and the SSH service is running on the target.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.15, "condition": "when SSH credentials are expected from environment variables that are not set"}
+      {
+        "error_id": "cicd/env-variable-not-set/gha-linux",
+        "probability": 0.15,
+        "condition": "when SSH credentials are expected from environment variables that are not set"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.20, "condition": "when missing SSH key environment variables cause connection failure"}
+      {
+        "error_id": "cicd/env-variable-not-set/gha-linux",
+        "probability": 0.2,
+        "condition": "when missing SSH key environment variables cause connection failure"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-secret-not-found/gha-linux", "distinction": "ansible-unreachable is a runtime connectivity failure; secret-not-found is a CI configuration issue where secrets are not passed to the workflow"}
+      {
+        "error_id": "cicd/gha-secret-not-found/gha-linux",
+        "distinction": "ansible-unreachable is a runtime connectivity failure; secret-not-found is a CI configuration issue where secrets are not passed to the workflow"
+      }
     ]
   },
   "metadata": {

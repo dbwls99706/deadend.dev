@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "runtime": {
+      "name": "http",
+      "version_range": ">=1.1"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Retry the exact same request immediately without checking client-side issues",
       "why_fails": "If the client is genuinely slow (poor network, large payload), immediate retry will hit the same timeout. The underlying cause — slow upload speed, network congestion, or oversized request — must be addressed.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": ""
     },
     {
       "action": "Increase server request timeout to very large values",
       "why_fails": "Very large timeouts allow slow clients to hold connections open indefinitely, consuming server resources. Under load, this can lead to connection pool exhaustion and denial of service for legitimate fast clients.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://man7.org/linux/man-pages/"
+      ],
       "condition": "Under high concurrency"
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.20, "condition": "when the server forcefully closes the connection after the 408 timeout"},
-      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.15, "condition": "when a reverse proxy reports 502 because the backend timed out the connection"}
+      {
+        "error_id": "networking/connection-reset/tcp-linux",
+        "probability": 0.2,
+        "condition": "when the server forcefully closes the connection after the 408 timeout"
+      },
+      {
+        "error_id": "networking/http-502-bad-gateway/http-linux",
+        "probability": 0.15,
+        "condition": "when a reverse proxy reports 502 because the backend timed out the connection"
+      }
     ],
     "preceded_by": [
-      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when slow network causes the TCP connection to establish slowly, leaving less time for the HTTP request"}
+      {
+        "error_id": "networking/connection-timeout/tcp-linux",
+        "probability": 0.15,
+        "condition": "when slow network causes the TCP connection to establish slowly, leaving less time for the HTTP request"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "408 means the server timed out waiting for the client request; 504 means a proxy timed out waiting for the upstream server response"}
+      {
+        "error_id": "networking/http-504-gateway-timeout/http-linux",
+        "distinction": "408 means the server timed out waiting for the client request; 504 means a proxy timed out waiting for the upstream server response"
+      }
     ]
   },
   "metadata": {

@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/network-bridge-conflict/docker24-vpn",
+        "distinction": "'Error response from daemon: Pool overlaps with other one on ' vs 'Error response from daemon: Pool overlaps with other one on ': while both are docker errors in the networking category, the former This error occurs when Docker tries to create a network with a subnet that overl while the latter When a VPN is active, it typically claims large private IP ranges (often 10.0.0."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

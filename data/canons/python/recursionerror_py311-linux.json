@@ -29,14 +29,18 @@
       "action": "Setting sys.setrecursionlimit(100000)",
       "why_fails": "Stack overflow will crash Python with a segfault instead of a clean RecursionError",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using @functools.lru_cache to memoize the recursive function",
       "why_fails": "Only helps if there are overlapping subproblems; doesn't fix infinite recursion",
       "fail_rate": 0.45,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/exceptions.html"
+      ],
       "condition": ""
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Using --force-reinstall",
       "why_fails": "Installs incompatible versions; imports will fail at runtime",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing version constraints from requirements.txt",
       "why_fails": "May install breaking versions of dependencies",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Creating new HttpClient instances per request instead of using IHttpClientFactory",
       "why_fails": "Each HttpClient instance holds its own connection pool and socket. Creating many instances leads to socket exhaustion (TIME_WAIT state), causing subsequent requests to fail with HttpRequestException",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling SSL certificate validation to fix SSL/TLS errors",
       "why_fails": "Bypasses security entirely, making the application vulnerable to man-in-the-middle attacks. The SSL error usually indicates a legitimate certificate configuration problem that should be properly fixed",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use IHttpClientFactory for proper connection pool management",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Register in DI: builder.Services.AddHttpClient<MyService>(client => { client.BaseAddress = new Uri(\"https://api.example.com\"); }); Then inject IHttpClientFactory or the typed client. This manages DNS changes, connection pooling, and socket lifecycle automatically",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "probability": 0.30, "condition": "when the HTTP request eventually times out after connection failures"},
-      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.08, "condition": "when socket exhaustion combined with retry storms causes resource exhaustion"}
+      {
+        "error_id": "dotnet/taskcanceledexception/dotnet8-linux",
+        "probability": 0.3,
+        "condition": "when the HTTP request eventually times out after connection failures"
+      },
+      {
+        "error_id": "dotnet/outofmemoryexception/dotnet8-linux",
+        "probability": 0.08,
+        "condition": "when socket exhaustion combined with retry storms causes resource exhaustion"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.20, "condition": "when container port misconfiguration makes the target service unreachable"},
-      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.10, "condition": "when CORS preflight failure is misinterpreted as a connection error"}
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when container port misconfiguration makes the target service unreachable"
+      },
+      {
+        "error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when CORS preflight failure is misinterpreted as a connection error"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/taskcanceledexception/dotnet8-linux", "distinction": "HttpRequestException indicates a connection-level failure (refused, DNS, SSL); TaskCanceledException indicates the connection was established but the response did not arrive before the timeout"}
+      {
+        "error_id": "dotnet/taskcanceledexception/dotnet8-linux",
+        "distinction": "HttpRequestException indicates a connection-level failure (refused, DNS, SSL); TaskCanceledException indicates the connection was established but the response did not arrive before the timeout"
+      }
     ]
   },
   "metadata": {

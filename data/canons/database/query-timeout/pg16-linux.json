@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.87,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "A query exceeded the configured statement_timeout and was canceled by PostgreSQL. The query was running too long, typically due to missing indexes, full table scans on large tables, lock contention, or unoptimized queries. The timeout is a safety mechanism to prevent runaway queries."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Setting statement_timeout to 0 (disabled) globally in production",
       "why_fails": "Disabling the timeout allows runaway queries to consume resources indefinitely, potentially blocking other queries, filling up connection slots, and causing cascading failures across the application.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Simply increasing statement_timeout without investigating query performance",
       "why_fails": "If a query takes 30 seconds and you increase the timeout to 60 seconds, it may work temporarily. But as data grows, the query will eventually exceed the new limit too. This does not fix the root cause and just delays the problem.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Analyze and optimize the slow query using EXPLAIN ANALYZE",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run: EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) <your_query>; Look for sequential scans on large tables, nested loops with high row counts, and sorts on unindexed columns. Add targeted indexes: CREATE INDEX CONCURRENTLY idx_name ON table(column); Rewrite the query to use index-friendly WHERE clauses.",
       "sources": [],
       "condition": ""
@@ -55,16 +62,38 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.25, "condition": "when many slow queries hold connections from the pool while waiting to timeout"},
-      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.10, "condition": "when queries that timeout and retry create additional lock contention"}
+      {
+        "error_id": "database/connection-pool-exhausted/pg16-linux",
+        "probability": 0.25,
+        "condition": "when many slow queries hold connections from the pool while waiting to timeout"
+      },
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "probability": 0.1,
+        "condition": "when queries that timeout and retry create additional lock contention"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when disk I/O slows dramatically as the filesystem approaches full capacity"},
-      {"error_id": "database/too-many-connections/pg16-linux", "probability": 0.15, "condition": "when high connection count causes resource contention that slows all queries"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.15,
+        "condition": "when disk I/O slows dramatically as the filesystem approaches full capacity"
+      },
+      {
+        "error_id": "database/too-many-connections/pg16-linux",
+        "probability": 0.15,
+        "condition": "when high connection count causes resource contention that slows all queries"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/deadlock-detected/pg16-linux", "distinction": "Query timeout (statement_timeout) is a wall-clock time limit on query execution. Deadlock is a circular lock dependency between transactions. A query can timeout while waiting for a lock, but that is lock_timeout, not statement_timeout. They are different PostgreSQL settings."},
-      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "distinction": "PostgreSQL statement_timeout covers total execution time. MySQL lock wait timeout specifically covers time waiting to acquire a lock. PostgreSQL has a separate lock_timeout setting that is closer to MySQL's lock wait timeout."}
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "distinction": "Query timeout (statement_timeout) is a wall-clock time limit on query execution. Deadlock is a circular lock dependency between transactions. A query can timeout while waiting for a lock, but that is lock_timeout, not statement_timeout. They are different PostgreSQL settings."
+      },
+      {
+        "error_id": "database/mysql-lock-wait-timeout/mysql8-linux",
+        "distinction": "PostgreSQL statement_timeout covers total execution time. MySQL lock wait timeout specifically covers time waiting to acquire a lock. PostgreSQL has a separate lock_timeout setting that is closer to MySQL's lock wait timeout."
+      }
     ]
   },
   "metadata": {

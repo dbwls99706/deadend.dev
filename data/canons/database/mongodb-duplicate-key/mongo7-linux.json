@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "runtime": {
+      "name": "mongodb",
+      "version_range": ">=7.0,<8.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Dropping the unique index on _id to prevent duplicate key errors",
       "why_fails": "The _id index is mandatory in MongoDB and cannot be dropped. Even for other unique indexes, dropping them removes data integrity guarantees and leads to duplicate documents.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using unordered bulk writes without error handling to push through duplicates",
       "why_fails": "Unordered writes continue past errors but silently skip duplicate documents. Without checking the BulkWriteResult for errors, you lose data and have no record of which documents failed.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Let MongoDB generate _id automatically instead of assigning manually",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Remove the _id field from your insert documents. MongoDB will auto-generate unique ObjectId values. If you need a business key, use a separate unique index and handle E11000 with retry/upsert logic.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/mongodb-namespace-not-found/mongo7-linux", "probability": 0.10, "condition": "when attempting to drop and recreate collections to fix duplicate key issues"}
+      {
+        "error_id": "database/mongodb-namespace-not-found/mongo7-linux",
+        "probability": 0.1,
+        "condition": "when attempting to drop and recreate collections to fix duplicate key issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.15, "condition": "when connection recovery retry logic re-inserts documents that were already persisted before the connection drop"}
+      {
+        "error_id": "database/mongodb-connection-failed/mongo7-linux",
+        "probability": 0.15,
+        "condition": "when connection recovery retry logic re-inserts documents that were already persisted before the connection drop"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/unique-violation/pg16-linux", "distinction": "MongoDB E11000 and PostgreSQL unique violation are the same concept. MongoDB shows the index name and duplicate key value, PostgreSQL shows the constraint name. MongoDB uses error code E11000 while PostgreSQL uses SQLSTATE 23505."}
+      {
+        "error_id": "database/unique-violation/pg16-linux",
+        "distinction": "MongoDB E11000 and PostgreSQL unique violation are the same concept. MongoDB shows the index name and duplicate key value, PostgreSQL shows the constraint name. MongoDB uses error code E11000 while PostgreSQL uses SQLSTATE 23505."
+      }
     ]
   },
   "metadata": {

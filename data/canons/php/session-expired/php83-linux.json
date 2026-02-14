@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "runtime": {
+      "name": "php",
+      "version_range": ">=8.2,<8.4"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "PHP session errors occur when the session handler cannot read or write session data. Common causes include incorrect session.save_path permissions, the session directory not existing, session garbage collection deleting active sessions prematurely, or misconfigured session handlers (Redis/Memcached) failing silently."
   },
   "dead_ends": [
-    {"action": "Setting session.gc_maxlifetime to an extremely high value to prevent cleanup", "why_fails": "Setting a very high gc_maxlifetime causes session files to accumulate on disk indefinitely. On high-traffic sites this can fill the disk partition, cause inode exhaustion, and make the session directory extremely slow to scan. It also keeps stale sessions around as a security risk.", "fail_rate": 0.70, "sources": [], "condition": ""},
-    {"action": "Storing session data in cookies using client-side sessions", "why_fails": "Storing all session data in cookies exposes it to the client, has a 4KB size limit, increases every HTTP request size, and can be tampered with unless encrypted and signed. Sensitive data like user roles or permissions should never be stored in cookies.", "fail_rate": 0.72, "sources": [], "condition": ""}
+    {
+      "action": "Setting session.gc_maxlifetime to an extremely high value to prevent cleanup",
+      "why_fails": "Setting a very high gc_maxlifetime causes session files to accumulate on disk indefinitely. On high-traffic sites this can fill the disk partition, cause inode exhaustion, and make the session directory extremely slow to scan. It also keeps stale sessions around as a security risk.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Storing session data in cookies using client-side sessions",
+      "why_fails": "Storing all session data in cookies exposes it to the client, has a 4KB size limit, increases every HTTP request size, and can be tampered with unless encrypted and signed. Sensitive data like user roles or permissions should never be stored in cookies.",
+      "fail_rate": 0.72,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Verify session.save_path exists with correct permissions and use a persistent session handler", "success_rate": 0.89, "how": "Check session.save_path with 'php -r \"echo ini_get(\\\"session.save_path\\\");\"'. Ensure the directory exists and is writable by the PHP process: 'mkdir -p /var/lib/php/sessions && chown www-data:www-data /var/lib/php/sessions && chmod 700 /var/lib/php/sessions'. For multi-server setups, switch to Redis or database session handler.", "sources": [], "condition": ""},
-    {"action": "Configure proper session garbage collection and use Redis for high-traffic applications", "success_rate": 0.87, "how": "Set session.gc_maxlifetime to match your desired session duration (e.g., 1440 for 24 minutes). Set session.gc_probability/session.gc_divisor appropriately (e.g., 1/100). For production, use Redis: set session.save_handler=redis and session.save_path='tcp://127.0.0.1:6379' in php.ini.", "sources": [], "condition": ""}
+    {
+      "action": "Verify session.save_path exists with correct permissions and use a persistent session handler",
+      "success_rate": 0.89,
+      "how": "Check session.save_path with 'php -r \"echo ini_get(\\\"session.save_path\\\");\"'. Ensure the directory exists and is writable by the PHP process: 'mkdir -p /var/lib/php/sessions && chown www-data:www-data /var/lib/php/sessions && chmod 700 /var/lib/php/sessions'. For multi-server setups, switch to Redis or database session handler.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure proper session garbage collection and use Redis for high-traffic applications",
+      "success_rate": 0.87,
+      "how": "Set session.gc_maxlifetime to match your desired session duration (e.g., 1440 for 24 minutes). Set session.gc_probability/session.gc_divisor appropriately (e.g., 1/100). For production, use Redis: set session.save_handler=redis and session.save_path='tcp://127.0.0.1:6379' in php.ini.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/laravel-csrf-token-mismatch/laravel11-linux", "probability": 0.25, "condition": "when session data is lost causing the CSRF token to become invalid"}],
-    "preceded_by": [{"error_id": "php/permission-denied-storage/php83-linux", "probability": 0.22, "condition": "when file permission issues prevent the session handler from writing session data"}],
-    "frequently_confused_with": [{"error_id": "php/laravel-csrf-token-mismatch/laravel11-linux", "distinction": "Session expired is a PHP-level session handling error while CSRF mismatch is a framework-level token validation error though expired sessions often cause CSRF mismatches"}]
+    "leads_to": [
+      {
+        "error_id": "php/laravel-csrf-token-mismatch/laravel11-linux",
+        "probability": 0.25,
+        "condition": "when session data is lost causing the CSRF token to become invalid"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/permission-denied-storage/php83-linux",
+        "probability": 0.22,
+        "condition": "when file permission issues prevent the session handler from writing session data"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/laravel-csrf-token-mismatch/laravel11-linux",
+        "distinction": "Session expired is a PHP-level session handling error while CSRF mismatch is a framework-level token validation error though expired sessions often cause CSRF mismatches"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "CORS policy blocked errors occur when the ASP.NET Core server does not include the required Access-Control-Allow-Origin header. Common causes include missing CORS middleware, incorrect origin configuration, or middleware order issues where CORS runs after authentication rejects the preflight request. Fix by properly configuring CORS policy and middleware order."
@@ -25,15 +28,19 @@
     {
       "action": "Adding CORS headers manually in a custom middleware or action filter",
       "why_fails": "Bypasses the built-in CORS middleware's preflight handling; OPTIONS requests are not properly handled, and the custom headers may conflict with or be overridden by other middleware. Also misses edge cases like credentials, exposed headers, and max-age",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using AllowAnyOrigin() combined with AllowCredentials()",
       "why_fails": "The CORS specification explicitly forbids wildcard origins with credentials. ASP.NET Core will throw an InvalidOperationException: 'The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time'",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.20, "condition": "when fixing CORS reveals that authentication middleware order is also incorrect"},
-      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.10, "condition": "when CORS errors are misdiagnosed as connection failures in the client application"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when fixing CORS reveals that authentication middleware order is also incorrect"
+      },
+      {
+        "error_id": "dotnet/httprequestexception/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when CORS errors are misdiagnosed as connection failures in the client application"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.25, "condition": "when authentication middleware runs before CORS and rejects preflight OPTIONS requests"},
-      {"error_id": "dotnet/docker-aspnet-port/dotnet8-linux", "probability": 0.10, "condition": "when Docker port mapping causes origin mismatch between expected and actual URLs"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.25,
+        "condition": "when authentication middleware runs before CORS and rejects preflight OPTIONS requests"
+      },
+      {
+        "error_id": "dotnet/docker-aspnet-port/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when Docker port mapping causes origin mismatch between expected and actual URLs"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "distinction": "CORS blocked is a browser-side enforcement that appears in the browser console; middleware order errors result in server-side 401/403 responses. However, incorrect middleware order can cause CORS failures when preflight requests are blocked by authentication"}
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "distinction": "CORS blocked is a browser-side enforcement that appears in the browser console; middleware order errors result in server-side 401/403 responses. However, incorrect middleware order can cause CORS failures when preflight requests are blocked by authentication"
+      }
     ]
   },
   "metadata": {

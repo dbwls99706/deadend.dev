@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.90,
+    "fix_success_rate": 0.9,
     "confidence": 0.92,
     "last_updated": "2026-02-12",
     "summary": "The application-level connection pool has no available connections. All pool connections are checked out and in use (or leaked). This is different from PostgreSQL's max_connections limit; it is the application pool's own limit. Caused by connection leaks, slow queries holding connections, or undersized pool."
@@ -25,15 +28,19 @@
     {
       "action": "Setting the pool size extremely high without fixing the underlying leak",
       "why_fails": "A larger pool masks the leak temporarily but eventually the pool fills up again and the error returns. Meanwhile, the large number of open connections may hit PostgreSQL's max_connections limit, creating a new error.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling connection pooling entirely and opening new connections per request",
       "why_fails": "Opening a new PostgreSQL connection takes 100-200ms due to process forking and authentication. Without pooling, performance degrades severely under load, and you risk hitting PostgreSQL's max_connections limit directly.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/too-many-connections/pg16-linux", "probability": 0.25, "condition": "when increasing pool size or opening direct connections pushes past PostgreSQL max_connections"},
-      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.20, "condition": "when pool exhaustion causes queued requests to timeout waiting for a connection"}
+      {
+        "error_id": "database/too-many-connections/pg16-linux",
+        "probability": 0.25,
+        "condition": "when increasing pool size or opening direct connections pushes past PostgreSQL max_connections"
+      },
+      {
+        "error_id": "database/query-timeout/pg16-linux",
+        "probability": 0.2,
+        "condition": "when pool exhaustion causes queued requests to timeout waiting for a connection"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.25, "condition": "when slow queries hold connections for too long, preventing them from being returned to the pool"},
-      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when deadlocked transactions hold pool connections indefinitely"}
+      {
+        "error_id": "database/query-timeout/pg16-linux",
+        "probability": 0.25,
+        "condition": "when slow queries hold connections for too long, preventing them from being returned to the pool"
+      },
+      {
+        "error_id": "database/deadlock-detected/pg16-linux",
+        "probability": 0.15,
+        "condition": "when deadlocked transactions hold pool connections indefinitely"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/too-many-connections/pg16-linux", "distinction": "Connection pool exhausted is an application-level limit (SQLAlchemy QueuePool, HikariCP, etc.). Too many connections is a PostgreSQL server-level limit (max_connections). The pool error happens before reaching PostgreSQL's limit. Pool errors show library-specific messages; server errors show PostgreSQL FATAL messages."}
+      {
+        "error_id": "database/too-many-connections/pg16-linux",
+        "distinction": "Connection pool exhausted is an application-level limit (SQLAlchemy QueuePool, HikariCP, etc.). Too many connections is a PostgreSQL server-level limit (max_connections). The pool error happens before reaching PostgreSQL's limit. Pool errors show library-specific messages; server errors show PostgreSQL FATAL messages."
+      }
     ]
   },
   "metadata": {

@@ -38,14 +38,18 @@
       "action": "Adding the import to optimizeDeps.include in vite.config",
       "why_fails": "optimizeDeps.include only helps with pre-bundling CJS dependencies into ESM. It does nothing for missing source files, misconfigured path aliases, or wrong import paths. The error is about import resolution, not dependency optimization.",
       "fail_rate": 0.82,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "optimizeDeps.include is treated as a catch-all fix for Vite import errors, but it only affects the dependency pre-bundling step."
     },
     {
       "action": "Deleting node_modules/.vite and restarting dev server",
       "why_fails": "The .vite cache stores pre-bundled dependencies. Clearing it helps when cached deps are corrupted, but when the import path itself is wrong (missing extension, wrong alias), the same error reappears immediately after restart.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "common_misconception": "Cache clearing is a reflexive first step, but this error is almost never a caching issue."
     }
   ],

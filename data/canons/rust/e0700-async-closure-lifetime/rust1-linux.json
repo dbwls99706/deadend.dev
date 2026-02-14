@@ -38,21 +38,27 @@
       "action": "Adding 'static lifetime bound to everything",
       "why_fails": "'static means the value lives for the entire program. This is overly restrictive: it prevents borrowing local data, forces all data to be owned or leaked, and leads to excessive .clone() calls. Most async code does not need 'static — it needs clear ownership.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "common_misconception": "'static is treated as a universal fix for lifetime errors when it actually imposes the strongest possible constraint."
     },
     {
       "action": "Using Box::leak to make references 'static",
       "why_fails": "Box::leak deliberately leaks memory. The value is never freed. This 'works' at the cost of a memory leak every time the code runs. It is a code smell, not a solution.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "common_misconception": "Leaking memory is seen as an acceptable workaround when the real issue is ownership structure."
     },
     {
       "action": "Wrapping everything in Arc<Mutex<T>>",
       "why_fails": "Arc<Mutex<T>> adds unnecessary synchronization overhead and complexity. Often the issue is simply that the closure needs 'move' to take ownership, or the function needs a named lifetime — not interior mutability.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "common_misconception": "Interior mutability wrappers are used as a catch-all for lifetime issues when the real fix is simpler ownership transfer."
     }
   ],

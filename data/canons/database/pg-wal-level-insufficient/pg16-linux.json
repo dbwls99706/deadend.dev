@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Attempting to change wal_level with ALTER SYSTEM and then just reloading configuration",
       "why_fails": "wal_level is a postmaster-level parameter that requires a full PostgreSQL restart, not just a configuration reload (pg_ctl reload / SELECT pg_reload_conf()). The change is written to postgresql.auto.conf but does not take effect until restart.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using pg_basebackup to set up a standby and enabling logical replication on the standby only",
       "why_fails": "Logical replication slots can only be created on the primary. A standby inherits the primary's wal_level but cannot create logical replication slots. The primary must have wal_level = logical.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/pg-replication-slot-inactive/pg16-linux", "probability": 0.20, "condition": "when logical replication is enabled but slots are not properly configured"}
+      {
+        "error_id": "database/pg-replication-slot-inactive/pg16-linux",
+        "probability": 0.2,
+        "condition": "when logical replication is enabled but slots are not properly configured"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.10, "condition": "when setting up a new PostgreSQL instance for CDC and finding logical replication not enabled"}
+      {
+        "error_id": "database/connection-refused/pg16-linux",
+        "probability": 0.1,
+        "condition": "when setting up a new PostgreSQL instance for CDC and finding logical replication not enabled"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/pg-replication-slot-inactive/pg16-linux", "distinction": "WAL level insufficient means the server configuration does not support logical replication at all. Replication slot inactive means logical replication is configured but a specific slot has no active consumer. The first is a prerequisite error; the second is an operational error."}
+      {
+        "error_id": "database/pg-replication-slot-inactive/pg16-linux",
+        "distinction": "WAL level insufficient means the server configuration does not support logical replication at all. Replication slot inactive means logical replication is configured but a specific slot has no active consumer. The first is a prerequisite error; the second is an operational error."
+      }
     ]
   },
   "metadata": {

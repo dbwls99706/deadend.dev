@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Dropping and recreating the table to fix index corruption",
       "why_fails": "The table data is usually not corrupted; only the index is. Dropping the table loses all data unnecessarily. REINDEX rebuilds the index from the intact table data without any data loss.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring the corruption warning and continuing to query the table",
       "why_fails": "A corrupted index returns incorrect query results silently. Queries using the corrupted index may return missing rows, duplicate rows, or wrong rows. This leads to application-level data integrity issues that are very difficult to trace back to index corruption.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Investigate and fix the root cause of corruption",
-      "success_rate": 0.80,
+      "success_rate": 0.8,
       "how": "Check system logs for hardware errors: dmesg | grep -i error. Verify disk health: smartctl -a /dev/sda. Check for unclean shutdowns: grep -i 'shutdown\\|crash' /var/log/postgresql/. Enable data checksums if not already: pg_checksums --enable (requires downtime). Consider enabling full_page_writes = on (default) to protect against partial writes.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.20, "condition": "when queries fall back to sequential scans after corrupted index is disabled"}
+      {
+        "error_id": "database/query-timeout/pg16-linux",
+        "probability": 0.2,
+        "condition": "when queries fall back to sequential scans after corrupted index is disabled"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when disk full conditions during write operations cause partial page writes that corrupt indexes"}
+      {
+        "error_id": "database/disk-full/pg16-linux",
+        "probability": 0.15,
+        "condition": "when disk full conditions during write operations cause partial page writes that corrupt indexes"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Index corruption means the index exists but contains invalid data. Relation does not exist means the table or index name cannot be found. Corruption is a data integrity issue; missing relation is a naming/schema issue."}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "distinction": "Index corruption means the index exists but contains invalid data. Relation does not exist means the table or index name cannot be found. Corruption is a data integrity issue; missing relation is a naming/schema issue."
+      }
     ]
   },
   "metadata": {

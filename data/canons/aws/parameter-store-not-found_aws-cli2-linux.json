@@ -29,14 +29,18 @@
       "action": "Creating the parameter with an empty value",
       "why_fails": "Empty values cause application errors downstream",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Hardcoding the value instead of using Parameter Store",
       "why_fails": "Loses the benefits of centralized config management",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

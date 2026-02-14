@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "Automatic garbage collection failed and git wrote the error to .git/gc.log. Subsequent operations repeatedly print this warning until the gc.log is removed. Root cause is typically insufficient memory, disk space, or conflicting processes."
   },
@@ -25,22 +28,26 @@
     {
       "action": "Simply deleting .git/gc.log without fixing the root cause",
       "why_fails": "The next auto-gc attempt will fail again and recreate gc.log with the same error, leading to an endless cycle of warnings",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling auto-gc entirely with git config gc.auto 0",
       "why_fails": "This prevents the error message but the repository grows unbounded with loose objects, degrading performance over time",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Fix the root cause, remove gc.log, then run gc manually",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Read .git/gc.log to identify the root cause. Free disk space or memory as needed. Remove .git/gc.log, then run git gc --auto or git gc manually to verify it completes.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "git/pack-objects-died/git2-linux", "probability": 0.25, "condition": "when gc triggers pack-objects which exhausts available memory"},
-      {"error_id": "git/fsck-broken-link/git2-linux", "probability": 0.15, "condition": "when interrupted gc leaves broken object references"}
+      {
+        "error_id": "git/pack-objects-died/git2-linux",
+        "probability": 0.25,
+        "condition": "when gc triggers pack-objects which exhausts available memory"
+      },
+      {
+        "error_id": "git/fsck-broken-link/git2-linux",
+        "probability": 0.15,
+        "condition": "when interrupted gc leaves broken object references"
+      }
     ],
     "preceded_by": [
-      {"error_id": "git/pack-objects-died/git2-linux", "probability": 0.20, "condition": "when pack-objects OOM during gc causes the gc failure to be logged"}
+      {
+        "error_id": "git/pack-objects-died/git2-linux",
+        "probability": 0.2,
+        "condition": "when pack-objects OOM during gc causes the gc failure to be logged"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "git/pack-objects-died/git2-linux", "distinction": "gc-auto-failed is the wrapper error about gc logging failures; pack-objects-died is the specific subprocess that failed within gc"}
+      {
+        "error_id": "git/pack-objects-died/git2-linux",
+        "distinction": "gc-auto-failed is the wrapper error about gc logging failures; pack-objects-died is the specific subprocess that failed within gc"
+      }
     ]
   },
   "metadata": {

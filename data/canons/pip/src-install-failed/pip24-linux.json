@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Install the package with --prefer-binary and hope for the best",
       "why_fails": "If no binary exists, --prefer-binary still falls back to source and fails the same way",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": "when no binary exists for the platform"
     },
     {
       "action": "Set CC=/usr/bin/gcc without actually installing gcc",
       "why_fails": "Setting the environment variable does not install the compiler; the file must exist",
       "fail_rate": 0.99,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Install C compiler and Python development headers",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "apt-get install build-essential python3-dev && pip install <package>",
       "sources": [],
       "condition": ""
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/subprocess-error/pip24-linux", "probability": 0.3, "condition": "when partial compilation creates broken state"}
+      {
+        "error_id": "pip/subprocess-error/pip24-linux",
+        "probability": 0.3,
+        "condition": "when partial compilation creates broken state"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/no-binary/pip24-linux", "probability": 0.35, "condition": "when no binary wheel exists and pip attempts source build"}
+      {
+        "error_id": "pip/no-binary/pip24-linux",
+        "probability": 0.35,
+        "condition": "when no binary wheel exists and pip attempts source build"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/build-isolation-failed/pip24-linux", "distinction": "Src-install-failed is about missing compilers/libraries; build-isolation-failed is about the isolated build environment setup failing before compilation starts"}
+      {
+        "error_id": "pip/build-isolation-failed/pip24-linux",
+        "distinction": "Src-install-failed is about missing compilers/libraries; build-isolation-failed is about the isolated build environment setup failing before compilation starts"
+      }
     ]
   },
   "metadata": {

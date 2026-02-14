@@ -29,14 +29,18 @@
       "action": "Adding try/catch to suppress the error and return empty props",
       "why_fails": "Publishes a page with no data; users see an empty or broken page",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching all pages to SSR to avoid static generation",
       "why_fails": "Loses static optimization; increases server load and TTFB",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

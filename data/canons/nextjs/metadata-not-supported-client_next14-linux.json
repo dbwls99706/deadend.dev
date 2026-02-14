@@ -29,14 +29,18 @@
       "action": "Using document.title in useEffect instead",
       "why_fails": "Loses SEO benefits; meta tags aren't set during SSR",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Removing 'use client' from the page",
       "why_fails": "May break if the component uses hooks or browser APIs",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

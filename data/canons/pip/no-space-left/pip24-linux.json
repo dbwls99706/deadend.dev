@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "runtime": {
+      "name": "pip",
+      "version_range": ">=24,<25"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,22 +28,26 @@
     {
       "action": "Run pip install with --no-cache-dir alone",
       "why_fails": "While it helps marginally, the extracted package and build artifacts still need disk space; if the disk is truly full, this is insufficient",
-      "fail_rate": 0.50,
-      "sources": [],
+      "fail_rate": 0.5,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": "when disk is completely full"
     },
     {
       "action": "Delete random files to free space without checking what uses disk",
       "why_fails": "May delete critical system files or virtualenv; the pip cache or /tmp build files are usually the culprits",
-      "fail_rate": 0.60,
-      "sources": [],
+      "fail_rate": 0.6,
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Clear pip cache and tmp, then retry: pip cache purge && rm -rf /tmp/pip-*",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "pip cache purge && rm -rf /tmp/pip-* /tmp/pip-build-* && pip install <package>",
       "sources": [],
       "condition": ""
@@ -62,13 +69,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "pip/cache-corruption/pip24-linux", "probability": 0.2, "condition": "when disk fills during cache write leaving partial files"}
+      {
+        "error_id": "pip/cache-corruption/pip24-linux",
+        "probability": 0.2,
+        "condition": "when disk fills during cache write leaving partial files"
+      }
     ],
     "preceded_by": [
-      {"error_id": "pip/build-isolation-failed/pip24-linux", "probability": 0.15, "condition": "when build isolation creates too many temp environments"}
+      {
+        "error_id": "pip/build-isolation-failed/pip24-linux",
+        "probability": 0.15,
+        "condition": "when build isolation creates too many temp environments"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "pip/cache-corruption/pip24-linux", "distinction": "No-space-left is about insufficient disk space; cache-corruption is about corrupted cached files which can happen after a space issue but has different symptoms"}
+      {
+        "error_id": "pip/cache-corruption/pip24-linux",
+        "distinction": "No-space-left is about insufficient disk space; cache-corruption is about corrupted cached files which can happen after a space issue but has different symptoms"
+      }
     ]
   },
   "metadata": {

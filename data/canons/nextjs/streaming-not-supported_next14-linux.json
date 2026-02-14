@@ -29,14 +29,18 @@
       "action": "Wrapping in try/catch and returning empty headers",
       "why_fails": "Silently returns wrong data; features depending on headers break",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     },
     {
       "action": "Moving to middleware",
       "why_fails": "Middleware is for request routing, not data fetching",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "condition": ""
     }
   ],

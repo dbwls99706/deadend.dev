@@ -29,14 +29,18 @@
       "action": "Deleting the existing log group",
       "why_fails": "Loses all existing log data permanently",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     },
     {
       "action": "Ignoring the error and continuing",
       "why_fails": "Works but masks potential naming conflicts",
       "fail_rate": 0.4,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/"
+      ],
       "condition": ""
     }
   ],

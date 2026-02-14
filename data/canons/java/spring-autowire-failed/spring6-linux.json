@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "spring", "version_range": ">=6.0,<7.0"},
+    "runtime": {
+      "name": "spring",
+      "version_range": ">=6.0,<7.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.88,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-12",
     "summary": "UnsatisfiedDependencyException is thrown when Spring cannot resolve a dependency required by a bean — either because no matching bean exists, multiple matching beans create ambiguity, or the dependency's own creation fails."
   },
@@ -26,21 +29,25 @@
       "action": "Using @Autowired(required=false) to make the dependency optional without handling the null case",
       "why_fails": "Setting required=false avoids the startup exception but leaves the field null at runtime. Any code that uses the dependency without null-checking will throw NullPointerException. This trades a clear startup failure for a hidden runtime failure that is harder to diagnose.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Creating an empty stub implementation of the missing dependency just to satisfy Spring",
       "why_fails": "An empty stub makes the application start but provides no actual functionality. Callers of the stub get silent no-ops or null returns, which can cause data loss, incorrect behavior, or cascading failures that are much harder to debug than the original autowiring error.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Read the full exception chain to identify the root cause — the actual reason is usually nested several levels deep",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Scroll to the bottom of the exception chain (Caused by:). The root cause reveals the actual problem. 2. Common root causes: NoSuchBeanDefinitionException (bean not registered), BeanCurrentlyInCreationException (circular dependency), ClassNotFoundException (missing JAR), or a constructor/factory method throwing an exception. 3. Fix the root cause directly rather than working around the UnsatisfiedDependencyException wrapper.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.25, "condition": "when @Autowired(required=false) is used and the null dependency is accessed at runtime"},
-      {"error_id": "java/spring-circular-dependency/spring6-linux", "probability": 0.15, "condition": "when adding a new bean to resolve the dependency creates a circular reference"}
+      {
+        "error_id": "java/nullpointerexception/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when @Autowired(required=false) is used and the null dependency is accessed at runtime"
+      },
+      {
+        "error_id": "java/spring-circular-dependency/spring6-linux",
+        "probability": 0.15,
+        "condition": "when adding a new bean to resolve the dependency creates a circular reference"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.30, "condition": "when a bean's dependency itself has a missing bean definition"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.15, "condition": "when the dependency's class cannot be loaded due to classpath issues"}
+      {
+        "error_id": "java/spring-bean-not-found/spring6-linux",
+        "probability": 0.3,
+        "condition": "when a bean's dependency itself has a missing bean definition"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the dependency's class cannot be loaded due to classpath issues"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/spring-bean-not-found/spring6-linux", "distinction": "UnsatisfiedDependencyException wraps a deeper creation failure and points to the bean that depends on the missing/broken bean; NoSuchBeanDefinitionException directly states that no bean of the required type exists"}
+      {
+        "error_id": "java/spring-bean-not-found/spring6-linux",
+        "distinction": "UnsatisfiedDependencyException wraps a deeper creation failure and points to the bean that depends on the missing/broken bean; NoSuchBeanDefinitionException directly states that no bean of the required type exists"
+      }
     ]
   },
   "metadata": {

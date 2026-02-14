@@ -29,14 +29,18 @@
       "action": "Using recover() to catch the panic",
       "why_fails": "Masks the bug; the slice access logic is wrong",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Pre-allocating a very large slice",
       "why_fails": "Wastes memory; doesn't fix the indexing logic",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],

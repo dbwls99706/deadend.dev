@@ -29,14 +29,18 @@
       "action": "Removing the selector from the Service",
       "why_fails": "Creates a Service with no backends; all requests fail",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
       "condition": ""
     },
     {
       "action": "Adding a manual Endpoints resource",
       "why_fails": "Fragile; must be manually updated when pods change",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/service/"
+      ],
       "condition": ""
     }
   ],

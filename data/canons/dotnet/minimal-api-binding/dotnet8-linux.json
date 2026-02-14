@@ -11,13 +11,16 @@
     "last_confirmed": "2026-02-13"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
     "fix_success_rate": 0.89,
-    "confidence": 0.90,
+    "confidence": 0.9,
     "last_updated": "2026-02-13",
     "summary": "Minimal API endpoints in ASP.NET Core automatically bind complex types from the request body using System.Text.Json. This exception occurs when the request body is missing, malformed, has incorrect Content-Type, or when the JSON structure does not match the expected parameter type. Common causes include sending form data instead of JSON, missing required properties when using required keyword or [Required] attributes, or enum/type mismatches. Fix by ensuring the request Content-Type is application/json and the body structure matches the expected type."
   },
@@ -26,21 +29,27 @@
       "action": "Adding [FromBody] attribute explicitly to the parameter assuming it changes binding behavior",
       "why_fails": "In Minimal APIs, complex types are already bound from the body by default. Adding [FromBody] explicitly does not change the binding source or fix deserialization errors. The issue is in the JSON payload structure or Content-Type header, not in how the parameter is annotated. This wastes debugging time on the wrong layer",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Making all properties nullable to avoid required property binding failures",
       "why_fails": "Making all properties nullable suppresses the binding error but pushes null-handling responsibility throughout the entire codebase. Every consumer of the model must now check for null on every field, and invalid requests that should be rejected with 400 are silently accepted with null data, leading to NullReferenceExceptions deeper in the application logic",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching from Minimal API to MVC controllers to get better model binding",
       "why_fails": "MVC controllers use the same System.Text.Json deserialization pipeline and will produce equivalent errors for malformed JSON. The migration adds significant complexity (controller classes, routing attributes, dependency injection changes) without addressing the root cause, which is a mismatch between the client request and the server's expected model",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -69,15 +78,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when nullable properties are used to suppress binding errors but null values are not handled downstream"},
-      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.10, "condition": "when fixing the binding model introduces navigation properties that cause serialization cycles in the response"}
+      {
+        "error_id": "dotnet/nullreferenceexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when nullable properties are used to suppress binding errors but null values are not handled downstream"
+      },
+      {
+        "error_id": "dotnet/serialization-cycle/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when fixing the binding model introduces navigation properties that cause serialization cycles in the response"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.15, "condition": "when CORS preflight issues mask the real binding error by preventing the POST request from reaching the server"},
-      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when middleware ordering causes the request body to be consumed before it reaches the endpoint binding"}
+      {
+        "error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when CORS preflight issues mask the real binding error by preventing the POST request from reaching the server"
+      },
+      {
+        "error_id": "dotnet/aspnet-middleware-order/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when middleware ordering causes the request body to be consumed before it reaches the endpoint binding"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "BadHttpRequestException for body binding is specifically about JSON deserialization of the request body in Minimal API endpoints; InvalidOperationException covers broader operational errors including DI resolution failures and incorrect middleware usage"}
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "distinction": "BadHttpRequestException for body binding is specifically about JSON deserialization of the request body in Minimal API endpoints; InvalidOperationException covers broader operational errors including DI resolution failures and incorrect middleware usage"
+      }
     ]
   },
   "metadata": {

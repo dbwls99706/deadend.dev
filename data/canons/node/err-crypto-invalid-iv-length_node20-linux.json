@@ -29,14 +29,18 @@
       "action": "Padding the IV with zeros",
       "why_fails": "Weakens cryptographic security; predictable IV bytes",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Using a fixed/hardcoded IV",
       "why_fails": "Completely defeats the purpose of an IV; same plaintext → same ciphertext",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

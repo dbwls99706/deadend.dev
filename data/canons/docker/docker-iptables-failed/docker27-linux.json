@@ -29,14 +29,18 @@
       "action": "Flushing all iptables rules with iptables -F",
       "why_fails": "Deletes all firewall rules including security rules, potentially exposing the host to network attacks",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Disabling iptables in Docker with --iptables=false",
       "why_fails": "Containers cannot reach the internet or each other; port publishing stops working entirely",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -71,7 +75,7 @@
     "preceded_by": [
       {
         "error_id": "docker/network-bridge-conflict/docker24-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when network conflicts corrupt iptables state"
       }
     ],

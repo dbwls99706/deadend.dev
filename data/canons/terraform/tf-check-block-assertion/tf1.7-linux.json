@@ -38,7 +38,9 @@
       "action": "Change the condition to always return true",
       "why_fails": "Hardcoding true defeats the purpose of the check and leaves infrastructure issues undetected",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Randomly removing JARs from the classpath until the error disappears",
       "why_fails": "Without understanding which classes conflict and which version each part of the application needs, randomly removing JARs will likely cause ClassNotFoundException or NoClassDefFoundError instead.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Using a custom classloader to isolate each JAR",
       "why_fails": "Custom classloaders add significant complexity and can cause ClassCastException when the same class loaded by different classloaders is treated as different types. This approach is only viable for plugin systems, not general dependency resolution.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/linkage-error/jdk17-linux", "probability": 0.30, "condition": "when resolving one duplicate class exposes a linkage incompatibility in the remaining version"},
-      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.20, "condition": "when the wrong version of a duplicated class is loaded, missing methods from the expected version"}
+      {
+        "error_id": "java/linkage-error/jdk17-linux",
+        "probability": 0.3,
+        "condition": "when resolving one duplicate class exposes a linkage incompatibility in the remaining version"
+      },
+      {
+        "error_id": "java/nosuchmethoderror/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when the wrong version of a duplicated class is loaded, missing methods from the expected version"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.35, "condition": "when Maven's nearest-wins strategy resolves a conflict but both JARs end up on the classpath via different paths"}
+      {
+        "error_id": "java/maven-dependency-conflict/maven3-linux",
+        "probability": 0.35,
+        "condition": "when Maven's nearest-wins strategy resolves a conflict but both JARs end up on the classpath via different paths"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/linkage-error/jdk17-linux", "distinction": "LinkageError is a broader category; jar hell specifically involves duplicate class definitions across multiple JARs, while LinkageError can also be caused by incompatible class changes"}
+      {
+        "error_id": "java/linkage-error/jdk17-linux",
+        "distinction": "LinkageError is a broader category; jar hell specifically involves duplicate class definitions across multiple JARs, while LinkageError can also be caused by incompatible class changes"
+      }
     ]
   },
   "metadata": {

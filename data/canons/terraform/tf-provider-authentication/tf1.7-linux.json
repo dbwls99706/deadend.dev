@@ -38,7 +38,9 @@
       "action": "Use root account credentials for Terraform",
       "why_fails": "Root credentials are a critical security risk and should never be used for programmatic access",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],
@@ -71,7 +73,12 @@
         "condition": "After installing provider, authentication must be configured"
       }
     ],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-data-source-not-found/tf1.7-linux",
+        "distinction": "'Error: error configuring provider: no valid credential sourc' vs 'Error: No matching resource found or data source returned no': while both are terraform errors, the former Terraform provider cannot authenticate with the cloud provider due to missing or while the latter A data source query returned no results because the referenced resource does not."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

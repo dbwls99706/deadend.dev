@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Using a static cache key without any hash component",
       "why_fails": "A static key means the cache is never invalidated when dependencies change, leading to stale caches and build inconsistencies",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Caching the entire node_modules directory without a lockfile hash",
       "why_fails": "Without a lockfile hash in the key, the cache serves outdated dependencies even after package.json changes, causing runtime errors",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -47,7 +54,7 @@
     },
     {
       "action": "Verify the cache key includes the correct hash files",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Ensure hashFiles() points to the correct lockfile (package-lock.json, yarn.lock, pnpm-lock.yaml). Verify the file exists and is committed. Check that the hash path glob matches your monorepo structure.",
       "sources": [],
       "condition": ""
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.15, "condition": "when cache miss causes full dependency download which exceeds the job timeout"},
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.10, "condition": "when lack of cached dependencies leads to npm install failures"}
+      {
+        "error_id": "cicd/gha-runner-timeout/gha-linux",
+        "probability": 0.15,
+        "condition": "when cache miss causes full dependency download which exceeds the job timeout"
+      },
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "probability": 0.1,
+        "condition": "when lack of cached dependencies leads to npm install failures"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.30, "condition": "when general cache miss issues affect specific cache key lookups"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "probability": 0.3,
+        "condition": "when general cache miss issues affect specific cache key lookups"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/gha-cache-miss/gha-linux", "distinction": "cache-key-not-found is about a specific cache key lookup failure; gha-cache-miss is a broader cache system issue"}
+      {
+        "error_id": "cicd/gha-cache-miss/gha-linux",
+        "distinction": "cache-key-not-found is about a specific cache key lookup failure; gha-cache-miss is a broader cache system issue"
+      }
     ]
   },
   "metadata": {

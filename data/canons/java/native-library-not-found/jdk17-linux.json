@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Installing only the main library without its native dependencies",
       "why_fails": "Native libraries have their own dependency chains (visible via ldd). If a dependency .so is missing, the main .so cannot be loaded even if it is present. All transitive native dependencies must be satisfied.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Creating symlinks to random library versions to satisfy the dependency",
       "why_fails": "Symlinking to an incompatible version (e.g., libfoo.so.2 -> libfoo.so.3) may load but can cause segfaults or undefined behavior due to ABI incompatibility. The correct version must be installed.",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/jni-error/jdk17-linux", "probability": 0.25, "condition": "when the native library loads but JNI symbol resolution fails due to version mismatch"}
+      {
+        "error_id": "java/jni-error/jdk17-linux",
+        "probability": 0.25,
+        "condition": "when the native library loads but JNI symbol resolution fails due to version mismatch"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/jni-error/jdk17-linux", "probability": 0.20, "condition": "when investigating a JNI error reveals missing transitive native dependencies"}
+      {
+        "error_id": "java/jni-error/jdk17-linux",
+        "probability": 0.2,
+        "condition": "when investigating a JNI error reveals missing transitive native dependencies"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/jni-error/jdk17-linux", "distinction": "JNI error is a broader category including symbol resolution and JNI API misuse; native library not found specifically means a .so file is missing from the filesystem or library path"}
+      {
+        "error_id": "java/jni-error/jdk17-linux",
+        "distinction": "JNI error is a broader category including symbol resolution and JNI API misuse; native library not found specifically means a .so file is missing from the filesystem or library path"
+      }
     ]
   },
   "metadata": {

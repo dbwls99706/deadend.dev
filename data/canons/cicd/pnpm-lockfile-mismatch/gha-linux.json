@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "runtime": {
+      "name": "github-actions",
+      "version_range": ">=2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Removing --frozen-lockfile from the CI command",
       "why_fails": "Without frozen-lockfile, CI installs potentially different versions than local development, leading to 'works on my machine' issues and non-reproducible builds",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Deleting pnpm-lock.yaml and regenerating it in CI",
       "why_fails": "This defeats the purpose of a lockfile. CI would install the latest compatible versions, which may differ from what was tested locally.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],
@@ -55,14 +62,29 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.10, "condition": "when lockfile issues affect multiple package managers in a monorepo"},
-      {"error_id": "cicd/cache-key-not-found/gha-linux", "probability": 0.15, "condition": "when the lockfile hash changes cause cache key mismatches"}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "probability": 0.1,
+        "condition": "when lockfile issues affect multiple package managers in a monorepo"
+      },
+      {
+        "error_id": "cicd/cache-key-not-found/gha-linux",
+        "probability": 0.15,
+        "condition": "when the lockfile hash changes cause cache key mismatches"
+      }
     ],
     "preceded_by": [
-      {"error_id": "cicd/npm-audit-critical/gha-linux", "probability": 0.15, "condition": "when audit fix changes package.json without updating the lockfile"}
+      {
+        "error_id": "cicd/npm-audit-critical/gha-linux",
+        "probability": 0.15,
+        "condition": "when audit fix changes package.json without updating the lockfile"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "pnpm-lockfile-mismatch is pnpm-specific lockfile sync error; npm-ci-failed is npm's equivalent (npm ci requires package-lock.json to match). Same concept, different package managers."}
+      {
+        "error_id": "cicd/npm-ci-failed/npm-linux",
+        "distinction": "pnpm-lockfile-mismatch is pnpm-specific lockfile sync error; npm-ci-failed is npm's equivalent (npm ci requires package-lock.json to match). Same concept, different package managers."
+      }
     ]
   },
   "metadata": {

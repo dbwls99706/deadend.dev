@@ -100,7 +100,12 @@
       }
     ],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "git/shallow-update-not-allowed/git2-linux",
+        "distinction": "'fatal: shallow file has changed since we read it' vs 'fatal: refusing to fetch into branch because shallow update ': while both are git errors in the clone_error category, the former Shallow clones (depth=1) lack full commit history, breaking operations that requ while the latter Git operation on a shallow clone that requires full history."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

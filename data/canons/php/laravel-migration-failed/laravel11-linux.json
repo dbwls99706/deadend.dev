@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "laravel", "version_range": ">=11.0,<12.0"},
+    "runtime": {
+      "name": "laravel",
+      "version_range": ">=11.0,<12.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -22,17 +25,62 @@
     "summary": "Laravel migration failures occur when a migration tries to create a table that already exists, adds a duplicate column, violates a foreign key constraint, or contains a SQL syntax error. The migrations table may be out of sync with the actual database schema."
   },
   "dead_ends": [
-    {"action": "Running migrate:fresh in production to reset all tables", "why_fails": "migrate:fresh drops ALL tables and re-runs all migrations from scratch. In production this destroys all data including user accounts, transactions, and content. This is only safe in development environments.", "fail_rate": 0.95, "sources": [], "condition": ""},
-    {"action": "Manually deleting rows from the migrations table to re-run a migration", "why_fails": "Deleting migration records without rolling back the actual schema changes causes the migration to attempt creating tables or columns that already exist, resulting in the same error. The migrations table must stay in sync with the actual schema.", "fail_rate": 0.78, "sources": [], "condition": ""}
+    {
+      "action": "Running migrate:fresh in production to reset all tables",
+      "why_fails": "migrate:fresh drops ALL tables and re-runs all migrations from scratch. In production this destroys all data including user accounts, transactions, and content. This is only safe in development environments.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Manually deleting rows from the migrations table to re-run a migration",
+      "why_fails": "Deleting migration records without rolling back the actual schema changes causes the migration to attempt creating tables or columns that already exist, resulting in the same error. The migrations table must stay in sync with the actual schema.",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://www.php.net/manual/en/errorfunc.constants.php"
+      ],
+      "condition": ""
+    }
   ],
   "workarounds": [
-    {"action": "Use migrate:status to identify the failed migration and fix it manually", "success_rate": 0.87, "how": "Run 'php artisan migrate:status' to see which migrations have run. If a migration partially failed, manually fix the database schema to match the expected state (e.g., drop the partially created table). Then run 'php artisan migrate' again. For production, write a new migration that handles the schema correction.", "sources": [], "condition": ""},
-    {"action": "Add conditional checks in migrations to handle existing schema objects", "success_rate": 0.84, "how": "Use Schema::hasTable() and Schema::hasColumn() in migrations to check before creating. Example: 'if (!Schema::hasTable(\"users\")) { Schema::create(\"users\", ...); }'. For adding columns: 'if (!Schema::hasColumn(\"users\", \"email\")) { Schema::table(\"users\", function($t) { $t->string(\"email\"); }); }'.", "sources": [], "condition": ""}
+    {
+      "action": "Use migrate:status to identify the failed migration and fix it manually",
+      "success_rate": 0.87,
+      "how": "Run 'php artisan migrate:status' to see which migrations have run. If a migration partially failed, manually fix the database schema to match the expected state (e.g., drop the partially created table). Then run 'php artisan migrate' again. For production, write a new migration that handles the schema correction.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add conditional checks in migrations to handle existing schema objects",
+      "success_rate": 0.84,
+      "how": "Use Schema::hasTable() and Schema::hasColumn() in migrations to check before creating. Example: 'if (!Schema::hasTable(\"users\")) { Schema::create(\"users\", ...); }'. For adding columns: 'if (!Schema::hasColumn(\"users\", \"email\")) { Schema::table(\"users\", function($t) { $t->string(\"email\"); }); }'.",
+      "sources": [],
+      "condition": ""
+    }
   ],
   "transition_graph": {
-    "leads_to": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.10, "condition": "when the failed migration corrupts connection state or locks the database"}],
-    "preceded_by": [{"error_id": "php/composer-dependency-conflict/composer2-linux", "probability": 0.12, "condition": "when a package update changes migration dependencies or database driver requirements"}],
-    "frequently_confused_with": [{"error_id": "php/pdo-connection-failed/php83-linux", "distinction": "Migration failures are SQL schema errors that occur after connecting to the database while PDO connection failures prevent reaching the database at all"}]
+    "leads_to": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "probability": 0.1,
+        "condition": "when the failed migration corrupts connection state or locks the database"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "php/composer-dependency-conflict/composer2-linux",
+        "probability": 0.12,
+        "condition": "when a package update changes migration dependencies or database driver requirements"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "php/pdo-connection-failed/php83-linux",
+        "distinction": "Migration failures are SQL schema errors that occur after connecting to the database while PDO connection failures prevent reaching the database at all"
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

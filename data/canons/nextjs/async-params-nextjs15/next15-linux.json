@@ -38,14 +38,18 @@
       "action": "Destructuring params in the function signature as in Next.js 14",
       "why_fails": "In Next.js 15, params is a Promise. Destructuring ({ params: { id } }) gives the Promise object properties, not the resolved values. The code runs without type errors but id is undefined at runtime.",
       "fail_rate": 0.92,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "common_misconception": "The Next.js 14 pattern of synchronous params destructuring still works in Next.js 15. It does not — params is now async."
     },
     {
       "action": "Using React.use(params) in a server component",
       "why_fails": "React.use() is designed for client components to unwrap promises during render. In server components, use standard await instead. Using React.use in a server component may cause a different error or unexpected behavior.",
       "fail_rate": 0.78,
-      "sources": [],
+      "sources": [
+        "https://nextjs.org/docs/messages/"
+      ],
       "common_misconception": "React.use() is a universal Promise unwrapper. It is specifically for the client-side React rendering model."
     }
   ],
@@ -79,7 +83,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/searchparams-sync-access/nextjs14-linux",
+        "distinction": "'Error: Route \"/X\" used params.id. params should be awaited b' vs 'Error: Route used `searchParams.X`. `searchParams` should be': while both are nextjs errors, the former Breaking change in Next.js 15: params and searchParams are now Promises and must while the latter Next.js 15 changed searchParams and params from synchronous objects to Promises."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

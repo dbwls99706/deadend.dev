@@ -102,7 +102,12 @@
       }
     ],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/filenotfounderror/py311-linux",
+        "distinction": "'ImportError: libcuda.so.1: cannot open shared object file: N' vs 'FileNotFoundError: [Errno 2] No such file or directory': while both are python errors, the former libcuda.so.1 is provided by the NVIDIA GPU driver (not the CUDA toolkit). This e while the latter File path does not exist. Common in scripts with hardcoded paths or relative pat."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

@@ -29,14 +29,18 @@
       "action": "Removing resource requests to bypass scheduling",
       "why_fails": "Pod can be scheduled anywhere but may OOM or starve other pods",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Draining a node to free resources",
       "why_fails": "Moves pods to other nodes; doesn't add capacity",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

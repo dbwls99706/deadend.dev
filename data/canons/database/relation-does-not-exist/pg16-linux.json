@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Wrapping the table name in double quotes without checking if the table actually exists",
       "why_fails": "Double-quoting makes PostgreSQL treat the name as case-sensitive, which may fix a case mismatch but does nothing if the table was never created. This leads to debugging the wrong problem.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Dropping and recreating the database without running migrations",
       "why_fails": "Dropping the database removes all data and without running migrations afterward, the tables still will not exist. This is destructive and does not solve the underlying issue.",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Run pending database migrations to create the missing table",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "Run the application's migration tool (e.g., 'alembic upgrade head', 'django manage.py migrate', 'knex migrate:latest'). Verify with '\\dt' in psql to confirm the table exists.",
       "sources": [],
       "condition": ""
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.30, "condition": "when attempting to run migrations to fix the missing relation but migrations themselves fail"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.3,
+        "condition": "when attempting to run migrations to fix the missing relation but migrations themselves fail"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/authentication-failed/pg16-linux", "probability": 0.20, "condition": "when user connects to wrong database after fixing auth issues"}
+      {
+        "error_id": "database/authentication-failed/pg16-linux",
+        "probability": 0.2,
+        "condition": "when user connects to wrong database after fixing auth issues"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "distinction": "PostgreSQL says 'relation does not exist' (covering tables, views, sequences) while MySQL says 'Table doesn't exist'. PostgreSQL uses the broader term 'relation'."}
+      {
+        "error_id": "database/mysql-table-doesnt-exist/mysql8-linux",
+        "distinction": "PostgreSQL says 'relation does not exist' (covering tables, views, sequences) while MySQL says 'Table doesn't exist'. PostgreSQL uses the broader term 'relation'."
+      }
     ]
   },
   "metadata": {

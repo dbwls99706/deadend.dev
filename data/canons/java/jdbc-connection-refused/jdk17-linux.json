@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,21 +29,25 @@
       "action": "Increasing connection timeout to wait longer for the database to respond",
       "why_fails": "If the connection is refused (TCP RST or no route), the failure is immediate — the database is not listening on that host:port. Increasing timeout only helps with slow responses, not with refused connections. A 'Connection refused' means the port is not open, and no amount of waiting will change that.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching JDBC drivers without verifying the database is actually reachable",
       "why_fails": "Connection refused is a network-level error, not a driver issue. Switching from MySQL Connector/J to MariaDB Connector or from PostgreSQL JDBC to pgjdbc-ng will not help if the database server is not running or the network path is blocked.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Verify the database server is running and accessible on the expected host:port",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "1. Check if the database process is running: 'systemctl status postgresql' or 'docker ps' for containerized databases. 2. Verify the port is open: 'ss -tlnp | grep 5432' (or your database port). 3. Test TCP connectivity from the application host: 'nc -zv db-host 5432'. 4. Check firewall rules: 'iptables -L' or cloud security group settings. 5. For Docker: ensure the database container is on the same network and the port is exposed.",
       "sources": [],
       "condition": ""
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.10, "condition": "when connection pool exhaustion causes Hibernate session to lose its connection"},
-      {"error_id": "java/illegalstateexception/jdk17-linux", "probability": 0.15, "condition": "when connection failure leaves transaction manager in an inconsistent state"}
+      {
+        "error_id": "java/hibernate-lazy-init/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when connection pool exhaustion causes Hibernate session to lose its connection"
+      },
+      {
+        "error_id": "java/illegalstateexception/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when connection failure leaves transaction manager in an inconsistent state"
+      }
     ],
     "preceded_by": [
-      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.15, "condition": "when DataSource bean creation fails due to unresolvable database connection"},
-      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when JDBC driver class is missing from classpath"}
+      {
+        "error_id": "java/spring-autowire-failed/spring6-linux",
+        "probability": 0.15,
+        "condition": "when DataSource bean creation fails due to unresolvable database connection"
+      },
+      {
+        "error_id": "java/classnotfoundexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when JDBC driver class is missing from classpath"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "distinction": "Connection refused means the TCP connection itself failed (port not open); SSLHandshakeException means TCP connection succeeded but the TLS negotiation failed (certificate issues)"}
+      {
+        "error_id": "java/ssl-handshake-exception/jdk17-linux",
+        "distinction": "Connection refused means the TCP connection itself failed (port not open); SSLHandshakeException means TCP connection succeeded but the TLS negotiation failed (certificate issues)"
+      }
     ]
   },
   "metadata": {

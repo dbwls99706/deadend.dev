@@ -28,15 +28,19 @@
     {
       "action": "Force-removing the volume directory from /var/lib/docker/volumes",
       "why_fails": "Bypasses Docker's internal state; Docker will still think the volume exists, causing ghost entries and potential data corruption",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Using docker volume prune while the volume is still referenced",
       "why_fails": "Prune only removes unreferenced volumes; volumes attached to stopped containers are still referenced",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
@@ -52,7 +56,7 @@
     },
     {
       "action": "Use docker compose down -v to clean up volumes with their compose project",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "docker compose down -v removes containers, networks, AND volumes defined in the compose file",
       "sources": [
         "https://docs.docker.com/reference/cli/docker/compose/down/"
@@ -64,7 +68,7 @@
     "leads_to": [
       {
         "error_id": "docker/no-space-left/docker24-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "when inability to remove volumes leads to disk space exhaustion"
       }
     ],

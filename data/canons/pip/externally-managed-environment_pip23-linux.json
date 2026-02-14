@@ -38,7 +38,9 @@
       "action": "Using --break-system-packages flag",
       "why_fails": "Bypasses the protection; can corrupt system Python",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],

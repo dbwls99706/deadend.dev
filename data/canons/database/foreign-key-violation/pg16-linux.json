@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "runtime": {
+      "name": "postgresql",
+      "version_range": ">=16,<17"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -25,15 +28,19 @@
     {
       "action": "Disabling foreign key checks globally to bypass the error",
       "why_fails": "PostgreSQL does not support globally disabling FK checks like MySQL. Even if you defer constraints, they are checked at commit time. Dropping the constraint destroys referential integrity.",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     },
     {
       "action": "Inserting a dummy parent record with placeholder data to satisfy the constraint",
       "why_fails": "Placeholder parent records create orphan data that confuses application logic and reporting. It masks the real issue of incorrect data flow ordering.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+      ],
       "condition": ""
     }
   ],
@@ -55,13 +62,24 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "database/relation-does-not-exist/pg16-linux", "probability": 0.15, "condition": "when the parent table itself is missing due to incomplete migrations"}
+      {
+        "error_id": "database/relation-does-not-exist/pg16-linux",
+        "probability": 0.15,
+        "condition": "when the parent table itself is missing due to incomplete migrations"
+      }
     ],
     "preceded_by": [
-      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.25, "condition": "when a migration partially runs creating child tables without parent table constraints"}
+      {
+        "error_id": "database/migration-failed/pg16-linux",
+        "probability": 0.25,
+        "condition": "when a migration partially runs creating child tables without parent table constraints"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "database/unique-violation/pg16-linux", "distinction": "Foreign key violations are about referential integrity (child references non-existent parent), while unique violations are about duplicate values in a single table's column."}
+      {
+        "error_id": "database/unique-violation/pg16-linux",
+        "distinction": "Foreign key violations are about referential integrity (child references non-existent parent), while unique violations are about duplicate values in a single table's column."
+      }
     ]
   },
   "metadata": {

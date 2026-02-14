@@ -29,14 +29,18 @@
       "action": "Disabling file watching entirely",
       "why_fails": "Breaks hot-reload and watch mode development workflow",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     },
     {
       "action": "Restarting the dev server repeatedly",
       "why_fails": "Temporary; watchers accumulate again",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/errors.html"
+      ],
       "condition": ""
     }
   ],

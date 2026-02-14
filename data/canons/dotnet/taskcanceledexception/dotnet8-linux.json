@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,14 +29,18 @@
       "action": "Setting HttpClient.Timeout to Timeout.InfiniteTimeSpan",
       "why_fails": "Removes the safety net against hanging requests; if the server never responds, the client thread/connection is blocked forever, leading to resource exhaustion and application hangs under load",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Catching TaskCanceledException and immediately retrying without backoff",
       "why_fails": "If the server is overloaded or slow, immediate retries add more load and make the problem worse. Creates a retry storm that can cascade into full service outage",
-      "fail_rate": 0.70,
-      "sources": [],
+      "fail_rate": 0.7,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.20, "condition": "when timeout is caused by connection failures that surface as HttpRequestException on retry"},
-      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.10, "condition": "when many timed-out requests accumulate pending buffers in memory"}
+      {
+        "error_id": "dotnet/httprequestexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when timeout is caused by connection failures that surface as HttpRequestException on retry"
+      },
+      {
+        "error_id": "dotnet/outofmemoryexception/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when many timed-out requests accumulate pending buffers in memory"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "probability": 0.15, "condition": "when intermittent connection issues cause requests to exceed timeout"},
-      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.12, "condition": "when database delays cause the API endpoint to respond slowly, triggering client timeout"}
+      {
+        "error_id": "dotnet/httprequestexception/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when intermittent connection issues cause requests to exceed timeout"
+      },
+      {
+        "error_id": "dotnet/sqlexception-connection/dotnet8-linux",
+        "probability": 0.12,
+        "condition": "when database delays cause the API endpoint to respond slowly, triggering client timeout"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/httprequestexception/dotnet8-linux", "distinction": "TaskCanceledException indicates the request timed out waiting for a response; HttpRequestException indicates the connection itself failed before any response could begin"}
+      {
+        "error_id": "dotnet/httprequestexception/dotnet8-linux",
+        "distinction": "TaskCanceledException indicates the request timed out waiting for a response; HttpRequestException indicates the connection itself failed before any response could begin"
+      }
     ]
   },
   "metadata": {

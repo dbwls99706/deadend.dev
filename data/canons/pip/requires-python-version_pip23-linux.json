@@ -29,14 +29,18 @@
       "action": "Using --ignore-requires-python flag",
       "why_fails": "Package may use syntax/features not available in your Python; crashes at runtime",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Editing the package's metadata to remove the constraint",
       "why_fails": "Will be overwritten on next install; doesn't fix actual incompatibilities",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://pip.pypa.io/en/stable/reference/"
+      ],
       "condition": ""
     }
   ],

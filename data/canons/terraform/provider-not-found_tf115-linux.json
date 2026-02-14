@@ -29,14 +29,18 @@
       "action": "Manually downloading the provider binary",
       "why_fails": "Requires manual updates; breaks terraform init workflow",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     },
     {
       "action": "Removing the provider version constraint",
       "why_fails": "May install an incompatible version",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language"
+      ],
       "condition": ""
     }
   ],

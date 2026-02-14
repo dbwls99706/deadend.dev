@@ -29,14 +29,18 @@
       "action": "Deleting and recreating the FluxCD resources without fixing the manifests",
       "why_fails": "FluxCD will re-read the same broken manifests from Git and fail again. The issue is in the source, not in FluxCD's state.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     },
     {
       "action": "Suspending reconciliation permanently",
       "why_fails": "Suspending stops GitOps entirely. The cluster drifts from the desired state in Git, defeating the purpose of FluxCD.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions/reference"
+      ],
       "condition": ""
     }
   ],

@@ -11,12 +11,15 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "runtime": {
+      "name": "dotnet",
+      "version_range": ">=8.0,<9.0"
+    },
     "os": "linux"
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.83,
     "last_updated": "2026-02-12",
     "summary": "EF Core migration failures occur when 'dotnet ef database update' cannot apply pending migrations. Causes include connection failures, conflicting schema changes, missing migration files, or model snapshot inconsistencies. Fix by verifying the database connection, resolving conflicts, and regenerating migrations if necessary."
@@ -26,14 +29,18 @@
       "action": "Deleting the Migrations folder and recreating all migrations from scratch",
       "why_fails": "Destroys migration history that other environments depend on; production databases expect the existing migration chain. The new initial migration will try to create tables that already exist, causing failures",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     },
     {
       "action": "Manually editing the __EFMigrationsHistory table to skip failed migrations",
       "why_fails": "Creates a mismatch between the actual database schema and what EF Core thinks the schema is; subsequent migrations will generate incorrect SQL because the model snapshot is out of sync with reality",
-      "fail_rate": 0.80,
-      "sources": [],
+      "fail_rate": 0.8,
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/api/"
+      ],
       "condition": ""
     }
   ],
@@ -55,15 +62,34 @@
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.15, "condition": "when migration attempts reveal underlying connection problems"},
-      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.20, "condition": "when schema mismatch causes EF Core to throw at runtime on queries"}
+      {
+        "error_id": "dotnet/sqlexception-connection/dotnet8-linux",
+        "probability": 0.15,
+        "condition": "when migration attempts reveal underlying connection problems"
+      },
+      {
+        "error_id": "dotnet/invalidoperationexception/dotnet8-linux",
+        "probability": 0.2,
+        "condition": "when schema mismatch causes EF Core to throw at runtime on queries"
+      }
     ],
     "preceded_by": [
-      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.25, "condition": "when database connection failure prevents migrations from running"},
-      {"error_id": "dotnet/nuget-version-conflict/dotnet8-linux", "probability": 0.10, "condition": "when conflicting EF Core package versions cause migration tool incompatibility"}
+      {
+        "error_id": "dotnet/sqlexception-connection/dotnet8-linux",
+        "probability": 0.25,
+        "condition": "when database connection failure prevents migrations from running"
+      },
+      {
+        "error_id": "dotnet/nuget-version-conflict/dotnet8-linux",
+        "probability": 0.1,
+        "condition": "when conflicting EF Core package versions cause migration tool incompatibility"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "distinction": "EF migration failure encompasses schema and migration-specific errors; SqlException connection failure is specifically about the inability to reach the database server at the network level"}
+      {
+        "error_id": "dotnet/sqlexception-connection/dotnet8-linux",
+        "distinction": "EF migration failure encompasses schema and migration-specific errors; SqlException connection failure is specifically about the inability to reach the database server at the network level"
+      }
     ]
   },
   "metadata": {

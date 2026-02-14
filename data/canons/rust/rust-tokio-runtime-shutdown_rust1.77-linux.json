@@ -11,7 +11,10 @@
     "last_confirmed": "2026-02-12"
   },
   "environment": {
-    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "runtime": {
+      "name": "rust",
+      "version_range": ">=1.70,<2.0"
+    },
     "os": "linux"
   },
   "verdict": {
@@ -26,42 +29,61 @@
       "action": "Create a new Runtime::new() inside the async function",
       "why_fails": "This is exactly what causes the error; nesting runtimes is forbidden",
       "fail_rate": 0.95,
-      "sources": ["https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html"],
+      "sources": [
+        "https://docs.rs/tokio/latest/tokio/runtime/struct.Runtime.html"
+      ],
       "condition": ""
     },
     {
       "action": "Use std::thread::spawn to run another runtime",
       "why_fails": "While technically works, it defeats the purpose of async and introduces complex synchronization",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://doc.rust-lang.org/error_codes/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Use tokio::spawn instead of block_on for nested async calls",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "// Instead of: runtime.block_on(future)\n// Use: tokio::spawn(async { future.await })",
-      "sources": ["https://tokio.rs/tokio/tutorial/spawning"],
+      "sources": [
+        "https://tokio.rs/tokio/tutorial/spawning"
+      ],
       "condition": ""
     },
     {
       "action": "Use Handle::current() with spawn_blocking for sync-in-async bridges",
       "success_rate": 0.85,
       "how": "let handle = tokio::runtime::Handle::current();\nstd::thread::spawn(move || {\n    handle.block_on(async_function())\n}).join().unwrap();",
-      "sources": ["https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html"],
+      "sources": [
+        "https://docs.rs/tokio/latest/tokio/runtime/struct.Handle.html"
+      ],
       "condition": ""
     }
   ],
   "transition_graph": {
     "leads_to": [
-      {"error_id": "rust/rust-async-send-bound/rust1.77-linux", "probability": 0.20, "condition": "When refactoring to spawn reveals Send bound issues"}
+      {
+        "error_id": "rust/rust-async-send-bound/rust1.77-linux",
+        "probability": 0.2,
+        "condition": "When refactoring to spawn reveals Send bound issues"
+      }
     ],
     "preceded_by": [
-      {"error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux", "probability": 0.15, "condition": "When channel issues lead to blocking workarounds"}
+      {
+        "error_id": "rust/rust-channel-recv-disconnected/rust1.77-linux",
+        "probability": 0.15,
+        "condition": "When channel issues lead to blocking workarounds"
+      }
     ],
     "frequently_confused_with": [
-      {"error_id": "rust/rust-hyper-connection-reset/rust1.77-linux", "distinction": "Connection reset is a network error; runtime shutdown is an async runtime nesting issue"}
+      {
+        "error_id": "rust/rust-hyper-connection-reset/rust1.77-linux",
+        "distinction": "Connection reset is a network error; runtime shutdown is an async runtime nesting issue"
+      }
     ]
   },
   "metadata": {

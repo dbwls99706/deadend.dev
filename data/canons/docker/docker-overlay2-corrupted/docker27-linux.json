@@ -19,7 +19,7 @@
   },
   "verdict": {
     "resolvable": "true",
-    "fix_success_rate": 0.80,
+    "fix_success_rate": 0.8,
     "confidence": 0.85,
     "last_updated": "2026-02-12",
     "summary": "Docker overlay2 storage driver has corrupted layers, typically from disk errors, interrupted pulls, or filesystem issues. Containers using affected layers fail to start."
@@ -28,22 +28,26 @@
     {
       "action": "Manually editing files in /var/lib/docker/overlay2",
       "why_fails": "The overlay2 directory structure is managed by Docker; manual edits break layer metadata and content-addressable references",
-      "fail_rate": 0.90,
-      "sources": [],
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Running docker system prune while containers are still using corrupted layers",
       "why_fails": "Prune skips in-use resources; the corrupted layers remain because containers reference them",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/"
+      ],
       "condition": ""
     }
   ],
   "workarounds": [
     {
       "action": "Remove the affected image and re-pull it",
-      "success_rate": 0.90,
+      "success_rate": 0.9,
       "how": "docker rmi <image> && docker pull <image> — forces fresh download of all layers",
       "sources": [
         "https://docs.docker.com/storage/storagedriver/overlayfs-driver/"

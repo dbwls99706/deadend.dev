@@ -29,14 +29,18 @@
       "action": "Assigning to a throwaway: _ = unused",
       "why_fails": "Suppresses the error but why declare it?",
       "fail_rate": 0.4,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     },
     {
       "action": "Moving the declaration to a different scope",
       "why_fails": "Doesn't fix it; still unused in the new scope",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/errors"
+      ],
       "condition": ""
     }
   ],
