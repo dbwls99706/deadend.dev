@@ -70,7 +70,7 @@
         "https://pkg.go.dev/context"
       ],
       "condition": "",
-      "how": "Add retry logic for transient timeouts"
+      "how": ""
     }
   ],
   "transition_graph": {

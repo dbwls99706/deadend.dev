@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/csv.html"
       ],
       "condition": "",
-      "how": "Validate data format before unpacking"
+      "how": ""
     }
   ],
   "transition_graph": {

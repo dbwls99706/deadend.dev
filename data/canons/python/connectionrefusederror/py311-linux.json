@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/urllib.request.html"
       ],
       "condition": "",
-      "how": "Add exponential backoff retry with a health check endpoint"
+      "how": ""
     }
   ],
   "transition_graph": {

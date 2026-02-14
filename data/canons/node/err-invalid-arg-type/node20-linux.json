@@ -52,7 +52,7 @@
         "https://nodejs.org/api/errors.html#err_invalid_arg_type"
       ],
       "condition": "",
-      "how": "Check the calling code — trace where wrong type originates"
+      "how": ""
     },
     {
       "action": "Add TypeScript or JSDoc types to catch at compile time",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html"
       ],
       "condition": "",
-      "how": "Add TypeScript or JSDoc types to catch at compile time"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -43,7 +43,7 @@
         "https://doc.rust-lang.org/cargo/reference/features.html"
       ],
       "condition": "",
-      "how": "Check the dependency docs for available features: cargo doc --open"
+      "how": "cargo doc --open"
     },
     {
       "action": "Check if the feature was renamed or removed in a version update",
@@ -52,7 +52,7 @@
         "https://doc.rust-lang.org/cargo/reference/features.html"
       ],
       "condition": "",
-      "how": "Check if the feature was renamed or removed in a version update"
+      "how": ""
     },
     {
       "action": "Verify the dependency version supports the feature",
@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
       ],
       "condition": "",
-      "how": "Verify the dependency version supports the feature"
+      "how": ""
     }
   ],
   "transition_graph": {

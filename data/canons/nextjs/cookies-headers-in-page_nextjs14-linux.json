@@ -43,7 +43,7 @@
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic"
       ],
       "condition": "",
-      "how": "Add export const dynamic = 'force-dynamic' to opt into dynamic rendering"
+      "how": ""
     },
     {
       "action": "Move cookie/header access to middleware or API routes if possible",
@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/building-your-application/routing/middleware"
       ],
       "condition": "",
-      "how": "Move cookie/header access to middleware or API routes if possible"
+      "how": ""
     }
   ],
   "transition_graph": {

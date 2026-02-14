@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/tempfile.html"
       ],
       "condition": "",
-      "how": "Clean up temp files, old logs, or __pycache__ directories"
+      "how": ""
     },
     {
       "action": "Set TMPDIR to a volume with more space for temporary files",
@@ -71,7 +71,7 @@
         "https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir"
       ],
       "condition": "",
-      "how": "Set TMPDIR to a volume with more space for temporary files"
+      "how": ""
     }
   ],
   "transition_graph": {

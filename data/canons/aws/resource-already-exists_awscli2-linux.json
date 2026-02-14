@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": "Use the existing resource — describe/get it to verify it matches your needs"
+      "how": ""
     },
     {
       "action": "For IaC (Terraform/CloudFormation), import the existing resource into your state",
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": "Use data sources to reference existing resources instead of creating new ones"
+      "how": ""
     }
   ],
   "transition_graph": {

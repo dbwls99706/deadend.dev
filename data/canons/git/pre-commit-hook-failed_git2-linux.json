@@ -43,7 +43,7 @@
         "https://git-scm.com/docs/githooks#_pre_commit"
       ],
       "condition": "",
-      "how": "Fix the issues the hook reported — run the linter/formatter manually"
+      "how": ""
     },
     {
       "action": "Run the hook manually to see detailed output: .git/hooks/pre-commit",
@@ -61,7 +61,7 @@
         "https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---no-verify"
       ],
       "condition": "",
-      "how": "If false positive, use --no-verify for this one commit only"
+      "how": ""
     }
   ],
   "transition_graph": {

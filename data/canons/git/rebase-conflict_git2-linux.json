@@ -61,7 +61,7 @@
         "https://git-scm.com/docs/git-rebase#_options"
       ],
       "condition": "",
-      "how": "Use git rebase --abort to start over if things go wrong"
+      "how": ""
     },
     {
       "action": "Consider git rerere to auto-resolve recurring conflicts",

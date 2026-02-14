@@ -52,7 +52,7 @@
         "https://go.dev/ref/spec#Return_statements"
       ],
       "condition": "",
-      "how": "Ensure every code path (every if/else/switch branch) has a return statement"
+      "how": "every if/else/switch branch"
     },
     {
       "action": "Add a default return after the if/switch to handle the 'else' case",
@@ -61,7 +61,7 @@
         "https://go.dev/ref/spec#Return_statements"
       ],
       "condition": "",
-      "how": "Add a default return after the if/switch to handle the 'else' case"
+      "how": ""
     }
   ],
   "transition_graph": {

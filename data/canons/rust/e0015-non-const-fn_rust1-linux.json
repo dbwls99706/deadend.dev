@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/reference/const_eval.html"
       ],
       "condition": "",
-      "how": "Move initialization from const/static to a function that runs at startup"
+      "how": ""
     }
   ],
   "transition_graph": {

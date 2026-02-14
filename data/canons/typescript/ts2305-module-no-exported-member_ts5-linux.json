@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": "Check if the export was renamed or moved in a package update"
+      "how": ""
     },
     {
       "action": "Use default import if the module uses export default: import X from 'mod' not { X }",

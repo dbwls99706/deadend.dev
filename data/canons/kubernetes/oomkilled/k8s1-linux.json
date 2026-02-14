@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/"
       ],
       "condition": "",
-      "how": "Fix memory leaks in the application or reduce batch sizes"
+      "how": ""
     }
   ],
   "transition_graph": {

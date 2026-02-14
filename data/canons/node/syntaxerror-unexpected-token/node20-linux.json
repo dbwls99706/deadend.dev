@@ -52,7 +52,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"
       ],
       "condition": "",
-      "how": "Check if the file is valid JSON when using JSON.parse()"
+      "how": ""
     },
     {
       "action": "Verify file extension matches the module system (.mjs for ESM, .cjs for CJS)",
@@ -61,7 +61,7 @@
         "https://nodejs.org/api/esm.html#enabling"
       ],
       "condition": "",
-      "how": "Verify file extension matches the module system (.mjs for ESM, .cjs for CJS)"
+      "how": ".mjs for ESM, .cjs for CJS"
     }
   ],
   "transition_graph": {

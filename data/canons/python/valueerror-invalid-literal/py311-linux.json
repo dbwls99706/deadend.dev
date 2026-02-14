@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/argparse.html"
       ],
       "condition": "",
-      "how": "Validate and sanitize input at the entry point (argparse, form validation)"
+      "how": "argparse, form validation"
     },
     {
       "action": "Use str.strip() and check str.isdigit() before conversion",

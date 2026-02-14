@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/stdtypes.html#frozenset"
       ],
       "condition": "",
-      "how": "Use frozenset for set-of-sets patterns"
+      "how": ""
     }
   ],
   "transition_graph": {

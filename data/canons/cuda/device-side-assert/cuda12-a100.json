@@ -65,7 +65,7 @@
         "https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html"
       ],
       "condition": "",
-      "how": "Check tensor shapes and label ranges (num_classes must match output dim)"
+      "how": "num_classes must match output dim"
     }
   ],
   "transition_graph": {

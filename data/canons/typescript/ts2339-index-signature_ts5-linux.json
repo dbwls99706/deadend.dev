@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/keyof-types.html"
       ],
       "condition": "",
-      "how": "Use keyof typeof obj to restrict keys to known ones"
+      "how": ""
     }
   ],
   "transition_graph": {

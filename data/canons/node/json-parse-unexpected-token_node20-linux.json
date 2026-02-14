@@ -70,7 +70,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"
       ],
       "condition": "",
-      "how": "Verify the API URL is correct and the server is returning JSON content-type"
+      "how": ""
     }
   ],
   "transition_graph": {

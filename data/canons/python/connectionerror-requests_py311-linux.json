@@ -71,7 +71,7 @@
         "https://requests.readthedocs.io/en/latest/user/advanced/#proxies"
       ],
       "condition": "",
-      "how": "Check firewall, proxy settings, and DNS resolution"
+      "how": ""
     }
   ],
   "transition_graph": {

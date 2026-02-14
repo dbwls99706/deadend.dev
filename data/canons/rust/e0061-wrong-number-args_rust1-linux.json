@@ -52,7 +52,7 @@
         "https://doc.rust-lang.org/error_codes/E0061.html"
       ],
       "condition": "",
-      "how": "Check the function signature and match the argument count"
+      "how": ""
     },
     {
       "action": "If you need optional params, use Option<T> or a config struct",

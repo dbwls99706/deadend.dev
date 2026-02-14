@@ -74,7 +74,7 @@
         "https://docs.nvidia.com/cuda/cusolver/index.html"
       ],
       "condition": "",
-      "how": "Update CUDA and cuSOLVER to latest version for bug fixes"
+      "how": ""
     }
   ],
   "transition_graph": {

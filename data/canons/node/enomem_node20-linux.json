@@ -61,7 +61,7 @@
         "https://nodejs.org/api/stream.html"
       ],
       "condition": "",
-      "how": "Process data in streams instead of loading everything into memory"
+      "how": ""
     },
     {
       "action": "Check for common leaks: growing arrays, unclosed connections, event listener accumulation",

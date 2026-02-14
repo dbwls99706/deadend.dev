@@ -52,7 +52,7 @@
         "https://react.dev/reference/react-dom/components/common"
       ],
       "condition": "",
-      "how": "Most HTML attributes are camelCase in JSX except data-* and aria-*"
+      "how": ""
     }
   ],
   "transition_graph": {

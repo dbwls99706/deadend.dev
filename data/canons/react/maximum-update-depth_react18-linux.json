@@ -61,7 +61,7 @@
         "https://react.dev/reference/react/useMemo"
       ],
       "condition": "",
-      "how": "Move state calculation into the render (useMemo) instead of useEffect + setState"
+      "how": ""
     },
     {
       "action": "Check onClick handlers: onClick={handleClick} not onClick={handleClick()}",

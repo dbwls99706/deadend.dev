@@ -61,7 +61,7 @@
         "https://www.python.org/downloads/"
       ],
       "condition": "",
-      "how": "Upgrade Python to meet the requirement"
+      "how": ""
     },
     {
       "action": "Use pyenv to manage multiple Python versions",

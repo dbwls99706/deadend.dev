@@ -43,7 +43,7 @@
         "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html"
       ],
       "condition": "",
-      "how": "Switch to on-demand capacity mode for unpredictable workloads"
+      "how": ""
     },
     {
       "action": "Implement exponential backoff for throttled requests",
@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
       ],
       "condition": "",
-      "how": "Implement exponential backoff for throttled requests"
+      "how": ""
     },
     {
       "action": "Review partition key design — hot partitions cause throttling even with capacity",
@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html"
       ],
       "condition": "",
-      "how": "Review partition key design — hot partitions cause throttling even with capacity"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
       ],
       "condition": "",
-      "how": "Implement exponential backoff with jitter and retry"
+      "how": ""
     },
     {
       "action": "Check AWS Health Dashboard for ongoing service incidents",
@@ -61,7 +61,7 @@
         "https://health.aws.amazon.com/health/status"
       ],
       "condition": "",
-      "how": "Check AWS Health Dashboard for ongoing service incidents"
+      "how": ""
     },
     {
       "action": "If persistent, try a different AWS region as failover",
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/rande.html"
       ],
       "condition": "",
-      "how": "If persistent, try a different AWS region as failover"
+      "how": ""
     }
   ],
   "transition_graph": {

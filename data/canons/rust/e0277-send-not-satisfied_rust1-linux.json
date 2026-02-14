@@ -70,7 +70,7 @@
         "https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html"
       ],
       "condition": "",
-      "how": "If using async, ensure futures are Send by avoiding non-Send types across .await"
+      "how": ""
     }
   ],
   "transition_graph": {

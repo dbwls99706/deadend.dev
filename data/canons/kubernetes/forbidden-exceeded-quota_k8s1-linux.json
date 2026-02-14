@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
       ],
       "condition": "",
-      "how": "Request quota increase from cluster admin"
+      "how": ""
     },
     {
       "action": "Clean up unused resources (completed jobs, old deployments)",

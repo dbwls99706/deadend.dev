@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/pathlib.html#pathlib.Path.exists"
       ],
       "condition": "",
-      "how": "Check path existence before access with Path.exists()"
+      "how": ""
     }
   ],
   "transition_graph": {

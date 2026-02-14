@@ -70,7 +70,7 @@
         "https://nodejs.org/api/events.html"
       ],
       "condition": "",
-      "how": "Check for listeners added in loops or repeated function calls"
+      "how": ""
     }
   ],
   "transition_graph": {

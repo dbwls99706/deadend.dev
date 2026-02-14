@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/compose-file/version-and-name/"
       ],
       "condition": "",
-      "how": "It's just a warning — it still works. But removing it is cleaner"
+      "how": ""
     }
   ],
   "transition_graph": {

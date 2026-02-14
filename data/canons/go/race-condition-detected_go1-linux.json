@@ -70,7 +70,7 @@
         "https://pkg.go.dev/sync#Map"
       ],
       "condition": "",
-      "how": "Use sync.Map for concurrent map access"
+      "how": ""
     }
   ],
   "transition_graph": {

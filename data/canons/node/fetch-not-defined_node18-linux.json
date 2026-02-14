@@ -61,7 +61,7 @@
         "https://nodejs.org/api/globals.html#fetch"
       ],
       "condition": "",
-      "how": "Upgrade to Node 21+ where fetch is stable, or use --experimental-fetch flag in Node 18"
+      "how": ""
     },
     {
       "action": "Use undici (Node's built-in HTTP client): const { fetch } = require('undici')",

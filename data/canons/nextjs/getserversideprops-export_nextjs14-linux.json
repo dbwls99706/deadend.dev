@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
       ],
       "condition": "",
-      "how": "Use generateMetadata for metadata and generateStaticParams for static paths"
+      "how": ""
     }
   ],
   "transition_graph": {

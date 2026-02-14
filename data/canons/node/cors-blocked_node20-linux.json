@@ -70,7 +70,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
       "condition": "",
-      "how": "For APIs you don't control, use a server-side proxy to make the request"
+      "how": ""
     }
   ],
   "transition_graph": {

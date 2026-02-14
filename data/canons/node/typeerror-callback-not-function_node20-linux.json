@@ -61,7 +61,7 @@
         "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": "",
-      "how": "Verify all required arguments are passed — the callback might be a missing middle argument"
+      "how": ""
     }
   ],
   "transition_graph": {

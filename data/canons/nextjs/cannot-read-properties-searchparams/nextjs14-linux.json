@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
       ],
       "condition": "",
-      "how": "Use useSearchParams() hook in client components"
+      "how": ""
     }
   ],
   "transition_graph": {

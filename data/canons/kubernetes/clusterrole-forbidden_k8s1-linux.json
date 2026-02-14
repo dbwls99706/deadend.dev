@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole"
       ],
       "condition": "",
-      "how": "Use namespaced Role instead of ClusterRole if possible (more restricted scope)"
+      "how": "more restricted scope"
     },
     {
       "action": "Check current permissions: kubectl auth can-i --list",

@@ -48,7 +48,7 @@
     {
       "action": "Try git fsck to identify corrupted objects",
       "success_rate": 0.9,
-      "how": "Try git fsck to identify corrupted objects",
+      "how": "",
       "sources": [
         "https://git-scm.com/docs/git-fsck"
       ],
@@ -70,7 +70,7 @@
         "https://git-scm.com/book/en/v2/Git-Internals-Maintenance-and-Data-Recovery"
       ],
       "condition": "",
-      "how": "If remote is intact, backup local branches then re-clone"
+      "how": ""
     }
   ],
   "transition_graph": {

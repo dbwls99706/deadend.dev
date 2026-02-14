@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html"
       ],
       "condition": "",
-      "how": "Use provisioned concurrency to eliminate cold start delays"
+      "how": ""
     }
   ],
   "transition_graph": {

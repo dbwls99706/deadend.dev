@@ -61,7 +61,7 @@
         "https://nodejs.org/api/modules.html#all-together"
       ],
       "condition": "",
-      "how": "Check the module name for typos in require/import statement"
+      "how": ""
     }
   ],
   "transition_graph": {

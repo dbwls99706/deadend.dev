@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": "Read the full error message — it usually tells you exactly which parameter is invalid"
+      "how": ""
     },
     {
       "action": "Check AWS API docs for the specific operation's required parameters and formats",
@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/aws-apis.html"
       ],
       "condition": "",
-      "how": "Check AWS API docs for the specific operation's required parameters and formats"
+      "how": ""
     },
     {
       "action": "Check for parameter length/pattern limits (e.g., IAM names must be alphanumeric)",
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html"
       ],
       "condition": "",
-      "how": "Check for parameter length/pattern limits (e.g., IAM names must be alphanumeric)"
+      "how": "e.g., IAM names must be alphanumeric"
     }
   ],
   "transition_graph": {

@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
       ],
       "condition": "",
-      "how": "Batch API calls and spread requests across time windows"
+      "how": ""
     }
   ],
   "transition_graph": {

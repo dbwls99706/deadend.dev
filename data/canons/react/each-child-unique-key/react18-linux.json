@@ -61,7 +61,7 @@
         "https://react.dev/learn/rendering-lists#rules-of-keys"
       ],
       "condition": "",
-      "how": "If no ID exists, generate stable keys from content hash"
+      "how": ""
     }
   ],
   "transition_graph": {

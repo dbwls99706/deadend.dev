@@ -70,7 +70,7 @@
         "https://pkg.go.dev/net#Dial"
       ],
       "condition": "",
-      "how": "Add retry logic with backoff for services that start slowly"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -52,7 +52,7 @@
         "https://go.dev/doc/effective_go#errors"
       ],
       "condition": "",
-      "how": "Find where the nil value originates — check error returns, interface assertions, and struct init"
+      "how": ""
     },
     {
       "action": "Use the comma-ok pattern for type assertions and map lookups",

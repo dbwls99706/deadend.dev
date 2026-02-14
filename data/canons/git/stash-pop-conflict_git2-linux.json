@@ -61,7 +61,7 @@
         "https://git-scm.com/docs/git-stash#Documentation/git-stash.txt-apply"
       ],
       "condition": "",
-      "how": "Use git stash apply instead of pop — apply doesn't auto-drop on success either way"
+      "how": ""
     }
   ],
   "transition_graph": {

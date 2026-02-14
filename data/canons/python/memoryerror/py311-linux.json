@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/mmap.html"
       ],
       "condition": "",
-      "how": "Use memory-mapped files or streaming approaches (mmap, generators)"
+      "how": "mmap, generators"
     }
   ],
   "transition_graph": {

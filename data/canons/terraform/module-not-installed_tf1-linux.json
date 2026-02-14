@@ -52,7 +52,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": "Run terraform init to download modules"
+      "how": ""
     },
     {
       "action": "If module source changed, run terraform init -upgrade to fetch new version",
@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": "If module source changed, run terraform init -upgrade to fetch new version"
+      "how": ""
     },
     {
       "action": "For CI/CD, ensure terraform init runs before plan/apply",
@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": "For CI/CD, ensure terraform init runs before plan/apply"
+      "how": ""
     }
   ],
   "transition_graph": {

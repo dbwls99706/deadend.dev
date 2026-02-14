@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
       ],
       "condition": "",
-      "how": "Fix the type at the source (function return type, API response type, etc.)"
+      "how": "function return type, API response type, etc."
     },
     {
       "action": "Use type guards or narrowing to handle union types properly",

@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/subprocess.html#subprocess.run"
       ],
       "condition": "",
-      "how": "Test the command manually in terminal first to debug"
+      "how": ""
     }
   ],
   "transition_graph": {

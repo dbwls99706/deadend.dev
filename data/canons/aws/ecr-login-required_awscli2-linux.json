@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
       ],
       "condition": "",
-      "how": "For Kubernetes, create an ECR pull secret or use IRSA for EKS"
+      "how": ""
     },
     {
       "action": "Add ECR login to CI/CD pipeline — token expires every 12 hours",
@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
       ],
       "condition": "",
-      "how": "Add ECR login to CI/CD pipeline — token expires every 12 hours"
+      "how": ""
     }
   ],
   "transition_graph": {

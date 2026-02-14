@@ -70,7 +70,7 @@
         "https://nodejs.org/api/deprecations.html#DEP0040"
       ],
       "condition": "",
-      "how": "This is a warning, not an error — it still works, just update when possible"
+      "how": ""
     }
   ],
   "transition_graph": {

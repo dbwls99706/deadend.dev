@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/concepts/context/#dockerignore-files"
       ],
       "condition": "",
-      "how": "Use .dockerignore to exclude files that change frequently (logs, .git, node_modules)"
+      "how": "logs, .git, node_modules"
     },
     {
       "action": "Use BuildKit cache mounts for package managers: --mount=type=cache,target=/root/.cache/pip",

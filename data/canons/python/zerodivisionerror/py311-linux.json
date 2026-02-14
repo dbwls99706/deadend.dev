@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#breakpoint"
       ],
       "condition": "",
-      "how": "Investigate why denominator is zero — usually missing/filtered data"
+      "how": ""
     }
   ],
   "transition_graph": {

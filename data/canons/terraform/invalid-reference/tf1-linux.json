@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/modules"
       ],
       "condition": "",
-      "how": "If in module, ensure output is declared and module source is correct"
+      "how": ""
     }
   ],
   "transition_graph": {

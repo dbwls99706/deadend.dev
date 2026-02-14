@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/reference/lifetime-elision.html"
       ],
       "condition": "",
-      "how": "If function has one reference input, the compiler can infer (lifetime elision rules)"
+      "how": "lifetime elision rules"
     },
     {
       "action": "Consider returning an owned type (String, Vec) if lifetime complexity isn't worth it",
@@ -70,7 +70,7 @@
         "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html"
       ],
       "condition": "",
-      "how": "Consider returning an owned type (String, Vec) if lifetime complexity isn't worth it"
+      "how": "String, Vec"
     }
   ],
   "transition_graph": {

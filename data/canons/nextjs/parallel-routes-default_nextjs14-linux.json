@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/building-your-application/routing/parallel-routes"
       ],
       "condition": "",
-      "how": "Add default.tsx to every parallel route slot that might not match"
+      "how": ""
     }
   ],
   "transition_graph": {

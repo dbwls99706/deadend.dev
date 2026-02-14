@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/typing.html#typing.Optional"
       ],
       "condition": "",
-      "how": "Use Optional type hints and handle None explicitly in the function that produces the value"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -61,7 +61,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-build-isolation"
       ],
       "condition": "",
-      "how": "Or use pip install -e . --no-build-isolation if using a custom backend"
+      "how": ""
     }
   ],
   "transition_graph": {

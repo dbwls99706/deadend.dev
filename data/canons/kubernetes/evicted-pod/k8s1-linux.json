@@ -52,7 +52,7 @@
         "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
       ],
       "condition": "",
-      "how": "Set resource requests/limits and clean up ephemeral storage (logs, tmp files)"
+      "how": "logs, tmp files"
     },
     {
       "action": "Use emptyDir sizeLimit to prevent individual pods from consuming too much disk",
@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/storage/volumes/#emptydir"
       ],
       "condition": "",
-      "how": "Use emptyDir sizeLimit to prevent individual pods from consuming too much disk"
+      "how": ""
     }
   ],
   "transition_graph": {

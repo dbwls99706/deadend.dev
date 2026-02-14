@@ -61,7 +61,7 @@
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
       "condition": "",
-      "how": "Close applications that may have the file locked (IDE, other Node processes)"
+      "how": "IDE, other Node processes"
     },
     {
       "action": "On npm install errors, delete node_modules and package-lock.json, then retry",

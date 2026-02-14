@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/state/list"
       ],
       "condition": "",
-      "how": "Use terraform state list to inventory what's tracked vs what's in config"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/error_codes/E0599.html"
       ],
       "condition": "",
-      "how": "Check the type — you may have the wrong type; use compiler suggestions"
+      "how": ""
     }
   ],
   "transition_graph": {

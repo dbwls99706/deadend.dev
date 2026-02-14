@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/abc.html#abc.abstractmethod"
       ],
       "condition": "",
-      "how": "Implement the method in your subclass with the correct signature"
+      "how": ""
     },
     {
       "action": "If you don't need this method, provide a no-op: def method(self): pass",

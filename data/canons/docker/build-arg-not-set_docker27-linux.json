@@ -52,7 +52,7 @@
         "https://docs.docker.com/reference/dockerfile/#arg"
       ],
       "condition": "",
-      "how": "Check for typos between --build-arg name and ARG name in Dockerfile"
+      "how": ""
     },
     {
       "action": "In multi-stage builds, ARG must be declared in each stage that uses it",
@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/dockerfile/#understand-how-arg-and-from-interact"
       ],
       "condition": "",
-      "how": "In multi-stage builds, ARG must be declared in each stage that uses it"
+      "how": ""
     }
   ],
   "transition_graph": {

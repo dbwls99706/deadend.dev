@@ -70,7 +70,7 @@
         "https://pip.pypa.io/en/stable/topics/secure-installs/"
       ],
       "condition": "",
-      "how": "Check if the package was yanked/replaced on PyPI — this could be a security issue"
+      "how": ""
     }
   ],
   "transition_graph": {

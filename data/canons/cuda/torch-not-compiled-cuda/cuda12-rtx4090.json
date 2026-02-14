@@ -65,7 +65,7 @@
         "https://pytorch.org/docs/stable/cuda.html#torch.cuda.is_available"
       ],
       "condition": "",
-      "how": "Verify installation with torch.cuda.is_available()"
+      "how": ""
     }
   ],
   "transition_graph": {

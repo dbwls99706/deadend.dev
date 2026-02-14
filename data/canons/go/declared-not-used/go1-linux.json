@@ -61,7 +61,7 @@
         "https://go.dev/ref/spec#Blank_identifier"
       ],
       "condition": "",
-      "how": "If debugging, use _ = variable to suppress temporarily"
+      "how": ""
     }
   ],
   "transition_graph": {

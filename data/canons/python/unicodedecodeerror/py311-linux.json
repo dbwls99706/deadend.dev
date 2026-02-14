@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#open"
       ],
       "condition": "",
-      "how": "Open with errors='replace' or errors='ignore' when data loss is acceptable"
+      "how": ""
     }
   ],
   "transition_graph": {

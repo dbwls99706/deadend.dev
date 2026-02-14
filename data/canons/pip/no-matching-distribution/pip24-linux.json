@@ -53,7 +53,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_install/#requirement-specifiers"
       ],
       "condition": "",
-      "how": "Check the correct package name on PyPI and verify Python version compatibility"
+      "how": ""
     },
     {
       "action": "Use a different Python version that the package supports",

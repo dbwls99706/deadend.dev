@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
       ],
       "condition": "",
-      "how": "Check the line BEFORE the reported error — that's usually where the real issue is"
+      "how": ""
     },
     {
       "action": "Look for unclosed brackets, parentheses, or template literals",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
       ],
       "condition": "",
-      "how": "Look for unclosed brackets, parentheses, or template literals"
+      "how": ""
     },
     {
       "action": "Check tsconfig.json target — some syntax requires ES2020+",
@@ -70,7 +70,7 @@
         "https://www.typescriptlang.org/tsconfig/#target"
       ],
       "condition": "",
-      "how": "Check tsconfig.json target — some syntax requires ES2020+"
+      "how": ""
     }
   ],
   "transition_graph": {

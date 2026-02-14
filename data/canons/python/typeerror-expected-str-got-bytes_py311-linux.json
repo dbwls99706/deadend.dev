@@ -71,7 +71,7 @@
         "https://docs.python.org/3/library/functions.html#open"
       ],
       "condition": "",
-      "how": "Open files in text mode ('r') for text, binary mode ('rb') for binary data"
+      "how": ""
     }
   ],
   "transition_graph": {

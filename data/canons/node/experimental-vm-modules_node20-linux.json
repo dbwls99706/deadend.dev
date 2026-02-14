@@ -70,7 +70,7 @@
         "https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object"
       ],
       "condition": "",
-      "how": "Add transform config to jest.config.js for ESM files"
+      "how": ""
     }
   ],
   "transition_graph": {

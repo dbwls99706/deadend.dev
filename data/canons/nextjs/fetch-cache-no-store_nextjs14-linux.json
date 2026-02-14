@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic"
       ],
       "condition": "",
-      "how": "If truly dynamic, set export const dynamic = 'force-dynamic' in the page"
+      "how": ""
     },
     {
       "action": "Understand the trade-off: static = fast/cached, dynamic = fresh/slower",

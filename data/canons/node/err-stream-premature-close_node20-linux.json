@@ -52,7 +52,7 @@
         "https://nodejs.org/api/stream.html#streamfinishedstream-options-callback"
       ],
       "condition": "",
-      "how": "Ensure the writable stream isn't destroyed before the readable finishes"
+      "how": ""
     },
     {
       "action": "Use stream.pipeline() instead of .pipe() — it handles cleanup automatically",
@@ -70,7 +70,7 @@
         "https://nodejs.org/api/http.html#event-close"
       ],
       "condition": "",
-      "how": "For HTTP responses, ensure client doesn't disconnect before response completes"
+      "how": ""
     }
   ],
   "transition_graph": {

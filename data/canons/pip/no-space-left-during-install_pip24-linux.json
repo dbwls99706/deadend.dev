@@ -43,7 +43,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_cache/"
       ],
       "condition": "",
-      "how": "Clear pip cache: pip cache purge"
+      "how": "pip cache purge"
     },
     {
       "action": "Set TMPDIR to a volume with more space: export TMPDIR=/path/with/space",

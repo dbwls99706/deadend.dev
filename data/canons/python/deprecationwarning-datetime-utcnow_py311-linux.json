@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/datetime.html#datetime.datetime.now"
       ],
       "condition": "",
-      "how": "Or use datetime.now(tz=timezone.utc) for explicit timezone-aware datetime"
+      "how": "tz=timezone.utc"
     }
   ],
   "transition_graph": {

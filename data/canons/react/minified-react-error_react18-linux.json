@@ -61,7 +61,7 @@
         "https://react.dev/learn/start-a-new-react-project"
       ],
       "condition": "",
-      "how": "Reproduce in development mode to get the full stack trace and error message"
+      "how": ""
     }
   ],
   "transition_graph": {

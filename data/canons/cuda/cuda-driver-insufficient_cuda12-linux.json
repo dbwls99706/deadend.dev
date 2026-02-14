@@ -64,7 +64,7 @@
         "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html#id5"
       ],
       "condition": "",
-      "how": "Check the CUDA/driver compatibility matrix to find minimum driver version"
+      "how": ""
     }
   ],
   "transition_graph": {

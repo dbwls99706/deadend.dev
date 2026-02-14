@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html"
       ],
       "condition": "",
-      "how": "Add the minimum required IAM policy for the specific action and resource"
+      "how": ""
     }
   ],
   "transition_graph": {

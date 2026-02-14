@@ -52,7 +52,7 @@
         "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/"
       ],
       "condition": "",
-      "how": "Ensure metrics-server is installed and running: kubectl top pods"
+      "how": "kubectl top pods"
     }
   ],
   "transition_graph": {

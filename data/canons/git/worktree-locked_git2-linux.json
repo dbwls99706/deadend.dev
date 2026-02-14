@@ -52,7 +52,7 @@
         "https://git-scm.com/docs/git-worktree#Documentation/git-worktree.txt-prune"
       ],
       "condition": "",
-      "how": "Use git worktree prune to clean up stale worktree entries"
+      "how": ""
     }
   ],
   "transition_graph": {

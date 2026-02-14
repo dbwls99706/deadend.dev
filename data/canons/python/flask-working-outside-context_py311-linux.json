@@ -62,7 +62,7 @@
         "https://flask.palletsprojects.com/en/3.0.x/testing/"
       ],
       "condition": "",
-      "how": "In tests, use app.test_client() or app.test_request_context()"
+      "how": ""
     }
   ],
   "transition_graph": {

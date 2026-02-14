@@ -53,7 +53,7 @@
         "https://docs.sqlalchemy.org/en/20/orm/session_basics.html"
       ],
       "condition": "",
-      "how": "Access attributes within the session context (before closing)"
+      "how": "before closing"
     }
   ],
   "transition_graph": {

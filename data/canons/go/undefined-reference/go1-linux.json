@@ -52,12 +52,12 @@
         "https://go.dev/doc/effective_go#names"
       ],
       "condition": "",
-      "how": "Check capitalization (exported names start with uppercase in Go)"
+      "how": "exported names start with uppercase in Go"
     },
     {
       "action": "Ensure the file is in the correct package and directory",
       "success_rate": 0.88,
-      "how": "Ensure the file is in the correct package and directory",
+      "how": "",
       "sources": [
         "https://go.dev/ref/spec#Packages"
       ],

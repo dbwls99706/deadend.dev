@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html"
       ],
       "condition": "",
-      "how": "Use --on-failure DO_NOTHING to debug without rollback next time"
+      "how": ""
     }
   ],
   "transition_graph": {

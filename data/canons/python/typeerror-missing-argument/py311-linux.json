@@ -53,7 +53,7 @@
         "https://docs.python.org/3/tutorial/classes.html#method-objects"
       ],
       "condition": "",
-      "how": "Check if calling instance method without self, or missing args after refactor"
+      "how": ""
     },
     {
       "action": "Compare call site args with function signature",
@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/inspect.html#inspect.signature"
       ],
       "condition": "",
-      "how": "Compare call site args with function signature"
+      "how": ""
     }
   ],
   "transition_graph": {

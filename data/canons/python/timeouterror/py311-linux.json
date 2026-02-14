@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/urllib.request.html"
       ],
       "condition": "",
-      "how": "Add retry with exponential backoff for transient failures"
+      "how": ""
     },
     {
       "action": "Verify target host is reachable: DNS, firewall, port",

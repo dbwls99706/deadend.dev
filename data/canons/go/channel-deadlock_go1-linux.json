@@ -43,7 +43,7 @@
         "https://go.dev/doc/effective_go#channels"
       ],
       "condition": "",
-      "how": "Ensure every channel send has a corresponding receive (and vice versa)"
+      "how": "and vice versa"
     },
     {
       "action": "Use select with default case for non-blocking channel operations",
@@ -61,7 +61,7 @@
         "https://go.dev/ref/spec#Close"
       ],
       "condition": "",
-      "how": "Close channels when done sending: close(ch)"
+      "how": "close(ch)"
     }
   ],
   "transition_graph": {

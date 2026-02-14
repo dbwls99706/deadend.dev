@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/type-inference.html"
       ],
       "condition": "",
-      "how": "Use type inference where possible (let TypeScript infer from usage)"
+      "how": "let TypeScript infer from usage"
     }
   ],
   "transition_graph": {

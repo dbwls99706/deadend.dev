@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
       ],
       "condition": "",
-      "how": "Split into Server (data fetching) + Client (interactive) components"
+      "how": "data fetching"
     }
   ],
   "transition_graph": {

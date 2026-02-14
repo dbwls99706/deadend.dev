@@ -70,7 +70,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": "",
-      "how": "For platform-specific packages (e.g., Windows-only), check package docs"
+      "how": "e.g., Windows-only"
     }
   ],
   "transition_graph": {

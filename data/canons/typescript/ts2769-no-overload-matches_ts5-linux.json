@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads"
       ],
       "condition": "",
-      "how": "Read each overload signature in the error — match your args to one of them"
+      "how": ""
     },
     {
       "action": "Check for subtle type differences: string vs String, number vs bigint",

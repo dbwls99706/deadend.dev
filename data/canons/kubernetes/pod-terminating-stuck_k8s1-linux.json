@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination"
       ],
       "condition": "",
-      "how": "Check if the container's SIGTERM handler is stuck — may need code fix"
+      "how": ""
     }
   ],
   "transition_graph": {

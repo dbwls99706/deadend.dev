@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
       ],
       "condition": "",
-      "how": "Scale up node pool or reduce resource requests to fit available capacity"
+      "how": ""
     }
   ],
   "transition_graph": {

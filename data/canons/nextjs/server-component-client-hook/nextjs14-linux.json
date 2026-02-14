@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
       ],
       "condition": "",
-      "how": "Extract the interactive part into a separate Client Component"
+      "how": ""
     }
   ],
   "transition_graph": {

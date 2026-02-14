@@ -61,7 +61,7 @@
         "https://react.dev/warnings/invalid-hook-call-warning"
       ],
       "condition": "",
-      "how": "Ensure hooks are called from a React function component, not a regular function"
+      "how": ""
     },
     {
       "action": "If using linked packages, ensure they resolve to the same React instance",
@@ -70,7 +70,7 @@
         "https://react.dev/warnings/invalid-hook-call-warning#duplicate-react"
       ],
       "condition": "",
-      "how": "If using linked packages, ensure they resolve to the same React instance"
+      "how": ""
     }
   ],
   "transition_graph": {

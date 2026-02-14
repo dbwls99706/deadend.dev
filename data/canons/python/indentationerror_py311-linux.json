@@ -53,7 +53,7 @@
         "https://docs.python.org/3/reference/lexical_analysis.html#indentation"
       ],
       "condition": "",
-      "how": "Configure your editor to convert tabs to spaces"
+      "how": ""
     },
     {
       "action": "Run: python -tt script.py to check for mixed tabs/spaces",

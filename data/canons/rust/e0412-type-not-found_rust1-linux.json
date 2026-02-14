@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html"
       ],
       "condition": "",
-      "how": "Check Cargo.toml for missing dependency if the type is from an external crate"
+      "how": ""
     },
     {
       "action": "Check for typos in the type name — Rust is case-sensitive",
@@ -70,7 +70,7 @@
         "https://doc.rust-lang.org/reference/items.html"
       ],
       "condition": "",
-      "how": "Check for typos in the type name — Rust is case-sensitive"
+      "how": ""
     }
   ],
   "transition_graph": {

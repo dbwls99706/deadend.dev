@@ -61,7 +61,7 @@
         "https://react.dev/learn/sharing-state-between-components"
       ],
       "condition": "",
-      "how": "Restructure to lift state up or use a shared context"
+      "how": ""
     }
   ],
   "transition_graph": {

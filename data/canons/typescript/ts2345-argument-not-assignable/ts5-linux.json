@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": "Transform the argument to match the expected type before passing"
+      "how": ""
     },
     {
       "action": "Use function overloads or generics to accept multiple types safely",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/generics.html"
       ],
       "condition": "",
-      "how": "Use function overloads or generics to accept multiple types safely"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -65,7 +65,7 @@
         "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
       ],
       "condition": "",
-      "how": "Add to .bashrc or .env file for persistence"
+      "how": ""
     }
   ],
   "transition_graph": {

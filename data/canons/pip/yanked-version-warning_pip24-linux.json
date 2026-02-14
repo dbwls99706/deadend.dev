@@ -61,7 +61,7 @@
         "https://pypi.org/"
       ],
       "condition": "",
-      "how": "Check PyPI for the reason it was yanked and the recommended replacement version"
+      "how": ""
     },
     {
       "action": "Update to the latest non-yanked version: pip install --upgrade pkg",

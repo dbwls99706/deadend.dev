@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": "Use the suggested correct property name from the error message"
+      "how": ""
     },
     {
       "action": "Use IDE autocomplete to avoid typos in property names",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/objects.html"
       ],
       "condition": "",
-      "how": "Use IDE autocomplete to avoid typos in property names"
+      "how": ""
     }
   ],
   "transition_graph": {

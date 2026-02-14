@@ -52,7 +52,7 @@
         "https://react.dev/reference/react/useState#setstate-caveats"
       ],
       "condition": "",
-      "how": "Check for setState calls during render (not inside useEffect or event handlers)"
+      "how": "not inside useEffect or event handlers"
     },
     {
       "action": "Fix useEffect dependency arrays to prevent retriggering",

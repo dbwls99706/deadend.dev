@@ -61,7 +61,7 @@
         "https://docs.docker.com/engine/containers/resource_constraints/"
       ],
       "condition": "",
-      "how": "Profile application memory to find leaks or reduce footprint"
+      "how": ""
     },
     {
       "action": "For build-time OOM, increase Docker Desktop memory in Settings > Resources",
@@ -70,7 +70,7 @@
         "https://docs.docker.com/desktop/settings-and-maintenance/settings/"
       ],
       "condition": "",
-      "how": "For build-time OOM, increase Docker Desktop memory in Settings > Resources"
+      "how": ""
     }
   ],
   "transition_graph": {

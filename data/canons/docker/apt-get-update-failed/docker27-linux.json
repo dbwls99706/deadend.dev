@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/building/best-practices/#from"
       ],
       "condition": "",
-      "how": "Use specific base image tags, not :latest"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/functions.html#isinstance"
       ],
       "condition": "",
-      "how": "Check the variable type — it's probably returning a single value instead of a collection"
+      "how": ""
     },
     {
       "action": "If you need to iterate over digits/chars, convert first: str(num) or [num]",

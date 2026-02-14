@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
       ],
       "condition": "",
-      "how": "Use dynamic = 'force-dynamic' only on routes that genuinely need it"
+      "how": ""
     },
     {
       "action": "Move dynamic data fetching to client components with useEffect",
@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
       ],
       "condition": "",
-      "how": "Move dynamic data fetching to client components with useEffect"
+      "how": ""
     }
   ],
   "transition_graph": {

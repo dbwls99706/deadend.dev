@@ -52,7 +52,7 @@
         "https://nodejs.org/api/packages.html#exports"
       ],
       "condition": "",
-      "how": "Check library changelog for the new import path after the update"
+      "how": ""
     },
     {
       "action": "Pin to the previous version that exposed this subpath",
@@ -61,7 +61,7 @@
         "https://docs.npmjs.com/cli/v10/commands/npm-install"
       ],
       "condition": "",
-      "how": "Pin to the previous version that exposed this subpath"
+      "how": ""
     },
     {
       "action": "Use the library's public API instead of deep imports",

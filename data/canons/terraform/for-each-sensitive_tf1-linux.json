@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/expressions/function-calls"
       ],
       "condition": "",
-      "how": "Restructure to use non-sensitive keys with sensitive values as attributes"
+      "how": ""
     }
   ],
   "transition_graph": {

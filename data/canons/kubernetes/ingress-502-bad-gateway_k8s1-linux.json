@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service"
       ],
       "condition": "",
-      "how": "Verify service port matches container port (not just pod port)"
+      "how": "not just pod port"
     }
   ],
   "transition_graph": {

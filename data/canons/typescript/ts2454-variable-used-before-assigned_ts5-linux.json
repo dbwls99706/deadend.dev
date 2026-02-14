@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": "Restructure code so all branches assign before use"
+      "how": ""
     }
   ],
   "transition_graph": {

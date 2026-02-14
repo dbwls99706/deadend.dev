@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/building/multi-platform/"
       ],
       "condition": "",
-      "how": "Verify exec format matches the container architecture (amd64 vs arm64)"
+      "how": "amd64 vs arm64"
     }
   ],
   "transition_graph": {

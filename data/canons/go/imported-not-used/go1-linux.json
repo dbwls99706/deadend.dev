@@ -48,7 +48,7 @@
     {
       "action": "Use goimports or gopls to auto-manage imports",
       "success_rate": 0.98,
-      "how": "Use goimports or gopls to auto-manage imports",
+      "how": "",
       "sources": [
         "https://pkg.go.dev/golang.org/x/tools/cmd/goimports"
       ],
@@ -61,7 +61,7 @@
         "https://go.dev/doc/effective_go#blank_import"
       ],
       "condition": "",
-      "how": "Remove the unused import line"
+      "how": ""
     }
   ],
   "transition_graph": {

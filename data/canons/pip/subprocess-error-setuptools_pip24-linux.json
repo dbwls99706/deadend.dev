@@ -70,7 +70,7 @@
         "https://pip.pypa.io/en/stable/topics/wheels/"
       ],
       "condition": "",
-      "how": "Install package-specific system deps (e.g., libpq-dev for psycopg2, libxml2-dev for lxml)"
+      "how": "e.g., libpq-dev for psycopg2, libxml2-dev for lxml"
     }
   ],
   "transition_graph": {

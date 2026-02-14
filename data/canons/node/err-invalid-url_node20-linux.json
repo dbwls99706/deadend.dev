@@ -61,7 +61,7 @@
         "https://nodejs.org/api/url.html"
       ],
       "condition": "",
-      "how": "Check for undefined/null input before constructing"
+      "how": ""
     }
   ],
   "transition_graph": {

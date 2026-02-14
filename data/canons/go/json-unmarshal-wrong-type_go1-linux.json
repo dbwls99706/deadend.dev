@@ -52,7 +52,7 @@
         "https://pkg.go.dev/encoding/json#Unmarshal"
       ],
       "condition": "",
-      "how": "Match struct field types to actual JSON — use string if API sends strings"
+      "how": ""
     },
     {
       "action": "Use string tag for numeric fields that come as strings: `json:\"id,string\"`",

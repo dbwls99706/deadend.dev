@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/building/multi-stage/"
       ],
       "condition": "",
-      "how": "Ensure the build step in the builder stage actually runs and outputs to the expected path"
+      "how": ""
     }
   ],
   "transition_graph": {

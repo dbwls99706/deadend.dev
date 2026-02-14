@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/error_codes/E0425.html"
       ],
       "condition": "",
-      "how": "Check for typos in name and verify module visibility (pub)"
+      "how": ""
     }
   ],
   "transition_graph": {

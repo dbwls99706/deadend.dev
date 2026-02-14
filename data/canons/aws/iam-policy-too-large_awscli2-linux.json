@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_iam-quotas.html"
       ],
       "condition": "",
-      "how": "Split into multiple managed policies (up to 10 per role/user)"
+      "how": "up to 10 per role/user"
     },
     {
       "action": "Use wildcards to reduce statement count: s3:Get* instead of listing each action",
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
       ],
       "condition": "",
-      "how": "Consolidate resources and conditions to reduce policy size"
+      "how": ""
     }
   ],
   "transition_graph": {

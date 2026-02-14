@@ -61,7 +61,7 @@
         "https://go.dev/ref/mod#go-mod-tidy"
       ],
       "condition": "",
-      "how": "Run go mod tidy to clean up and add all missing dependencies"
+      "how": ""
     }
   ],
   "transition_graph": {

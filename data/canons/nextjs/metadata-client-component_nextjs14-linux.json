@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/building-your-application/optimizing/metadata"
       ],
       "condition": "",
-      "how": "Remove 'use client' from the page and move interactive parts to child Client Components"
+      "how": ""
     },
     {
       "action": "Move metadata to the nearest Server Component layout.tsx",

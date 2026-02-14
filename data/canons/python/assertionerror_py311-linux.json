@@ -53,7 +53,7 @@
         "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
       ],
       "condition": "",
-      "how": "Read the assert message to understand what condition failed, then fix the data/logic"
+      "how": ""
     },
     {
       "action": "Replace assert with proper if/raise ValueError for production validation",
@@ -62,7 +62,7 @@
         "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
       ],
       "condition": "",
-      "how": "Replace assert with proper if/raise ValueError for production validation"
+      "how": ""
     }
   ],
   "transition_graph": {

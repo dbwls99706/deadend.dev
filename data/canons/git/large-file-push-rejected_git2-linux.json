@@ -70,7 +70,7 @@
         "https://git-scm.com/docs/gitignore"
       ],
       "condition": "",
-      "how": "Add large files to .gitignore before committing"
+      "how": ""
     }
   ],
   "transition_graph": {

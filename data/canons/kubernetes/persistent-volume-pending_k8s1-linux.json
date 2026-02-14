@@ -70,7 +70,7 @@
         "https://kubernetes.io/docs/concepts/storage/volumes/#hostpath"
       ],
       "condition": "",
-      "how": "For local dev, use local-path provisioner or hostPath"
+      "how": ""
     }
   ],
   "transition_graph": {

@@ -43,7 +43,7 @@
         "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": "",
-      "how": "Pin more versions in requirements.txt to reduce the search space"
+      "how": ""
     },
     {
       "action": "Use pip-compile (pip-tools) to pre-resolve and lock versions",

@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/cli/docker/compose/up/"
       ],
       "condition": "",
-      "how": "Use docker-compose up which handles container lifecycle automatically"
+      "how": ""
     }
   ],
   "transition_graph": {

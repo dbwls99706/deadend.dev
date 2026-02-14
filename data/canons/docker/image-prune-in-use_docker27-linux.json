@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/cli/docker/system/prune/"
       ],
       "condition": "",
-      "how": "Use docker system prune to clean up all unused resources safely"
+      "how": ""
     }
   ],
   "transition_graph": {
