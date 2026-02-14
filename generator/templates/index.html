@@ -16,6 +16,7 @@
   <link rel="alternate" type="application/json" href="{{ base_path }}/api/v1/match.json" title="Lightweight Error Matching">
   <link rel="alternate" type="text/plain" href="{{ base_path }}/llms.txt" title="LLM-optimized error listing">
   <link rel="describedby" href="{{ base_path }}/api/v1/openapi.json" type="application/json">
+  <link rel="alternate" type="application/atom+xml" href="{{ base_path }}/feed.xml" title="New Error Patterns">
   <link rel="author" href="{{ base_path }}/CLAUDE.md" type="text/markdown" title="AI Agent Instructions">
 
   <meta property="og:title" content="deadends.dev — Structured Failure Knowledge for AI Agents">
@@ -67,7 +68,8 @@
 PURPOSE=Structured failure knowledge for AI coding agents — dead ends, workarounds, error chains
 TOTAL_ERRORS={{ total_errors }}
 DOMAINS={{ domains | join(', ') }}
-MATCH_ENDPOINT={{ base_url }}/api/v1/match.json
+{% for ds in domain_stats %}DOMAIN_COUNT:{{ ds.slug }}={{ ds.count }}
+{% endfor %}MATCH_ENDPOINT={{ base_url }}/api/v1/match.json
 API_INDEX={{ base_url }}/api/v1/index.json
 API_PATTERN={{ base_url }}/api/v1/{domain}/{slug}/{env}.json
 OPENAPI_SPEC={{ base_url }}/api/v1/openapi.json
@@ -75,8 +77,9 @@ LLMS_TXT={{ base_url }}/llms.txt
 LLMS_FULL={{ base_url }}/llms-full.txt
 NDJSON_STREAM={{ base_url }}/api/v1/errors.ndjson
 STATS_API={{ base_url }}/api/v1/stats.json
+FEED={{ base_url }}/feed.xml
 MCP_SERVER=pip install deadends-dev && python -m mcp.server
-USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[]. Or use the MCP server for direct tool access.</pre>
+USAGE=1. Fetch /api/v1/match.json (350KB) for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[]. Or use MCP server (8 tools) for direct access. No auth required.</pre>
   {% endautoescape %}
 
   <header>
@@ -116,6 +119,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
       <li><strong>NDJSON</strong> — <code>GET <a href="{{ base_path }}/api/v1/errors.ndjson">/api/v1/errors.ndjson</a></code> — streaming format</li>
       <li><strong>llms.txt</strong> — <code>GET <a href="{{ base_path }}/llms.txt">/llms.txt</a></code> — error listing for LLMs</li>
       <li><strong>Full dump</strong> — <code>GET <a href="{{ base_path }}/llms-full.txt">/llms-full.txt</a></code> — complete database</li>
+      <li><strong>Atom feed</strong> — <code>GET <a href="{{ base_path }}/feed.xml">/feed.xml</a></code> — subscribe to new errors</li>
     </ul>
     <p>URL pattern: <code>{{ base_url }}/{domain}/{error-slug}/{env-hash}</code></p>
   </section>

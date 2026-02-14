@@ -489,6 +489,7 @@ Sitemap: {BASE_URL}/sitemap.xml
 # Plugin manifest: {BASE_URL}/.well-known/ai-plugin.json
 # A2A agent card:  {BASE_URL}/.well-known/agent-card.json
 # Security:        {BASE_URL}/.well-known/security.txt
+# Atom feed:       {BASE_URL}/feed.xml
 """
     (SITE_DIR / "robots.txt").write_text(content, encoding="utf-8")
     print("  Generated: robots.txt")
@@ -1477,13 +1478,19 @@ def build_well_known(canons: list[dict]) -> None:
             "before debugging an error."
         ),
         "description_for_model": (
-            "When you encounter a software error, query this service "
-            "to find: (1) dead ends — approaches that are known to fail, "
-            "(2) workarounds — approaches that actually work with success "
-            "rates, (3) error chains — what error typically comes next. "
-            "Fetch /api/v1/index.json for the full error list, then "
-            "fetch /api/v1/{id}.json for details. "
-            "Match your error message against the regex patterns."
+            "Error knowledge database with "
+            f"{len(canons)} patterns across {len(domains)} domains "
+            f"({', '.join(domains)}). "
+            "Query flow: (1) GET /api/v1/match.json (350KB, "
+            "load once, regex-match locally). "
+            "(2) On match, GET /api/v1/{id}.json for full details. "
+            "Each error returns: dead_ends[] (what fails, with "
+            "fail_rate), workarounds[] (what works, with "
+            "success_rate and how), transition_graph "
+            "(leads_to, preceded_by, frequently_confused_with). "
+            "Alt: GET /llms.txt for text summary, "
+            "GET /api/v1/errors.ndjson for streaming, "
+            "or use MCP server (8 tools). No auth required."
         ),
         "auth": {"type": "none"},
         "api": {
@@ -1544,6 +1551,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "CrashLoopBackOff",
                     "TS2307: Cannot find module",
                 ],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "get-error-detail",
@@ -1554,6 +1563,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "workarounds, transition graphs, and source evidence."
                 ),
                 "tags": ["errors", "lookup", "api"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "list-domains",
@@ -1562,6 +1573,8 @@ def build_well_known(canons: list[dict]) -> None:
                     f"List all {len(domains)} error domains with counts."
                 ),
                 "tags": ["domains", "index"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "search-errors",
@@ -1572,6 +1585,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "error message."
                 ),
                 "tags": ["search", "errors"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "list-by-domain",
@@ -1580,6 +1595,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "List all errors in a specific domain with fix rates."
                 ),
                 "tags": ["domain", "list"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "batch-lookup",
@@ -1589,6 +1606,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "Use for debugging error chains or log analysis."
                 ),
                 "tags": ["batch", "errors"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "domain-stats",
@@ -1598,6 +1617,8 @@ def build_well_known(canons: list[dict]) -> None:
                     "fix rates, resolvability, confidence levels."
                 ),
                 "tags": ["stats", "quality"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "error-chain",
@@ -1607,9 +1628,13 @@ def build_well_known(canons: list[dict]) -> None:
                     "follow, what precedes it, what gets confused with it."
                 ),
                 "tags": ["chain", "graph", "transitions"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
         ],
-        "auth": {"type": "none"},
+        "authentication": {"schemes": ["none"]},
+        "documentationUrl": f"{BASE_URL}/api/v1/openapi.json",
+        "feedUrl": f"{BASE_URL}/feed.xml",
     }
 
     (well_known_dir / "agent-card.json").write_text(
@@ -1648,7 +1673,16 @@ def build_stats_json(canons: list[dict]) -> None:
         cats: dict[str, int] = {}
         for c in dcanons:
             res[c["verdict"]["resolvable"]] = res.get(c["verdict"]["resolvable"], 0) + 1
-            conf[c["verdict"]["confidence"]] = conf.get(c["verdict"]["confidence"], 0) + 1
+            raw_conf = c["verdict"]["confidence"]
+            if isinstance(raw_conf, (int, float)):
+                conf_label = (
+                    "high" if raw_conf >= 0.8
+                    else "medium" if raw_conf >= 0.5
+                    else "low"
+                )
+            else:
+                conf_label = str(raw_conf)
+            conf[conf_label] = conf.get(conf_label, 0) + 1
             cat = c["error"]["category"]
             cats[cat] = cats.get(cat, 0) + 1
 
@@ -1844,6 +1878,79 @@ def build_indexnow(canons: list[dict]) -> None:
     print(f"  Generated: {INDEXNOW_KEY}.txt + indexnow-urls.txt ({len(urls)} URLs)")
 
 
+def build_feed(canons: list[dict]) -> None:
+    """Generate Atom feed (feed.xml) for AI agent subscriptions."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Sort by generation date (newest first), take top 50
+    dated = sorted(
+        canons,
+        key=lambda c: c["metadata"].get("generation_date", "2020-01-01"),
+        reverse=True,
+    )[:50]
+
+    ns = "http://www.w3.org/2005/Atom"
+    feed = Element("feed", xmlns=ns)
+    SubElement(feed, "title").text = (
+        "deadends.dev — New Error Patterns"
+    )
+    SubElement(feed, "subtitle").text = (
+        "Structured failure knowledge for AI coding agents"
+    )
+    link_self = SubElement(feed, "link")
+    link_self.set("href", f"{BASE_URL}/feed.xml")
+    link_self.set("rel", "self")
+    link_self.set("type", "application/atom+xml")
+    link_alt = SubElement(feed, "link")
+    link_alt.set("href", BASE_URL)
+    link_alt.set("rel", "alternate")
+    SubElement(feed, "id").text = f"{BASE_URL}/"
+    SubElement(feed, "updated").text = now
+    author = SubElement(feed, "author")
+    SubElement(author, "name").text = "deadends.dev"
+
+    for canon in dated:
+        entry = SubElement(feed, "entry")
+        cid = canon["id"]
+        sig = canon["error"]["signature"]
+        domain = canon["error"]["domain"]
+        rate = int(canon["verdict"]["fix_success_rate"] * 100)
+        resolvable = canon["verdict"]["resolvable"]
+        de_count = len(canon["dead_ends"])
+        wa_count = len(canon.get("workarounds", []))
+        gen_date = canon["metadata"].get(
+            "generation_date", "2026-01-01"
+        )
+
+        SubElement(entry, "title").text = f"[{domain}] {sig}"
+        elink = SubElement(entry, "link")
+        elink.set("href", f"{BASE_URL}/{cid}")
+        elink.set("rel", "alternate")
+        SubElement(entry, "id").text = f"{BASE_URL}/{cid}"
+        SubElement(entry, "updated").text = f"{gen_date}T00:00:00Z"
+
+        summary_text = (
+            f"Resolvable: {resolvable} | "
+            f"Fix rate: {rate}% | "
+            f"Dead ends: {de_count} | "
+            f"Workarounds: {wa_count}\n\n"
+            f"{canon['verdict']['summary']}\n\n"
+            f"JSON API: {BASE_URL}/api/v1/{cid}.json"
+        )
+        content = SubElement(entry, "content")
+        content.set("type", "text")
+        content.text = summary_text
+
+        cat = SubElement(entry, "category")
+        cat.set("term", domain)
+
+    xml_bytes = tostring(feed, encoding="unicode", xml_declaration=False)
+    xml_out = '<?xml version="1.0" encoding="utf-8"?>\n' + xml_bytes
+
+    (SITE_DIR / "feed.xml").write_text(xml_out, encoding="utf-8")
+    print(f"  Generated: feed.xml ({len(dated)} entries)")
+
+
 def main():
     print("Building deadends.dev static site...\n")
 
@@ -1936,6 +2043,10 @@ def main():
 
     print("Generating errors.ndjson (streaming)...")
     build_ndjson(canons)
+    print()
+
+    print("Generating Atom feed...")
+    build_feed(canons)
     print()
 
     print("Generating IndexNow support...")
