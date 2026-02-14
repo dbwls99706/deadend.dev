@@ -42,7 +42,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "const body = await request.json()"
     },
     {
       "action": "Ensure client sends Content-Type: application/json header",

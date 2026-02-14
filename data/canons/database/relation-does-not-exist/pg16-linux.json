@@ -39,7 +39,7 @@
       "why_fails": "Dropping the database removes all data and without running migrations afterward, the tables still will not exist. This is destructive and does not solve the underlying issue.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-alter.html"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "Returning an empty model instead of a 404 hides the fact that the resource does not exist. Downstream code may attempt to use null properties from the empty model, causing confusing errors or displaying incorrect data to users.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Using find() instead of findOrFail() returns null when the record is missing, which pushes null handling to every call site. This leads to 'call to member function on null' errors scattered throughout the codebase.",
       "fail_rate": 0.68,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

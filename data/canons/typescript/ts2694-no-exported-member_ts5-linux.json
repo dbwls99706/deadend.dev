@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the library's changelog/migration guide for renamed or removed exports"
     },
     {
       "action": "Use IDE Go to Definition to find the actual export path",
@@ -59,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use IDE Go to Definition to find the actual export path"
     },
     {
       "action": "Check if import path changed: import { X } from 'lib' vs 'lib/subpath'",
@@ -67,7 +69,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "import { X } from 'lib' vs 'lib/subpath'"
     }
   ],
   "transition_graph": {

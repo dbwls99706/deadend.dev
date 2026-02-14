@@ -30,7 +30,7 @@
       "why_fails": "If the autoload PSR-4 mapping in composer.json is incorrect, reinstalling dependencies will regenerate the same broken autoloader. The issue is in the configuration, not in corrupted vendor files.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Bypassing the autoloader with manual require_once statements defeats the purpose of composer and creates brittle, unmaintainable dependency chains. It breaks framework conventions and will not work with dependency injection containers.",
       "fail_rate": 0.78,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     }

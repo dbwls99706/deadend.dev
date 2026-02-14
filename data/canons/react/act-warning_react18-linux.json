@@ -51,7 +51,8 @@
       "sources": [
         "https://react.dev/reference/react/act"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "await act(async () => { fireEvent.click(btn) })"
     },
     {
       "action": "Use React Testing Library's built-in methods (click, type) which auto-wrap in act",
@@ -68,7 +69,8 @@
       "sources": [
         "https://testing-library.com/docs/dom-testing-library/api-async#waitfor"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "await waitFor(() => expect(element).toBeVisible())"
     }
   ],
   "transition_graph": {

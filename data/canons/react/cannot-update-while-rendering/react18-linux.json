@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/learn/sharing-state-between-components"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Restructure to lift state up or use a shared context"
     }
   ],
   "transition_graph": {

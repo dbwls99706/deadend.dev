@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/json.html#json.loads"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "data = json.loads(text)"
     },
     {
       "action": "If iterating a dict, use .items() — for k in dict gives keys (strings), not dicts",

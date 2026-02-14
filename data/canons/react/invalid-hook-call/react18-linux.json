@@ -51,12 +51,13 @@
       "sources": [
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Ensure hooks are called at the top level of a function component"
     },
     {
       "action": "Check for duplicate React versions in node_modules",
       "success_rate": 0.85,
-      "how": "npm ls react",
+      "how": "Check for duplicate React versions in node_modules",
       "sources": [
         "https://react.dev/warnings/invalid-hook-call-warning"
       ],

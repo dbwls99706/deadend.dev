@@ -30,7 +30,7 @@
       "why_fails": "The _id index is mandatory in MongoDB and cannot be dropped. Even for other unique indexes, dropping them removes data integrity guarantees and leads to duplicate documents.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Unordered writes continue past errors but silently skip duplicate documents. Without checking the BulkWriteResult for errors, you lose data and have no record of which documents failed.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS"
       ],
       "condition": ""
     }

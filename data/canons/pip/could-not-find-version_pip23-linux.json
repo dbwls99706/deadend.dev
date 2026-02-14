@@ -30,7 +30,7 @@
       "why_fails": "Supply chain risk; may install a malicious package",
       "fail_rate": 0.9,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "May install an incompatible old version",
       "fail_rate": 0.55,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

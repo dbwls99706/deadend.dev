@@ -43,7 +43,8 @@
       "sources": [
         "https://docs.python.org/3/library/asyncio-task.html#coroutines"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "result = await async_function()"
     },
     {
       "action": "If calling from sync code, use asyncio.run(async_function())",
@@ -51,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/asyncio-runner.html#asyncio.run"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If calling from sync code, use asyncio.run(async_function())"
     }
   ],
   "transition_graph": {

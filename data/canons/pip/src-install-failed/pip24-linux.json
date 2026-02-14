@@ -30,7 +30,7 @@
       "why_fails": "If no binary exists, --prefer-binary still falls back to source and fails the same way",
       "fail_rate": 0.65,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": "when no binary exists for the platform"
     },
@@ -39,7 +39,7 @@
       "why_fails": "Setting the environment variable does not install the compiler; the file must exist",
       "fail_rate": 0.99,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     }

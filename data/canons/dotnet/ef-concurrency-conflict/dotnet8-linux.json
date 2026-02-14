@@ -30,7 +30,7 @@
       "why_fails": "Removing concurrency tokens eliminates the exception but introduces silent data loss through last-write-wins behavior. Concurrent updates will silently overwrite each other without any notification, which is far worse than a visible exception in most business scenarios",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/ef/core/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Silently swallowing the exception means the user's changes are discarded without notification. The entity in memory still holds stale data and the user believes their save succeeded. This leads to data inconsistency and confused users who cannot understand why their changes disappeared",
       "fail_rate": 0.9,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/ef/core/"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Serializable isolation causes severe performance degradation and deadlocks under concurrent load. It converts optimistic concurrency to pessimistic locking, which does not scale and introduces lock timeout errors that are harder to handle than concurrency exceptions. The cure is worse than the disease for web applications",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/ef/core/"
       ],
       "condition": ""
     }

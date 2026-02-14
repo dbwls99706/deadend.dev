@@ -30,7 +30,7 @@
       "why_fails": "This line is just the wrapper; the actual error with actionable information is in the preceding output",
       "fail_rate": 0.85,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The error is not in pip's subprocess handling — it is in the package's build script that failed",
       "fail_rate": 0.8,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": ""
     }

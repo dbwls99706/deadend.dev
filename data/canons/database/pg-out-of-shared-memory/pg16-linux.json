@@ -30,7 +30,7 @@
       "why_fails": "shared_buffers controls the buffer cache for data pages, not the lock table. The lock table size is controlled by max_locks_per_transaction * max_connections. Changing shared_buffers has no effect on lock table capacity.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Each lock slot consumes shared memory. Setting max_locks_per_transaction very high (e.g., 10000) with many connections can exhaust total shared memory, causing PostgreSQL to fail to start.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

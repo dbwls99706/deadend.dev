@@ -30,7 +30,7 @@
       "why_fails": "The DHCP server may have already reassigned that IP to another host, causing an IP conflict. Additionally, DNS and gateway settings from DHCP will not be applied.",
       "fail_rate": 0.7,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the DHCP server is down or unreachable (e.g., different VLAN, firewall blocking UDP 67/68), no amount of client retries will obtain a lease.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man8/iptables.8.html"
       ],
       "condition": ""
     }

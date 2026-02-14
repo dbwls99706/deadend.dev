@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/stdtypes.html#str.encode"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "text.encode('utf-8')"
     },
     {
       "action": "Or decode bytes to string: data.decode('utf-8')",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/stdtypes.html#bytes.decode"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "data.decode('utf-8')"
     },
     {
       "action": "Open files in text mode ('r') for text, binary mode ('rb') for binary data",
@@ -68,7 +70,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#open"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Open files in text mode ('r') for text, binary mode ('rb') for binary data"
     }
   ],
   "transition_graph": {

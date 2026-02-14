@@ -39,7 +39,7 @@
       "why_fails": "SSH requires key pairs to be generated, added to the agent, and registered with the remote host; switching without setup leads to permission-denied-publickey",
       "fail_rate": 0.8,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-config#Documentation/git-config.txt-corefileMode"
       ],
       "condition": ""
     }

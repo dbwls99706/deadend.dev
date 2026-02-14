@@ -64,7 +64,8 @@
       "sources": [
         "https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__ERROR.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check nvidia-smi for GPU health and driver status"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "Most Glue failures are script logic or data format errors, not resource exhaustion",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/glue/latest/dg/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The same Spark script will likely have the same data/logic errors on EMR",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/glue/latest/dg/"
       ],
       "condition": ""
     }

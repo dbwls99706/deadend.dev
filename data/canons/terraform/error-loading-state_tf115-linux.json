@@ -30,7 +30,7 @@
       "why_fails": "Corrupts the state file; Terraform may not understand newer format",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/state"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Loses track of all existing infrastructure; resources become unmanaged",
       "fail_rate": 0.95,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

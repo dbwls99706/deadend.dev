@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.pydantic.dev/latest/concepts/models/#model-methods-and-properties"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use model_validate with strict=False for coercion if types are close"
     }
   ],
   "transition_graph": {

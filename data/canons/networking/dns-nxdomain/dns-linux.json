@@ -30,7 +30,7 @@
       "why_fails": "NXDOMAIN is an authoritative answer propagated by the domain's nameservers. All recursive resolvers will return the same NXDOMAIN because the record genuinely does not exist in the authoritative zone.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": "Unless the previous resolver was returning stale cached NXDOMAIN after a recent record creation"
     },
@@ -39,7 +39,7 @@
       "why_fails": "NXDOMAIN is a definitive negative answer, often with a negative TTL. Retrying produces the same result until the domain is actually created or the record is added to the zone.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": ""
     }

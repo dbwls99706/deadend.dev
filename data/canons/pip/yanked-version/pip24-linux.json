@@ -30,7 +30,7 @@
       "why_fails": "Yanked versions typically have critical bugs, security vulnerabilities, or data corruption issues",
       "fail_rate": 0.7,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The package is yanked for a reason; installing it from a mirror just bypasses the safety warning",
       "fail_rate": 0.8,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     }

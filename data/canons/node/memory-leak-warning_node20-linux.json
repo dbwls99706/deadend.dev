@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/events.html#emitterremovelistenereventname-listener"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "emitter.removeListener() or emitter.off()"
     },
     {
       "action": "Use { once: true } for one-time listeners: emitter.on('event', fn, { once: true })",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/events.html#emitteroneventname-listener"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "true } for one-time listeners: emitter.on('event', fn, { once: true })"
     },
     {
       "action": "Check for listeners added in loops or repeated function calls",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nodejs.org/api/events.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for listeners added in loops or repeated function calls"
     }
   ],
   "transition_graph": {

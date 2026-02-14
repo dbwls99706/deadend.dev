@@ -30,7 +30,7 @@
       "why_fails": "Corporate proxies typically operate at the network level (transparent proxy, WPAD, or mandatory routing). Hardcoding IPs does not bypass the proxy if traffic is routed through it at the network layer. Additionally, this breaks when IPs change and may violate corporate security policies.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/curl.1.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The Authorization header authenticates with the origin server, not the proxy. Proxy servers specifically require the Proxy-Authorization header. Using the wrong header means the proxy never sees the credentials and continues returning 407.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/curl.1.html"
       ],
       "condition": ""
     }

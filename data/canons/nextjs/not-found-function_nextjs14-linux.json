@@ -60,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/api-reference/functions/not-found"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Ensure notFound() is called in a Server Component, not a Client Component"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "Delays the crash but the leak still grows unbounded",
       "fail_rate": 0.7,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Each worker will also eventually OOM",
       "fail_rate": 0.6,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes"
       ],
       "condition": ""
     }

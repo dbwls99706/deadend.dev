@@ -39,7 +39,7 @@
       "why_fails": "Sleep does not create a receiver — the goroutine still blocks after the sleep completes",
       "fail_rate": 0.9,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/effective_go#goroutines"
       ],
       "condition": ""
     }

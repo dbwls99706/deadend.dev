@@ -39,7 +39,7 @@
       "why_fails": "terraform console has the same access restrictions as plan/apply; undefined outputs remain undefined",
       "fail_rate": 0.85,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/modules"
       ],
       "condition": ""
     }

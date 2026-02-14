@@ -39,7 +39,7 @@
       "why_fails": "If the JVM heap exceeds the container memory limit, the container runtime (Docker/K8s) kills the process via OOM killer, producing a more cryptic exit code 137 error",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-github-hosted-runners"
       ],
       "condition": ""
     }

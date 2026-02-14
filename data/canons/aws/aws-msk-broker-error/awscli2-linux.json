@@ -39,7 +39,7 @@
       "why_fails": "MSK reboots replace brokers sequentially and can cause data loss if replication is insufficient",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/msk/latest/developerguide/"
       ],
       "condition": ""
     }

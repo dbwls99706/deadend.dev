@@ -30,7 +30,7 @@
       "why_fails": "Masks real bugs; mismatches can cause UI inconsistencies",
       "fail_rate": 0.75,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/messages/react-hydration-error"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Loses SSR benefits (SEO, performance)",
       "fail_rate": 0.7,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/messages/react-hydration-error"
       ],
       "condition": ""
     }

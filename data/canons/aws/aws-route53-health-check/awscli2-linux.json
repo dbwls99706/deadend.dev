@@ -30,7 +30,7 @@
       "why_fails": "Disabling health checks removes DNS failover protection, routing traffic to dead endpoints",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Lower thresholds mask real problems; users may hit the unhealthy endpoint",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/"
       ],
       "condition": ""
     }

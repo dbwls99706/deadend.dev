@@ -30,7 +30,7 @@
       "why_fails": "Disabling certificate verification exposes the application to man-in-the-middle attacks. Any network intermediary can intercept and modify traffic. This is a critical security vulnerability.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Old CA bundles are missing root certificates for newer CAs and contain revoked certificates. This causes legitimate sites to fail verification while potentially trusting compromised CAs.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     }

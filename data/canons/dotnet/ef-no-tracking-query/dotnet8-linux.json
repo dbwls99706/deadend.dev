@@ -30,7 +30,7 @@
       "why_fails": "Defeats the purpose of the Unit of Work pattern; transactions cannot span operations, causing data consistency issues. Also causes performance problems from repeated context creation overhead",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Discards all tracked changes including pending updates from the same request scope; can cause silent data loss and breaks the expected behavior of other code sharing the same DbContext",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     }

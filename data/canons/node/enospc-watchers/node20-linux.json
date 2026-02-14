@@ -60,7 +60,8 @@
       "sources": [
         "https://vitejs.dev/config/server-options.html#server-watch"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Exclude node_modules from watching in bundler config"
     }
   ],
   "transition_graph": {

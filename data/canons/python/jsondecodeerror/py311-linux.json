@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/logging.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Log the raw content to identify what's actually being returned"
     }
   ],
   "transition_graph": {

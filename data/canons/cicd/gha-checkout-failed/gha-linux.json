@@ -30,7 +30,7 @@
       "why_fails": "Credentials are exposed in workflow logs and violate security best practices; also breaks when credentials rotate",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Manual git operations without proper token setup face the same authentication issues",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://github.com/actions/checkout"
       ],
       "condition": ""
     }

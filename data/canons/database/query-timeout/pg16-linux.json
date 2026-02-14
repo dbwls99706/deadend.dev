@@ -30,7 +30,7 @@
       "why_fails": "Disabling the timeout allows runaway queries to consume resources indefinitely, potentially blocking other queries, filling up connection slots, and causing cascading failures across the application.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If a query takes 30 seconds and you increase the timeout to 60 seconds, it may work temporarily. But as data grows, the query will eventually exceed the new limit too. This does not fix the root cause and just delays the problem.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT"
       ],
       "condition": ""
     }

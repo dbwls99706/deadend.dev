@@ -30,7 +30,7 @@
       "why_fails": "Each PHP-FPM worker consumes 20-50MB of RAM. Setting max_children too high can exhaust system memory, triggering the OOM killer which will kill random PHP workers and cause more severe failures.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },

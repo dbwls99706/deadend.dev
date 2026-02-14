@@ -42,7 +42,8 @@
       "sources": [
         "https://react.dev/reference/react-dom/components/common#common-props"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "className, htmlFor, tabIndex, readOnly, etc"
     },
     {
       "action": "Most HTML attributes are camelCase in JSX except data-* and aria-*",
@@ -50,7 +51,8 @@
       "sources": [
         "https://react.dev/reference/react-dom/components/common"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Most HTML attributes are camelCase in JSX except data-* and aria-*"
     }
   ],
   "transition_graph": {

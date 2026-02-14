@@ -30,7 +30,7 @@
       "why_fails": "If the connection is refused (TCP RST or no route), the failure is immediate — the database is not listening on that host:port. Increasing timeout only helps with slow responses, not with refused connections. A 'Connection refused' means the port is not open, and no amount of waiting will change that.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/package-summary.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Connection refused is a network-level error, not a driver issue. Switching from MySQL Connector/J to MariaDB Connector or from PostgreSQL JDBC to pgjdbc-ng will not help if the database server is not running or the network path is blocked.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/package-summary.html"
       ],
       "condition": ""
     }

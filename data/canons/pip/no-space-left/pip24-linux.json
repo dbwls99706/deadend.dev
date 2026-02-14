@@ -30,7 +30,7 @@
       "why_fails": "While it helps marginally, the extracted package and build artifacts still need disk space; if the disk is truly full, this is insufficient",
       "fail_rate": 0.5,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": "when disk is completely full"
     },
@@ -39,7 +39,7 @@
       "why_fails": "May delete critical system files or virtualenv; the pip cache or /tmp build files are usually the culprits",
       "fail_rate": 0.6,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "Manual requires bypass the PSR-4 autoloading standard that frameworks like Laravel and Symfony depend on. Other parts of the codebase that expect the class to be autoloadable will still fail. This creates fragile path dependencies and breaks when the file is moved or the project structure changes. It also prevents the class from being discovered by service containers and dependency injection.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "A full vendor reinstall takes significant time (often minutes) and does not address the root cause. If the autoload mapping in composer.json is misconfigured or the namespace does not match the directory structure, a fresh install regenerates the same broken autoload map. This is a shotgun approach when a targeted 'composer dump-autoload' is almost always sufficient.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Files under vendor/composer/ are auto-generated and will be overwritten by the next composer install, update, or dump-autoload. Manual edits to generated files are lost immediately and never address the actual misconfiguration in composer.json. This also risks introducing syntax errors in the autoloader that crash the entire application.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     }

@@ -61,7 +61,7 @@
     "itemListElement": [
       {"@type": "ListItem", "position": 1, "name": "deadends.dev", "item": "{{ base_url }}"},
       {"@type": "ListItem", "position": 2, "name": "{{ error.domain | display_name }}", "item": "{{ base_url }}/{{ error.domain }}/"},
-      {"@type": "ListItem", "position": 3, "name": "{{ error.signature }}", "item": "{{ base_url }}/{{ id_parts[0] }}/{{ id_parts[1] }}/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ error.signature | json_escape }}", "item": "{{ base_url }}/{{ id_parts[0] }}/{{ id_parts[1] }}/"},
       {"@type": "ListItem", "position": 4, "name": "{{ env_summary }}"}
     ]
   }

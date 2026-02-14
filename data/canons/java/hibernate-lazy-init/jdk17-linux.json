@@ -30,7 +30,7 @@
       "why_fails": "Open Session in View keeps the Hibernate Session open for the entire HTTP request lifecycle, including view rendering. This is considered an anti-pattern because: it leads to N+1 query problems in templates, database connections are held longer (pool exhaustion), lazy loads happen unpredictably during serialization, and it masks poor data access patterns.",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Eager fetching loads all related entities immediately, causing massive SQL joins and loading entire object graphs into memory. This leads to OutOfMemoryError for large datasets, extremely slow queries, and the classic N+1 problem replaced by a cartesian product problem.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     }

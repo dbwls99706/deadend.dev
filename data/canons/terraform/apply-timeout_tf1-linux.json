@@ -51,7 +51,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the resource in AWS Console — it may still be creating"
     },
     {
       "action": "Run terraform refresh to sync state, then terraform apply",
@@ -59,7 +60,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/cli/commands/refresh"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Run terraform refresh to sync state, then terraform apply"
     },
     {
       "action": "Set custom timeouts in the resource block for known slow resources",

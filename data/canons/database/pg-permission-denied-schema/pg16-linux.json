@@ -30,7 +30,7 @@
       "why_fails": "Running applications as superuser violates the principle of least privilege and creates a security risk. Any SQL injection or application bug has full database access. This also masks permission issues that will resurface during security audits or role changes.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/sql-grant.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Overly broad grants give the application role access to system schemas (pg_catalog, information_schema) and other application schemas. This creates security vulnerabilities and makes it harder to audit access. Grant only the specific privileges needed on specific schemas.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/sql-grant.html"
       ],
       "condition": ""
     }

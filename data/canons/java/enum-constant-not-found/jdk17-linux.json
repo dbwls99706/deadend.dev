@@ -30,7 +30,7 @@
       "why_fails": "Returning null defers the problem — now the caller has a null where it expected a valid enum value, likely causing a NullPointerException later. The root cause (mismatched data vs. enum definition) remains.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This only fixes case mismatch issues but does not handle genuinely missing enum constants from schema evolution. It also risks breaking other data consumers that depend on the original case.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"
       ],
       "condition": ""
     }

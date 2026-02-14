@@ -30,7 +30,7 @@
       "why_fails": "Stamping the version table without actually applying the migration leaves the schema in an inconsistent state. The database schema does not match what the migration tool expects, causing cascading failures in subsequent migrations.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-alter.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Dropping tables in production destroys all data. This approach is acceptable in development but catastrophic in production environments with live data.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-alter.html"
       ],
       "condition": ""
     }

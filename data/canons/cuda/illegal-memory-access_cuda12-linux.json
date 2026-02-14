@@ -30,7 +30,7 @@
       "why_fails": "GPU is in error state; all subsequent CUDA operations will fail",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#error-handling"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Illegal access is about address validity, not memory quantity",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#error-handling"
       ],
       "condition": ""
     }

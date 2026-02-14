@@ -30,7 +30,7 @@
       "why_fails": "NoClassDefFoundError usually means a compiled .class file or JAR is missing from the runtime classpath, not from the source code. The class compiled successfully but is not available at runtime.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NoClassDefFoundError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "NoClassDefFoundError is an Error, not an Exception. While it can be caught, the missing class likely means a critical component is unavailable. Fallback implementations rarely provide equivalent functionality and mask the deployment issue.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NoClassDefFoundError.html"
       ],
       "condition": ""
     }

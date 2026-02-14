@@ -47,7 +47,7 @@
       "why_fails": "Windows filesystems (NTFS, FAT32) mounted in Linux don't support Unix file permissions. chmod appears to succeed but has no effect. The permissions remain whatever the mount options specify (typically 777 or 755). You must either copy keys to a native Linux filesystem or use mount options to set default permissions.",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-config#Documentation/git-config.txt-corefileMode"
       ],
       "condition": "When .ssh directory is on a mounted Windows partition"
     },

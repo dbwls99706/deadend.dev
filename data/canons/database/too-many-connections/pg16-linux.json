@@ -30,7 +30,7 @@
       "why_fails": "Each PostgreSQL connection consumes significant memory (~10MB). Setting max_connections very high without adequate RAM causes OOM kills or severe performance degradation from context switching.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Restarting forcibly disconnects all clients, causing data loss in active transactions. Without fixing the leak or adding pooling, connections will be exhausted again shortly after restart.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

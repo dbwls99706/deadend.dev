@@ -39,7 +39,7 @@
       "why_fails": "Over-allocating arrays wastes memory and does not fix the indexing logic. If the index is computed incorrectly (e.g., negative, or based on wrong input), a larger array only raises the threshold before failure without fixing the root cause. It can also cause OutOfMemoryError.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     }

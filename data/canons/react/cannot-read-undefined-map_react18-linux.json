@@ -51,7 +51,8 @@
       "sources": [
         "https://react.dev/reference/react/useState"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "const [items, setItems] = useState([])"
     },
     {
       "action": "Add loading state check: if (!data) return <Loading />",
@@ -59,7 +60,8 @@
       "sources": [
         "https://react.dev/learn/synchronizing-with-effects"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "if (!data) return <Loading />"
     },
     {
       "action": "Use optional chaining: data?.items?.map(...)",
@@ -67,7 +69,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "data?.items?.map(...)"
     }
   ],
   "transition_graph": {

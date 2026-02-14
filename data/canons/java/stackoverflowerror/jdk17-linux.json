@@ -30,7 +30,7 @@
       "why_fails": "Increasing -Xss is a temporary workaround. If the recursion is genuinely unbounded (e.g., infinite loop due to a missing base case), no stack size will be sufficient. Even if the recursion is bounded but deep, larger stacks multiply memory usage per thread, which can cause heap OOM in multi-threaded applications.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StackOverflowError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "After a StackOverflowError, the thread's stack is in a fragile state. Any further method calls can trigger another StackOverflowError. The application state is likely inconsistent since the recursive operation did not complete. Catching this error leads to unpredictable behavior.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StackOverflowError.html"
       ],
       "condition": ""
     }

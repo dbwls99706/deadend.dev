@@ -30,7 +30,7 @@
       "why_fails": "Bypasses the autoloader entirely, creating a fragile dependency chain that breaks when files move. This does not scale and defeats the purpose of PSR-4 autoloading.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/01-basic-usage.md#autoloading"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The autoloader map is generated from composer.json. Moving files without updating the PSR-4 mapping causes further class not found errors.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     }

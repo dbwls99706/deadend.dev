@@ -30,7 +30,7 @@
       "why_fails": "Many step failures are due to application bugs or misconfigured scripts, not resource limits",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/emr/latest/ManagementGuide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Older versions may have different bugs; the step script itself is usually the issue",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/emr/latest/ManagementGuide/"
       ],
       "condition": ""
     }

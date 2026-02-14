@@ -49,7 +49,7 @@
     {
       "action": "Use asyncio.run() in the main entry point — it creates and manages the loop",
       "success_rate": 0.95,
-      "how": "asyncio.run(main())",
+      "how": "Use asyncio.run() in the main entry point — it creates and manages the loop",
       "sources": [
         "https://docs.python.org/3/library/asyncio-runner.html#asyncio.run"
       ],
@@ -70,7 +70,8 @@
       "sources": [
         "https://docs.python.org/3/library/asyncio-task.html#asyncio.run_coroutine_threadsafe"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "For threads, use asyncio.run_coroutine_threadsafe(coro, loop)"
     }
   ],
   "transition_graph": {

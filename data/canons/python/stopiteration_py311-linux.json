@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#list"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Convert to list first if you need multiple passes, or recreate the iterator"
     }
   ],
   "transition_graph": {

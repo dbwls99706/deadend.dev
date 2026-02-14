@@ -30,7 +30,7 @@
       "why_fails": "The classic 'docker build' command does not support buildx cache export/import flags. These flags require 'docker buildx build' with a compatible driver, not the legacy builder.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "DOCKER_BUILDKIT=1 enables BuildKit as the build engine but still uses the 'docker' driver, which does not support cache export. The driver type is what matters, not whether BuildKit is enabled.",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "All cache-to backends (local, registry, gha, inline) are blocked when using the docker driver. The error occurs before any cache type logic is evaluated because the driver itself lacks the capability.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     }

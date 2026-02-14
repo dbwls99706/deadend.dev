@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If a component conditionally needs a hook, split into two components"
     },
     {
       "action": "Check for early returns before hooks — all hooks must run before any return",
@@ -68,7 +69,8 @@
       "sources": [
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for early returns before hooks — all hooks must run before any return"
     }
   ],
   "transition_graph": {

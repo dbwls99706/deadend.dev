@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add retry logic with exponential backoff for transient network issues"
     },
     {
       "action": "Check server-side logs — the server is closing the connection",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check server-side logs — the server is closing the connection"
     },
     {
       "action": "If behind a proxy/LB, check its timeout settings",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nodejs.org/api/http.html#httpagent"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If behind a proxy/LB, check its timeout settings"
     }
   ],
   "transition_graph": {

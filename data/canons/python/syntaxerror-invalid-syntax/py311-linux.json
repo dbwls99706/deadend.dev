@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/tutorial/errors.html#syntax-errors"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the line BEFORE the reported error for missing colons, parentheses, or brackets"
     },
     {
       "action": "Use an editor with syntax highlighting or run py_compile to get precise location",

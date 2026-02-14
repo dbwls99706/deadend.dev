@@ -30,7 +30,7 @@
       "why_fails": "Very long timeouts cause PHP-FPM workers to hang indefinitely, exhausting the worker pool and making the entire application unresponsive to other requests.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Without a connection timeout, the request can hang indefinitely on DNS resolution or TCP handshake, blocking the PHP process.",
       "fail_rate": 0.68,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     }

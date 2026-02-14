@@ -42,7 +42,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "let x: Type = defaultValue"
     },
     {
       "action": "Restructure code so all branches assign before use",
@@ -50,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Restructure code so all branches assign before use"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "Cooperative launch occupancy is limited by SM count, registers per SM, and shared memory per SM — not global memory. Adding more VRAM does not increase the number of SMs or change per-SM resource limits.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#execution-configuration"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Cooperative kernels use grid-wide synchronization (cooperative_groups::grid_group::sync). Removing cooperative launch without removing grid sync calls causes undefined behavior or hangs. The algorithm must be restructured to not require global synchronization.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#execution-configuration"
       ],
       "condition": ""
     }

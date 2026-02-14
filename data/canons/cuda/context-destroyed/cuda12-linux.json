@@ -42,7 +42,7 @@
       "why_fails": "Context destruction is not caused by memory pressure; it is caused by explicit destruction or driver timeout",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     }

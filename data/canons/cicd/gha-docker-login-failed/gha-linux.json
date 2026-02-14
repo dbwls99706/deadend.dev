@@ -30,7 +30,7 @@
       "why_fails": "Password appears in workflow logs even with masking; insecure and often fails due to stdin issues in CI",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "GITHUB_TOKEN only authenticates to ghcr.io (GitHub Container Registry), not Docker Hub or other registries",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     }

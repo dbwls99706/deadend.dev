@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#breakpoint"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Trace where the object becomes None/wrong type and fix the source"
     },
     {
       "action": "Add type hints and use mypy/pyright to catch statically",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/typing.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add type hints and use mypy/pyright to catch statically"
     }
   ],
   "transition_graph": {

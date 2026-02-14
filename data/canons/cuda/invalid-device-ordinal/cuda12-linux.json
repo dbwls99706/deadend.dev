@@ -42,7 +42,7 @@
       "why_fails": "The device ordinal is about physical hardware; drivers cannot create GPUs that do not exist",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     }

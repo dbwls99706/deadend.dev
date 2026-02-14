@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/asyncio-runner.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "use await directly (Jupyter runs its own event loop)"
     }
   ],
   "transition_graph": {

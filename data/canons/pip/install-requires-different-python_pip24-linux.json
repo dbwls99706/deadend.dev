@@ -52,7 +52,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_install/#requirement-specifiers"
       ],
       "condition": "",
-      "how": "pip install 'pkg"
+      "how": "pip install 'pkg<2.0'"
     },
     {
       "action": "Upgrade Python to meet the requirement",
@@ -60,7 +60,8 @@
       "sources": [
         "https://www.python.org/downloads/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Upgrade Python to meet the requirement"
     },
     {
       "action": "Use pyenv to manage multiple Python versions",

@@ -30,7 +30,7 @@
       "why_fails": "Without LFS installed and configured, pointer files remain as-is and binaries are never fetched",
       "fail_rate": 0.8,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-lfs.com/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Checkout triggers the smudge filter again which fails with the same error if the underlying connectivity or auth issue is not resolved",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-checkout"
       ],
       "condition": ""
     }

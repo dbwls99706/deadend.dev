@@ -30,7 +30,7 @@
       "why_fails": "Destroying and re-instantiating the graph eliminates the performance benefit of CUDA graphs. The point of graph update is to avoid the instantiation overhead. If you re-instantiate every time, you lose the O(1) launch benefit and the overhead may be worse than individual kernel launches.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#execution-configuration"
       ],
       "condition": ""
     },

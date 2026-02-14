@@ -30,7 +30,7 @@
       "why_fails": "Destroys migration history that other environments depend on; production databases expect the existing migration chain. The new initial migration will try to create tables that already exist, causing failures",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/ef/core/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Creates a mismatch between the actual database schema and what EF Core thinks the schema is; subsequent migrations will generate incorrect SQL because the model snapshot is out of sync with reality",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/ef/core/"
       ],
       "condition": ""
     }

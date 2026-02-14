@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/abc.html#abc.abstractmethod"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Implement the method in your subclass with the correct signature"
     },
     {
       "action": "If you don't need this method, provide a no-op: def method(self): pass",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/exceptions.html#NotImplementedError"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "def method(self): pass"
     }
   ],
   "transition_graph": {

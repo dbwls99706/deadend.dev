@@ -60,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/cluster-administration/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Scale up the cluster — add more nodes"
     },
     {
       "action": "Check for node affinity/taints preventing scheduling on available nodes",

@@ -30,7 +30,7 @@
       "why_fails": "The bottleneck is the receiver's inability to consume data from its receive buffer. Increasing the sender's buffer only allows more data to queue on the sender side but does not make the receiver process data faster.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disabling window scaling limits the maximum window to 64KB, severely reducing throughput on high-bandwidth/high-latency links. It does not fix the application-level slow consumption problem.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

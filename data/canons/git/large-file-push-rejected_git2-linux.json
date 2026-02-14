@@ -69,7 +69,8 @@
       "sources": [
         "https://git-scm.com/docs/gitignore"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add large files to .gitignore before committing"
     }
   ],
   "transition_graph": {

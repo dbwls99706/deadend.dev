@@ -56,7 +56,7 @@
       "@type": "ItemList",
       "numberOfItems": {{ total }},
       "itemListElement": [{% for e in entries %}
-        {"@type": "ListItem", "position": {{ loop.index }}, "url": "{{ base_url }}/{{ e.id }}", "name": "{{ e.signature | e }}"}{{ "," if not loop.last else "" }}{% endfor %}
+        {"@type": "ListItem", "position": {{ loop.index }}, "url": "{{ base_url }}/{{ e.id }}", "name": "{{ e.signature | json_escape }}"}{{ "," if not loop.last else "" }}{% endfor %}
       ]
     }
   }

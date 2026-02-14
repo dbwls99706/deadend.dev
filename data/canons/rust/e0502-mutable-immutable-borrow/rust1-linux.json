@@ -60,7 +60,8 @@
       "sources": [
         "https://doc.rust-lang.org/book/ch15-05-interior-mutability.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use interior mutability (RefCell, Mutex) when borrow splitting isn't possible"
     }
   ],
   "transition_graph": {

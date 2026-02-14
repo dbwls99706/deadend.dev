@@ -30,7 +30,7 @@
       "why_fails": "The CORS specification explicitly forbids using the wildcard '*' for Access-Control-Allow-Origin when credentials (cookies, authorization headers) are included. Browsers will reject this combination, and the request will still fail with a CORS error.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Launching Chrome with --disable-web-security only works for local development on a single machine. It cannot be deployed to end users, does not fix the server-side configuration, and creates a significant security vulnerability if used habitually.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
       "condition": ""
     }

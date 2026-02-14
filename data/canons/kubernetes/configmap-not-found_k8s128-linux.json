@@ -30,7 +30,7 @@
       "why_fails": "Pod starts but gets empty config; may crash on missing keys",
       "fail_rate": 0.55,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/concepts/configuration/configmap/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "optional: true means the pod starts without the config — may misbehave silently",
       "fail_rate": 0.5,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/concepts/configuration/configmap/"
       ],
       "condition": ""
     }

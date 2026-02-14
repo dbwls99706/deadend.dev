@@ -47,6 +47,16 @@ def built_site(tmp_path_factory):
         jinja_env.globals["base_url"] = bs.BASE_URL
         jinja_env.filters["display_name"] = bs.domain_display_name
 
+        import json
+        from markupsafe import Markup
+
+        def _json_escape(s: str) -> Markup:
+            escaped = json.dumps(s)[1:-1]
+            escaped = escaped.replace("</", r"<\/")
+            return Markup(escaped)
+
+        jinja_env.filters["json_escape"] = _json_escape
+
         build_error_pages(canons, jinja_env)
         build_domain_pages(canons, jinja_env)
         summary_urls = build_error_summary_pages(canons, jinja_env)

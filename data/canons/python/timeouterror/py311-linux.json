@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/urllib.request.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add retry with exponential backoff for transient failures"
     },
     {
       "action": "Verify target host is reachable: DNS, firewall, port",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/socket.html#socket.create_connection"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "DNS, firewall, port"
     }
   ],
   "transition_graph": {

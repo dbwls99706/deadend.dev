@@ -30,7 +30,7 @@
       "why_fails": "In Minimal APIs, complex types are already bound from the body by default. Adding [FromBody] explicitly does not change the binding source or fix deserialization errors. The issue is in the JSON payload structure or Content-Type header, not in how the parameter is annotated. This wastes debugging time on the wrong layer",
       "fail_rate": 0.85,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Making all properties nullable suppresses the binding error but pushes null-handling responsibility throughout the entire codebase. Every consumer of the model must now check for null on every field, and invalid requests that should be rejected with 400 are silently accepted with null data, leading to NullReferenceExceptions deeper in the application logic",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "MVC controllers use the same System.Text.Json deserialization pipeline and will produce equivalent errors for malformed JSON. The migration adds significant complexity (controller classes, routing attributes, dependency injection changes) without addressing the root cause, which is a mismatch between the client request and the server's expected model",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception"
       ],
       "condition": ""
     }

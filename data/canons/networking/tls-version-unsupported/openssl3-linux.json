@@ -30,7 +30,7 @@
       "why_fails": "TLS 1.0 and 1.1 have known vulnerabilities (BEAST, POODLE downgrade). Re-enabling them system-wide affects all applications and introduces security risks. Compliance standards (PCI DSS, HIPAA) prohibit TLS 1.0/1.1, making this a non-starter for regulated environments.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Building a custom OpenSSL with re-enabled legacy protocols creates a maintenance burden, breaks system package management, and may introduce build-time errors. Other applications linking against the system OpenSSL will not benefit, and the custom build must be manually patched for future vulnerabilities.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl.1ssl.html"
       ],
       "condition": ""
     }

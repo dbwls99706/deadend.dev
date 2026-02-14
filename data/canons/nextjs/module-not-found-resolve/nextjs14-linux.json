@@ -60,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/configuring/absolute-imports-and-module-aliases"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for typos in the import path and use correct relative/absolute paths"
     }
   ],
   "transition_graph": {

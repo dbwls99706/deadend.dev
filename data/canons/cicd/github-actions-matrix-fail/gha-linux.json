@@ -30,7 +30,7 @@
       "why_fails": "This makes the entire workflow appear green even when matrix combinations fail, masking real failures and breaking the quality gate",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Removing failing combinations reduces test coverage. The underlying issue persists and may affect production environments that match the removed combination.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "GitHub enforces that each SSH deploy key can only be registered to one repository. Attempting to add the same public key to another repo produces 'Key is already in use' error.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Regenerating the key pair does not help if 'Allow write access' is not checked when adding the new public key to the repository deploy key settings. The default is read-only.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Loading the key into ssh-agent does not override GitHub's server-side read-only restriction. The push is rejected by the remote regardless of local SSH configuration.",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication"
       ],
       "condition": ""
     }

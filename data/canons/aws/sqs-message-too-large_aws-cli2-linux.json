@@ -30,7 +30,7 @@
       "why_fails": "Adds complexity; consumer must decompress; base64 encoding increases size by 33%",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Requires a reassembly mechanism; complex and error-prone",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/"
       ],
       "condition": ""
     }

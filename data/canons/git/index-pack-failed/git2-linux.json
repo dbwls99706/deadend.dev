@@ -30,7 +30,7 @@
       "why_fails": "If the failure is due to insufficient memory for indexing a large pack, retrying produces the same OOM failure each time",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-clone"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "http.postBuffer affects push, not fetch/clone. The index-pack process has its own memory requirements independent of HTTP buffering",
       "fail_rate": 0.75,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-clone"
       ],
       "condition": ""
     }

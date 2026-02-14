@@ -30,7 +30,7 @@
       "why_fails": "All other containers on that network lose connectivity and must be reconnected",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/network/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The stale endpoint still occupies the network slot; the old endpoint must be cleaned up",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/network/"
       ],
       "condition": ""
     }

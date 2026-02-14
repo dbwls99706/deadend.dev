@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.docker.com/reference/cli/docker/image/pull/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify image name spelling and registry URL (docker.io vs ghcr.io vs ecr)"
     }
   ],
   "transition_graph": {

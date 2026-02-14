@@ -30,7 +30,7 @@
       "why_fails": "Simply raising memory_limit masks the underlying problem. If the code has a memory leak or loads unbounded data, the error will return with larger datasets. Eventually system OOM killer may terminate the process.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Setting unlimited memory in production risks crashing the entire server when a runaway process consumes all available RAM. This is a dangerous workaround that can cause cascading failures.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     }

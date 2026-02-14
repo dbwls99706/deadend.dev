@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/reference/lexical_analysis.html#f-strings"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "f'{name}: {value}'"
     }
   ],
   "transition_graph": {

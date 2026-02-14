@@ -30,7 +30,7 @@
       "why_fails": "ICMP unreachable is a definitive routing response, not a transient issue. Retrying without fixing the routing problem will produce the same result. The exception is host unreachable due to ARP failure, which may resolve if the target host comes online.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Blocking ICMP unreachable on the client converts a fast failure into a slow timeout. The application waits for the full TCP timeout instead of failing immediately, degrading user experience without fixing the routing issue.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

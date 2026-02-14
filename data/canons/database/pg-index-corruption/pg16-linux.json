@@ -30,7 +30,7 @@
       "why_fails": "The table data is usually not corrupted; only the index is. Dropping the table loses all data unnecessarily. REINDEX rebuilds the index from the intact table data without any data loss.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/indexes.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "A corrupted index returns incorrect query results silently. Queries using the corrupted index may return missing rows, duplicate rows, or wrong rows. This leads to application-level data integrity issues that are very difficult to trace back to index corruption.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS"
       ],
       "condition": ""
     }

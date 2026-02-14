@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/classes.html#--strictpropertyinitialization"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "property: Type = defaultValue"
     },
     {
       "action": "Use definite assignment assertion (!) only when you're SURE it's set before use (e.g., DI)",

@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/reference/expressions.html#generator-expressions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Don't call next() on a generator from within that generator's code path"
     },
     {
       "action": "Use separate generator instances for recursive patterns",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/reference/expressions.html#yield-expressions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use separate generator instances for recursive patterns"
     }
   ],
   "transition_graph": {

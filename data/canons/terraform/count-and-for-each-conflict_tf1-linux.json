@@ -42,7 +42,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "use for_each for maps/sets, count for simple numeric iteration"
     },
     {
       "action": "Convert count to for_each: for_each = toset(range(var.instance_count))",
@@ -50,7 +51,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/meta-arguments/for_each"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "for_each = toset(range(var.instance_count))"
     }
   ],
   "transition_graph": {

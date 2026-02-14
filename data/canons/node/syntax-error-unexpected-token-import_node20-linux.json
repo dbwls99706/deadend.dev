@@ -30,7 +30,7 @@
       "why_fails": "Loses ESM benefits; extra build step for simple projects",
       "fail_rate": 0.55,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/esm.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Flag was removed in Node 14+; not needed",
       "fail_rate": 0.8,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/esm.html"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "The lock metadata in .git/worktrees/<name>/locked persists even after the directory is deleted, preventing git from cleaning up or re-adding the worktree at the same path",
       "fail_rate": 0.8,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-worktree"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "git worktree prune skips locked worktrees by design, so the stale locked worktree remains in the list",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-worktree"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "If already pushed, other clones still have the old tag pointing to the old commit",
       "fail_rate": 0.55,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-clone"
       ],
       "condition": ""
     },

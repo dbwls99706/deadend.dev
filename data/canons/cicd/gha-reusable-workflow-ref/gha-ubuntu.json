@@ -30,7 +30,7 @@
       "why_fails": "GitHub Actions parses reusable workflow references at workflow compilation time, before any expressions are evaluated. The 'uses' field for reusable workflows does not support any form of dynamic expression -- it must be a literal string.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Even though workflow_dispatch inputs are available at runtime, the reusable workflow 'uses' field is resolved statically during workflow parsing. Input values cannot be interpolated into the uses clause.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Neither env vars nor repository/organization variables can be used in the 'uses' field of a reusable workflow call. This is a fundamental limitation of how GitHub Actions resolves workflow dependencies at parse time.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     }

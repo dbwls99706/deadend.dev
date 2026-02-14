@@ -30,7 +30,7 @@
       "why_fails": "If packets are being dropped by a firewall or the host is down, no amount of waiting will produce a response. Large timeouts cause applications to hang for extended periods, degrade user experience, and consume connection pool resources without resolving the underlying network issue.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man2/connect.2.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "ETIMEDOUT occurs after DNS resolution succeeds. The hostname has already resolved to an IP address; the failure is at the TCP level when the SYN packet gets no response. Changing DNS servers will not fix a firewall or routing problem between client and the resolved IP.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man2/connect.2.html"
       ],
       "condition": ""
     }

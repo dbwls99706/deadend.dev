@@ -30,7 +30,7 @@
       "why_fails": "May corrupt the local state cache",
       "fail_rate": 0.85,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/backend"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Easy to lose state or corrupt it; use terraform init -migrate-state instead",
       "fail_rate": 0.75,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/backend"
       ],
       "condition": ""
     }

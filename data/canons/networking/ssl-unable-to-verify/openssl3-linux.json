@@ -30,7 +30,7 @@
       "why_fails": "Disabling verification removes all trust guarantees and exposes the application to MITM attacks. It does not fix the underlying missing CA certificate issue and creates a persistent security vulnerability that often leaks into production.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The issue is often a missing intermediate certificate, not the root CA. Installing only the root CA will not complete the chain if intermediates are absent. Additionally, manually managing individual CA certs is fragile and does not scale.",
       "fail_rate": 0.7,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     }

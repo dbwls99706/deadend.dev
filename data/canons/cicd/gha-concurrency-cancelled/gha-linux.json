@@ -30,7 +30,7 @@
       "why_fails": "Without concurrency controls, multiple runs pile up consuming runner resources and potentially deploying out of order",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-github-hosted-runners"
       ],
       "condition": ""
     },

@@ -30,7 +30,7 @@
       "why_fails": "A larger pool masks the leak temporarily but eventually the pool fills up again and the error returns. Meanwhile, the large number of open connections may hit PostgreSQL's max_connections limit, creating a new error.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Opening a new PostgreSQL connection takes 100-200ms due to process forking and authentication. Without pooling, performance degrades severely under load, and you risk hitting PostgreSQL's max_connections limit directly.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

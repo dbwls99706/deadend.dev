@@ -30,7 +30,7 @@
       "why_fails": "The built-in .NET DI container does not support property injection. Even with third-party containers (Autofac, etc.) that support it, property injection merely defers the cycle resolution and creates fragile initialization order dependencies where services may be used before their properties are set",
       "fail_rate": 0.85,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Changing the service lifetime does not affect cycle detection. The DI container analyzes the constructor dependency graph regardless of lifetime. A transient registration still requires constructing the full dependency chain, which will still be circular",
       "fail_rate": 0.95,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Resolving the circular dependency from IServiceProvider inside the constructor triggers the same cycle detection because the resolution happens during construction. This is the Service Locator anti-pattern and it moves the exception from compile-time-detectable to runtime without solving the underlying design issue",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     }

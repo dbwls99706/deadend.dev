@@ -30,7 +30,7 @@
       "why_fails": "With deadlock detection disabled, InnoDB falls back to innodb_lock_wait_timeout to resolve deadlocks. This means transactions wait the full timeout (default 50s) before failing, severely degrading performance. Deadlocks that were resolved in milliseconds now take 50 seconds.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Table-level locks serialize all access, destroying concurrency. InnoDB's row-level locking allows much higher throughput. LOCK TABLES also does not work with InnoDB's transactional semantics and can cause more issues than it solves.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

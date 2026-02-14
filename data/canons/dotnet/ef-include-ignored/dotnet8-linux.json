@@ -30,7 +30,7 @@
       "why_fails": "EF Core does not guarantee population of navigation properties based on nullability annotations. A non-nullable reference navigation (e.g., public Order Order { get; set; } = null!;) will still be null if not loaded via Include(). The null-forgiving operator suppresses compiler warnings but does not cause EF Core to load the data. This leads to NullReferenceException at runtime instead of a clear error about missing Include()",
       "fail_rate": 0.95,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Lazy loading introduces N+1 query problems that severely degrade performance. Each navigation property access triggers a separate database roundtrip. In list/collection scenarios, this can result in hundreds of queries instead of one. Additionally, lazy loading requires all navigation properties to be virtual, and it silently fails (returns null) when the DbContext has been disposed, such as after async operations or when entities are returned from a service layer",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": "When used as a blanket solution without query analysis"
     },
@@ -48,7 +48,7 @@
       "why_fails": "Null checks hide the fact that required related data was never loaded, leading to silent data loss and incorrect business logic. For example, if order.Customer is null because Include was missing, skipping the customer processing silently produces incomplete results. The null navigation property is a data loading bug, not a valid null state",
       "fail_rate": 0.85,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": "When the navigation property represents a required relationship"
     }

@@ -51,7 +51,8 @@
       "sources": [
         "https://jestjs.io/docs/ecmascript-modules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "NODE_OPTIONS=--experimental-vm-modules npx jest"
     },
     {
       "action": "Consider switching to Vitest which has native ESM support",
@@ -68,7 +69,8 @@
       "sources": [
         "https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add transform config to jest.config.js for ESM files"
     }
   ],
   "transition_graph": {

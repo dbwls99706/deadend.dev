@@ -30,7 +30,7 @@
       "why_fails": "Jenkins Pipeline DSL is not standard Groovy; many pipeline-specific constructs (pipeline, stage, steps) are Jenkins-only and will fail in a regular Groovy compiler",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Scripted pipeline is more complex and error-prone; switching paradigms mid-debug introduces new categories of errors",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     }

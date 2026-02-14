@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-tag"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "v1.0.1, v1.0.0-rc2, etc"
     }
   ],
   "transition_graph": {

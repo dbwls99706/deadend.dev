@@ -30,7 +30,7 @@
       "why_fails": "Container appears healthy but may not actually be serving traffic",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Defeats the purpose; orchestrators think the container is always healthy",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
       ],
       "condition": ""
     }

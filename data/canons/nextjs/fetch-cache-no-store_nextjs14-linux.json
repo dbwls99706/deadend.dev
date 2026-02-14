@@ -51,7 +51,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/data-fetching/caching-and-revalidating"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "fetch(url, { next: { revalidate: 60 } })"
     },
     {
       "action": "If truly dynamic, set export const dynamic = 'force-dynamic' in the page",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If truly dynamic, set export const dynamic = 'force-dynamic' in the page"
     },
     {
       "action": "Understand the trade-off: static = fast/cached, dynamic = fresh/slower",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "static = fast/cached, dynamic = fresh/slower"
     }
   ],
   "transition_graph": {

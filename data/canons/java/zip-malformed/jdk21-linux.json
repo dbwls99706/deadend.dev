@@ -30,7 +30,7 @@
       "why_fails": "If the ZIP/JAR file in the cache is corrupted, retrying the build will use the same corrupted cached file. Maven and Gradle do not verify the integrity of cached artifacts on subsequent builds. The corrupted file must be deleted first.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.gradle.org/current/userguide/userguide.html"
       ],
       "condition": ""
     },

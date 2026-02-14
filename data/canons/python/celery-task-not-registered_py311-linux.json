@@ -43,7 +43,8 @@
       "sources": [
         "https://docs.celeryq.dev/en/stable/userguide/workers.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Restart the Celery worker after code changes — it caches task definitions"
     },
     {
       "action": "Ensure autodiscover_tasks finds the task: check include/imports config",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.celeryq.dev/en/stable/userguide/tasks.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify worker and caller import the same task module path"
     }
   ],
   "transition_graph": {

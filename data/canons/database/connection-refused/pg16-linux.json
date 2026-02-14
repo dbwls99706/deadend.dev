@@ -30,7 +30,7 @@
       "why_fails": "The error is a server-side connectivity issue, not a client library bug. Reinstalling psycopg2 does not affect whether the PostgreSQL server is reachable.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the server process is not running or not listening on the target port, no amount of connection parameter tweaking will establish a connection.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

@@ -64,7 +64,8 @@
       "sources": [
         "https://pytorch.org/docs/stable/cpp_extension.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "TORCH_CUDA_ARCH_LIST='8.9'"
     }
   ],
   "transition_graph": {

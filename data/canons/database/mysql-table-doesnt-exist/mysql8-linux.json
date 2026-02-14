@@ -30,7 +30,7 @@
       "why_fails": "lower_case_table_names must be set before MySQL data directory initialization. Changing it on an existing instance with mixed-case table names causes existing tables to become inaccessible.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "InnoDB tablespace files are tied to the specific MySQL instance's data dictionary. Simply copying .ibd files without proper IMPORT TABLESPACE procedure causes corruption errors.",
       "fail_rate": 0.88,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     }

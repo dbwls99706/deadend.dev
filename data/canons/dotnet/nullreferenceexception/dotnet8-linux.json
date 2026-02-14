@@ -30,7 +30,7 @@
       "why_fails": "Masks the root cause and creates performance overhead; the null propagates further and causes harder-to-debug failures elsewhere",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Leads to excessive defensive coding without fixing the actual source of the null; the real bug remains and surfaces in different locations",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Disables compiler safety checks that would catch the problem at build time; effectively hides the bug rather than fixing it",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.nullreferenceexception"
       ],
       "condition": ""
     }

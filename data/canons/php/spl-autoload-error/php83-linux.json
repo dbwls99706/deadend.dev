@@ -30,7 +30,7 @@
       "why_fails": "Multiple autoloaders can cause 'cannot redeclare class' errors or include incorrect files. The autoloader stack order matters, and conflicting loaders create non-deterministic behavior.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/01-basic-usage.md#autoloading"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "__autoload() was removed in PHP 8.0. It only supported a single autoloader function and could not be chained with other autoloaders like Composer's.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     }

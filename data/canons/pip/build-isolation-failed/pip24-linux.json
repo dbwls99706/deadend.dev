@@ -30,7 +30,7 @@
       "why_fails": "Disabling build isolation can cause dependency pollution and break other packages that require clean builds",
       "fail_rate": 0.65,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Old pip versions have worse dependency resolution and more bugs; build isolation is there for good reason",
       "fail_rate": 0.7,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "This disables all TLS certificate verification for the entire process, making it vulnerable to MITM attacks. It is a common but dangerous workaround that security audits will flag, and it masks legitimate certificate problems.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Downgrading to HTTP removes all encryption and authentication, exposing all traffic to interception. Many modern APIs and services reject HTTP connections entirely, and HSTS policies will block the downgrade in browsers.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     }

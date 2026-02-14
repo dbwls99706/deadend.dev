@@ -30,7 +30,7 @@
       "why_fails": "Masks bugs; recover should only be used at API boundaries",
       "fail_rate": 0.75,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/effective_go#pointers_vs_values"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Hides nil-state bugs; empty struct may not be a valid state",
       "fail_rate": 0.55,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/effective_go#pointers_vs_values"
       ],
       "condition": ""
     }

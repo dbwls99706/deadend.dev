@@ -30,7 +30,7 @@
       "why_fails": "EHOSTUNREACH is a definitive routing error. The kernel or an intermediate router has determined there is no path to the destination. Retrying does nothing unless the network topology changes, which requires manual intervention or automated failover to trigger.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Host unreachable is a network-layer (IP/ICMP) error that occurs before any port or protocol negotiation. The issue is that IP packets cannot reach the host at all, so changing the destination port or switching between HTTP/HTTPS has no effect.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

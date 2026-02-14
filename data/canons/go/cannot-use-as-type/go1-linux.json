@@ -60,7 +60,8 @@
       "sources": [
         "https://go.dev/doc/effective_go#interfaces"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Implement the required interface on your type"
     }
   ],
   "transition_graph": {

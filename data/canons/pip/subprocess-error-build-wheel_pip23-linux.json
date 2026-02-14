@@ -30,7 +30,7 @@
       "why_fails": "Actually makes the problem worse by requiring compilation for all packages",
       "fail_rate": 0.8,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_wheel/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Older versions may have the same build requirements",
       "fail_rate": 0.45,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

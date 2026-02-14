@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/math.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "if x > 0: math.log(x)"
     },
     {
       "action": "Use cmath for complex number support: cmath.sqrt(-1) → 1j",

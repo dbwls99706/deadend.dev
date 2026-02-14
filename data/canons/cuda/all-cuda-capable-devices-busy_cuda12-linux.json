@@ -39,7 +39,7 @@
       "why_fails": "Requires root; kills all GPU processes",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     }

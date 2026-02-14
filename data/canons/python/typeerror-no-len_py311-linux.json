@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#len"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "if obj is not None: len(obj)"
     }
   ],
   "transition_graph": {

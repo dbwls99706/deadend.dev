@@ -60,7 +60,8 @@
       "sources": [
         "https://go.dev/ref/spec#Assignments"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "tmp := m[k]; tmp.Field = val; m[k] = tmp"
     }
   ],
   "transition_graph": {

@@ -39,7 +39,7 @@
       "why_fails": "Excessive pessimistic locking defeats the purpose of MVCC, reduces throughput significantly, and can introduce deadlocks. It converts optimistic concurrency control into pessimistic, negating the benefits of SERIALIZABLE isolation.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-DEADLOCKS"
       ],
       "condition": ""
     }

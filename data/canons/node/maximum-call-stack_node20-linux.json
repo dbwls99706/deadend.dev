@@ -51,7 +51,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Glossary/Recursion"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check recursive function for missing or incorrect base case"
     },
     {
       "action": "Convert recursive algorithm to iterative with explicit stack",
@@ -68,7 +69,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for circular references in objects being JSON.stringify'd or deep-cloned"
     }
   ],
   "transition_graph": {

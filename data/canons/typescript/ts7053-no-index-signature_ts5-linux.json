@@ -39,7 +39,7 @@
       "why_fails": "Disables a fundamental strictness check for the entire project",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/tsconfig/#strict"
       ],
       "condition": ""
     }

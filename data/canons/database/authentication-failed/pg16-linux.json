@@ -30,7 +30,7 @@
       "why_fails": "PostgreSQL authentication is deterministic. The same wrong password will always fail. Retrying wastes time and may trigger connection rate limiting.",
       "fail_rate": 0.99,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },

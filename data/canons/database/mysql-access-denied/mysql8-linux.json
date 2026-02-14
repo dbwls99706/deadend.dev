@@ -30,7 +30,7 @@
       "why_fails": "GRANT statements require the user to already exist in MySQL 8+. Running GRANT on a non-existent user fails. Even if the user exists, GRANT does not change the password.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Directly modifying mysql.user without running FLUSH PRIVILEGES is ineffective. Additionally, MySQL 8 uses caching_sha2_password by default, and manually editing password hashes is error-prone and insecure.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     }

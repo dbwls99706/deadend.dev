@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add the dependency that defines the type to your package.json dependencies (not just devDependencies)"
     },
     {
       "action": "Add an explicit return type annotation to avoid relying on inference",
@@ -68,7 +69,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/project-references.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "In monorepos, ensure TypeScript project references are set up correctly"
     }
   ],
   "transition_graph": {

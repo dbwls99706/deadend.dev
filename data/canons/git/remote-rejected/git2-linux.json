@@ -30,7 +30,7 @@
       "why_fails": "Branch protection rules on the remote explicitly block force pushes; the --force flag is rejected by the server-side hook",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-push"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Branch deletion is typically also blocked by the same protection rules that prevent force pushes",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-push"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "-DskipTests only skips test execution, not test compilation. The compilation error will still occur. Even -Dmaven.test.skip=true (which skips test compilation) does not help if the error is in main source code. Skipping tests does not fix compilation failures.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://maven.apache.org/guides/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deleting the local repository forces re-download of all dependencies, which is slow and usually unnecessary. Compilation errors are almost never caused by corrupted local repository artifacts. The error is in the source code or dependency declarations, not the repository cache.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://maven.apache.org/guides/"
       ],
       "condition": ""
     }

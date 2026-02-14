@@ -30,7 +30,7 @@
       "why_fails": "Client-side configuration changes cannot make a connection to a server that is not listening. The error is at the TCP level; no amount of client tuning can establish a connection to a closed port.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The client library correctly reports that the server is unreachable. The issue is server-side; reinstalling the client package has no effect on server availability.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

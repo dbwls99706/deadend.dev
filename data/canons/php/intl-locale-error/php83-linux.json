@@ -39,7 +39,7 @@
       "why_fails": "The symfony/polyfill-intl-icu package provides only basic fallback behavior. Complex formatting, collation, and transliteration will not work correctly without the real ICU library.",
       "fail_rate": 0.55,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://symfony.com/doc/current/"
       ],
       "condition": ""
     }

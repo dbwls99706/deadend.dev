@@ -30,7 +30,7 @@
       "why_fails": "DNSSEC validation protects against DNS cache poisoning and spoofing attacks. Disabling it hides the real problem (invalid DNSSEC signatures, expired keys) and makes the resolver vulnerable to attacks. The domain owner needs to fix their DNSSEC configuration.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the SERVFAIL is caused by an upstream issue (broken delegation, DNSSEC failure, authoritative server down), clearing the local cache simply forces a re-query that will receive the same SERVFAIL. Caching the negative result actually reduces load on the failing infrastructure.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": ""
     }

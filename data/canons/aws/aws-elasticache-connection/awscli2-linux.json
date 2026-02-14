@@ -39,7 +39,7 @@
       "why_fails": "If the issue is network configuration, rebooting doesn't change security groups or subnet routing",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/"
       ],
       "condition": ""
     }

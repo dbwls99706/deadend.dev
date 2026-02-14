@@ -30,7 +30,7 @@
       "why_fails": "If the server is not running or unreachable, waiting longer will not help. This only delays the error and makes the application appear to hang instead of failing fast.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Connection refused is a network-level error. The driver correctly reports that the server is unreachable. Reinstalling the driver changes nothing about server availability.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

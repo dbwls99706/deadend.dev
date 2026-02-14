@@ -30,7 +30,7 @@
       "why_fails": "This only delays the timeout without fixing the underlying contention. Transactions will hold locks for longer, causing other transactions to queue up, making the overall problem worse and potentially leading to connection exhaustion.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "READ UNCOMMITTED avoids some read locks but introduces dirty reads, phantom reads, and non-repeatable reads. It does not prevent write lock contention, which is the usual cause of this error. It trades correctness for a minimal reduction in lock contention.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

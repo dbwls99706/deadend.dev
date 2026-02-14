@@ -69,7 +69,8 @@
       "sources": [
         "https://pkg.go.dev/sync#Map"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use sync.Map for concurrent map access"
     }
   ],
   "transition_graph": {

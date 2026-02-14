@@ -30,7 +30,7 @@
       "why_fails": "Setting a very high retry count for a job with a persistent error (e.g., invalid data, permanently unavailable service) wastes queue resources and can create a backlog that delays other jobs. The failing job will keep consuming worker capacity.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Catching and swallowing all exceptions prevents the job from being marked as failed, making it appear successful when it actually did nothing. Failed jobs table will not contain the error, and monitoring/alerting will not trigger. Data will be silently lost.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

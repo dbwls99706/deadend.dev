@@ -30,7 +30,7 @@
       "why_fails": "Excessive permissions; violates least privilege",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_access-denied.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Any AWS account could assume the role",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_access-denied.html"
       ],
       "condition": ""
     }

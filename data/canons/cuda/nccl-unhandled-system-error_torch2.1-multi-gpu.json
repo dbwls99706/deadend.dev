@@ -54,7 +54,8 @@
       "sources": [
         "https://docs.nvidia.com/deeplearning/nccl/install-guide/index.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Update NVIDIA driver and NCCL to latest compatible versions"
     },
     {
       "action": "Try NCCL_P2P_DISABLE=1 if peer-to-peer GPU communication fails",
@@ -62,7 +63,8 @@
       "sources": [
         "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Try NCCL_P2P_DISABLE=1 if peer-to-peer GPU communication fails"
     }
   ],
   "transition_graph": {

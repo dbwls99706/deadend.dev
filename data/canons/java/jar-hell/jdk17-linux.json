@@ -30,7 +30,7 @@
       "why_fails": "Without understanding which classes conflict and which version each part of the application needs, randomly removing JARs will likely cause ClassNotFoundException or NoClassDefFoundError instead.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassNotFoundException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Custom classloaders add significant complexity and can cause ClassCastException when the same class loaded by different classloaders is treated as different types. This approach is only viable for plugin systems, not general dependency resolution.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassCastException.html"
       ],
       "condition": ""
     }

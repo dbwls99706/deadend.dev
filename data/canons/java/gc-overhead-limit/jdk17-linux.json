@@ -30,7 +30,7 @@
       "why_fails": "This just converts the GC overhead error into a regular OutOfMemoryError: Java heap space. The application will still run out of memory, but now without the early warning. Performance will be terrible as the JVM spends nearly all time in GC.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If there is a memory leak, increasing heap size only delays the inevitable. The application will eventually exhaust the larger heap too. Meanwhile, GC pauses become longer with a bigger heap, degrading performance.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": "when a memory leak is the root cause"
     }

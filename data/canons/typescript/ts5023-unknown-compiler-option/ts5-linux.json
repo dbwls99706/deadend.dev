@@ -47,7 +47,7 @@
       "why_fails": "Tutorial configs often use bleeding-edge options like verbatimModuleSyntax (TS 5.0+), moduleDetection (TS 4.7+), or allowImportingTsExtensions (TS 5.0+). The option does not exist in the installed version.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "common_misconception": "tsconfig options are assumed to be universal across all TypeScript versions."
     },

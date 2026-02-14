@@ -30,7 +30,7 @@
       "why_fails": "Creates a monolithic package; violates separation of concerns",
       "fail_rate": 0.55,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://pkg.go.dev/cmd/go#hdr-Add_dependencies_to_current_module_and_install_them"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Compiler directive abuse; breaks with Go updates",
       "fail_rate": 0.9,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://pkg.go.dev/cmd/go#hdr-Add_dependencies_to_current_module_and_install_them"
       ],
       "condition": ""
     }

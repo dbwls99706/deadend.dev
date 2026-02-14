@@ -30,7 +30,7 @@
       "why_fails": "Destroys all uncommitted work",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-checkout"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deletes untracked files permanently",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-merge"
       ],
       "condition": ""
     }

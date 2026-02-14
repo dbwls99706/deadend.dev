@@ -52,7 +52,7 @@
         "https://kubernetes.io/docs/concepts/containers/images/"
       ],
       "condition": "",
-      "how": "docker pull"
+      "how": "docker pull <image>:<tag> locally first"
     },
     {
       "action": "For private registries, create imagePullSecret and reference it in the pod spec",

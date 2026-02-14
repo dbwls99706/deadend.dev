@@ -69,7 +69,8 @@
       "sources": [
         "https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "boto3.client('s3', region_name='us-east-1')"
     }
   ],
   "transition_graph": {

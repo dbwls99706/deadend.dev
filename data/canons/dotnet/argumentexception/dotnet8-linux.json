@@ -30,7 +30,7 @@
       "why_fails": "The method expects meaningful values; passing empty or dummy values causes logic errors or silent data corruption downstream",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.argumentexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Removes a safety net that prevents invalid data from entering the system; the invalid argument will cause harder-to-debug errors deeper in the call stack",
       "fail_rate": 0.9,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.argumentexception"
       ],
       "condition": ""
     }

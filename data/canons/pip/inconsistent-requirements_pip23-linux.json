@@ -30,7 +30,7 @@
       "why_fails": "Installs incompatible versions; imports will fail at runtime",
       "fail_rate": 0.8,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "May install breaking versions of dependencies",
       "fail_rate": 0.65,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

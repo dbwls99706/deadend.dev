@@ -30,7 +30,7 @@
       "why_fails": "fs and child_process cannot be meaningfully polyfilled in browsers",
       "fail_rate": 0.8,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "fs is a built-in Node module; npm install fs installs a shim that doesn't work",
       "fail_rate": 0.85,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
       ],
       "condition": ""
     }

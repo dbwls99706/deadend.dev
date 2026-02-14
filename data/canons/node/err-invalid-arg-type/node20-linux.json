@@ -39,7 +39,7 @@
       "why_fails": "Pushes error downstream",
       "fail_rate": 0.7,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": ""
     }
@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/errors.html#err_invalid_arg_type"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the calling code — trace where wrong type originates"
     },
     {
       "action": "Add TypeScript or JSDoc types to catch at compile time",
@@ -59,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add TypeScript or JSDoc types to catch at compile time"
     }
   ],
   "transition_graph": {

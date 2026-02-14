@@ -30,7 +30,7 @@
       "why_fails": "Auto-formatters can break YAML anchors, multi-line strings, and GitHub Actions-specific syntax like ${{ }} expressions",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "GitHub Actions syntax evolves; older templates may use deprecated keys or removed features",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Syntax errors are deterministic and will never self-resolve on retry",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     }

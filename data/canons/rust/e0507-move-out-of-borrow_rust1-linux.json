@@ -51,7 +51,8 @@
       "sources": [
         "https://doc.rust-lang.org/std/clone/trait.Clone.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "value.clone()"
     },
     {
       "action": "Use .as_ref() or pattern matching with ref to avoid moving",
@@ -68,7 +69,8 @@
       "sources": [
         "https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Consider restructuring to pass by reference instead of by value"
     }
   ],
   "transition_graph": {

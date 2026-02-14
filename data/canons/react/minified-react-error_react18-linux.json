@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/learn/start-a-new-react-project"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Reproduce in development mode to get the full stack trace and error message"
     }
   ],
   "transition_graph": {

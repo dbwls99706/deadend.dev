@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/exceptions.html#BrokenPipeError"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "For network code, handle the error gracefully — the client disconnected"
     }
   ],
   "transition_graph": {

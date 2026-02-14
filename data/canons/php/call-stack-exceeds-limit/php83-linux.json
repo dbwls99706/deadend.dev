@@ -30,7 +30,7 @@
       "why_fails": "If the recursion is truly infinite (missing base case, circular dependency), increasing the nesting limit only delays the crash. PHP will eventually exhaust the C-level call stack or available memory, producing a segfault or OOM kill instead of the informative Xdebug error. The Xdebug limit exists specifically to catch runaway recursion before it causes catastrophic failure. A legitimate call stack rarely exceeds 100-200 levels.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Without Xdebug's nesting limit, PHP will recurse until it exhausts the process stack memory, typically resulting in a segmentation fault with no error message, stack trace, or useful diagnostic output. Xdebug's nesting limit provides the most debuggable failure mode for recursion. Removing it makes the problem harder to diagnose, not easier to fix. In production (where Xdebug should already be disabled), PHP 8.x fiber stack or memory exhaustion provides the eventual stop.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },

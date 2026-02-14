@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/faq/programming.html#what-are-the-best-practices-for-using-import-in-a-module"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Restructure modules to eliminate circular dependency"
     }
   ],
   "transition_graph": {

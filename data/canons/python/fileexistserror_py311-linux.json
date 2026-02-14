@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/os.html#os.makedirs"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "os.makedirs(path, exist_ok=True)"
     },
     {
       "action": "Use pathlib: Path(path).mkdir(parents=True, exist_ok=True)",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/pathlib.html#pathlib.Path.mkdir"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Path(path).mkdir(parents=True, exist_ok=True)"
     }
   ],
   "transition_graph": {

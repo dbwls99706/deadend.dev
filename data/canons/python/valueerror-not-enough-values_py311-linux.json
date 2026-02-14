@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#print"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Print/inspect the actual data to see its shape, then fix unpacking count"
     }
   ],
   "transition_graph": {

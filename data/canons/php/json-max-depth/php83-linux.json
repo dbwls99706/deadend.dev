@@ -30,7 +30,7 @@
       "why_fails": "Extremely deep recursion in JSON parsing can exhaust the C-level stack, causing a segfault rather than a PHP error. It also opens the application to denial-of-service attacks via crafted deeply nested JSON payloads.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Regex-based JSON manipulation is inherently fragile and will break on escaped characters, unicode sequences, and edge cases. It also adds significant processing overhead for large payloads.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     }

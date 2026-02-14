@@ -69,7 +69,8 @@
       "sources": [
         "https://docs.npmjs.com/cli/v10/using-npm/scripts"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "next dev, vite, react-scripts start"
     }
   ],
   "transition_graph": {

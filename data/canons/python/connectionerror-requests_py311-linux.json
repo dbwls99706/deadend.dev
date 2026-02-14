@@ -70,7 +70,8 @@
       "sources": [
         "https://requests.readthedocs.io/en/latest/user/advanced/#proxies"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check firewall, proxy settings, and DNS resolution"
     }
   ],
   "transition_graph": {

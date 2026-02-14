@@ -30,7 +30,7 @@
       "why_fails": "Terraform doesn't allow both; pick one",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Works but prevents use of count.index in any expressions",
       "fail_rate": 0.4,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

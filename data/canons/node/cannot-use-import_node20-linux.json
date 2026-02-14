@@ -60,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/esm.html#enabling"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Rename file to .mjs extension"
     },
     {
       "action": "Use dynamic import(): const mod = await import('module')",
@@ -68,7 +69,8 @@
       "sources": [
         "https://nodejs.org/api/esm.html#import-expressions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "const mod = await import('module')"
     }
   ],
   "transition_graph": {

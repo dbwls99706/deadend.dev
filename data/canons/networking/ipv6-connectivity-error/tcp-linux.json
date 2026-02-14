@@ -30,7 +30,7 @@
       "why_fails": "Disabling IPv6 entirely breaks IPv6-only services, container networking that relies on IPv6, and some localhost communication. It is a heavy-handed workaround that causes other issues.",
       "fail_rate": 0.6,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": "When IPv6 is required for other services"
     },
@@ -39,7 +39,7 @@
       "why_fails": "A static route pointing to a gateway that does not forward IPv6 traffic results in packets being sent but never reaching the destination. The error changes from 'no route' to a timeout, which is harder to diagnose.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

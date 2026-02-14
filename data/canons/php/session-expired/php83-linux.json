@@ -30,7 +30,7 @@
       "why_fails": "Setting a very high gc_maxlifetime causes session files to accumulate on disk indefinitely. On high-traffic sites this can fill the disk partition, cause inode exhaustion, and make the session directory extremely slow to scan. It also keeps stale sessions around as a security risk.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Storing all session data in cookies exposes it to the client, has a 4KB size limit, increases every HTTP request size, and can be tampered with unless encrypted and signed. Sensitive data like user roles or permissions should never be stored in cookies.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     }

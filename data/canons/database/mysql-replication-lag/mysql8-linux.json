@@ -30,7 +30,7 @@
       "why_fails": "Stopping replication does not reduce the backlog of events to apply. When replication restarts, it resumes from where it stopped and the lag remains. During the stop period, even more events accumulate on the primary, increasing the lag.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "All replicas receive the same binary log stream. If one replica cannot keep up, additional replicas with similar hardware will have the same lag. Adding replicas increases primary network overhead without fixing the processing bottleneck.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     }

@@ -69,7 +69,8 @@
       "sources": [
         "https://nodejs.org/api/deprecations.html#DEP0040"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "This is a warning, not an error — it still works, just update when possible"
     }
   ],
   "transition_graph": {

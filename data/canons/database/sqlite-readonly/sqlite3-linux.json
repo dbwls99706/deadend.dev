@@ -30,7 +30,7 @@
       "why_fails": "While this grants write access, it also allows any user on the system to read and modify the database, creating a serious security vulnerability. It is a dangerous shortcut that masks the real ownership issue.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.sqlite.org/docs.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The SQLite connection URI mode (e.g., mode=rw) only controls how SQLite opens the file. It cannot override OS-level file permissions. If the filesystem denies write access, no SQLite flag can bypass it.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

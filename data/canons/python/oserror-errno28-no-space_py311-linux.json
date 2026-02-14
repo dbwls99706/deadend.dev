@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/shutil.html#shutil.disk_usage"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "df -h and du -sh /tmp to find what's full"
     },
     {
       "action": "Clean up temp files, old logs, or __pycache__ directories",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/tempfile.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Clean up temp files, old logs, or __pycache__ directories"
     },
     {
       "action": "Set TMPDIR to a volume with more space for temporary files",
@@ -68,7 +70,8 @@
       "sources": [
         "https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Set TMPDIR to a volume with more space for temporary files"
     }
   ],
   "transition_graph": {

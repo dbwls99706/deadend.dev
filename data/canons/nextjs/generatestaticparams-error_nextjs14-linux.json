@@ -60,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamicparams"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use dynamicParams = false to return 404 for unknown params, or true (default) for ISR"
     }
   ],
   "transition_graph": {

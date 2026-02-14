@@ -30,7 +30,7 @@
       "why_fails": "Exposes credentials in version control; GitHub will redact known patterns but this is a severe security risk",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "GitHub intentionally does not expose secrets to workflows triggered by pull_request events from forks to prevent secret exfiltration",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     }

@@ -60,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/cli.html#node_optionsoptions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "NODE_OPTIONS=--openssl-legacy-provider npm start"
     }
   ],
   "transition_graph": {

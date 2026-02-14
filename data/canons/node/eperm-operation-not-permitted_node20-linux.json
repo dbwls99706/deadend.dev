@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/fs.html#file-system-permissions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "ls -la or icacls on Windows"
     },
     {
       "action": "Close applications that may have the file locked (IDE, other Node processes)",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Close applications that may have the file locked (IDE, other Node processes)"
     },
     {
       "action": "On npm install errors, delete node_modules and package-lock.json, then retry",

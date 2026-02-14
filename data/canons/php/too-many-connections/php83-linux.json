@@ -30,7 +30,7 @@
       "why_fails": "Each MySQL connection consumes memory (approximately 10-20MB per thread). Setting max_connections extremely high without increasing available RAM causes MySQL to run out of memory and crash or trigger the OOM killer. This trades a connection limit error for a far worse total database outage. The underlying connection leak or mismanagement remains unfixed.",
       "fail_rate": 0.78,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If connections are leaking, retrying just adds more connections to the pool. Each retry attempt from each PHP process compounds the problem. Under load, retry storms accelerate exhaustion rather than relieving it. The application stalls while sleeping, degrading user experience without solving the root cause.",
       "fail_rate": 0.82,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.pdo.php"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Persistent connections survive between requests and are reused per PHP-FPM worker. However, if the worker pool size exceeds max_connections, the same exhaustion occurs. Persistent connections also retain transaction state, lock state, and session variables from previous requests, causing subtle data corruption or deadlocks. Without careful pool sizing this makes the problem worse.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     }

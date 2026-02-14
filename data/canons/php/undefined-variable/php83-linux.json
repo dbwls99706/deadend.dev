@@ -30,7 +30,7 @@
       "why_fails": "Hiding the warning does not fix the underlying bug. The variable is still undefined and will evaluate to null, potentially causing logic errors, null pointer exceptions downstream, or data corruption.",
       "fail_rate": 0.82,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/language.variables.basics.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "extract() creates variables from array keys which is unpredictable and can overwrite existing variables. It makes code harder to trace and introduces security risks when used with user input.",
       "fail_rate": 0.73,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/language.variables.basics.php"
       ],
       "condition": ""
     }

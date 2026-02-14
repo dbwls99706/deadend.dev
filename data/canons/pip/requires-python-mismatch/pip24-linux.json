@@ -30,7 +30,7 @@
       "why_fails": "The package may use syntax or stdlib features not available in the current Python version, causing runtime errors",
       "fail_rate": 0.55,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Does not fix actual incompatibilities in the code; may cause subtle runtime bugs",
       "fail_rate": 0.65,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     }

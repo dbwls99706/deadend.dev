@@ -60,7 +60,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Next.js rewrites, Vite proxy, or CRA proxy"
     },
     {
       "action": "For APIs you don't control, use a server-side proxy to make the request",
@@ -68,7 +69,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "For APIs you don't control, use a server-side proxy to make the request"
     }
   ],
   "transition_graph": {

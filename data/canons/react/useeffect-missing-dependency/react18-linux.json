@@ -51,7 +51,8 @@
       "sources": [
         "https://react.dev/reference/react/useMemo"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Memoize object/array deps with useMemo, or move them inside useEffect"
     },
     {
       "action": "Extract the function used in useEffect to useCallback if it's a dep",
@@ -59,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/react/useCallback"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Extract the function used in useEffect to useCallback if it's a dep"
     }
   ],
   "transition_graph": {

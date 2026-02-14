@@ -43,7 +43,7 @@
         "https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors"
       ],
       "condition": "",
-      "how": "kubectl get ep"
+      "how": "kubectl get ep <service>"
     },
     {
       "action": "Check pod readiness — unready pods are removed from endpoints",
@@ -60,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify service port matches container port (not just pod port)"
     }
   ],
   "transition_graph": {

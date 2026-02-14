@@ -30,7 +30,7 @@
       "why_fails": "If the workspace does not exist in the backend, manually setting the file creates an invalid state",
       "fail_rate": 0.8,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/backend"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "References to terraform.workspace assume the workspace exists; plan fails if it does not",
       "fail_rate": 0.75,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/cli/commands/plan"
       ],
       "condition": ""
     }

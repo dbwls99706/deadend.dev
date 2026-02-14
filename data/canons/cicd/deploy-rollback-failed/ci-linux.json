@@ -39,7 +39,7 @@
       "why_fails": "If the deployment artifact is faulty, redeploying it will fail the same way; this wastes time during an incident",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow"
       ],
       "condition": ""
     }

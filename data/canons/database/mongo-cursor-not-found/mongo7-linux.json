@@ -30,7 +30,7 @@
       "why_fails": "noCursorTimeout cursors are never automatically closed. If the application crashes or forgets to close the cursor, it leaks server resources (memory and open cursors). Over time, this can exhaust the server's cursor capacity and degrade performance for all clients.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "cursorTimeoutMillis is a server-wide setting. Setting it very high affects all cursors and increases the risk of resource leaks from abandoned cursors. It also does not help with cursors lost during replica set elections.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT"
       ],
       "condition": ""
     }

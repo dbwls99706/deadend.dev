@@ -30,7 +30,7 @@
       "why_fails": "Exposes all images to anyone; security risk",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/registry/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Credentials are baked into the image layer and visible to anyone",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/reference/dockerfile/"
       ],
       "condition": ""
     }

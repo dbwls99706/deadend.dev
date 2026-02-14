@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/codecs.html#standard-encodings"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check Python's list of standard encodings for the correct name"
     }
   ],
   "transition_graph": {

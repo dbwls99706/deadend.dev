@@ -30,7 +30,7 @@
       "why_fails": "Restarting all nodes at once causes a full cluster outage and can lead to data loss if nodes have unsaved data. Cluster state recovery depends on node gossip, and a full restart can cause split-brain if nodes come up at different times with stale cluster state.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://redis.io/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "With cluster-require-full-coverage no, the cluster accepts commands for available slots but returns errors for keys in unavailable slots. This causes partial failures that are difficult for applications to handle correctly. It masks the real problem (missing slots) instead of fixing it.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://redis.io/docs/"
       ],
       "condition": ""
     }

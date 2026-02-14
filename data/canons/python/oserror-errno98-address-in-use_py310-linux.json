@@ -30,7 +30,7 @@
       "why_fails": "May kill a critical service",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.python.org/3/library/exceptions.html"
+        "https://docs.python.org/3/library/exceptions.html#OSError"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Masks the problem if the old process is still running and handling connections",
       "fail_rate": 0.4,
       "sources": [
-        "https://docs.python.org/3/library/exceptions.html"
+        "https://docs.python.org/3/library/exceptions.html#OSError"
       ],
       "condition": ""
     }

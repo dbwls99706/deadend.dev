@@ -30,7 +30,7 @@
       "why_fails": "Device-side asserts are sticky; error persists until GPU context is reset",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#assertion"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "GPU is in an error state; all subsequent CUDA operations will fail",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#assertion"
       ],
       "condition": ""
     }

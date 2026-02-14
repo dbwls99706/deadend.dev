@@ -43,7 +43,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_cache/"
       ],
       "condition": "",
-      "how": "pip cache purge"
+      "how": "Clear pip cache: pip cache purge"
     },
     {
       "action": "Set TMPDIR to a volume with more space: export TMPDIR=/path/with/space",
@@ -60,7 +60,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_cache/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "remove old virtualenvs, Docker images, or old log files"
     }
   ],
   "transition_graph": {

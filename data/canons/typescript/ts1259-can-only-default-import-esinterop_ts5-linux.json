@@ -30,7 +30,7 @@
       "why_fails": "Bypasses TypeScript module checking; loses type information",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Works but makes all usage look like X.default; awkward API",
       "fail_rate": 0.45,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": ""
     }

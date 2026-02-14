@@ -30,7 +30,7 @@
       "why_fails": "Switches the entire project back to CJS; breaks ES imports",
       "fail_rate": 0.7,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/modules.html#loading-from-node_modules-folders"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Mixing module systems causes more problems",
       "fail_rate": 0.65,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/modules.html#loading-from-node_modules-folders"
       ],
       "condition": ""
     }

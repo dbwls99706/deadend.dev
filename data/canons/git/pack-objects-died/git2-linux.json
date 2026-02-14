@@ -39,7 +39,7 @@
       "why_fails": "The same memory pressure causes the OOM killer to terminate pack-objects again each time",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-push"
       ],
       "condition": ""
     }

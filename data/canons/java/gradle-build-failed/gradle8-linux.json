@@ -30,7 +30,7 @@
       "why_fails": "Gradle builds are deterministic for the same inputs. If the build fails due to a code or configuration error, cleaning and rebuilding will produce the exact same failure. Repeated clean builds only waste time and can mask intermittent failures (which would indicate a different problem like flaky tests).",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.gradle.org/current/userguide/userguide.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deleting Gradle caches forces re-download of all dependencies and re-computation of all task outputs. This is slow and rarely fixes the underlying issue. Build failures are caused by code errors, misconfiguration, or incompatible dependencies — not by cache corruption.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.gradle.org/current/userguide/userguide.html"
       ],
       "condition": ""
     }

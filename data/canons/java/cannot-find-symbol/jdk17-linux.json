@@ -30,7 +30,7 @@
       "why_fails": "The symbol is genuinely missing from the compilation classpath. Casting to Object does not make a nonexistent class or method available and will cause ClassCastException or further errors at runtime.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassCastException.html"
       ],
       "condition": ""
     },

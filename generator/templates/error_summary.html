@@ -33,7 +33,7 @@
     "itemListElement": [
       {"@type": "ListItem", "position": 1, "name": "deadends.dev", "item": "{{ base_url }}"},
       {"@type": "ListItem", "position": 2, "name": "{{ domain | display_name }}", "item": "{{ base_url }}/{{ domain }}/"},
-      {"@type": "ListItem", "position": 3, "name": "{{ signature }}"}
+      {"@type": "ListItem", "position": 3, "name": "{{ signature | json_escape }}"}
     ]
   }
   </script>

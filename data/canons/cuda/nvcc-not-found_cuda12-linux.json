@@ -30,7 +30,7 @@
       "why_fails": "The driver enables GPU compute but doesn't include nvcc or development tools",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     },

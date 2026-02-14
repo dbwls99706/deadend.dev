@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/reference/executionmodel.html#naming-and-binding"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for typos and ensure variable is assigned in all code paths"
     },
     {
       "action": "Move import or assignment before first use; check conditional branches all assign",
@@ -60,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/tutorial/controlflow.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Move import or assignment before first use; check conditional branches all assign"
     }
   ],
   "transition_graph": {

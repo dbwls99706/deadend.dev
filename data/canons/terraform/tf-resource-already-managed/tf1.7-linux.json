@@ -30,7 +30,7 @@
       "why_fails": "This creates a duplicate state entry for the same cloud resource, causing conflicts on apply",
       "fail_rate": 0.85,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deleting state makes Terraform unaware of all managed resources, potentially causing recreation of everything",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

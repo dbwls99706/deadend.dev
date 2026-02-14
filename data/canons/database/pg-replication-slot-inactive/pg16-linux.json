@@ -30,7 +30,7 @@
       "why_fails": "Manually removing WAL files corrupts the replication stream and can make the database unrecoverable. PostgreSQL manages WAL files internally and requires them for crash recovery and replication. The slot will still retain its position, so new WAL segments will continue to accumulate.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "max_slot_wal_keep_size caps WAL retention per slot, but when the limit is reached, the slot becomes invalidated and the subscriber must be re-initialized from scratch. This does not fix the root cause of why the slot consumer is not keeping up.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     }

@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/pathlib.html#pathlib.Path.exists"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check path existence before access with Path.exists()"
     }
   ],
   "transition_graph": {

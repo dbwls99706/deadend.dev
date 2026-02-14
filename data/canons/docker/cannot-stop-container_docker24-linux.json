@@ -30,7 +30,7 @@
       "why_fails": "May leave Docker's state inconsistent; container appears running",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/engine/install/linux-postinstall/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disruptive to all running containers and services",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/engine/install/linux-postinstall/"
       ],
       "condition": ""
     }

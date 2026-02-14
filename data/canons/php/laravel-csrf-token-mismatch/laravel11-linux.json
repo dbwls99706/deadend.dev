@@ -30,7 +30,7 @@
       "why_fails": "Removing CSRF protection exposes the application to cross-site request forgery attacks. Any malicious website can then submit forms on behalf of authenticated users, leading to unauthorized actions like data modification or account takeover.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Excluding all routes from CSRF protection is equivalent to disabling it entirely. This provides no security benefit and leaves the application vulnerable. Only API routes with token-based auth should be excluded.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

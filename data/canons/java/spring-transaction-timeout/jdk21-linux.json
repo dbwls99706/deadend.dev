@@ -30,7 +30,7 @@
       "why_fails": "Very large timeouts mask performance problems and can hold database locks for extended periods, causing cascading failures for other transactions. A long-running transaction also consumes database connection pool resources, potentially exhausting the pool for other requests.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Class-level @Transactional applies to all public methods. Setting a long timeout at the class level to fix one slow method gives every method an unnecessarily long timeout, masking performance issues in the fast methods. Each method should have an appropriate timeout.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     }

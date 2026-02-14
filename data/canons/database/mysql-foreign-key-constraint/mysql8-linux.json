@@ -30,7 +30,7 @@
       "why_fails": "SET GLOBAL FOREIGN_KEY_CHECKS = 0 disables referential integrity for all sessions, allowing orphaned rows and data corruption. This defeats the purpose of foreign keys and creates data quality issues that are extremely difficult to clean up later.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Removing the constraint allows the immediate insert but permanently removes referential integrity protection. Future inserts can create orphaned records. Re-adding the constraint later will fail if orphaned data already exists.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK"
       ],
       "condition": ""
     }

@@ -70,7 +70,8 @@
       "sources": [
         "https://docs.python.org/3/using/windows.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "On Windows, install Visual C++ Redistributable"
     }
   ],
   "transition_graph": {

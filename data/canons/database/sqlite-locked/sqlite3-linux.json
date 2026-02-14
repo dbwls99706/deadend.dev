@@ -30,7 +30,7 @@
       "why_fails": "SQLite's single-writer architecture fundamentally cannot handle concurrent writes from multiple processes. No configuration change can overcome this limitation. This is a design constraint, not a bug.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "SQLite's locking mechanism relies on POSIX file locks which do not work correctly on many network filesystems. This leads to database corruption and persistent locking errors that cannot be fixed by retry logic.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.sqlite.org/docs.html"
       ],
       "condition": ""
     }

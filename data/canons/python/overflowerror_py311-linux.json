@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use Python's arbitrary precision int instead of numpy int64 for large numbers"
     },
     {
       "action": "For numpy, use dtype=object or dtype=np.int64 explicitly and check bounds",
@@ -60,7 +61,8 @@
       "sources": [
         "https://numpy.org/doc/stable/reference/arrays.scalars.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "For numpy, use dtype=object or dtype=np.int64 explicitly and check bounds"
     }
   ],
   "transition_graph": {

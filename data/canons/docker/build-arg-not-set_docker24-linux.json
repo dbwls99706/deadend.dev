@@ -30,7 +30,7 @@
       "why_fails": "The build arg isn't being used; the feature it should configure isn't applied",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/build/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "ENV is baked into the image at runtime; different semantics from build-time ARG",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/build/"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "The error occurs because two versions of the same library disagree on a method signature. Writing your own version of the method does not fix the root cause — the wrong version of the library is on the classpath. The caller expects the method to be in the specific library class, not in your code.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NoSuchMethodError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Using reflection to work around NoSuchMethodError is fragile and only masks the version conflict. It adds complexity, bypasses compile-time type checking, and does not solve the underlying dependency conflict that will cause other issues elsewhere.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NoSuchMethodError.html"
       ],
       "condition": ""
     }

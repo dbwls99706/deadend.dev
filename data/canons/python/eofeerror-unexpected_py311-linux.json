@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/sys.html#sys.stdin"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "for line in sys.stdin:"
     }
   ],
   "transition_graph": {

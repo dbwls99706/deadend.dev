@@ -30,7 +30,7 @@
       "why_fails": "Cone mode expects directory-based patterns; arbitrary gitignore-style patterns are silently ignored or cause errors",
       "fail_rate": 0.8,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-checkout"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This is the old sparse-checkout mechanism and conflicts with the new sparse-checkout command; it can leave the working tree in an inconsistent state",
       "fail_rate": 0.7,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-checkout"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "May orphan container networking; containers lose connectivity",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/network/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disruptive to all running containers",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/network/"
       ],
       "condition": ""
     }

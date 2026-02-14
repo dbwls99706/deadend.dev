@@ -30,7 +30,7 @@
       "why_fails": "Skipping binlog events causes the replica to diverge from the primary. Skipped writes mean data exists on the primary but not the replica. Accumulated divergence can cause increasingly frequent errors and makes the replica unreliable for reads or failover. Each skip makes the problem worse.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "slave_skip_errors=1062 silently skips all duplicate key errors during replication. While this keeps replication running, it hides data inconsistencies. The replica silently diverges from the primary, making it unsafe for failover or read scaling. When promoted to primary, missing or stale data causes application errors.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     }

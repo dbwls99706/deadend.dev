@@ -30,7 +30,7 @@
       "why_fails": "Stack overflow will crash Python with a segfault instead of a clean RecursionError",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.python.org/3/library/exceptions.html"
+        "https://docs.python.org/3/library/exceptions.html#RecursionError"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Only helps if there are overlapping subproblems; doesn't fix infinite recursion",
       "fail_rate": 0.45,
       "sources": [
-        "https://docs.python.org/3/library/exceptions.html"
+        "https://docs.python.org/3/library/exceptions.html#RecursionError"
       ],
       "condition": ""
     }

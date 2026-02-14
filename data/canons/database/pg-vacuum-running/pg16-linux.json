@@ -30,7 +30,7 @@
       "why_fails": "Disabling autovacuum accelerates the wraparound problem. Without vacuuming, dead tuples accumulate, table bloat grows, and the database will eventually enter single-user mode or refuse to accept writes to prevent transaction ID wraparound.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "VACUUM FULL acquires an ACCESS EXCLUSIVE lock, blocking all reads and writes on the table for the entire duration. On large tables this can take hours, causing a full outage. Regular VACUUM (without FULL) is sufficient for wraparound prevention and allows concurrent access.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

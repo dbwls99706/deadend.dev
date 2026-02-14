@@ -30,7 +30,7 @@
       "why_fails": "This is a temporary hack that creates far worse problems: log timestamps become invalid, cron jobs misfire, Kerberos auth breaks, and the certificate will still appear expired to remote clients performing their own time validation.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "While this suppresses the error, it completely defeats the purpose of TLS by allowing man-in-the-middle attacks. It also masks other certificate issues and creates a security vulnerability that is easy to forget to revert.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Older OpenSSL versions have known security vulnerabilities (e.g., Heartbleed). The expired certificate is still expired regardless of client version, and modern servers may reject connections from outdated TLS implementations.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "This property was added as a migration aid for Spring Boot 3.x. Enabling it masks a design problem. Circular dependencies make the initialization order undefined, can cause partially initialized beans to be injected, and make the application fragile and hard to test.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "@Lazy creates a proxy that defers initialization, breaking the cycle at startup. However, the circular dependency still exists in the design. The lazy proxy can cause unexpected behavior: the real bean is created on first access, which can happen at unpredictable times, potentially causing threading issues or startup order problems.",
       "fail_rate": 0.45,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     }

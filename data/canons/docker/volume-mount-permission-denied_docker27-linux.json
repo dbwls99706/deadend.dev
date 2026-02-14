@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.docker.com/reference/dockerfile/#user"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "RUN chown -R appuser:appgroup /app"
     },
     {
       "action": "Use named volumes instead of bind mounts for data that doesn't need host access",
@@ -68,7 +69,8 @@
       "sources": [
         "https://docs.docker.com/engine/storage/volumes/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use named volumes instead of bind mounts for data that doesn't need host access"
     }
   ],
   "transition_graph": {

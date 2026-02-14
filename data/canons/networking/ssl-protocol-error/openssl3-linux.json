@@ -30,7 +30,7 @@
       "why_fails": "SSL 3.0 is vulnerable to POODLE and TLS 1.0 to BEAST. Most modern servers disable these protocols entirely, so forcing them will result in the same handshake failure or a different error. OpenSSL 3.x has removed SSL 3.0 support by default.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Setting cipher strings to ALL or COMPLEMENTOFALL enables insecure ciphers that servers may still reject. OpenSSL 3.x has deprecated many legacy ciphers, and enabling them requires loading the legacy provider which introduces security risks.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl.1ssl.html"
       ],
       "condition": ""
     }

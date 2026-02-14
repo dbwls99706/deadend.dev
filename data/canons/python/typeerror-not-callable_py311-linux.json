@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/reference/expressions.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "f(x)(y) might need f(x) * (y)"
     }
   ],
   "transition_graph": {

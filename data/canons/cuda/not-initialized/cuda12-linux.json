@@ -33,7 +33,7 @@
       "why_fails": "The issue is at the driver/hardware level, not in the ML framework. Reinstalling frameworks does not fix driver or permission issues.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     },
@@ -42,7 +42,7 @@
       "why_fails": "CUDA_HOME is for compile-time toolkit location; it does not affect runtime initialization or driver loading",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     }

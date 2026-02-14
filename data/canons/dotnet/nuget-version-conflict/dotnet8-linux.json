@@ -30,7 +30,7 @@
       "why_fails": "Creates a maintenance burden where every package update requires manual version adjustment of all transitive dependencies. Version pins often conflict with the ranges required by direct dependencies, making future updates nearly impossible",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/nuget/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Assembly binding redirects are a .NET Framework concept. .NET 8 uses a different dependency resolution mechanism; adding binding redirects to modern .NET projects has no effect and adds confusion",
       "fail_rate": 0.9,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/nuget/"
       ],
       "condition": ""
     }

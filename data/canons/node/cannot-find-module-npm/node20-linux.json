@@ -60,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/modules.html#all-together"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the module name for typos in require/import statement"
     }
   ],
   "transition_graph": {

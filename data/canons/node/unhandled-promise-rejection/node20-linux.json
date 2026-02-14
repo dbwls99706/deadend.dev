@@ -60,7 +60,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use Promise.allSettled() for parallel promises that may individually fail"
     }
   ],
   "transition_graph": {

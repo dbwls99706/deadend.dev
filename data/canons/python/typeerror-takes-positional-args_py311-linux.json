@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/functions.html#staticmethod"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If decorator issue, check @staticmethod vs @classmethod vs regular method"
     }
   ],
   "transition_graph": {

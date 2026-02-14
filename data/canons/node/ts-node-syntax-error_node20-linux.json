@@ -42,7 +42,8 @@
       "sources": [
         "https://typestrong.org/ts-node/docs/imports#native-ecmascript-modules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "ts-node --esm script.ts"
     },
     {
       "action": "Set 'module': 'nodenext' and 'moduleResolution': 'nodenext' in tsconfig.json",
@@ -50,7 +51,8 @@
       "sources": [
         "https://typestrong.org/ts-node/docs/imports"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "'nodenext' and 'moduleResolution': 'nodenext' in tsconfig.json"
     },
     {
       "action": "Consider tsx as a drop-in replacement: npx tsx script.ts (faster, less config)",

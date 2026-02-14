@@ -63,7 +63,8 @@
       "sources": [
         "https://pytorch.org/docs/stable/backends.html#torch.backends.cudnn"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use torch.backends.cudnn.benchmark = True after fixing version match"
     }
   ],
   "transition_graph": {

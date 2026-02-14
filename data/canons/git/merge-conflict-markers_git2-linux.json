@@ -30,7 +30,7 @@
       "why_fails": "Discards one side's changes entirely without reviewing",
       "fail_rate": 0.75,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-merge"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Loses git history; may miss important changes from either side",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-merge"
       ],
       "condition": ""
     }

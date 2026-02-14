@@ -60,7 +60,8 @@
       "sources": [
         "https://go.dev/ref/spec#Type_assertions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "if iface != nil { ... }"
     }
   ],
   "transition_graph": {

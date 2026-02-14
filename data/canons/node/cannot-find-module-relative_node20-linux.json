@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/modules.html#file-modules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "./Utils.js != ./utils.js"
     },
     {
       "action": "For TypeScript/ESM, you may need the extension: import './file.js' (not .ts)",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/esm.html#mandatory-file-extensions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "import './file.js' (not .ts)"
     },
     {
       "action": "Verify the file exists at the path relative to the importing file",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nodejs.org/api/modules.html#file-modules"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify the file exists at the path relative to the importing file"
     }
   ],
   "transition_graph": {

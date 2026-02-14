@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "use IAM role (no credentials needed)"
     }
   ],
   "transition_graph": {

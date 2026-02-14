@@ -30,7 +30,7 @@
       "why_fails": "New nodes will have the same misconfiguration and fail to join identically",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/eks/latest/userguide/"
       ],
       "condition": ""
     },

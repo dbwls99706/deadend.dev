@@ -39,7 +39,7 @@
       "why_fails": "JSX.Element is overly restrictive — it breaks when the component returns null, a string, or a fragment. The real issue is usually a @types/react version mismatch between dependencies, not the return type annotation.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/tsconfig/#strict"
       ],
       "common_misconception": "The return type is the problem, when the real issue is that two @types/react versions define incompatible JSX.Element types."
     },

@@ -30,7 +30,7 @@
       "why_fails": "Disables SSL verification which is a security risk; does not fix the underlying certificate issue",
       "fail_rate": 0.4,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Older pip versions have security vulnerabilities; SSL strictness is intentional",
       "fail_rate": 0.75,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     }

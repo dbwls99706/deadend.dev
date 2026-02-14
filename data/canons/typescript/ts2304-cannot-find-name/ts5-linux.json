@@ -60,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/tsconfig#include"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check tsconfig include/exclude paths and module resolution settings"
     }
   ],
   "transition_graph": {

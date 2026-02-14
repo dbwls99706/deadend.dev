@@ -30,7 +30,7 @@
       "why_fails": "Autovacuum is the mechanism that prevents transaction ID wraparound. Killing autovacuum workers delays the critical vacuum process and makes the wraparound situation worse. The system will eventually reach the hard limit and refuse all commands.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This only delays when autovacuum triggers anti-wraparound vacuum, but does not increase the total transaction ID space (2 billion). With a higher threshold, when vacuum finally runs, it has more work to do and takes longer. If it cannot complete before the hard limit, the database shuts down.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

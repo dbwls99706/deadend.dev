@@ -42,7 +42,8 @@
       "sources": [
         "https://nodejs.org/api/esm.html#import-expressions"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "const mod = await import('module')"
     },
     {
       "action": "Convert calling code to ESM with 'type': 'module' in package.json",
@@ -50,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/packages.html#type"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "'module' in package.json"
     }
   ],
   "transition_graph": {

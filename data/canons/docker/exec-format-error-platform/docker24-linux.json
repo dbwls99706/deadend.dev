@@ -48,7 +48,7 @@
       "why_fails": "This is a permissions fix. The error is about ELF binary architecture mismatch, not file permissions. The binary is executable, just not for this CPU instruction set.",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/engine/install/linux-postinstall/"
       ],
       "common_misconception": "'exec format error' is confused with permission denied errors."
     },

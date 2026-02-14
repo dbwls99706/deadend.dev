@@ -55,7 +55,8 @@
       "sources": [
         "https://docs.nvidia.com/deeplearning/cudnn/latest/reference/support-matrix.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "check the compatibility matrix"
     },
     {
       "action": "Use conda install which handles CUDA/cuDNN version matching automatically",

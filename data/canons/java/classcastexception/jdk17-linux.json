@@ -30,7 +30,7 @@
       "why_fails": "The @SuppressWarnings annotation only hides the compiler warning; it does not make the cast safe. The ClassCastException will still occur at runtime. Suppressing warnings without verification masks the exact problem that needs to be fixed.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassCastException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Cascading instanceof checks are brittle and violate the open-closed principle. When new types are added, the checks must be updated everywhere. This approach indicates a design problem — typically a missing interface, improper use of generics, or a need for the visitor pattern.",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassCastException.html"
       ],
       "condition": ""
     }

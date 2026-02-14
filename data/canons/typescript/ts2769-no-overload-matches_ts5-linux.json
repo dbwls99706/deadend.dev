@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Read each overload signature in the error — match your args to one of them"
     },
     {
       "action": "Check for subtle type differences: string vs String, number vs bigint",
@@ -59,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "string vs String, number vs bigint"
     },
     {
       "action": "Common with event handlers: use the specific event type, not generic Event",

@@ -52,7 +52,7 @@
         "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/"
       ],
       "condition": "",
-      "how": "kubectl apply -f"
+      "how": "kubectl apply -f <crd-definition>.yaml"
     },
     {
       "action": "Check if the operator/controller is installed that manages this CRD",

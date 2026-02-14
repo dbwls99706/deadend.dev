@@ -30,7 +30,7 @@
       "why_fails": "Secrets end up in the image layer history or version control, creating a security vulnerability",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/reference/dockerfile/"
       ],
       "condition": ""
     },

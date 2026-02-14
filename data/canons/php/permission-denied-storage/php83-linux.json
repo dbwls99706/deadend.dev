@@ -30,7 +30,7 @@
       "why_fails": "chmod 777 makes all files world-readable, writable, and executable, creating a severe security vulnerability. Any user on the system can read configuration files with database credentials and modify application code. This is a critical security anti-pattern.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Running PHP-FPM or Apache as root means any vulnerability in the application gives the attacker full system access. If the application is compromised, the attacker can read/modify any file on the system, install backdoors, or pivot to other services.",
       "fail_rate": 0.92,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

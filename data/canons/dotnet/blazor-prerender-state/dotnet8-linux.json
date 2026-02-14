@@ -30,7 +30,7 @@
       "why_fails": "The component renders without the JS-dependent state, causing visual flicker, missing data, or broken UI on initial load. The catch block masks a real architectural issue and the component's first render will always be incomplete, creating a poor user experience and potential hydration mismatches",
       "fail_rate": 0.8,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "NavigationManager is available during prerendering and does not reliably indicate the render phase. Skipping all initialization during prerender means the server-rendered HTML has no meaningful content, defeating the purpose of SSR for SEO and first-paint performance. The component renders as empty on the server",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "The constructor runs even earlier than OnInitialized and the DI-injected IJSRuntime is not yet available or is in the same prerender context. This typically results in a NullReferenceException or the same InvalidOperationException, now thrown from the constructor which is harder to debug",
       "fail_rate": 0.95,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     }

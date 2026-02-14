@@ -63,7 +63,8 @@
       "sources": [
         "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for index out of bounds in custom CUDA kernels or wrong tensor shapes"
     }
   ],
   "transition_graph": {

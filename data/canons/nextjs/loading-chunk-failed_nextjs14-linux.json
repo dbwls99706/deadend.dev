@@ -51,7 +51,8 @@
       "sources": [
         "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add error boundary that triggers window.location.reload() on ChunkLoadError"
     },
     {
       "action": "Use content-addressed filenames (default in Next.js) so old chunks remain available",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/deploying"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use content-addressed filenames (default in Next.js) so old chunks remain available"
     },
     {
       "action": "Keep old build assets for a grace period during deployments",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/deploying"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Keep old build assets for a grace period during deployments"
     }
   ],
   "transition_graph": {

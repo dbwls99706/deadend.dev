@@ -30,7 +30,7 @@
       "why_fails": "Defensive null checks mask the real bug. The null value often indicates a missing initialization, incorrect dependency injection, or a logic error upstream. Scattering null checks treats the symptom, not the disease, and leads to bloated, hard-to-maintain code.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Swallowing NullPointerException hides bugs. The program continues in an invalid state, causing data corruption or delayed failures that are much harder to diagnose later.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Returning null just moves the NullPointerException to a different call site. It propagates the null further through the codebase, making it harder to trace the origin of the problem.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"
       ],
       "condition": ""
     }

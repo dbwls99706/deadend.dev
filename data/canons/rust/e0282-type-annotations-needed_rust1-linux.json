@@ -51,7 +51,8 @@
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0282.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "let x: Vec<i32> = vec![];"
     },
     {
       "action": "Use turbofish syntax: iter.collect::<Vec<_>>()",
@@ -59,7 +60,8 @@
       "sources": [
         "https://doc.rust-lang.org/reference/expressions/method-call-expr.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "iter.collect::<Vec<_>>()"
     },
     {
       "action": "Provide type through usage context: the compiler can sometimes infer from how the value is used",
@@ -67,7 +69,8 @@
       "sources": [
         "https://doc.rust-lang.org/book/ch03-02-data-types.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "the compiler can sometimes infer from how the value is used"
     }
   ],
   "transition_graph": {

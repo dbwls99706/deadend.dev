@@ -30,7 +30,7 @@
       "why_fails": "gc cannot recreate missing objects; it may actually make things worse by removing dangling objects that could help with recovery",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-fsck"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Broken links can cascade during merge/rebase operations, leading to data loss when git tries to read the missing objects",
       "fail_rate": 0.7,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-rebase"
       ],
       "condition": ""
     }

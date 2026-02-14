@@ -60,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/tls.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "HTTPS_PROXY env var"
     }
   ],
   "transition_graph": {

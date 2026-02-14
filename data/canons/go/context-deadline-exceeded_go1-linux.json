@@ -60,7 +60,8 @@
       "sources": [
         "https://pkg.go.dev/context"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "check DB queries, network latency, etc"
     },
     {
       "action": "Add retry logic for transient timeouts",
@@ -68,7 +69,8 @@
       "sources": [
         "https://pkg.go.dev/context"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add retry logic for transient timeouts"
     }
   ],
   "transition_graph": {

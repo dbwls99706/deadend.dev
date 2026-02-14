@@ -30,7 +30,7 @@
       "why_fails": "Collections.synchronizedList() only synchronizes individual method calls. Iteration requires holding the lock for the entire duration of the loop. Without a synchronized block around the entire iteration, another thread can modify the list between hasNext() and next() calls.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ConcurrentModificationException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The enhanced for-each loop uses an iterator internally. Calling collection.remove() modifies the collection's modCount without updating the iterator's expectedModCount, which triggers the ConcurrentModificationException on the next iterator operation.",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ConcurrentModificationException.html"
       ],
       "condition": ""
     }

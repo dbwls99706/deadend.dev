@@ -30,7 +30,7 @@
       "why_fails": "Image pull errors are network or permission issues, not resource limits",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Service restart re-launches the same task definition; configuration errors persist",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html"
       ],
       "condition": ""
     }

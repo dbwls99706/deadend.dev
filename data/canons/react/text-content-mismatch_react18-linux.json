@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/react-dom/client/hydrateRoot"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use suppressHydrationWarning only on the specific element with dynamic content"
     },
     {
       "action": "Ensure server and client use the same data — pass SSR data via props, not new fetches",
@@ -68,7 +69,8 @@
       "sources": [
         "https://react.dev/reference/react-dom/server"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Ensure server and client use the same data — pass SSR data via props, not new fetches"
     }
   ],
   "transition_graph": {

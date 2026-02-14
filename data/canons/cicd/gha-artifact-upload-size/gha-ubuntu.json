@@ -30,7 +30,7 @@
       "why_fails": "The 10 GB per-artifact limit is a hard GitHub platform limit that cannot be changed through any settings. There is no configuration option to raise it.",
       "fail_rate": 0.99,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Each individual upload-artifact call still has the 10 GB limit, and the overall repository storage quota (500 MB for free, up to 50 GB for enterprise) still applies to the sum of all artifacts. Splitting does not address the root cause of excessive artifact size.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "If the contents are already compressed binaries, media files, or caches, tar/gzip yields minimal size reduction. Without excluding unnecessary files first, the archive will still exceed the limit.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/storing-and-sharing-data-from-a-workflow"
       ],
       "condition": "When artifact contents are already compressed binaries or media"
     }

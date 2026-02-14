@@ -30,7 +30,7 @@
       "why_fails": "Connection refused is an immediate, active rejection (RST packet), not a timeout. The OS immediately tells the client that nothing is listening. Increasing timeout has no effect because the error occurs instantly, not after a delay.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man2/connect.2.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "ECONNREFUSED means the target host received the SYN packet and responded with RST because no process is listening on that port. The issue is on the server side, not the network path. Changing source IP or interface does not affect what is listening on the server.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man2/connect.2.html"
       ],
       "condition": ""
     }

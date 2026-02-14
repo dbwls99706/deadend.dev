@@ -30,7 +30,7 @@
       "why_fails": "This suppresses the warning but does not fix the root cause. The header or cookie is silently not sent, leading to broken redirects, lost sessions, or missing response headers. The user experiences mysterious failures without visible errors.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If output has already been produced before the new location of session_start(), the error persists. The fix requires eliminating premature output, not moving session_start() further down. This often leads to cascading issues where session data is unavailable when needed.",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Suppressing the error hides the symptom while leaving the broken behavior intact. Headers and cookies still fail to send. Redirects break silently, sessions do not initialize, and content-type headers are missing, causing downstream failures that are much harder to debug.",
       "fail_rate": 0.92,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.session.php"
       ],
       "condition": ""
     }

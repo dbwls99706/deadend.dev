@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.docker.com/reference/compose-file/services/#env_file"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "cp .env.example .env"
     },
     {
       "action": "Make env_file optional with required: false (Compose V2)",

@@ -30,7 +30,7 @@
       "why_fails": "deadlock_timeout only controls how long PostgreSQL waits before checking for deadlocks. Increasing it delays detection but does not prevent deadlocks. The deadlock still occurs; it just takes longer to report.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-DEADLOCKS"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Without addressing the root cause (inconsistent lock ordering), retries will frequently deadlock again, creating a retry storm that makes the problem worse under load.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

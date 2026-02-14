@@ -30,7 +30,7 @@
       "why_fails": "Manually instantiating a Spring-managed class bypasses dependency injection entirely. The new instance will not have its @Autowired fields injected, @Transactional proxies will not be created, and AOP aspects will not apply. This creates a partially initialized object that fails in subtle ways.",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Spring only scans packages explicitly listed in @ComponentScan or sub-packages of the @SpringBootApplication class. Adding @Component to a class outside the scan path has no effect — Spring never sees the annotation.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     }

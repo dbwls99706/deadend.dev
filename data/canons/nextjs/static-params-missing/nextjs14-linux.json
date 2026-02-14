@@ -30,7 +30,7 @@
       "why_fails": "While this avoids the dynamic route requirement, static exports cannot access query parameters at build time. Pages using useSearchParams() in static export mode will render with empty parameters during the build, producing incorrect or empty pre-rendered pages. This fundamentally breaks the static generation model and produces non-functional pages",
       "fail_rate": 0.85,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Static export mode (output: 'export') does not support dynamic rendering at runtime. There is no server to handle requests for paths not generated at build time. Setting dynamicParams = true or dynamic = 'force-dynamic' is incompatible with output: 'export' and will produce a build error stating that dynamic server usage cannot be statically exported",
       "fail_rate": 0.95,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "Returning an empty array means no pages are generated for that dynamic route. All URLs matching the pattern (e.g., /blog/any-slug) will result in 404 errors in the exported site. This technically satisfies the build requirement but produces a broken site with no actual dynamic content pages",
       "fail_rate": 0.9,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
       ],
       "condition": "Unless you intentionally want no pages for that route"
     }

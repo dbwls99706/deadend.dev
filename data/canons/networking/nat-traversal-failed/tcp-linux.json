@@ -30,7 +30,7 @@
       "why_fails": "Symmetric NAT allocates a new external port for each unique destination. The port discovered via STUN will not be the port used for the peer connection, so hole punching systematically fails regardless of retry count.",
       "fail_rate": 0.9,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": "When symmetric NAT is on both sides"
     },
@@ -39,7 +39,7 @@
       "why_fails": "Most enterprise and carrier-grade NATs disable UPnP for security. Even consumer routers may have UPnP disabled by default in recent firmware. UPnP also only works for the first NAT layer in double-NAT scenarios.",
       "fail_rate": 0.65,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

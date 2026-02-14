@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/tsconfig/#noUnusedLocals"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Remove the unused variable or import"
     },
     {
       "action": "Prefix with underscore if intentionally unused: _unusedParam",

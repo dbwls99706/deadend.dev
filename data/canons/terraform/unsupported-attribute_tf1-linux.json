@@ -51,7 +51,8 @@
       "sources": [
         "https://registry.terraform.io/providers"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check the provider documentation for the correct attribute name"
     },
     {
       "action": "Run terraform providers schema to see all available attributes",
@@ -68,7 +69,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/providers/requirements"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check provider version — attribute may have been added/removed in a version change"
     }
   ],
   "transition_graph": {

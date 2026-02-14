@@ -51,7 +51,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Trace where the variable becomes undefined — check async timing, missing return, wrong key name"
     },
     {
       "action": "Use nullish coalescing (??) with explicit defaults at the source, not at every usage",

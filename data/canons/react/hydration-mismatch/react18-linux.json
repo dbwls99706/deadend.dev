@@ -39,7 +39,7 @@
       "why_fails": "suppressHydrationWarning only suppresses text content mismatches on a single element. It does not fix structural mismatches (different elements, different number of children). It masks the problem rather than fixing it.",
       "fail_rate": 0.7,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
       ],
       "common_misconception": "suppressHydrationWarning is a global fix for all hydration errors."
     },
@@ -48,7 +48,7 @@
       "why_fails": "Moving all rendering to useEffect means nothing renders on the server, defeating the purpose of SSR entirely. The page appears blank until JavaScript loads, hurting performance and SEO.",
       "fail_rate": 0.8,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
       ],
       "common_misconception": "SSR is optional when it is the core feature of the framework being used."
     },
@@ -57,7 +57,7 @@
       "why_fails": "Strict mode does not cause hydration errors. It double-invokes effects to catch bugs, but hydration mismatches are real rendering inconsistencies. Disabling strict mode does not fix them.",
       "fail_rate": 0.9,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
       ],
       "common_misconception": "Strict mode causes hydration errors because of double rendering."
     }

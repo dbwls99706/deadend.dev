@@ -30,7 +30,7 @@
       "why_fails": "Cached files are compressed archives with checksums; manual editing breaks integrity and pip will still reject them",
       "fail_rate": 0.95,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_cache/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Does not fix the root cause; if disk issues caused corruption, the new cache may also become corrupted",
       "fail_rate": 0.5,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_cache/"
       ],
       "condition": ""
     }

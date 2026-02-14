@@ -30,7 +30,7 @@
       "why_fails": "Writing a userland polyfill for a function that should come from a PHP extension (e.g., json_encode, curl_init) creates an incomplete and potentially buggy replacement. The extension provides optimized C-level implementation that a polyfill cannot replicate fully.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     },

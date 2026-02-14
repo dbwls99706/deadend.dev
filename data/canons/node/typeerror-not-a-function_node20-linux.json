@@ -30,7 +30,7 @@
       "why_fails": "Masks the import/API issue; fallback may not be equivalent",
       "fail_rate": 0.65,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Boilerplate; hides the root cause",
       "fail_rate": 0.7,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": ""
     }

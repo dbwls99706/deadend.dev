@@ -30,7 +30,7 @@
       "why_fails": "The limit is a hard cap, not a rate limit; more requests will all fail",
       "fail_rate": 0.95,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/"
       ],
       "condition": ""
     },

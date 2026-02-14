@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.docker.com/build/building/multi-stage/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use multi-stage builds to only copy needed files"
     }
   ],
   "transition_graph": {

@@ -42,7 +42,8 @@
       "sources": [
         "https://www.prisma.io/docs/orm/prisma-client/setup-and-configuration/generating-prisma-client"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Run npx prisma generate after any schema.prisma change"
     },
     {
       "action": "Add prisma generate to your build/postinstall script",

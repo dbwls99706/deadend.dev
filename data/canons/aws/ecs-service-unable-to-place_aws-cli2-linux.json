@@ -30,7 +30,7 @@
       "why_fails": "More tasks compete for the same insufficient resources",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Service recreates but the capacity problem remains",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/"
       ],
       "condition": ""
     }

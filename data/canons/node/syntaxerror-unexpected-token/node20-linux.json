@@ -39,7 +39,7 @@
       "why_fails": "Usually not a version issue but a code or configuration error",
       "fail_rate": 0.62,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/esm.html"
       ],
       "condition": ""
     }
@@ -51,7 +51,8 @@
       "sources": [
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check if the file is valid JSON when using JSON.parse()"
     },
     {
       "action": "Verify file extension matches the module system (.mjs for ESM, .cjs for CJS)",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/esm.html#enabling"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify file extension matches the module system (.mjs for ESM, .cjs for CJS)"
     }
   ],
   "transition_graph": {

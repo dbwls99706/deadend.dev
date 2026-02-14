@@ -60,7 +60,8 @@
       "sources": [
         "https://go.dev/blog/defer-panic-and-recover"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Close file handles, database connections, and other resources with defer"
     },
     {
       "action": "Increase ulimit as a temporary measure: ulimit -n 65536",
@@ -68,7 +69,8 @@
       "sources": [
         "https://pkg.go.dev/os#File"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "ulimit -n 65536"
     }
   ],
   "transition_graph": {

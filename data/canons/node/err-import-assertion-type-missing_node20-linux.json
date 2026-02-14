@@ -30,7 +30,7 @@
       "why_fails": "Extra build step; breaks co-located config patterns",
       "fail_rate": 0.6,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Loses ESM benefits for the whole project",
       "fail_rate": 0.7,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#class-typeerror"
       ],
       "condition": ""
     }

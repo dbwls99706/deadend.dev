@@ -39,7 +39,7 @@
       "why_fails": "Setting type: module makes ALL .js files in the project ESM. Every require() call breaks with 'require is not defined in ES module scope'. This requires a full codebase migration, not a one-line config change.",
       "fail_rate": 0.85,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#err_require_esm"
       ],
       "common_misconception": "type: module is a simple toggle that enables ESM support without affecting existing code."
     },
@@ -57,7 +57,7 @@
       "why_fails": "Transpiling node_modules is fragile, slow, and may break the dependency's internal ESM imports. Most bundlers exclude node_modules by default for good reason.",
       "fail_rate": 0.72,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#err_require_esm"
       ],
       "common_misconception": "Transpilation can undo a dependency's ESM migration."
     }

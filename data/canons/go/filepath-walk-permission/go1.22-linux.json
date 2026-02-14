@@ -30,7 +30,7 @@
       "why_fails": "Running as root is a security risk and masks the real issue — the program should handle permission errors gracefully",
       "fail_rate": 0.7,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/articles/race_detector"
       ],
       "condition": ""
     }

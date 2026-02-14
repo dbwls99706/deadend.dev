@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check if the export was renamed or moved in a package update"
     },
     {
       "action": "Use default import if the module uses export default: import X from 'mod' not { X }",
@@ -59,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "import X from 'mod' not { X }"
     },
     {
       "action": "Check @types package version matches the library version",

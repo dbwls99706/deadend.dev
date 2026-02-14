@@ -30,7 +30,7 @@
       "why_fails": "The generic function likely depends on properties from the constraint; removing it causes errors inside the function",
       "fail_rate": 0.72,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/2/generics.html"
       ],
       "condition": ""
     }

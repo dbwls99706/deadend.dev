@@ -30,7 +30,7 @@
       "why_fails": "If the event pattern is wrong, the duplicate will have the same issue; also creates management overhead",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/eventbridge/latest/userguide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the rule is disabled, no events are processed and there will be nothing in logs to find",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/eventbridge/latest/userguide/"
       ],
       "condition": ""
     }

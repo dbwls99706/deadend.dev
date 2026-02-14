@@ -30,7 +30,7 @@
       "why_fails": "max_allowed_packet must be set on both the server and the client. The effective limit is the minimum of the two values. Setting it only on the client does nothing if the server limit is lower, and vice versa.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "max_allowed_packet is allocated per connection. With many concurrent connections, setting it very high can exhaust server memory. MySQL allocates the buffer dynamically but large packets require large allocations. A more targeted approach is to set it to the actual maximum expected data size plus a small margin.",
       "fail_rate": 0.55,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     }

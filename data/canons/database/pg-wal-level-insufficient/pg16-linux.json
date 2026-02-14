@@ -30,7 +30,7 @@
       "why_fails": "wal_level is a postmaster-level parameter that requires a full PostgreSQL restart, not just a configuration reload (pg_ctl reload / SELECT pg_reload_conf()). The change is written to postgresql.auto.conf but does not take effect until restart.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/wal.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Logical replication slots can only be created on the primary. A standby inherits the primary's wal_level but cannot create logical replication slots. The primary must have wal_level = logical.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     }

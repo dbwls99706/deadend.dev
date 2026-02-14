@@ -30,7 +30,7 @@
       "why_fails": "If the server is overwhelmed or rate-limiting connections, rapid retries will make the problem worse. The server will continue resetting connections, potentially leading to IP bans or exhausting client resources with failed connections.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the reset is caused by an intermediate device (load balancer, NAT gateway) timing out idle connections, the client-side keepalive must be shorter than the intermediary's timeout. However, client-only keepalives do not help if the server or intermediary does not support or respond to them, or if the reset is caused by server crashes.",
       "fail_rate": 0.7,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/tcp.7.html"
       ],
       "condition": ""
     }

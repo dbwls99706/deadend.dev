@@ -30,7 +30,7 @@
       "why_fails": "Adding COLLATE or CONVERT to queries is a per-query workaround that prevents index usage on the converted column (causes full table scans). It must be added to every query that compares mismatched columns, creating maintenance burden and performance issues.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/indexes.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The server default only affects new tables and columns. Existing tables retain their original character set and collation. The mismatch between old and new tables persists, and the error continues for queries joining them.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://dev.mysql.com/doc/refman/8.0/en/"
       ],
       "condition": ""
     }

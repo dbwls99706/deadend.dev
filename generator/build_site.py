@@ -8,6 +8,7 @@ from pathlib import Path
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from jinja2 import Environment, FileSystemLoader
+from markupsafe import Markup
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data" / "canons"
@@ -1979,6 +1980,15 @@ def main():
     jinja_env.globals["base_path"] = BASE_PATH
     jinja_env.globals["base_url"] = BASE_URL
     jinja_env.filters["display_name"] = domain_display_name
+    def _json_escape(s: str) -> Markup:
+        """JSON-safe string for use inside JSON-LD <script> blocks.
+        Returns Markup to bypass Jinja2 autoescape (the value is already
+        properly escaped by json.dumps). Also escapes </ to prevent XSS."""
+        escaped = json.dumps(s)[1:-1]  # strip outer quotes
+        escaped = escaped.replace("</", r"<\/")  # prevent </script> breakout
+        return Markup(escaped)
+
+    jinja_env.filters["json_escape"] = _json_escape
 
     # Build pages
     print("Generating error pages...")

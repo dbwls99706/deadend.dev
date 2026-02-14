@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-ls-files"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check spelling and use git ls-files or git branch -a to verify the name"
     },
     {
       "action": "Fetch remote branches if switching to a remote branch",

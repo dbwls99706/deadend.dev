@@ -30,7 +30,7 @@
       "why_fails": "Disabling the execution time limit globally allows runaway scripts to hang indefinitely, consuming server resources. In web contexts this can exhaust all PHP-FPM workers and bring down the application.",
       "fail_rate": 0.78,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Raising the limit without understanding why the script is slow only delays the problem. As data grows, the script will exceed the new limit as well. The underlying performance issue remains unresolved.",
       "fail_rate": 0.68,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "Forcing a cast may compile, but if the types are genuinely incompatible at runtime, it will throw ClassCastException. For example, casting Object to String compiles but fails at runtime if the object is actually an Integer. The compiler error is protecting you from a runtime error.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassCastException.html"
       ],
       "condition": ""
     },

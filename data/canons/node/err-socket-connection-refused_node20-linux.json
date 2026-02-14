@@ -30,7 +30,7 @@
       "why_fails": "The server is not running; waiting longer won't help",
       "fail_rate": 0.85,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#common-system-errors"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The problem is the server, not the client",
       "fail_rate": 0.9,
       "sources": [
-        "https://nodejs.org/api/errors.html"
+        "https://nodejs.org/api/errors.html#common-system-errors"
       ],
       "condition": ""
     }

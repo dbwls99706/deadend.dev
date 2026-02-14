@@ -60,7 +60,8 @@
       "sources": [
         "https://pkg.go.dev/net#Dial"
       ],
-      "condition": ""
+      "condition": "",
+      "how": ":1] vs IPv4 127.0.0.1 — server may only listen on one"
     },
     {
       "action": "Add retry logic with backoff for services that start slowly",
@@ -68,7 +69,8 @@
       "sources": [
         "https://pkg.go.dev/net#Dial"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add retry logic with backoff for services that start slowly"
     }
   ],
   "transition_graph": {

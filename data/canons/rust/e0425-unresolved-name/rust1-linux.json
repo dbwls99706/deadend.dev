@@ -60,7 +60,8 @@
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0425.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for typos in name and verify module visibility (pub)"
     }
   ],
   "transition_graph": {

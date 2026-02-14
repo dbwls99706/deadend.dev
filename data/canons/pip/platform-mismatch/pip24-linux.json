@@ -30,7 +30,7 @@
       "why_fails": "The wheel contains compiled binaries for the original platform; renaming does not recompile them and will cause runtime crashes",
       "fail_rate": 0.9,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_wheel/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Force-reinstall does not override platform compatibility checks; pip still rejects the wheel",
       "fail_rate": 0.95,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     }

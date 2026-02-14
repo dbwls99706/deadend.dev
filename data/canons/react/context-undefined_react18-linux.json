@@ -30,7 +30,7 @@
       "why_fails": "Default value masks missing Provider; component uses stale/wrong data",
       "fail_rate": 0.55,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/useContext"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Adds null checks throughout the codebase; verbose and error-prone",
       "fail_rate": 0.6,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/useContext"
       ],
       "condition": ""
     }

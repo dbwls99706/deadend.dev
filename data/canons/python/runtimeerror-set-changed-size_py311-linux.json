@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/stdtypes.html#frozenset"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "for item in set(my_set): my_set.discard(item)"
     },
     {
       "action": "Build a new set with set comprehension instead of modifying in place",

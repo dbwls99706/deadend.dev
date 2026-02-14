@@ -30,7 +30,7 @@
       "why_fails": "Next.js performs static string replacement of process.env.NEXT_PUBLIC_* at build time using webpack DefinePlugin. Non-prefixed variables are never included in the client bundle. process.env on the client is an empty object - there is no runtime environment variable access in the browser. Even if you somehow inject process.env at runtime (e.g., via a polyfill), Next.js build optimization has already replaced the references",
       "fail_rate": 0.95,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
       ],
       "condition": ""
     },
@@ -48,7 +48,7 @@
       "why_fails": "The environment variable replacement happens at compile time during the webpack build, not at runtime. Dynamic import delays module loading but the module is still compiled with the same build-time replacements. eval('process.env.MY_VAR') will fail because process.env is not available in the browser environment. These approaches add complexity without solving the fundamental issue that server environment variables are not shipped to the client",
       "fail_rate": 0.95,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
       ],
       "condition": ""
     }

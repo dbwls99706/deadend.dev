@@ -30,7 +30,7 @@
       "why_fails": "The source file existing in the project does not mean the compiled .class file ends up in the runtime classpath. Build tool misconfiguration, missing dependency declarations, or incorrect packaging can cause the compiled class to be absent from the JAR or module path.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassNotFoundException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The class may be a compile-time-only dependency (e.g., provided scope in Maven) or an optional dependency that is not included in the deployment artifact. Class.forName() will fail at runtime even though IDE autocompletion found the class during development.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassNotFoundException.html"
       ],
       "condition": ""
     }

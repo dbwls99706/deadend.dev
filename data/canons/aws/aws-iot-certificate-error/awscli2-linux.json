@@ -30,7 +30,7 @@
       "why_fails": "Old certificates remain active and create security risk; new certs need same policy attachment",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/iot/latest/developerguide/"
       ],
       "condition": ""
     },

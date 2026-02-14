@@ -69,7 +69,8 @@
       "sources": [
         "https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check S3 Block Public Access settings if accessing from external"
     }
   ],
   "transition_graph": {

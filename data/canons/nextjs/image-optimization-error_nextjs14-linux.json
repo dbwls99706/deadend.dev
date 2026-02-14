@@ -60,7 +60,8 @@
       "sources": [
         "https://nextjs.org/docs/app/building-your-application/optimizing/images#local-images"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "import img from './image.png'"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "mavenLocal() uses the local Maven repository (~/.m2/repository), which may contain stale, corrupted, or snapshot artifacts. Builds that depend on mavenLocal() are not reproducible across machines. It can mask real resolution problems by serving outdated artifacts.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.gradle.org/current/userguide/userguide.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Dependency verification exists to prevent supply chain attacks and corrupted downloads. Disabling it may allow tampered or incomplete artifacts to be used, introducing security vulnerabilities or hard-to-diagnose runtime errors.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.gradle.org/current/userguide/userguide.html"
       ],
       "condition": ""
     }

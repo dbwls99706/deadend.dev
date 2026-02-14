@@ -69,7 +69,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Fix the actual type mismatch instead of casting"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "Disabling OPcache removes the performance benefits of opcode caching, causing every PHP file to be parsed and compiled on every request. This can increase response times by 2-10x and significantly increase CPU usage on the server.",
       "fail_rate": 0.88,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Setting revalidate_freq to 0 causes OPcache to check every file for changes on every request, which defeats the caching purpose and adds filesystem stat calls to every request. In production, files should not change between deployments.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/ini.core.php#ini.memory-limit"
       ],
       "condition": ""
     }

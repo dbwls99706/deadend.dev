@@ -30,7 +30,7 @@
       "why_fails": "Disabling SSL verification makes the connection vulnerable to man-in-the-middle attacks. An attacker can intercept and modify traffic between the application and the remote server. This is especially dangerous when transmitting credentials, payment data, or personal information.",
       "fail_rate": 0.88,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disabling peer verification globally affects all HTTPS connections made by the PHP process, not just the problematic one. Every outbound HTTP request loses its security guarantee, creating a systemic vulnerability across the entire application.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.curl.php"
       ],
       "condition": ""
     }

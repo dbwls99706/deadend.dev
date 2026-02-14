@@ -30,7 +30,7 @@
       "why_fails": "Overwrites remote history; other collaborators' work may be lost",
       "fail_rate": 0.9,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-push"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Loses all remote-only commits and breaks other clones",
       "fail_rate": 0.95,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-clone"
       ],
       "condition": ""
     }

@@ -60,7 +60,8 @@
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0382.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Clone only when genuinely needed and restructure to minimize moves"
     }
   ],
   "transition_graph": {

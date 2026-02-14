@@ -60,7 +60,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/data-sources"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Break the cycle by using data sources instead of direct references for one direction"
     }
   ],
   "transition_graph": {

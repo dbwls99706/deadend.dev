@@ -30,7 +30,7 @@
       "why_fails": "If the failure is deterministic (bad buildspec, missing deps), retries will fail identically",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/codebuild/latest/userguide/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Compute type changes only fix resource exhaustion, not command or permission errors",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/codebuild/latest/userguide/"
       ],
       "condition": ""
     }

@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Verify the ARN or resource identifier for typos"
     }
   ],
   "transition_graph": {

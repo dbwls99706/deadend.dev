@@ -30,7 +30,7 @@
       "why_fails": "Legacy builder is deprecated, slower, and lacks multi-stage build optimizations; does not fix the root cause of missing files or cache issues",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disabling cache entirely makes builds significantly slower (10x+ in many cases) and wastes CI resources without addressing the underlying issue",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     }

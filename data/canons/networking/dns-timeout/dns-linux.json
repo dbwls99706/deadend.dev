@@ -30,7 +30,7 @@
       "why_fails": "If the DNS server is unreachable or blocked by a firewall, no amount of waiting will produce a response. Increasing timeouts just delays the inevitable failure and makes applications appear to hang, degrading user experience without solving the root cause.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man8/iptables.8.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Static host entries bypass DNS but only work for the specific hostnames listed. IPs change, new services appear, and maintaining /etc/hosts does not scale. It also breaks if the IP address changes due to load balancing, failover, or infrastructure updates.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man5/resolv.conf.5.html"
       ],
       "condition": ""
     }

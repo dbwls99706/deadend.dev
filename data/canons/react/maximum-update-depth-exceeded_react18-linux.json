@@ -30,7 +30,7 @@
       "why_fails": "Adds complexity without fixing the root cause; effect still fires unnecessarily",
       "fail_rate": 0.7,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/useEffect"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "May break the feature that needs the side effect",
       "fail_rate": 0.6,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/useEffect"
       ],
       "condition": ""
     }

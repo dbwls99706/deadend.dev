@@ -39,7 +39,7 @@
       "why_fails": "Each volume type has its own limit, but total storage quota may still be hit",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/ebs/latest/userguide/"
       ],
       "condition": ""
     }

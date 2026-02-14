@@ -30,7 +30,7 @@
       "why_fails": "If the build legitimately needs more memory, this helps; but often it's a build cache issue",
       "fail_rate": 0.5,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/build/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Legacy builder is deprecated and slower",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/build/"
       ],
       "condition": ""
     }

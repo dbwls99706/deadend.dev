@@ -39,7 +39,7 @@
       "why_fails": "The CORS specification explicitly forbids wildcard origins with credentials. ASP.NET Core will throw an InvalidOperationException: 'The CORS protocol does not allow specifying a wildcard (any) origin and credentials at the same time'",
       "fail_rate": 0.95,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "Immediate retries increase the request rate and extend the throttling window",
       "fail_rate": 0.85,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/providers"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Higher parallelism means more concurrent API calls, making rate limiting worse",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/providers"
       ],
       "condition": ""
     }

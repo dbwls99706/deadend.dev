@@ -30,7 +30,7 @@
       "why_fails": "Allowing writes on a replica breaks replication consistency. Writes to the replica are not replicated to the primary or other replicas, and will be overwritten on the next sync. This creates data divergence and silent data loss.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/high-availability.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "After a failover, the primary role moves to a different node. A hardcoded IP will point to the old primary (now a replica). The application needs to discover the current primary dynamically.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://redis.io/docs/"
       ],
       "condition": ""
     }

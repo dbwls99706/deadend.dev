@@ -60,7 +60,8 @@
       "sources": [
         "https://doc.rust-lang.org/std/clone/trait.Clone.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Clone the data to give the consumer its own copy"
     },
     {
       "action": "Use Rc/Arc for shared ownership when multiple parts need the data",
@@ -68,7 +69,8 @@
       "sources": [
         "https://doc.rust-lang.org/std/rc/struct.Rc.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use Rc/Arc for shared ownership when multiple parts need the data"
     }
   ],
   "transition_graph": {

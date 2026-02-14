@@ -30,7 +30,7 @@
       "why_fails": "Backtracking can be combinatorial; some dependency sets never resolve and pip will run for hours or days",
       "fail_rate": 0.6,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": "when constraints are genuinely conflicting"
     },
@@ -39,7 +39,7 @@
       "why_fails": "Legacy resolver was removed in pip 24; even when available it silently installs incompatible versions",
       "fail_rate": 0.7,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

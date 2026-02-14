@@ -30,7 +30,7 @@
       "why_fails": "Does not work for stuck Terminating namespaces; finalizers still block",
       "fail_rate": 0.8,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "May never resolve if the finalizer controller is gone",
       "fail_rate": 0.7,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/"
       ],
       "condition": ""
     }

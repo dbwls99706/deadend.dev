@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.docker.com/network/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "use service name instead of localhost, check network connectivity"
     }
   ],
   "transition_graph": {

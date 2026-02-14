@@ -30,7 +30,7 @@
       "why_fails": "Band-aid; masks the control flow bug",
       "fail_rate": 0.6,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The second write is intentional code, not an exception",
       "fail_rate": 0.75,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
       ],
       "condition": ""
     }

@@ -69,7 +69,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "disk pressure, memory pressure, PID pressure, or container runtime down"
     }
   ],
   "transition_graph": {

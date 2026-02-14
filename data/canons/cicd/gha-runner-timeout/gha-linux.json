@@ -30,7 +30,7 @@
       "why_fails": "Masks the underlying issue (hanging process, inefficient build); wastes CI minutes and delays feedback; GitHub has a hard cap of 360 minutes",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Timeouts from hangs or slow builds are deterministic and will recur on every run",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/writing-workflows"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "If any device in the path does not support jumbo frames, packets are silently dropped. Most internet paths and many cloud provider networks only support 1500 MTU. Jumbo frames only work on end-to-end controlled L2 segments.",
       "fail_rate": 0.8,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/ip.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "EMSGSIZE means the kernel refused to send the packet. The data was not transmitted. Ignoring the error leads to silent data loss and application-level failures.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/ip.7.html"
       ],
       "condition": ""
     }

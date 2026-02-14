@@ -60,7 +60,8 @@
       "sources": [
         "https://expressjs.com/en/guide/writing-middleware.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for multiple middleware calling next() and also sending response"
     }
   ],
   "transition_graph": {

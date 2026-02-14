@@ -30,7 +30,7 @@
       "why_fails": "More connections increase lock contention, not reduce it. Each connection that attempts a write must acquire the write lock. With many connections, the probability of SQLITE_BUSY increases because more connections are competing for the single write lock.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "SQLite already wraps individual statements in implicit transactions. Explicit single-statement transactions add overhead without helping. The real issue is that multiple writers are competing for the write lock. Grouping related writes into one transaction actually reduces lock contention.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

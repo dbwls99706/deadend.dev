@@ -30,7 +30,7 @@
       "why_fails": "Specific patch versions may not be available on GitHub-hosted runners; the version manifest is updated independently",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-github-hosted-runners"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Compiling from source is extremely slow, fragile in CI, and conflicts with the runner's pre-installed tools",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-github-hosted-runners"
       ],
       "condition": ""
     }

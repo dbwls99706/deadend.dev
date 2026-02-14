@@ -30,7 +30,7 @@
       "why_fails": "Kubernetes will restart it with the same config; crash will recur",
       "fail_rate": 0.85,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Does not fix the underlying crash",
       "fail_rate": 0.9,
       "sources": [
-        "https://kubernetes.io/docs/reference/"
+        "https://kubernetes.io/docs/tasks/debug/debug-application/debug-pods/"
       ],
       "condition": ""
     }

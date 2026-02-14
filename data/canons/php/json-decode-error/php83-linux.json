@@ -30,7 +30,7 @@
       "why_fails": "json_decode() does not throw exceptions by default (unless JSON_THROW_ON_ERROR flag is used). It returns null on failure, so a try-catch without the flag will not catch anything. The error must be checked with json_last_error().",
       "fail_rate": 0.82,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Attempting to repair JSON with regex is fragile and error-prone. JSON has nested structures, escaped characters, and Unicode that regex cannot reliably parse. The real fix is to ensure the source produces valid JSON.",
       "fail_rate": 0.73,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     }

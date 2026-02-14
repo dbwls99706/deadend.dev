@@ -61,7 +61,8 @@
       "sources": [
         "https://docs.python.org/3/library/stdtypes.html#dict"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Validate dict structure before access using schema validation"
     }
   ],
   "transition_graph": {

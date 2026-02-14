@@ -30,7 +30,7 @@
       "why_fails": "Both PDO and mysqli use the same underlying connection mechanism. If PDO cannot connect, mysqli will fail for the same reason. Switching drivers does not fix network or configuration issues and adds unnecessary code changes.",
       "fail_rate": 0.88,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.pdo.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Hardcoding credentials does not solve connection issues and creates security vulnerabilities. If the connection is refused, the problem is with the host/port/socket, not with how credentials are stored.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.pdo.php"
       ],
       "condition": ""
     }

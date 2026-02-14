@@ -69,7 +69,8 @@
       "sources": [
         "https://docs.docker.com/engine/daemon/networking/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If on corporate VPN, use VPN's DNS server instead of public DNS"
     }
   ],
   "transition_graph": {

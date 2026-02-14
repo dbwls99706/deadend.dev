@@ -39,7 +39,7 @@
       "why_fails": "Moved blocks only work within a single state file; cross-state moves require state mv or import",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

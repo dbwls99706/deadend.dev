@@ -30,7 +30,7 @@
       "why_fails": "Disabling verification (e.g., curl -k, verify=False) removes all TLS security guarantees and opens the connection to man-in-the-middle attacks. It does not fix the server misconfiguration.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Pinning the leaf certificate works temporarily but breaks when the certificate is renewed. Every client must be manually updated, which does not scale.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     }

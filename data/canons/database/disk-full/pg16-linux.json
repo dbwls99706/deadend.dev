@@ -30,7 +30,7 @@
       "why_fails": "VACUUM FULL needs to create a complete copy of the table before dropping the old one. When disk is at 100%, there is no space for the copy and the operation fails immediately or makes things worse.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/sql-vacuum.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Manually deleting WAL segments can corrupt the database and prevent recovery. PostgreSQL tracks which WAL files are needed; removing them without pg_archivecleanup causes data loss.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/wal.html"
       ],
       "condition": ""
     }

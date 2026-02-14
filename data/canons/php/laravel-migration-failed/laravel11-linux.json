@@ -30,7 +30,7 @@
       "why_fails": "migrate:fresh drops ALL tables and re-runs all migrations from scratch. In production this destroys all data including user accounts, transactions, and content. This is only safe in development environments.",
       "fail_rate": 0.95,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deleting migration records without rolling back the actual schema changes causes the migration to attempt creating tables or columns that already exist, resulting in the same error. The migrations table must stay in sync with the actual schema.",
       "fail_rate": 0.78,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

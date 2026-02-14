@@ -30,7 +30,7 @@
       "why_fails": "Masks the nil interface bug; inconsistent state continues",
       "fail_rate": 0.75,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/effective_go#interfaces"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Panic already happened; nil check is too late",
       "fail_rate": 0.85,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://go.dev/doc/effective_go#interfaces"
       ],
       "condition": ""
     }

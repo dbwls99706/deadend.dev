@@ -30,7 +30,7 @@
       "why_fails": "Explicitly creates the cycle that Terraform detected",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Does not break the cycle; just marks for recreation",
       "fail_rate": 0.8,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

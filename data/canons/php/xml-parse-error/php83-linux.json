@@ -30,7 +30,7 @@
       "why_fails": "XML structure is context-sensitive and cannot be reliably fixed with regex. Regex-based fixes often break valid CDATA sections, processing instructions, or entities while not handling all malformation cases.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.xml.php"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Suppressing errors loses the detailed error information needed to diagnose the issue. The XML may partially parse, returning a corrupt SimpleXMLElement that causes silent data loss later.",
       "fail_rate": 0.68,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.xml.php"
       ],
       "condition": ""
     }

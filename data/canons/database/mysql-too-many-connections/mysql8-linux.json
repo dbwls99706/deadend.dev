@@ -30,7 +30,7 @@
       "why_fails": "Each MySQL connection uses a thread with its own memory allocation. High max_connections without increasing open_files_limit, thread stack, and available RAM leads to OOM or 'Can't create a new thread' errors.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/libpq-connect.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Restarting kills all connections and in-flight transactions abruptly. Without fixing the root cause, connections exhaust again within minutes. Repeated restarts cause data corruption risk with InnoDB recovery.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/tutorial-transactions.html"
       ],
       "condition": ""
     }

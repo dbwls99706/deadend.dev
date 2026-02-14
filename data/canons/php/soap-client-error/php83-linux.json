@@ -39,7 +39,7 @@
       "why_fails": "Manually parsing WSDL bypasses the SOAP protocol's type system, message format validation, and operation binding. The resulting HTTP calls will lack proper SOAP envelope formatting and namespace handling.",
       "fail_rate": 0.78,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.xml.php"
       ],
       "condition": ""
     }

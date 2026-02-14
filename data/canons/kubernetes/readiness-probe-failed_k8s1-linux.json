@@ -60,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use a startup probe for slow-starting apps instead of long initialDelaySeconds"
     },
     {
       "action": "Verify the probe endpoint path and port match what the app actually serves",

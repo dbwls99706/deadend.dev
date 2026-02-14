@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "AssumeRole permission for the target role ARN"
     },
     {
       "action": "Check for ExternalId requirement if assuming cross-account role",
@@ -68,7 +69,8 @@
       "sources": [
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for ExternalId requirement if assuming cross-account role"
     }
   ],
   "transition_graph": {

@@ -42,7 +42,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/values/outputs"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Remove or update the output block to reference existing resources"
     },
     {
       "action": "If the output is consumed by other modules, coordinate the removal",
@@ -50,7 +51,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/values/outputs"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "If the output is consumed by other modules, coordinate the removal"
     }
   ],
   "transition_graph": {

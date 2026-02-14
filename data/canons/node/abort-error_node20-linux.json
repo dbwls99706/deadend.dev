@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/globals.html#abortsignaltimeoutdelay"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "AbortSignal.timeout(30000)"
     },
     {
       "action": "Handle the AbortError in catch block — it's expected behavior for cancellation",

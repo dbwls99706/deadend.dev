@@ -48,7 +48,7 @@
       "why_fails": "If the variable is later assigned from a function that can return null (e.g., json_decode, database fetch), the initialization is overwritten. The null replaces the empty array, and the original warning returns. The fix only works if the variable is never reassigned, which is rarely the case in the code patterns that trigger this error.",
       "fail_rate": 0.68,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://www.php.net/manual/en/book.json.php"
       ],
       "condition": ""
     }

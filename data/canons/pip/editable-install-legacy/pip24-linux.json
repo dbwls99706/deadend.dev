@@ -30,7 +30,7 @@
       "why_fails": "The --no-use-pep517 flag is deprecated in pip 24 and will not work for pyproject.toml-based projects",
       "fail_rate": 0.8,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Creating a setup.py alongside pyproject.toml causes confusion and potential conflicts between build systems",
       "fail_rate": 0.55,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],
       "condition": ""
     }

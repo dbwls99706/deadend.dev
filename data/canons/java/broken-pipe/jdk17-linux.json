@@ -30,7 +30,7 @@
       "why_fails": "Broken pipe is not a timeout issue — the remote end has actively closed the connection. Increasing timeouts does not prevent the peer from disconnecting and only delays detection of the problem.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Once the pipe is broken, the connection is dead. Retrying writes on the same socket will produce the same IOException. A new connection must be established before retrying.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/IOException.html"
       ],
       "condition": ""
     }

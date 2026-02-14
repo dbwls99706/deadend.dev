@@ -30,7 +30,7 @@
       "why_fails": "If the package is genuinely unavailable or the source is misconfigured, clearing cache just wastes bandwidth re-downloading all other packages. The original problem remains after cache rebuild",
       "fail_rate": 0.65,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/nuget/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Bloats the repository with binary files, causes merge conflicts, and does not solve the underlying source/authentication issue. Packages become stale and cannot be easily updated",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/nuget/"
       ],
       "condition": ""
     }

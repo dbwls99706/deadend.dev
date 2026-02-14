@@ -30,7 +30,7 @@
       "why_fails": "Deletes all firewall rules including security rules, potentially exposing the host to network attacks",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/network/"
       ],
       "condition": ""
     },

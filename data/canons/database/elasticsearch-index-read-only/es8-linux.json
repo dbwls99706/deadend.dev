@@ -30,7 +30,7 @@
       "why_fails": "If disk usage is still above the flood_stage watermark, Elasticsearch will immediately re-apply the read-only block after it is removed. The block is a protective mechanism; removing it without freeing disk space results in an infinite loop of blocking and unblocking.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/indexes.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Deleting the index removes all data permanently. The new index may also become read-only immediately if disk space is still insufficient. This destroys data without solving the root cause.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/indexes.html"
       ],
       "condition": ""
     }

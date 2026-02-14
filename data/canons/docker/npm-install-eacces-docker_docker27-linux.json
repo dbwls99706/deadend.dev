@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.npmjs.com/cli/v10/using-npm/config#cache"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "RUN npm config set cache /tmp/.npm"
     }
   ],
   "transition_graph": {

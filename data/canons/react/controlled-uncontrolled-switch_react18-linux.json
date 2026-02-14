@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/react-dom/components/input"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use value={val ?? ''} to ensure value is never undefined"
     }
   ],
   "transition_graph": {

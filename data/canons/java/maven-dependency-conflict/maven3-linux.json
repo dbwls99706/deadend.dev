@@ -30,7 +30,7 @@
       "why_fails": "Excluding all transitives and re-declaring them is an enormous maintenance burden. You lose automatic transitive resolution — the main benefit of a dependency manager. New versions of direct dependencies may add new transitive requirements that you will miss, causing ClassNotFoundException at runtime.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassNotFoundException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "The latest version may have breaking API changes that other dependencies are not compatible with. For example, library A might require Guava 30.x and be incompatible with Guava 33.x. Blindly upgrading can introduce NoSuchMethodError, ClassNotFoundException, or behavioral changes.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/ClassNotFoundException.html"
       ],
       "condition": ""
     }

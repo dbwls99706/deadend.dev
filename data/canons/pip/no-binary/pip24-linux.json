@@ -30,7 +30,7 @@
       "why_fails": "If no binary exists for the platform, this flag guarantees failure instead of attempting source build",
       "fail_rate": 0.99,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Mirrors replicate the same packages; if PyPI does not have the wheel, mirrors will not either",
       "fail_rate": 0.9,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

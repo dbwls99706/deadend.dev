@@ -30,7 +30,7 @@
       "why_fails": "PostgreSQL does not support globally disabling FK checks like MySQL. Even if you defer constraints, they are checked at commit time. Dropping the constraint destroys referential integrity.",
       "fail_rate": 0.9,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Placeholder parent records create orphan data that confuses application logic and reporting. It masks the real issue of incorrect data flow ordering.",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK"
       ],
       "condition": ""
     }

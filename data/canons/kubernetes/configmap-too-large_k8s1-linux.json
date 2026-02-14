@@ -51,7 +51,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use a volume mount with a PersistentVolumeClaim for large config files"
     },
     {
       "action": "Use external configuration services (Vault, Parameter Store, etc.)",
@@ -59,7 +60,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/configuration/configmap/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use external configuration services (Vault, Parameter Store, etc.)"
     },
     {
       "action": "Compress or minify the config data, or split logically into multiple ConfigMaps",
@@ -67,7 +69,8 @@
       "sources": [
         "https://kubernetes.io/docs/concepts/configuration/configmap/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Compress or minify the config data, or split logically into multiple ConfigMaps"
     }
   ],
   "transition_graph": {

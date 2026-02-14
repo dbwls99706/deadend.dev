@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.aws.amazon.com/servicequotas/latest/userguide/request-quota-increase.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Request a limit increase through AWS Service Quotas console"
     },
     {
       "action": "Check current usage: aws service-quotas list-service-quotas",
@@ -68,7 +69,8 @@
       "sources": [
         "https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Clean up unused resources to free capacity under the limit"
     }
   ],
   "transition_graph": {

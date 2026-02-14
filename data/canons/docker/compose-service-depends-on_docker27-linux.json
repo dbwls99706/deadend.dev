@@ -52,7 +52,7 @@
         "https://docs.docker.com/reference/cli/docker/compose/logs/"
       ],
       "condition": "",
-      "how": "docker compose logs"
+      "how": "docker compose logs <service>"
     }
   ],
   "transition_graph": {

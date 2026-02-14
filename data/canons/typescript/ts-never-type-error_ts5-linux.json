@@ -30,7 +30,7 @@
       "why_fails": "The never type usually indicates a logic error; suppressing it hides real bugs",
       "fail_rate": 0.75,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/2/objects.html"
       ],
       "condition": ""
     }

@@ -51,7 +51,8 @@
       "sources": [
         "https://git-scm.com/docs/git-cherry-pick"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "git add <files> && git cherry-pick --continue"
     },
     {
       "action": "Use -x flag to record the source commit hash in the message",

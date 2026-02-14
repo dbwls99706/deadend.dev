@@ -30,7 +30,7 @@
       "why_fails": "Handler import is a packaging issue, not a resource issue",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/lambda/latest/dg/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Rarely helps unless using runtime-specific syntax",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/lambda/latest/dg/"
       ],
       "condition": ""
     }

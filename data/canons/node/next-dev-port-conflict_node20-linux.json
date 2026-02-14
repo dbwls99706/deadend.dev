@@ -51,7 +51,8 @@
       "sources": [
         "https://nextjs.org/docs/api-reference/cli#development"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "next dev -p 3001"
     }
   ],
   "transition_graph": {

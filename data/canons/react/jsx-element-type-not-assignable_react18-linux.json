@@ -51,7 +51,8 @@
       "sources": [
         "https://react.dev/learn/conditional-rendering"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "{condition && <Component />} or ternary"
     }
   ],
   "transition_graph": {

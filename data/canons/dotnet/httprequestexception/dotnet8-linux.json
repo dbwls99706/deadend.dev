@@ -30,7 +30,7 @@
       "why_fails": "Each HttpClient instance holds its own connection pool and socket. Creating many instances leads to socket exhaustion (TIME_WAIT state), causing subsequent requests to fail with HttpRequestException",
       "fail_rate": 0.75,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Bypasses security entirely, making the application vulnerable to man-in-the-middle attacks. The SSL error usually indicates a legitimate certificate configuration problem that should be properly fixed",
       "fail_rate": 0.7,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httprequestexception"
       ],
       "condition": ""
     }

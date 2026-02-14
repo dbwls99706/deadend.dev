@@ -30,7 +30,7 @@
       "why_fails": "May cause downtime; the resource may be in use by other systems",
       "fail_rate": 0.7,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Creates a duplicate resource instead of managing the existing one",
       "fail_rate": 0.75,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/en/learn/diagnostics/memory/using-heap-snapshot"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "node --inspect + Chrome DevTools"
     },
     {
       "action": "Process data in streams instead of loading everything into memory",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/stream.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Process data in streams instead of loading everything into memory"
     },
     {
       "action": "Check for common leaks: growing arrays, unclosed connections, event listener accumulation",
@@ -67,7 +69,8 @@
       "sources": [
         "https://nodejs.org/en/learn/diagnostics/memory"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "growing arrays, unclosed connections, event listener accumulation"
     }
   ],
   "transition_graph": {

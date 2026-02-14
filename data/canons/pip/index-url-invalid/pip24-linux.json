@@ -30,7 +30,7 @@
       "why_fails": "If the URL is wrong or the index does not carry the package, retrying will never work",
       "fail_rate": 0.95,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disables all indexes without providing an alternative source; pip cannot find any packages",
       "fail_rate": 0.99,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/reference/requirements-file-format/"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "Without a maxmemory limit, Redis will consume all available system memory until the Linux OOM killer terminates the process. This causes data loss and affects other processes on the same server.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://redis.io/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If Redis is configured without AOF or RDB persistence, restarting loses all data. Even with persistence, the same data will be reloaded and memory will fill up again immediately after restart.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://redis.io/docs/"
       ],
       "condition": ""
     }

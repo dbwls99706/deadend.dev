@@ -39,7 +39,7 @@
       "why_fails": "Lifecycle hook scripts may have permission issues, missing dependencies, or syntax errors that only surface at deployment time",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication"
       ],
       "condition": ""
     }

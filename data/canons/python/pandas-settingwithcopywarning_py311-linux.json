@@ -61,7 +61,8 @@
       "sources": [
         "https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.copy.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "subset = df[mask].copy()"
     }
   ],
   "transition_graph": {

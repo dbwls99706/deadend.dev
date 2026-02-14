@@ -39,7 +39,7 @@
       "why_fails": "If the issue is disk pressure, upgrading instance type without adding storage won't help",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.aws.amazon.com/"
+        "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/"
       ],
       "condition": ""
     }

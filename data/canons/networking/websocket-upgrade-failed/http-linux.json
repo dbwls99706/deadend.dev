@@ -30,7 +30,7 @@
       "why_fails": "WebSocket over HTTP/2 (RFC 8441) requires explicit server support via SETTINGS_ENABLE_CONNECT_PROTOCOL. Most reverse proxies and load balancers do not yet support this. Standard WebSocket uses HTTP/1.1 Upgrade.",
       "fail_rate": 0.75,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/socket.7.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "HTTP/2 does not use the Connection and Upgrade headers — they are connection-level headers not valid in HTTP/2. The proxy strips them during HTTP/1.1 to HTTP/2 translation. The WebSocket negotiation must use a different mechanism.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man7/socket.7.html"
       ],
       "condition": "When the proxy uses HTTP/2 upstream"
     }

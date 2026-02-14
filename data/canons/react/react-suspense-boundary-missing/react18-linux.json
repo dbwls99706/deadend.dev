@@ -30,7 +30,7 @@
       "why_fails": "A single top-level Suspense boundary replaces the entire application UI with a loading indicator whenever any component suspends. This provides a poor user experience because unrelated parts of the UI disappear while one section loads. Suspense boundaries should be placed close to the components that suspend for granular loading states.",
       "fail_rate": 0.55,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/Suspense"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "While this avoids the need for Suspense boundaries, it reintroduces the problems Suspense was designed to solve: loading state management scattered across components, waterfall request patterns, and the need to handle loading/error/success states manually in every component. It also prevents use of React Server Components and streaming SSR.",
       "fail_rate": 0.5,
       "sources": [
-        "https://react.dev/reference/"
+        "https://react.dev/reference/react/useEffect"
       ],
       "condition": ""
     }

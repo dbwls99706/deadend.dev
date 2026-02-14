@@ -60,7 +60,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_hash/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "pip hash <package>.whl"
     },
     {
       "action": "Check if the package was yanked/replaced on PyPI — this could be a security issue",
@@ -68,7 +69,8 @@
       "sources": [
         "https://pip.pypa.io/en/stable/topics/secure-installs/"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check if the package was yanked/replaced on PyPI — this could be a security issue"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "The unique constraint exists to enforce data integrity. Removing it allows duplicate data which will cause subtle and hard-to-debug application errors downstream.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Silently swallowing the error means the intended data was not inserted or updated. This causes data loss or inconsistency without any user-visible indication.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html"
       ],
       "condition": ""
     }

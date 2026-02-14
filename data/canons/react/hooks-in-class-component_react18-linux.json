@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/react/Component#componentdidmount"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "componentDidMount, componentDidUpdate"
     }
   ],
   "transition_graph": {

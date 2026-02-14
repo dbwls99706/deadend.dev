@@ -30,7 +30,7 @@
       "why_fails": "Package may use syntax/features not available in your Python; crashes at runtime",
       "fail_rate": 0.75,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Will be overwritten on next install; doesn't fix actual incompatibilities",
       "fail_rate": 0.85,
       "sources": [
-        "https://pip.pypa.io/en/stable/reference/"
+        "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-V"
       ],
       "condition": ""
     }

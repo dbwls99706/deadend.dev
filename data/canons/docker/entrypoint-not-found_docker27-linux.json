@@ -60,7 +60,8 @@
       "sources": [
         "https://docs.docker.com/reference/dockerfile/#entrypoint"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "dos2unix entrypoint.sh"
     },
     {
       "action": "Make script executable: RUN chmod +x /app/entrypoint.sh in Dockerfile",
@@ -68,7 +69,8 @@
       "sources": [
         "https://docs.docker.com/reference/dockerfile/#run"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "RUN chmod +x /app/entrypoint.sh in Dockerfile"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "If the root cause is a classloader leak (common in application server redeployments or dynamic scripting), increasing Metaspace only delays the inevitable. Leaked classloaders prevent their classes from being unloaded, and Metaspace will eventually fill regardless of size.",
       "fail_rate": 0.65,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Scheduled restarts are an operational band-aid. They cause downtime, data loss in in-flight requests, and do not address the underlying leak. As the application grows or traffic increases, the restart interval shrinks until restarts become impractical.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     }

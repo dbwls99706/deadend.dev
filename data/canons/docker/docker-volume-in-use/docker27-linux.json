@@ -30,7 +30,7 @@
       "why_fails": "Bypasses Docker's internal state; Docker will still think the volume exists, causing ghost entries and potential data corruption",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/storage/volumes/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Prune only removes unreferenced volumes; volumes attached to stopped containers are still referenced",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/storage/volumes/"
       ],
       "condition": ""
     }

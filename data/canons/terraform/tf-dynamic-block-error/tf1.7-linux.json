@@ -39,7 +39,7 @@
       "why_fails": "Deeply nested dynamic blocks become unreadable and error-prone; refactor into modules instead",
       "fail_rate": 0.65,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/modules"
       ],
       "condition": ""
     }

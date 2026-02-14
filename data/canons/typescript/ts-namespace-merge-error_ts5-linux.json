@@ -30,7 +30,7 @@
       "why_fails": "Only helps with CJS modules that have a default export; doesn't fix true namespace-only modules",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/"
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": ""
     }

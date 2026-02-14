@@ -33,7 +33,7 @@
       "why_fails": "Disabling ECC does not fix the bad memory; it just stops detecting errors, leading to silent data corruption in computations",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#error-handling"
       ],
       "condition": ""
     },
@@ -42,7 +42,7 @@
       "why_fails": "ECC errors are from physical memory defects, not timing issues; underclocking does not fix bad DRAM cells",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-c-programming-guide/#error-handling"
       ],
       "condition": ""
     }

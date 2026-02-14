@@ -60,7 +60,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Break circular type references by using interface instead of type alias"
     },
     {
       "action": "Check if a simpler type utility exists in a library like type-fest",
@@ -68,7 +69,8 @@
       "sources": [
         "https://www.npmjs.com/package/type-fest"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check if a simpler type utility exists in a library like type-fest"
     }
   ],
   "transition_graph": {

@@ -30,7 +30,7 @@
       "why_fails": "INSERT IGNORE silently discards rows with duplicate keys and also suppresses other errors (type conversion warnings, NOT NULL violations). This leads to silent data loss that is very hard to debug later.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Removing the unique constraint allows duplicate data which violates business rules and can cause incorrect query results, broken joins, and application-level errors.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/ddl-constraints.html"
       ],
       "condition": ""
     }

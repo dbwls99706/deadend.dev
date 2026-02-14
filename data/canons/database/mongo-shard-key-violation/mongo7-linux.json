@@ -30,7 +30,7 @@
       "why_fails": "Resharding (available since MongoDB 5.0) is extremely resource-intensive on large collections. It creates a new collection, copies all data, and rebuilds indexes. On collections with billions of documents, this can take days and significantly impact cluster performance.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.mongodb.com/docs/manual/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Queries without the shard key must be broadcast to all shards (scatter-gather). This does not scale: as you add more shards, query latency increases because every shard must respond. It negates the performance benefits of sharding for those queries.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.postgresql.org/docs/current/indexes.html"
       ],
       "condition": ""
     }

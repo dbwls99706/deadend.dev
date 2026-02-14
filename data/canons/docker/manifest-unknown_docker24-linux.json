@@ -39,7 +39,7 @@
       "why_fails": "The image might exist in the specified registry but with a different tag",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.docker.com/reference/"
+        "https://docs.docker.com/registry/"
       ],
       "condition": ""
     }

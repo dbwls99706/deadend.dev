@@ -60,7 +60,8 @@
       "sources": [
         "https://react.dev/reference/react/useEffect#connecting-to-an-external-system"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "return () => unsubscribe()"
     }
   ],
   "transition_graph": {

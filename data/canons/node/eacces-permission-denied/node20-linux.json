@@ -60,7 +60,8 @@
       "sources": [
         "https://nodejs.org/en/download/package-manager"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use nvm or volta for Node version management (avoids system paths)"
     }
   ],
   "transition_graph": {

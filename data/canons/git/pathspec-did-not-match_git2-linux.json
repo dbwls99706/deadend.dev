@@ -39,7 +39,7 @@
       "why_fails": "checkout --force doesn't create branches; still fails",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-checkout"
       ],
       "condition": ""
     }

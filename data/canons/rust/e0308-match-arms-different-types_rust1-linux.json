@@ -51,7 +51,8 @@
       "sources": [
         "https://doc.rust-lang.org/book/ch17-02-trait-objects.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use impl Trait or Box<dyn Trait> if arms return different types implementing same trait"
     }
   ],
   "transition_graph": {

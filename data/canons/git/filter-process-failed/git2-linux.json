@@ -30,7 +30,7 @@
       "why_fails": "This disables LFS tracking for the entire repo; large files become checked in directly, bloating the repository permanently",
       "fail_rate": 0.85,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-filter-branch"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Older git versions use the single-file filter protocol which is slower and still fails if the filter binary is missing",
       "fail_rate": 0.75,
       "sources": [
-        "https://git-scm.com/docs"
+        "https://git-scm.com/docs/git-filter-branch"
       ],
       "condition": ""
     }

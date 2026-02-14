@@ -51,12 +51,13 @@
       "sources": [
         "https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Open conflicting files, resolve <<<< ==== >>>> markers, then git add and commit"
     },
     {
       "action": "Use git mergetool or IDE merge UI for complex conflicts",
       "success_rate": 0.88,
-      "how": "git mergetool",
+      "how": "Use git mergetool or IDE merge UI for complex conflicts",
       "sources": [
         "https://git-scm.com/docs/git-mergetool"
       ],

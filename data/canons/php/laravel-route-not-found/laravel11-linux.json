@@ -30,7 +30,7 @@
       "why_fails": "A catch-all route defined early in the routes file will intercept all requests, preventing any routes defined after it from ever matching. This effectively breaks the entire application routing.",
       "fail_rate": 0.85,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Route caching provides significant performance improvements in Laravel. Disabling it does not fix the underlying route definition issue and degrades performance. The real fix is to clear and regenerate the cache.",
       "fail_rate": 0.6,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://laravel.com/docs/"
       ],
       "condition": ""
     }

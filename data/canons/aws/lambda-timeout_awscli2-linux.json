@@ -51,7 +51,8 @@
       "sources": [
         "https://docs.aws.amazon.com/lambda/latest/dg/lambda-troubleshooting.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "cold start, DB connections, external API calls"
     },
     {
       "action": "Use provisioned concurrency to eliminate cold start delays",
@@ -59,7 +60,8 @@
       "sources": [
         "https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use provisioned concurrency to eliminate cold start delays"
     }
   ],
   "transition_graph": {

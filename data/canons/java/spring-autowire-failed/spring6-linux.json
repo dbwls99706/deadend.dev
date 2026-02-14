@@ -30,7 +30,7 @@
       "why_fails": "Setting required=false avoids the startup exception but leaves the field null at runtime. Any code that uses the dependency without null-checking will throw NullPointerException. This trades a clear startup failure for a hidden runtime failure that is harder to diagnose.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "An empty stub makes the application start but provides no actual functionality. Callers of the stub get silent no-ops or null returns, which can cause data loss, incorrect behavior, or cascading failures that are much harder to debug than the original autowiring error.",
       "fail_rate": 0.7,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.spring.io/spring-framework/reference/"
       ],
       "condition": ""
     }

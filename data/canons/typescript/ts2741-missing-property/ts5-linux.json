@@ -51,7 +51,8 @@
       "sources": [
         "https://www.typescriptlang.org/docs/handbook/2/objects.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Add the missing property to the object"
     },
     {
       "action": "If intentionally optional, mark with ? in the type definition",

@@ -43,7 +43,8 @@
       "sources": [
         "https://peps.python.org/pep-0008/#indentation"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "4 spaces (PEP 8 standard)"
     },
     {
       "action": "Configure your editor to convert tabs to spaces",
@@ -51,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/reference/lexical_analysis.html#indentation"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Configure your editor to convert tabs to spaces"
     },
     {
       "action": "Run: python -tt script.py to check for mixed tabs/spaces",

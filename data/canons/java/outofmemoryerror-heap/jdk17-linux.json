@@ -30,7 +30,7 @@
       "why_fails": "Increasing heap size is a temporary band-aid. If the application has a memory leak, it will eventually consume any amount of heap. Larger heaps also cause longer GC pauses, potentially making the application less responsive. The real fix requires profiling memory usage to find leaks or excessive allocations.",
       "fail_rate": 0.6,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "System.gc() is only a hint to the JVM — it may be ignored entirely. Even when it runs, it cannot collect objects that are still referenced. If the OOM is caused by a memory leak (objects still reachable), GC cannot help. It also introduces unpredictable pauses.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/OutOfMemoryError.html"
       ],
       "condition": ""
     }

@@ -39,7 +39,7 @@
       "why_fails": "Moving classes to separate packages does not resolve the circular dependency; it just moves the problem to the package level where it becomes harder to debug.",
       "fail_rate": 0.65,
       "sources": [
-        "https://www.php.net/manual/en/errorfunc.constants.php"
+        "https://getcomposer.org/doc/"
       ],
       "condition": ""
     }

@@ -57,7 +57,7 @@
     {
       "action": "Use HTTPS with personal access token or gh auth login",
       "success_rate": 0.88,
-      "how": "gh auth login",
+      "how": "Use HTTPS with personal access token or gh auth login",
       "sources": [
         "https://cli.github.com/manual/gh_auth_login"
       ],

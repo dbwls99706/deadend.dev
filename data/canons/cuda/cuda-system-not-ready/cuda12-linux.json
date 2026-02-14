@@ -30,7 +30,7 @@
       "why_fails": "The error is a transient hardware/driver state issue, not a software installation problem. Reinstalling CUDA does not change the driver state or GPU hardware readiness. The GPU needs time to initialize or recover from a reset.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "cudaDeviceReset destroys the current CUDA context but does not affect the underlying driver or hardware state. If the system is not ready at the driver level, resetting the CUDA context does not help and may return the same error.",
       "fail_rate": 0.85,
       "sources": [
-        "https://docs.nvidia.com/cuda/cuda-runtime-api/"
+        "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/"
       ],
       "condition": ""
     }

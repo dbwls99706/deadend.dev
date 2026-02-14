@@ -39,7 +39,7 @@
       "why_fails": "If the edge proxy strips the header but re-adds it with only the direct client IP, the application must be configured to read from this specific proxy's header. Misconfiguration means the application may still read a different header or the wrong position in the chain.",
       "fail_rate": 0.65,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/curl.1.html"
       ],
       "condition": ""
     }

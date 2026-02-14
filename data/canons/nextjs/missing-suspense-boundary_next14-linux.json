@@ -30,7 +30,7 @@
       "why_fails": "Page is already a client component; the issue is the missing Suspense",
       "fail_rate": 0.8,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "router.query doesn't exist in App Router; it's a Pages Router API",
       "fail_rate": 0.85,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
       ],
       "condition": ""
     }

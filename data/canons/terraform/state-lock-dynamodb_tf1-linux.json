@@ -51,7 +51,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Wait for the other process to finish — check the Lock Info in the error for who holds it"
     },
     {
       "action": "If the lock is stale (crashed process), force-unlock: terraform force-unlock <LOCK_ID>",
@@ -68,7 +69,8 @@
       "sources": [
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check CI/CD for parallel Terraform runs that need serialization"
     }
   ],
   "transition_graph": {

@@ -39,7 +39,7 @@
       "why_fails": "In Next.js 15, params is a Promise. Destructuring ({ params: { id } }) gives the Promise object properties, not the resolved values. The code runs without type errors but id is undefined at runtime.",
       "fail_rate": 0.92,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
       ],
       "common_misconception": "The Next.js 14 pattern of synchronous params destructuring still works in Next.js 15. It does not — params is now async."
     },
@@ -48,7 +48,7 @@
       "why_fails": "React.use() is designed for client components to unwrap promises during render. In server components, use standard await instead. Using React.use in a server component may cause a different error or unexpected behavior.",
       "fail_rate": 0.78,
       "sources": [
-        "https://nextjs.org/docs/messages/"
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
       ],
       "common_misconception": "React.use() is a universal Promise unwrapper. It is specifically for the client-side React rendering model."
     }

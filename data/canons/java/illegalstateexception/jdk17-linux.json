@@ -30,7 +30,7 @@
       "why_fails": "If the object is in the wrong state, retrying the exact same call will produce the exact same exception. The state must be corrected or the operation must be sequenced differently. Retry loops for state errors cause infinite loops or excessive resource consumption.",
       "fail_rate": 0.9,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "While this may clear the error, it discards all progress made up to the exception. For transactions, this means lost writes. For iterators, this means restarting from the beginning. The correct fix is to understand the expected state machine and ensure transitions happen in the right order.",
       "fail_rate": 0.55,
       "sources": [
-        "https://docs.oracle.com/en/java/javase/21/docs/api/"
+        "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalStateException.html"
       ],
       "condition": ""
     }

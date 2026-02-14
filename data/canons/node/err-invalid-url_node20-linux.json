@@ -51,7 +51,8 @@
       "sources": [
         "https://nodejs.org/api/url.html#new-urlinput-base"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "new URL(path, 'http://localhost')"
     },
     {
       "action": "Check for undefined/null input before constructing",
@@ -59,7 +60,8 @@
       "sources": [
         "https://nodejs.org/api/url.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Check for undefined/null input before constructing"
     }
   ],
   "transition_graph": {

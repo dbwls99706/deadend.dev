@@ -30,7 +30,7 @@
       "why_fails": "Keeps unnecessary import; adds dead code",
       "fail_rate": 0.5,
       "sources": [
-        "https://pkg.go.dev/errors"
+        "https://pkg.go.dev/cmd/compile"
       ],
       "condition": ""
     }

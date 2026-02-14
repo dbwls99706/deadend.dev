@@ -30,7 +30,7 @@
       "why_fails": "Skipping migration loses the existing state file, making Terraform think no resources exist",
       "fail_rate": 0.9,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Manual copies miss metadata, may corrupt state, and do not handle locking correctly",
       "fail_rate": 0.7,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/backend"
       ],
       "condition": ""
     }

@@ -30,7 +30,7 @@
       "why_fails": "MongoDB auto-creates collections on first write. Explicitly creating collections before every operation adds unnecessary overhead and complexity. The real issue is usually that you are running the operation against the wrong database or collection name.",
       "fail_rate": 0.7,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.mongodb.com/docs/manual/"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "If the namespace is wrong (typo, wrong database), the collection will never appear. Silently ignoring the error means operations against the intended collection are not executing.",
       "fail_rate": 0.8,
       "sources": [
-        "https://www.postgresql.org/docs/current/errcodes-appendix.html"
+        "https://www.mongodb.com/docs/manual/"
       ],
       "condition": ""
     }

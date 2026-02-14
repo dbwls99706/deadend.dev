@@ -30,7 +30,7 @@
       "why_fails": "Terraform will try to destroy the old resource and create a new one",
       "fail_rate": 0.8,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "May lose track of the resource; potential orphaned infrastructure",
       "fail_rate": 0.65,
       "sources": [
-        "https://developer.hashicorp.com/terraform/language"
+        "https://developer.hashicorp.com/terraform/language/resources"
       ],
       "condition": ""
     }

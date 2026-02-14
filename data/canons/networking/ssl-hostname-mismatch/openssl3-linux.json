@@ -30,7 +30,7 @@
       "why_fails": "DNS resolution is not the problem. The TLS client validates the hostname against the certificate fields, not against DNS. Changing /etc/hosts does not modify the certificate's CN or SANs, so the mismatch error persists.",
       "fail_rate": 0.95,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Disabling SNI does not fix hostname validation. SNI tells the server which certificate to present in multi-tenant setups; disabling it may cause the server to return the wrong certificate entirely, making the mismatch worse.",
       "fail_rate": 0.85,
       "sources": [
-        "https://man7.org/linux/man-pages/"
+        "https://man7.org/linux/man-pages/man1/openssl-x509.1ssl.html"
       ],
       "condition": ""
     }

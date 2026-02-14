@@ -30,7 +30,7 @@
       "why_fails": "The object state that caused the exception has not changed, so the retry will throw the same exception in an infinite loop or until another failure occurs",
       "fail_rate": 0.85,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "Silently returns null or default(T) which causes NullReferenceException or logic errors downstream instead of surfacing the real problem of an empty sequence",
       "fail_rate": 0.65,
       "sources": [
-        "https://learn.microsoft.com/en-us/dotnet/api/"
+        "https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception"
       ],
       "condition": ""
     }

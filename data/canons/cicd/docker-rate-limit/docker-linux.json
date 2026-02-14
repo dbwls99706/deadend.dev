@@ -30,7 +30,7 @@
       "why_fails": "The rate limit will be hit again on the next CI run cycle since the underlying pull pattern has not changed",
       "fail_rate": 0.8,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/use-cases-and-examples/publishing-packages/publishing-docker-images"
       ],
       "condition": ""
     },
@@ -39,7 +39,7 @@
       "why_fails": "This violates Docker Hub terms of service and is unreliable. Shared CI runner IPs still converge on the same rate limits.",
       "fail_rate": 0.75,
       "sources": [
-        "https://docs.github.com/en/actions/reference"
+        "https://docs.github.com/en/actions/using-github-hosted-runners"
       ],
       "condition": ""
     }

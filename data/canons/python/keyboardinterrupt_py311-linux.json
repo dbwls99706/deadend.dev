@@ -52,7 +52,8 @@
       "sources": [
         "https://docs.python.org/3/library/signal.html"
       ],
-      "condition": ""
+      "condition": "",
+      "how": "Use signal.signal(signal.SIGINT, handler) for custom interrupt handling"
     }
   ],
   "transition_graph": {
