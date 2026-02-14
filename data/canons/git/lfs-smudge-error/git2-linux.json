@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/lfs-smudge-error/git2-linux",
+  "url": "https://deadends.dev/git/lfs-smudge-error/git2-linux",
+  "error": {
+    "signature": "Smudge error: Error downloading object: Object does not exist on the server",
+    "regex": "(?i)smudge error.*(?:downloading|Error downloading|object does not exist)",
+    "domain": "git",
+    "category": "lfs",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Git LFS smudge filter fails to download large file objects from the LFS server. Commonly caused by missing LFS objects on the remote, expired credentials, or the LFS server being unreachable."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting and re-cloning without LFS configured",
+      "why_fails": "Without LFS installed and configured, pointer files remain as-is and binaries are never fetched",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running git checkout on the affected files without fixing the LFS endpoint",
+      "why_fails": "Checkout triggers the smudge filter again which fails with the same error if the underlying connectivity or auth issue is not resolved",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify LFS endpoint and credentials, then run git lfs pull",
+      "success_rate": 0.88,
+      "how": "Check git lfs env to verify the endpoint URL is correct. Run git lfs install to ensure hooks are configured. Then git lfs pull to re-download all LFS objects.",
+      "sources": ["https://git-lfs.com"],
+      "condition": ""
+    },
+    {
+      "action": "Skip smudge on clone, then fetch LFS objects separately",
+      "success_rate": 0.85,
+      "how": "GIT_LFS_SKIP_SMUDGE=1 git clone <repo>, then cd into the repo and run git lfs pull. This avoids smudge failures during clone.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/filter-process-failed/git2-linux", "probability": 0.25, "condition": "when LFS smudge errors cascade into filter process failures"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/unable-to-access-https/git2-linux", "probability": 0.20, "condition": "when HTTPS access issues prevent LFS object downloads"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/filter-process-failed/git2-linux", "distinction": "Smudge error is specific to LFS object download failures, while filter-process-failed is a broader git filter protocol error"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

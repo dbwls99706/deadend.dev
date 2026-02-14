@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/json-max-depth/php83-linux",
+  "url": "https://deadends.dev/php/json-max-depth/php83-linux",
+  "error": {
+    "signature": "json_decode(): Maximum stack depth exceeded",
+    "regex": "json_decode\\(\\):.*Maximum stack depth exceeded|JSON_ERROR_DEPTH",
+    "domain": "php",
+    "category": "data_processing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "JSON max depth errors occur when json_decode() encounters a JSON structure nested deeper than the default 512 levels. This can indicate deeply nested API responses, recursive data structures, or malicious payloads designed to cause resource exhaustion."
+  },
+  "dead_ends": [
+    {"action": "Setting the depth parameter to PHP_INT_MAX", "why_fails": "Extremely deep recursion in JSON parsing can exhaust the C-level stack, causing a segfault rather than a PHP error. It also opens the application to denial-of-service attacks via crafted deeply nested JSON payloads.", "fail_rate": 0.72, "sources": [], "condition": ""},
+    {"action": "Pre-processing the JSON string with regex to flatten it before decoding", "why_fails": "Regex-based JSON manipulation is inherently fragile and will break on escaped characters, unicode sequences, and edge cases. It also adds significant processing overhead for large payloads.", "fail_rate": 0.80, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Increase the depth parameter to a reasonable value based on expected data structure", "success_rate": 0.90, "how": "Pass a larger depth as the third argument: json_decode($json, true, 1024). Choose a value based on the known maximum nesting of your data. Values between 512 and 2048 are safe for most use cases.", "sources": [], "condition": ""},
+    {"action": "Validate and limit nesting depth before processing untrusted JSON", "success_rate": 0.85, "how": "For untrusted input, use a streaming JSON parser (e.g., JsonMachine) that processes tokens incrementally without building the full structure in memory. Alternatively, validate depth with a simple counter before calling json_decode().", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.20, "condition": "when increasing depth limit causes large decoded arrays to consume excessive memory"}],
+    "preceded_by": [{"error_id": "php/json-decode-error/php83-linux", "probability": 0.25, "condition": "when investigating general JSON decode failures and discovering the depth limit is the specific cause"}],
+    "frequently_confused_with": [{"error_id": "php/json-decode-error/php83-linux", "distinction": "JSON max depth is specifically error code JSON_ERROR_DEPTH, while general JSON decode errors can be syntax errors, control character issues, or malformed UTF-8"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

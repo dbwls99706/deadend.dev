@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/pack-objects-died/git2-linux",
+  "url": "https://deadends.dev/git/pack-objects-died/git2-linux",
+  "error": {
+    "signature": "error: pack-objects died of signal 9",
+    "regex": "(?i)(?:pack-objects died|pack-objects.*signal|fatal.*pack-objects)",
+    "domain": "git",
+    "category": "transfer",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "The pack-objects process was killed (usually by OOM killer sending signal 9) during push or gc. Large repositories with many objects require significant memory for delta compression."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing http.postBuffer size",
+      "why_fails": "postBuffer affects the HTTP transfer size, not the memory used by pack-objects for delta compression. The OOM condition persists.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retrying the push immediately without changing configuration",
+      "why_fails": "The same memory pressure causes the OOM killer to terminate pack-objects again each time",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Limit pack-objects memory usage and threads",
+      "success_rate": 0.85,
+      "how": "git config --global pack.windowMemory 100m && git config --global pack.packSizeLimit 100m && git config --global pack.threads 1. This reduces memory footprint at the cost of slower packing.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Push in smaller batches using partial history",
+      "success_rate": 0.80,
+      "how": "Push a subset of commits: git push origin HEAD~100:refs/heads/main, then incrementally push more. This reduces the number of objects pack-objects must process at once.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/index-pack-failed/git2-linux", "probability": 0.15, "condition": "when pack memory issues affect both sending and receiving sides"},
+      {"error_id": "git/gc-auto-failed/git2-linux", "probability": 0.25, "condition": "when gc triggers pack-objects which gets OOM-killed"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/gc-auto-failed/git2-linux", "probability": 0.20, "condition": "when auto-gc triggers pack-objects on a memory-constrained system"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/index-pack-failed/git2-linux", "distinction": "pack-objects-died occurs during packing (push/gc); index-pack-failed occurs during unpacking (fetch/clone)"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

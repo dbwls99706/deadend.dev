@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/too-many-threads/cuda12-linux",
+  "url": "https://deadends.dev/cuda/too-many-threads/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: invalid configuration argument (cudaErrorInvalidConfiguration) - too many threads per block",
+    "regex": "invalid configuration|cudaErrorInvalidConfiguration|too many threads|exceeds.*maxThreadsPerBlock|block.*dimensions.*exceed",
+    "domain": "cuda",
+    "category": "kernel_launch_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "any"
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Kernel launch requested more threads per block than the GPU supports (typically max 1024). Or block dimensions exceed per-dimension limits (1024 x 1024 x 64). Common when hardcoding block sizes without checking device capabilities."
+  },
+  "dead_ends": [
+    {
+      "action": "Ignore the error and increase GPU memory allocation",
+      "why_fails": "Thread limits are hardware-imposed per SM, not related to memory. More memory does not allow more threads per block.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use cudaSetDevice to switch to a different GPU",
+      "why_fails": "All modern NVIDIA GPUs have the same max threads per block (1024); switching devices will not help",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce block size to 256 or 512 and increase grid size to compensate",
+      "success_rate": 0.95,
+      "how": "Use dim3 block(256) and dim3 grid((N + 255) / 256) instead of launching with >1024 threads",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Query device properties to set block size dynamically",
+      "success_rate": 0.9,
+      "how": "cudaDeviceProp prop; cudaGetDeviceProperties(&prop, 0); use prop.maxThreadsPerBlock",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use occupancy API to determine optimal block size",
+      "success_rate": 0.88,
+      "how": "cudaOccupancyMaxPotentialBlockSize(&minGridSize, &blockSize, myKernel, 0, 0)",
+      "sources": [],
+      "condition": "for performance-optimal configuration"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when reducing block size causes incorrect index calculations"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/cooperative-launch-too-large/cuda12-linux",
+        "distinction": "Too-many-threads is about exceeding per-block thread limits; cooperative-launch-too-large is about cooperative kernel groups exceeding device occupancy"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

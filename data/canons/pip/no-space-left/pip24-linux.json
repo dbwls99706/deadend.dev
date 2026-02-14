@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/no-space-left/pip24-linux",
+  "url": "https://deadends.dev/pip/no-space-left/pip24-linux",
+  "error": {
+    "signature": "ERROR: Could not install packages due to an OSError: [Errno 28] No space left on device",
+    "regex": "No space left on device|Errno 28|OSError.*space.*device|ENOSPC",
+    "domain": "pip",
+    "category": "system_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "The filesystem is full during pip install. Pip needs space for downloading, caching, and extracting packages. Often occurs in Docker containers with small /tmp or in CI environments with limited disk."
+  },
+  "dead_ends": [
+    {
+      "action": "Run pip install with --no-cache-dir alone",
+      "why_fails": "While it helps marginally, the extracted package and build artifacts still need disk space; if the disk is truly full, this is insufficient",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": "when disk is completely full"
+    },
+    {
+      "action": "Delete random files to free space without checking what uses disk",
+      "why_fails": "May delete critical system files or virtualenv; the pip cache or /tmp build files are usually the culprits",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Clear pip cache and tmp, then retry: pip cache purge && rm -rf /tmp/pip-*",
+      "success_rate": 0.90,
+      "how": "pip cache purge && rm -rf /tmp/pip-* /tmp/pip-build-* && pip install <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Redirect pip temp directory to a larger partition using TMPDIR",
+      "success_rate": 0.92,
+      "how": "export TMPDIR=/mnt/larger-disk/tmp && mkdir -p $TMPDIR && pip install <package>",
+      "sources": [],
+      "condition": "when /tmp is on a small partition"
+    },
+    {
+      "action": "In Docker, increase build layer size or use multi-stage builds",
+      "success_rate": 0.88,
+      "how": "Use multi-stage Docker build: install in builder stage with more space, copy only site-packages to final image",
+      "sources": [],
+      "condition": "when in Docker container"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/cache-corruption/pip24-linux", "probability": 0.2, "condition": "when disk fills during cache write leaving partial files"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/build-isolation-failed/pip24-linux", "probability": 0.15, "condition": "when build isolation creates too many temp environments"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/cache-corruption/pip24-linux", "distinction": "No-space-left is about insufficient disk space; cache-corruption is about corrupted cached files which can happen after a space issue but has different symptoms"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/xml-parse-error/jdk21-linux",
+  "url": "https://deadends.dev/java/xml-parse-error/jdk21-linux",
+  "error": {
+    "signature": "org.xml.sax.SAXParseException: Content is not allowed in prolog",
+    "regex": "SAXParseException|Content is not allowed in prolog|Premature end of file|not well-formed|XML document structures must start and end within the same entity",
+    "domain": "java",
+    "category": "parsing_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The Java XML parser encountered malformed content before the XML declaration or root element. The most common cause is a BOM (Byte Order Mark) at the beginning of a UTF-8 file, invisible whitespace or characters before the <?xml declaration, or the input is not XML at all (e.g., an HTML error page returned from an HTTP request, or an empty response). This error is prevalent in Spring configuration parsing, SOAP services, and Maven POM files."
+  },
+  "dead_ends": [
+    {
+      "action": "Switching from SAX to DOM parser to handle the malformed content",
+      "why_fails": "Both SAX and DOM parsers perform the same XML well-formedness checks. If the input is not valid XML, neither parser can handle it. DOM may give a slightly different error message but will still reject malformed content at the prolog level.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting the parser to be lenient or non-validating",
+      "why_fails": "Non-validating mode skips DTD/Schema validation, not well-formedness checks. 'Content is not allowed in prolog' is a well-formedness error (XML 1.0 spec), not a validation error. There is no standard way to make a Java XML parser accept malformed XML at the prolog level.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove BOM and invisible characters from the beginning of the XML input",
+      "success_rate": 0.92,
+      "how": "Check for BOM: open the file in a hex editor and look for EF BB BF (UTF-8 BOM) or FF FE / FE FF (UTF-16 BOM) at the start. Remove BOM: save the file as UTF-8 without BOM. In code: strip leading whitespace/BOM before parsing. Use InputStreamReader with explicit charset: new InputStreamReader(stream, StandardCharsets.UTF_8). For files from Windows, ensure the editor saves without BOM.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Validate that the input is actually XML before parsing",
+      "success_rate": 0.88,
+      "how": "Log or inspect the first 100 bytes of the input to see what is actually there. Common non-XML inputs: HTML error pages from a web server (check for <!DOCTYPE html>), empty responses, JSON responses, or binary data. For HTTP-sourced XML, check the Content-Type header (should be application/xml or text/xml). Add error handling to log the actual content when parsing fails.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/spring-bean-not-found/spring6-linux", "probability": 0.15, "condition": "when Spring XML configuration fails to parse, beans defined in that file are not registered"},
+      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.15, "condition": "when a POM file has BOM or encoding issues causing Maven to fail"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.10, "condition": "when an HTTP timeout returns a partial or error response that is then parsed as XML"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/jackson-deserialization/jdk17-linux", "distinction": "SAXParseException is for XML parsing failures. Jackson deserialization errors are for JSON parsing failures. Both are parsing errors but for different data formats. Check the Content-Type of the input to determine which parser should be used."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

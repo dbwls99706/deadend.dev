@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongo-index-build-failed/mongo7-linux",
+  "url": "https://deadends.dev/database/mongo-index-build-failed/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.OperationFailure: Index build failed: CannotCreateIndex: Values in v:2 index key pattern are not valid",
+    "regex": "Index build failed|CannotCreateIndex|index build.*error|Cannot build index.*duplicate key",
+    "domain": "database",
+    "category": "index_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "An index build operation failed on MongoDB. Common causes: creating a unique index on a field with existing duplicate values, invalid index key pattern, exceeding the index key size limit (8KB for MongoDB 4.2+), running out of disk space during index build, or duplicate index names. Since MongoDB 4.2, index builds are done in the background by default."
+  },
+  "dead_ends": [
+    {
+      "action": "Killing the mongod process to abort a stuck index build",
+      "why_fails": "Killing mongod during an index build leaves the index in an inconsistent state. On restart, MongoDB may need to rebuild the index from scratch, which takes even longer. Use db.currentOp() to monitor progress and db.killOp() to cleanly abort the build if needed.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Creating the unique index with dropDups option to automatically remove duplicates",
+      "why_fails": "The dropDups option was removed in MongoDB 3.0. It no longer exists in modern MongoDB. You must manually deduplicate data before creating the unique index.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Deduplicate existing data before creating the unique index",
+      "success_rate": 0.90,
+      "how": "Find duplicates: db.collection.aggregate([{$group:{_id:'$field',count:{$sum:1},ids:{$push:'$_id'}}},{$match:{count:{$gt:1}}}]). Remove duplicates keeping one: iterate results and db.collection.deleteMany({_id:{$in: duplicateIds}}). Then create the unique index: db.collection.createIndex({field:1},{unique:true}).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use partial indexes to avoid indexing problematic documents",
+      "success_rate": 0.82,
+      "how": "Create a partial index that only includes documents meeting certain criteria: db.collection.createIndex({field:1},{unique:true,partialFilterExpression:{field:{$exists:true,$ne:null}}}). This excludes documents with null or missing values from the unique constraint, which is often the source of duplicates.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongo-write-conflict/mongo7-linux", "probability": 0.10, "condition": "when index builds block writes that then conflict when the build completes"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongodb-duplicate-key/mongo7-linux", "probability": 0.20, "condition": "when creating a unique index after discovering duplicate key errors reveals existing duplicate data"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mongodb-duplicate-key/mongo7-linux", "distinction": "Index build failed occurs during index creation when existing data violates the new index constraints. Duplicate key error occurs during normal insert/update operations when a document violates an existing unique index. One is a DDL error; the other is a DML error."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

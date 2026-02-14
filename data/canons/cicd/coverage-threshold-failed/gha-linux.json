@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/coverage-threshold-failed/gha-linux",
+  "url": "https://deadends.dev/cicd/coverage-threshold-failed/gha-linux",
+  "error": {
+    "signature": "Jest: \"global\" coverage threshold for statements (80%) not met: 72.5%",
+    "regex": "(?i)(?:coverage threshold.*not met|coverage.*below.*threshold|minimum coverage.*not reached|coverage.*failed)",
+    "domain": "cicd",
+    "category": "testing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Code coverage fell below the configured threshold, causing the CI pipeline to fail. This is a quality gate check that ensures new code maintains minimum test coverage levels."
+  },
+  "dead_ends": [
+    {
+      "action": "Lowering the coverage threshold to make CI pass",
+      "why_fails": "This circumvents the quality gate entirely. Coverage will continue to drop over time without enforcement, accumulating untested code.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding trivial tests that increase coverage without testing meaningful behavior",
+      "why_fails": "Tests that merely call functions without asserting behavior provide false coverage confidence. They pass coverage checks but do not catch bugs.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Write meaningful tests for uncovered code paths",
+      "success_rate": 0.88,
+      "how": "Run coverage locally: npx jest --coverage. Review the coverage report to identify uncovered lines/branches. Write tests targeting the specific uncovered paths. Verify the threshold is met before pushing.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use per-file or per-directory thresholds instead of global",
+      "success_rate": 0.82,
+      "how": "Configure different thresholds for different parts of the codebase. In jest.config.js: coverageThreshold: { './src/critical/': { statements: 90 }, './src/utils/': { statements: 70 } }. This allows new code to have higher thresholds without penalizing legacy code.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "probability": 0.20, "condition": "when coverage failure also triggers SonarQube quality gate failure"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.15, "condition": "when flaky test timeouts cause some tests to be skipped, reducing coverage"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "distinction": "coverage-threshold-failed is enforced by the test runner (Jest, pytest, etc.); sonarqube-quality-gate is enforced by the SonarQube analysis platform which checks multiple quality metrics beyond coverage"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

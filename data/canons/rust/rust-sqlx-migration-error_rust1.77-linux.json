@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-sqlx-migration-error/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-sqlx-migration-error/rust1.77-linux",
+  "error": {
+    "signature": "error returned from database: migration checksum mismatch for migration",
+    "regex": "migration checksum mismatch|sqlx.*migration.*error",
+    "domain": "rust",
+    "category": "database_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "An already-applied migration was modified. SQLx stores checksums to ensure migration integrity."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the _sqlx_migrations table to re-run all migrations",
+      "why_fails": "Re-running CREATE TABLE migrations on existing tables causes SQL errors; data may be lost",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a new migration with the corrective changes instead of modifying the existing one",
+      "success_rate": 0.90,
+      "how": "sqlx migrate add fix_previous_migration\n# Write ALTER TABLE or corrective SQL in the new migration",
+      "sources": ["https://docs.rs/sqlx/latest/sqlx/migrate/index.html"],
+      "condition": ""
+    },
+    {
+      "action": "For development only: drop and recreate the database",
+      "success_rate": 0.88,
+      "how": "sqlx database drop\nsqlx database create\nsqlx migrate run",
+      "sources": ["https://docs.rs/sqlx/latest/sqlx/migrate/index.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "probability": 0.10, "condition": "When database issues lead to connection troubleshooting"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "probability": 0.15, "condition": "When connection is established and migrations are run"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/rust-diesel-connection-error/rust1.77-linux", "distinction": "Connection error means database is unreachable; migration error means migrations are inconsistent after connection succeeds"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

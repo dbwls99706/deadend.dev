@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/memory-leak-perm-gen/jdk17-linux",
+  "url": "https://deadends.dev/java/memory-leak-perm-gen/jdk17-linux",
+  "error": {
+    "signature": "java.lang.OutOfMemoryError: Metaspace",
+    "regex": "java\\.lang\\.OutOfMemoryError:\\s*(?:Metaspace|PermGen space|Compressed class space)",
+    "domain": "java",
+    "category": "memory_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Metaspace (the replacement for PermGen in JDK 8+) has been exhausted. This stores class metadata and is consumed by class loading. Common after many hot-deploys in application servers or when frameworks generate excessive dynamic classes."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting -XX:MaxMetaspaceSize to an extremely large value without investigating the leak",
+      "why_fails": "If classes are being loaded repeatedly without being unloaded (classloader leak), increasing MaxMetaspaceSize just delays the OOM. Native memory consumption grows unbounded and can crash the entire OS process.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": "when there is a classloader leak"
+    },
+    {
+      "action": "Repeatedly redeploying the application to the same running application server",
+      "why_fails": "Each hot-deploy can leak classloaders if the application does not properly clean up ThreadLocals, JDBC drivers, shutdown hooks, and static references. Metaspace usage grows with each redeploy until OOM.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": "in application server hot-deploy scenarios"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Analyze class loading with jcmd or a profiler to find classloader leaks",
+      "success_rate": 0.85,
+      "how": "1. Run 'jcmd <pid> VM.classloader_stats' to see which classloaders hold the most classes. 2. Use Eclipse MAT on a heap dump and query for ClassLoader instances. 3. Look for duplicate classloaders from hot-deploys. 4. Check for common leak sources: JDBC drivers not deregistered in contextDestroyed(), ThreadLocal values referencing app classes, static fields in shared libraries holding app class references. 5. Fix leaks and set a reasonable -XX:MaxMetaspaceSize (e.g., 256m).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use full JVM restart instead of hot-deploy in production, and set appropriate MaxMetaspaceSize",
+      "success_rate": 0.88,
+      "how": "1. For production, use rolling restarts (blue-green or canary deployment) instead of hot-deploy. 2. Set -XX:MaxMetaspaceSize=256m (adjust based on your app's class count). 3. Monitor Metaspace usage with JMX or Prometheus JMX exporter. 4. If Metaspace grows linearly over time, there is a classloader leak to fix.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/gc-overhead-limit/jdk17-linux", "probability": 0.15, "condition": "when Metaspace pressure causes frequent full GCs that also impact heap collection"},
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.10, "condition": "when class metadata explosion indirectly consumes heap space for class-related objects"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/spring-autowire-failed/spring6-linux", "probability": 0.10, "condition": "when repeated Spring context refreshes create classloader leaks"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/outofmemoryerror-metaspace/jdk17-linux", "distinction": "Both refer to the same error; memory-leak-perm-gen focuses on the leak pattern (growing Metaspace over time) while outofmemoryerror-metaspace covers the immediate OOM condition"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

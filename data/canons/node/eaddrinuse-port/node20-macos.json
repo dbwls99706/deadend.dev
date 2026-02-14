@@ -77,16 +77,10 @@
   ],
   "transition_graph": {
     "leads_to": [],
-    "preceded_by": [
-      {
-        "error_id": "node/process-crash-unhandled/node20-macos",
-        "probability": 0.3,
-        "condition": "A previous Node process crashed without closing the server socket"
-      }
-    ],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/eacces-permission-denied/node20-macos",
+        "error_id": "node/eacces-permission-denied/node20-linux",
         "distinction": "EADDRINUSE means another process holds the port. EACCES means you lack permission to bind (ports below 1024 on macOS require root unless the process has the appropriate entitlement). Different error codes, different solutions."
       }
     ]

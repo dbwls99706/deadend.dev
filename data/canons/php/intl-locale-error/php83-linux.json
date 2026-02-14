@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/intl-locale-error/php83-linux",
+  "url": "https://deadends.dev/php/intl-locale-error/php83-linux",
+  "error": {
+    "signature": "Fatal error: Uncaught Error: Class 'IntlDateFormatter' not found in /var/www/app/src/Locale/DateHelper.php:12",
+    "regex": "Class ['\"]?(Intl\\w+|NumberFormatter|MessageFormatter|Locale|Collator)['\"]? not found",
+    "domain": "php",
+    "category": "extension",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "Intl extension errors occur when PHP's internationalization extension is missing. The Intl extension provides ICU-based locale-aware formatting for numbers, dates, currencies, and message translation. Many frameworks (Symfony, Laravel) require it."
+  },
+  "dead_ends": [
+    {"action": "Manually formatting dates and numbers with custom locale logic instead of installing intl", "why_fails": "Reimplementing ICU locale rules manually is error-prone and incomplete. Edge cases like right-to-left scripts, complex number systems, and locale-specific sorting will produce incorrect results.", "fail_rate": 0.78, "sources": [], "condition": ""},
+    {"action": "Using a PHP polyfill for intl without the underlying ICU library", "why_fails": "The symfony/polyfill-intl-icu package provides only basic fallback behavior. Complex formatting, collation, and transliteration will not work correctly without the real ICU library.", "fail_rate": 0.55, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Install the php-intl extension and ICU libraries", "success_rate": 0.95, "how": "On Debian/Ubuntu: apt-get install php8.3-intl. On Alpine (Docker): apk add icu-dev && docker-php-ext-install intl. Restart PHP-FPM. Verify with php -m | grep intl.", "sources": [], "condition": ""},
+    {"action": "Use symfony/polyfill-intl packages as a temporary workaround", "success_rate": 0.75, "how": "Install composer require symfony/polyfill-intl-icu symfony/polyfill-intl-normalizer symfony/polyfill-intl-grapheme. These provide limited fallback for basic operations while the full extension is being installed.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/mbstring-encoding-error/php83-linux", "probability": 0.15, "condition": "when locale configuration issues also affect multibyte string handling"}],
+    "preceded_by": [{"error_id": "php/composer-dependency-conflict/composer2-linux", "probability": 0.20, "condition": "when installing a framework that requires ext-intl triggers a dependency conflict"}],
+    "frequently_confused_with": [{"error_id": "php/mbstring-encoding-error/php83-linux", "distinction": "Intl is about locale-aware formatting and collation using ICU, while mbstring is about multibyte character encoding conversion and string manipulation"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

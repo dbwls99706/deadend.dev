@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-waf-rule-blocked/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-waf-rule-blocked/awscli2-linux",
+  "error": {
+    "signature": "403 Forbidden: Request blocked by AWS WAF",
+    "regex": "(403 Forbidden.*WAF|Request blocked by AWS WAF|WAFv2 .+ BLOCK|AWS-WAF.*rate-based rule)",
+    "domain": "aws",
+    "category": "security_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "AWS WAF blocked the request because it matched a rule in the Web ACL (IP reputation, rate limiting, SQL injection, etc.)."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable WAF entirely to unblock requests",
+      "why_fails": "Removing WAF exposes the application to all web attacks it was configured to prevent",
+      "fail_rate": 0.90,
+      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html"],
+      "condition": ""
+    },
+    {
+      "action": "Set all rules to Count mode permanently",
+      "why_fails": "Count mode logs but does not block; application remains unprotected while appearing monitored",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check WAF sampled requests and logs to identify which rule blocked the request",
+      "success_rate": 0.90,
+      "how": "Enable WAF logging to S3/CloudWatch, use aws wafv2 get-sampled-requests to see which rule matched",
+      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/logging.html"],
+      "condition": ""
+    },
+    {
+      "action": "Add a scope-down statement or IP set exception for legitimate traffic",
+      "success_rate": 0.85,
+      "how": "Create an IP set with trusted IPs and add a NOT condition to the blocking rule, or use a label-based exception",
+      "sources": ["https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-scope-down-statements.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "aws/throttling-exception/awscli2-linux", "probability": 0.10, "condition": "WAF rate-based rules also trigger API throttling"}
+    ],
+    "preceded_by": [
+      {"error_id": "aws/aws-cloudfront-origin-error/awscli2-linux", "probability": 0.10, "condition": "CloudFront passes request through WAF which then blocks it"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "distinction": "AccessDenied is about IAM permissions; WAF blocked is about web application firewall rules matching HTTP request patterns"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

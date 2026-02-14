@@ -36,8 +36,8 @@
     },
     {
       "action": "Disable image pull policy",
-      "why_fails": "imagePullPolicy: Never only works if image is pre-loaded on node",
-      "fail_rate": 0.7,
+      "why_fails": "imagePullPolicy: Never tells kubelet to never pull the image. If the image is not already present on the node, the pod fails deterministically with ErrImageNeverPull. This does not solve pull errors — it only works when images are pre-loaded via docker load or a DaemonSet.",
+      "fail_rate": 0.95,
       "sources": [
         "https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy"
       ],

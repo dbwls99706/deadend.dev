@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-import-resource-exists/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-import-resource-exists/tf1.7-linux",
+  "error": {
+    "signature": "Error: Resource already managed by Terraform or import ID not found",
+    "regex": "(Resource already managed|import .+ (not found|failed)|Cannot import .+ into|resource .+ already exists in state)",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "terraform", "version_range": ">=1.5,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform import failed because the resource already exists in state or the import ID format is incorrect."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the real resource and recreate it with Terraform",
+      "why_fails": "Deleting production resources causes downtime; import exists specifically to avoid this",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Force-push a new state file to overwrite the existing resource entry",
+      "why_fails": "Overwriting state can cause other resources to become orphaned or duplicated",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use terraform state rm to remove stale state entry before re-importing",
+      "success_rate": 0.88,
+      "how": "terraform state rm MODULE.RESOURCE_ADDRESS, then terraform import MODULE.RESOURCE_ADDRESS RESOURCE_ID",
+      "sources": ["https://developer.hashicorp.com/terraform/cli/commands/state/rm"],
+      "condition": ""
+    },
+    {
+      "action": "Use the import block in Terraform 1.5+ for declarative imports",
+      "success_rate": 0.85,
+      "how": "Add import { to = RESOURCE_ADDRESS; id = \"RESOURCE_ID\" } block and run terraform plan",
+      "sources": ["https://developer.hashicorp.com/terraform/language/import"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "terraform/resource-already-exists/tf1-linux", "probability": 0.20, "condition": "After import, plan shows resource already exists in the cloud"}
+    ],
+    "preceded_by": [
+      {"error_id": "terraform/resource-already-exists/tf1-linux", "probability": 0.30, "condition": "Resource created outside Terraform needs to be imported"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "terraform/tf-resource-already-managed/tf1.7-linux", "distinction": "Resource already managed means it is in state already; import resource exists means the import process itself fails"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

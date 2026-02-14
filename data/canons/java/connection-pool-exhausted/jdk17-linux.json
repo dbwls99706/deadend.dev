@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/connection-pool-exhausted/jdk17-linux",
+  "url": "https://deadends.dev/java/connection-pool-exhausted/jdk17-linux",
+  "error": {
+    "signature": "Unable to acquire connection from pool. Connection pool exhausted",
+    "regex": "(?:Unable to acquire|Cannot get a) connection from (?:the )?pool|Connection pool exhausted",
+    "domain": "java",
+    "category": "resource_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.9,
+    "last_updated": "2026-02-12",
+    "summary": "All connections in the database connection pool (HikariCP, DBCP, C3P0) are in use and the pool cannot allocate a new one. Usually caused by connection leaks (not closing connections), long-running queries, or an undersized pool."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply increasing the maximum pool size without investigating the root cause",
+      "why_fails": "If connections are being leaked (not returned to the pool), increasing the pool size just delays the problem. The pool will exhaust again, now using more database resources. Databases also have their own connection limits.",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling connection pool timeout to wait indefinitely for a connection",
+      "why_fails": "This converts a fast-failing error into threads that hang indefinitely, leading to thread pool exhaustion and complete application unresponsiveness. The user experience goes from an error message to a frozen application.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable HikariCP leak detection to find unclosed connections",
+      "success_rate": 0.9,
+      "how": "1. Set leakDetectionThreshold in HikariCP config (e.g., 30000 for 30 seconds). 2. Run the application under load — HikariCP will log stack traces of code that borrowed a connection and did not return it within the threshold. 3. Fix the leak by ensuring every connection/statement/resultset is closed in a try-with-resources block. 4. Verify the fix by monitoring active connection count.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure all database operations use try-with-resources to guarantee connection return",
+      "success_rate": 0.88,
+      "how": "1. Audit all code that obtains a connection from the pool. 2. Wrap every Connection, PreparedStatement, and ResultSet in a try-with-resources block. 3. In Spring, use @Transactional or JdbcTemplate which handle connection management automatically. 4. After fixing leaks, right-size the pool to roughly 2x the number of concurrent request-handling threads.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "java/thread-pool-exhausted/jdk21-linux",
+        "probability": 0.3,
+        "condition": "when threads waiting for connections block the thread pool"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the database is slow to respond, causing connections to be held longer"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "java/jdbc-connection-refused/jdk17-linux",
+        "distinction": "Connection refused means the database is unreachable; pool exhausted means the database is reachable but all pooled connections are in use"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 90,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-state-lock-conflict/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-state-lock-conflict/tf1.7-linux",
+  "error": {
+    "signature": "Error acquiring the state lock: ConditionalCheckFailedException: The conditional request failed",
+    "regex": "(Error acquiring the state lock|ConditionalCheckFailedException|state lock .+ conflict|Lock Info)",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-12",
+    "summary": "Another Terraform process holds the state lock, or a previous run left a stale lock behind."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the DynamoDB lock table to clear the lock",
+      "why_fails": "Deleting the table removes all locking protection and may cause state corruption from concurrent operations",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/settings/backends/s3"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run terraform apply with -lock=false to bypass",
+      "why_fails": "Bypassing locks risks concurrent state modifications and state file corruption",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/apply"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use terraform force-unlock with the lock ID after verifying no other process is running",
+      "success_rate": 0.9,
+      "how": "terraform force-unlock LOCK_ID (the lock ID is shown in the error message)",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wait for the other Terraform operation to complete",
+      "success_rate": 0.85,
+      "how": "Check the Lock Info in the error for who holds the lock; verify with CI/CD system if a pipeline is running",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state/locking"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "probability": 0.3,
+        "condition": "Previous state lock error left stale lock behind"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/state-lock-error/tf1-linux",
+        "distinction": "State lock error is general locking failure; state lock conflict specifically involves DynamoDB conditional check failures from concurrent access"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

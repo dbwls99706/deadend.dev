@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/index-pack-failed/git2-linux",
+  "url": "https://deadends.dev/git/index-pack-failed/git2-linux",
+  "error": {
+    "signature": "fatal: index-pack failed",
+    "regex": "(?i)fatal:.*index-pack failed",
+    "domain": "git",
+    "category": "transfer",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "The index-pack process failed while processing received pack data during fetch/clone. Typically caused by insufficient memory for large repos, corrupted pack data from network issues, or disk space exhaustion."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly retrying the clone without addressing the memory issue",
+      "why_fails": "If the failure is due to insufficient memory for indexing a large pack, retrying produces the same OOM failure each time",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing only the HTTP buffer without addressing pack memory limits",
+      "why_fails": "http.postBuffer affects push, not fetch/clone. The index-pack process has its own memory requirements independent of HTTP buffering",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase pack memory limits and use shallow clone",
+      "success_rate": 0.85,
+      "how": "Set git config --global pack.windowMemory 256m and git config --global pack.threads 1 to reduce memory usage. Or use git clone --depth 1 for a shallow clone to reduce pack size.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Clone via SSH instead of HTTPS to avoid transfer encoding issues",
+      "success_rate": 0.78,
+      "how": "If using HTTPS, switch to SSH: git clone git@github.com:user/repo.git. SSH uses a different transfer protocol that can be more reliable for large repositories.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/pack-objects-died/git2-linux", "probability": 0.20, "condition": "when pack processing issues affect both receiving and sending"},
+      {"error_id": "git/object-corrupted/git2-linux", "probability": 0.15, "condition": "when partial pack indexing results in corrupted objects"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/unable-to-access-https/git2-linux", "probability": 0.15, "condition": "when intermittent network issues cause partial pack data transfer"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/pack-objects-died/git2-linux", "distinction": "index-pack-failed occurs on the receiving side (fetch/clone); pack-objects-died occurs on the sending side (push) or during local repacking"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

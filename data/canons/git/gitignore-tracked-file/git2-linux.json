@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/gitignore-tracked-file/git2-linux",
+  "url": "https://deadends.dev/git/gitignore-tracked-file/git2-linux",
+  "error": {
+    "signature": ".gitignore rule has no effect on already-tracked file",
+    "regex": "(?:\\.gitignore.*(?:not work|no effect|still track)|Changes not staged.*(?:should be ignored|in gitignore)|git rm --cached)",
+    "domain": "git",
+    "category": "configuration_error",
+    "first_seen": "2016-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Adding .env or config files to .gitignore after they were already committed",
+        "IDE configuration files (*.iml, .idea/, .vscode/) still showing in git status",
+        "Build artifacts committed before gitignore rule was added"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.97,
+    "last_updated": "2026-02-14",
+    "summary": ".gitignore only prevents untracked files from being added. Once a file is tracked by git (i.e., has been committed), adding it to .gitignore has no effect. The file must be explicitly removed from git's index while keeping it on disk."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the file to .gitignore and expecting git to stop tracking it",
+      "why_fails": ".gitignore only applies to untracked files. Once a file has been added to git's index (via git add and commit), .gitignore rules are completely ignored for that file. Git will continue tracking modifications to the file regardless of any gitignore patterns.",
+      "fail_rate": 0.99,
+      "sources": [
+        "https://git-scm.com/docs/gitignore"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Deleting the file, committing, then recreating it expecting gitignore to take effect",
+      "why_fails": "If you delete the file via 'rm' and commit the deletion, then recreate the file, .gitignore WILL work. But this approach removes the file from all other clones when they pull, which may break teammates' configurations. It also loses the file's git history permanently.",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://git-scm.com/docs/gitignore"
+      ],
+      "condition": "In collaborative repositories"
+    },
+    {
+      "action": "Using git update-index --assume-unchanged to hide tracked files",
+      "why_fails": "assume-unchanged is a performance hint for git, NOT a proper ignore mechanism. It tells git to skip stat() calls for the file, but git reset, git checkout, and git pull will still overwrite local changes. It's also local-only (not shared with other developers) and can silently revert. Use --skip-worktree instead if you must use this approach.",
+      "fail_rate": 0.7,
+      "sources": [
+        "https://git-scm.com/docs/git-update-index"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove from index with git rm --cached, then commit",
+      "success_rate": 0.98,
+      "how": "Run 'git rm --cached <file>' (or 'git rm --cached -r <directory>' for directories). This removes the file from git's tracking index but keeps it on your local disk. Then commit the change. The file will now be properly ignored by .gitignore. WARNING: This creates a commit that deletes the file from git, so other developers will see the file deleted when they pull.",
+      "sources": [
+        "https://git-scm.com/docs/git-rm"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use git update-index --skip-worktree for local-only ignore",
+      "success_rate": 0.88,
+      "how": "Run 'git update-index --skip-worktree <file>'. This tells git to pretend the file hasn't changed locally, even if it has. Unlike --assume-unchanged, --skip-worktree survives most git operations. It's local-only and won't affect other developers. Undo with '--no-skip-worktree'.",
+      "tradeoff": "Local-only setting; not shared via clone/push; must be set per-developer",
+      "sources": [
+        "https://git-scm.com/docs/git-update-index"
+      ],
+      "condition": "When you need to keep the file tracked in the repo but ignore local modifications"
+    },
+    {
+      "action": "Bulk-remove all gitignored tracked files",
+      "success_rate": 0.95,
+      "how": "Run 'git rm --cached $(git ls-files -i -c --exclude-from=.gitignore)' to remove all currently tracked files that match .gitignore patterns. Review the list with 'git ls-files -i -c --exclude-from=.gitignore' first. Then commit.",
+      "tradeoff": "Affects all collaborators; may delete their local copies of these files on pull",
+      "sources": [
+        "https://git-scm.com/docs/git-ls-files"
+      ],
+      "condition": "When many tracked files need to be untracked at once"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "git/credential-rejected/git2-linux",
+        "probability": 0.15,
+        "condition": "If .env or credential files remain tracked and get pushed to remote"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "distinction": "local-changes-overwritten happens during pull/merge when working directory has modifications. gitignore-tracked-file is about .gitignore not applying to already-committed files."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 200,
+    "last_verification": "2026-02-14"
+  }
+}

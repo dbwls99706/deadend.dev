@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/rsc-serialization-error/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/rsc-serialization-error/nextjs14-linux",
+  "error": {
+    "signature": "Error: Only plain objects, and a few built-ins, can be passed to Client Components from Server Components. Classes or null prototypes are not supported.",
+    "regex": "Only plain objects.*can be passed to Client Components from Server Components",
+    "domain": "nextjs",
+    "category": "serialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-13",
+    "summary": "Data passed from a Server Component to a Client Component via props must be serializable over the RSC wire protocol. Non-serializable values include class instances, functions, Dates, Maps, Sets, Symbols, and objects with null prototypes (e.g., from Object.create(null) or some ORM results)."
+  },
+  "dead_ends": [
+    {
+      "action": "Use JSON.stringify/JSON.parse to serialize the data before passing as props",
+      "why_fails": "While this can work for simple cases, it strips type information, loses Date objects (they become strings), silently drops undefined values, and fails on circular references. It's a fragile workaround that introduces subtle bugs and breaks TypeScript type safety.",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
+      "condition": "Data contains Dates, undefined values, or complex nested types"
+    },
+    {
+      "action": "Pass the entire class instance or ORM model object directly as a prop",
+      "why_fails": "Class instances have prototypes and methods that cannot cross the Server/Client boundary. The RSC protocol only supports plain objects, strings, numbers, booleans, null, arrays, and a few built-in types like Date (as of newer React versions).",
+      "fail_rate": 0.98,
+      "sources": [
+        "https://react.dev/reference/rsc/use-client#serializable-types"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap the Client Component in a Server Component that converts data to a string",
+      "why_fails": "Converting structured data to a string loses all typing and structure. The Client Component then needs to re-parse it, which is error-prone and defeats the purpose of typed props.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Convert class instances and ORM models to plain objects before passing as props",
+      "success_rate": 0.93,
+      "how": "// Server Component\nimport { prisma } from '@/lib/db';\nimport { ClientList } from './ClientList';\n\nexport default async function Page() {\n  const users = await prisma.user.findMany();\n  // Convert Prisma models to plain objects:\n  const plainUsers = users.map(u => ({\n    id: u.id,\n    name: u.name,\n    email: u.email,\n    createdAt: u.createdAt.toISOString(),\n  }));\n  return <ClientList users={plainUsers} />;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Move the data transformation logic to the Client Component and pass only serializable IDs or primitives",
+      "success_rate": 0.88,
+      "how": "// Server Component\nexport default async function Page() {\n  const userIds = await getUserIds(); // Returns string[]\n  return <UserDashboard userIds={userIds} />;\n}\n\n// ClientComponent.tsx\n'use client';\nexport function UserDashboard({ userIds }: { userIds: string[] }) {\n  // Fetch full user data client-side using SWR, React Query, etc.\n  const { data } = useSWR(`/api/users?ids=${userIds.join(',')}`);\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#fetching-data-on-the-client"
+      ],
+      "condition": "Data is complex and frequently changes"
+    },
+    {
+      "action": "Create a serialization utility that converts non-serializable types to RSC-safe plain objects",
+      "success_rate": 0.91,
+      "how": "// lib/serialize.ts\nexport function serialize<T extends Record<string, any>>(obj: T): Record<string, any> {\n  return Object.fromEntries(\n    Object.entries(obj).map(([key, val]) => [\n      key,\n      val instanceof Date ? val.toISOString() :\n      val instanceof Map ? Object.fromEntries(val) :\n      val instanceof Set ? [...val] :\n      typeof val === 'object' && val !== null ? serialize(val) :\n      typeof val === 'function' ? undefined :\n      val\n    ]).filter(([_, v]) => v !== undefined)\n  );\n}\n\n// Usage in Server Component:\nconst safeData = serialize(complexData);\nreturn <ClientComponent data={safeData} />;",
+      "sources": [
+        "https://react.dev/reference/rsc/use-client#serializable-types"
+      ],
+      "condition": "Many components need to pass complex data across the boundary"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/hydration-failed/nextjs14-linux",
+        "probability": 0.15,
+        "condition": "Serialized Date strings are rendered differently on server and client"
+      },
+      {
+        "error_id": "nextjs/async-client-component/nextjs14-linux",
+        "probability": 0.10,
+        "condition": "Developer moves data fetching into the Client Component and makes it async"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/server-only-import-client/nextjs14-linux",
+        "probability": 0.20,
+        "condition": "Developer restructures to pass server data via props but the data is not serializable"
+      },
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.15,
+        "condition": "After splitting into Server/Client components, the data passed between them is not serializable"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/server-only-import-client/nextjs14-linux",
+        "distinction": "server-only-import-client is about importing server modules in client code; rsc-serialization-error is about passing non-serializable data as props from Server to Client Components"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

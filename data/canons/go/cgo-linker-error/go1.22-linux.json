@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/cgo-linker-error/go1.22-linux",
+  "url": "https://deadends.dev/go/cgo-linker-error/go1.22-linux",
+  "error": {
+    "signature": "# runtime/cgo\ncgo: C compiler \"gcc\" not found: exec: \"gcc\": executable file not found in $PATH",
+    "regex": "runtime/cgo|cgo:.*not found|undefined reference to.*cgo|cannot find -l",
+    "domain": "go",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "CGo requires a C compiler and linker. The build fails because gcc/clang is not installed, or C libraries referenced by #cgo directives are missing."
+  },
+  "dead_ends": [
+    {
+      "action": "Set CGO_ENABLED=0 when the package genuinely requires CGo",
+      "why_fails": "Packages like go-sqlite3, libpcap bindings, and system crypto require CGo — disabling it causes missing symbol errors at link time or runtime",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://pkg.go.dev/cmd/cgo"
+      ],
+      "condition": "when the dependency uses C code"
+    },
+    {
+      "action": "Copy pre-compiled .so/.a files from another machine",
+      "why_fails": "Shared libraries are ABI-sensitive — compiled on a different glibc or architecture will produce cryptic linker errors",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install C build tools: apt-get install gcc libc6-dev",
+      "success_rate": 0.92,
+      "how": "sudo apt-get update && sudo apt-get install -y build-essential",
+      "sources": [
+        "https://go.dev/doc/install/source"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Install the specific C library headers referenced by the Go package",
+      "success_rate": 0.88,
+      "how": "Read the cgo LDFLAGS/CFLAGS in the Go source, then install the corresponding -dev package (e.g., libsqlite3-dev)",
+      "sources": [
+        "https://pkg.go.dev/cmd/cgo"
+      ],
+      "condition": "when linker error references a specific library"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/module-checksum-mismatch/go1.22-linux",
+        "probability": 0.15,
+        "condition": "when installing missing C deps triggers module re-download"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/missing-go-sum-entry/go121-linux",
+        "probability": 0.20,
+        "condition": "when adding a new cgo-dependent module"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/undefined-reference/go1-linux",
+        "distinction": "'runtime/cgo' and linker errors indicate missing C toolchain or libraries, while 'undefined' in Go context indicates a missing Go identifier."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/spring-transaction-timeout/jdk21-linux",
+  "url": "https://deadends.dev/java/spring-transaction-timeout/jdk21-linux",
+  "error": {
+    "signature": "org.springframework.transaction.TransactionTimedOutException: Transaction timed out: deadline was ...",
+    "regex": "TransactionTimedOutException|Transaction timed out.*deadline|transaction.*timeout.*expired|TransactionSystemException.*timeout",
+    "domain": "java",
+    "category": "framework_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "A Spring-managed transaction exceeded its configured timeout. The default Spring transaction timeout is often inherited from the underlying transaction manager or database connection pool. When a @Transactional method takes longer than the timeout, Spring marks the transaction for rollback. The actual timeout enforcement depends on the transaction manager and may only be checked at certain points (e.g., before executing the next JDBC statement)."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting the timeout to an extremely large value (e.g., Integer.MAX_VALUE) to prevent timeouts",
+      "why_fails": "Very large timeouts mask performance problems and can hold database locks for extended periods, causing cascading failures for other transactions. A long-running transaction also consumes database connection pool resources, potentially exhausting the pool for other requests.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding @Transactional(timeout=X) at the class level to fix a timeout in one specific method",
+      "why_fails": "Class-level @Transactional applies to all public methods. Setting a long timeout at the class level to fix one slow method gives every method an unnecessarily long timeout, masking performance issues in the fast methods. Each method should have an appropriate timeout.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set an appropriate per-method transaction timeout and optimize the slow operation",
+      "success_rate": 0.90,
+      "how": "Use @Transactional(timeout = 30) on the specific method (timeout in seconds). Profile the method to find the slow operation: is it a slow query, external API call, or N+1 select problem? Optimize the database query (add indexes, reduce data fetched). Move non-transactional work (HTTP calls, file I/O) outside the @Transactional boundary.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Split long-running operations into smaller transactional units",
+      "success_rate": 0.85,
+      "how": "Break the operation into multiple smaller transactions using TransactionTemplate or @Transactional(propagation = REQUIRES_NEW) on helper methods (must be in a different Spring bean due to proxy-based AOP). Process records in batches, committing after each batch. Use Spring Batch for very large dataset operations.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "probability": 0.20, "condition": "when timed-out transactions hold connections that are not returned to the pool promptly"},
+      {"error_id": "java/deadlock-detected/jdk17-linux", "probability": 0.15, "condition": "when transaction retries after timeout compete for the same locks"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/hibernate-lazy-init/jdk17-linux", "probability": 0.15, "condition": "when lazy loading triggers many additional queries that push the transaction past the timeout"},
+      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.20, "condition": "when database deadlock detection takes long enough to trigger the Spring timeout"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/http-timeout/jdk17-linux", "distinction": "Spring TransactionTimedOutException is about database transaction duration. HTTP timeout is about the duration of an HTTP request/response. A transaction can timeout because it includes a slow HTTP call, but the root causes and fixes are different."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

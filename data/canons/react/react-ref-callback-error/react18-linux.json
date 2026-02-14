@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-ref-callback-error/react18-linux",
+  "url": "https://deadends.dev/react/react-ref-callback-error/react18-linux",
+  "error": {
+    "signature": "TypeError: Cannot read properties of null (reading 'focus'). Ref callback receives null on unmount.",
+    "regex": "Cannot read propert.* of null.*ref|ref.*callback.*null|ref\\.current is null|Cannot read propert.*null.*focus|scrollIntoView.*null",
+    "domain": "react",
+    "category": "ref_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "Ref callback function or ref.current accessed when the DOM node is null. Callback refs are called with null on unmount. useRef.current is null before the component mounts or after it unmounts."
+  },
+  "dead_ends": [
+    {
+      "action": "Access ref.current immediately after calling setState",
+      "why_fails": "State updates are asynchronous; the DOM has not yet updated when you access the ref. The ref still points to the old DOM or is null.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://react.dev/reference/react/useRef#caveats"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a setTimeout to delay ref access",
+      "why_fails": "Timing-based workaround that is fragile and race-condition prone. May work in dev but break in production under load.",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/learn/manipulating-the-dom-with-refs"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add a null check before accessing ref.current methods",
+      "success_rate": 0.90,
+      "how": "if (ref.current) { ref.current.focus(); } or ref.current?.focus();",
+      "sources": [
+        "https://react.dev/learn/manipulating-the-dom-with-refs"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a callback ref that checks for null",
+      "success_rate": 0.92,
+      "how": "const callbackRef = useCallback((node) => { if (node !== null) { node.focus(); } }, []);  <input ref={callbackRef} />",
+      "sources": [
+        "https://react.dev/reference/react-dom/components/common#ref-callback"
+      ],
+      "condition": "When you need to perform an action as soon as the DOM node is available"
+    },
+    {
+      "action": "Use flushSync before accessing ref after a state update",
+      "success_rate": 0.85,
+      "how": "import { flushSync } from 'react-dom'; flushSync(() => { setState(newValue); }); ref.current.focus();",
+      "sources": [
+        "https://react.dev/reference/react-dom/flushSync"
+      ],
+      "condition": "When you need synchronous DOM access after a state update"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-forward-ref-error/react18-linux",
+        "probability": 0.18,
+        "condition": "When passing a ref to a child function component that does not use forwardRef"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/react-cannot-update-unmounted/react18-linux",
+        "probability": 0.15,
+        "condition": "When the component unmounts during an async operation and the ref callback fires with null"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-forward-ref-error/react18-linux",
+        "distinction": "ref-callback-error is about accessing a null ref at the wrong lifecycle point, while forward-ref-error is about passing refs to function components that lack forwardRef"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 100,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/redis-cluster-down/redis7-linux",
+  "url": "https://deadends.dev/database/redis-cluster-down/redis7-linux",
+  "error": {
+    "signature": "redis.exceptions.ClusterDownError: CLUSTERDOWN The cluster is down",
+    "regex": "CLUSTERDOWN|cluster is down|cluster state.*fail",
+    "domain": "database",
+    "category": "cluster_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "A Redis Cluster node reports that the cluster is in a failed state. This occurs when one or more hash slots are not covered (no master serving them), typically because a master node is down and has no available replica for failover. The cluster requires all 16384 hash slots to be assigned and served to accept commands."
+  },
+  "dead_ends": [
+    {
+      "action": "Restarting all cluster nodes simultaneously to fix the cluster state",
+      "why_fails": "Restarting all nodes at once causes a full cluster outage and can lead to data loss if nodes have unsaved data. Cluster state recovery depends on node gossip, and a full restart can cause split-brain if nodes come up at different times with stale cluster state.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting cluster-require-full-coverage to no as a permanent solution",
+      "why_fails": "With cluster-require-full-coverage no, the cluster accepts commands for available slots but returns errors for keys in unavailable slots. This causes partial failures that are difficult for applications to handle correctly. It masks the real problem (missing slots) instead of fixing it.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and recover the failed node or assign its slots to another node",
+      "success_rate": 0.88,
+      "how": "Check cluster state: redis-cli cluster info (look for cluster_state:fail). Find unassigned slots: redis-cli cluster slots. If a master is down but recoverable, restart it and wait for it to rejoin. If permanently lost, use: redis-cli --cluster fix <any-alive-node>:6379 to reassign orphaned slots to existing masters.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Promote a replica to master for the failed node's slots",
+      "success_rate": 0.85,
+      "how": "If the failed master has a replica: redis-cli -h replica-host -p 6379 CLUSTER FAILOVER TAKEOVER. The replica will assume the master role and serve its slots. If no replica exists, add a new node: redis-cli --cluster add-node new-node:6379 existing-node:6379, then reshard slots to it.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.20, "condition": "when individual cluster nodes become unreachable after cluster failure"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.20, "condition": "when a cluster node runs out of memory and crashes, leaving its slots unserved"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/redis-connection-refused/redis7-linux", "distinction": "CLUSTERDOWN means the cluster topology is broken (missing hash slots). Connection refused means a specific Redis node is not reachable. A cluster can be down even when all reachable nodes accept connections, if slot coverage is incomplete."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

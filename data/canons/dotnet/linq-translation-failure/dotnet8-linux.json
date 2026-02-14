@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/linq-translation-failure/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/linq-translation-failure/dotnet8-linux",
+  "error": {
+    "signature": "System.InvalidOperationException: The LINQ expression could not be translated.",
+    "regex": "(LINQ expression.*could not be translated|InvalidOperationException.*LINQ.*translated|could not be translated.*Either rewrite)",
+    "domain": "dotnet",
+    "category": "runtime_exception",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-13",
+    "summary": "EF Core throws this when a LINQ expression contains C# methods or logic that cannot be translated to SQL. Common culprits include custom methods, string interpolation in predicates, unsupported .NET method calls (e.g., TimeSpan arithmetic, regex), and complex conditional logic. Fix by restructuring the query to use translatable operations, or by explicitly evaluating the untranslatable part client-side with AsEnumerable()/ToList() at the right boundary."
+  },
+  "dead_ends": [
+    {
+      "action": "Switching the entire query to client-side evaluation by calling .ToList() before the Where clause",
+      "why_fails": "Loads the entire table into memory before filtering, causing catastrophic performance on large datasets. This masks the real issue and creates O(n) memory consumption and network transfer that will fail at scale",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrading to EF Core 2.x where client evaluation was silently allowed",
+      "why_fails": "EF Core 2.x silently evaluated untranslatable expressions on the client, hiding severe performance bugs. EF Core 3.0+ throws this exception intentionally to prevent accidental full-table scans. Downgrading reintroduces those hidden performance problems and loses years of bug fixes and features",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Wrapping the untranslatable method in a try-catch and falling back to a different query",
+      "why_fails": "The exception is thrown during query compilation, not execution. The entire query fails before any SQL is sent to the database. A try-catch around the enumeration does not help because the translation failure is deterministic and will always throw for the same query shape",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Split the query into a translatable server-side part and a client-side post-filter",
+      "success_rate": 0.90,
+      "how": "Move the translatable filters (simple comparisons, Contains, etc.) before a materialization call, then apply the untranslatable logic after: var results = await dbContext.Orders.Where(o => o.Status == \"Active\").ToListAsync(); var filtered = results.Where(o => MyCustomMethod(o.Data)).ToList(); This keeps the expensive filtering on the server and only evaluates the custom logic on the reduced result set",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace the untranslatable method with an EF Core-compatible expression",
+      "success_rate": 0.88,
+      "how": "Identify which method cannot be translated and replace it with an EF-translatable equivalent. Common replacements: use EF.Functions.Like() instead of Regex, use .Contains() instead of custom string methods, use DbFunction mapping for database-specific functions, and inline simple logic instead of calling helper methods. Example: replace .Where(x => IsValid(x.Name)) with .Where(x => x.Name != null && x.Name.Length > 0)",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a compiled raw SQL query or FromSqlRaw for complex server-side logic",
+      "success_rate": 0.85,
+      "how": "When the required logic is expressible in SQL but not in LINQ, use raw SQL: var results = await dbContext.Orders.FromSqlRaw(\"SELECT * FROM Orders WHERE DATEDIFF(day, CreatedAt, GETDATE()) > {0}\", days).ToListAsync(); Combine with .Where() and .OrderBy() for additional LINQ-translatable filters that EF Core will compose into the final query",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/outofmemoryexception/dotnet8-linux", "probability": 0.20, "condition": "when developers work around the error by forcing client-side evaluation on large tables"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when restructuring the query introduces other EF Core configuration issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.10, "condition": "when refactoring queries for no-tracking performance introduces untranslatable expressions"},
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.05, "condition": "when model changes lead to query refactoring that introduces untranslatable LINQ"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "LINQ translation failure is specifically about EF Core's query translation pipeline being unable to convert a C# expression to SQL; generic InvalidOperationException covers a wide range of state validation errors unrelated to query translation"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/enum-constant-not-found/jdk17-linux",
+  "url": "https://deadends.dev/java/enum-constant-not-found/jdk17-linux",
+  "error": {
+    "signature": "java.lang.IllegalArgumentException: No enum constant",
+    "regex": "java\\.lang\\.IllegalArgumentException:\\s*No enum constant",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Enum.valueOf() was called with a string that does not match any constant in the enum. Common when deserializing data (JSON, database values, configs) that contains a value not present in the enum definition."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding a catch for IllegalArgumentException and returning null",
+      "why_fails": "Returning null defers the problem — now the caller has a null where it expected a valid enum value, likely causing a NullPointerException later. The root cause (mismatched data vs. enum definition) remains.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Making enum names case-insensitive by converting all stored data to uppercase",
+      "why_fails": "This only fixes case mismatch issues but does not handle genuinely missing enum constants from schema evolution. It also risks breaking other data consumers that depend on the original case.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the missing enum constant, or use a custom fromString() method that handles unknown values gracefully",
+      "success_rate": 0.92,
+      "how": "1. Check the error message for the unrecognized value. 2. If it is a legitimate new value, add it to the enum. 3. For forward compatibility, create a static fromString() method that uses a Map lookup and returns a default/UNKNOWN constant for unrecognized values. 4. For Jackson deserialization, use @JsonEnumDefaultValue on an UNKNOWN constant and enable DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use @JsonCreator or a custom deserializer for robust enum parsing from external data",
+      "success_rate": 0.88,
+      "how": "1. Add a @JsonCreator static method that accepts a String and handles case-insensitive matching and aliases. 2. Store enum values in a static Map for O(1) lookup. 3. For database values, use JPA's @Converter (AttributeConverter) instead of relying on Enum.valueOf(). 4. Add validation at the data ingestion boundary rather than deep in business logic.",
+      "sources": [],
+      "condition": "when the enum is deserialized from JSON or database"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nullpointerexception/jdk17-linux", "probability": 0.20, "condition": "when catching IllegalArgumentException and returning null leads to NPE downstream"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/jackson-deserialization/jdk17-linux", "probability": 0.25, "condition": "when Jackson attempts to deserialize a JSON string into an enum value"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/illegalstateexception/jdk17-linux", "distinction": "IllegalStateException indicates wrong object state; No enum constant is an IllegalArgumentException indicating an invalid input string for Enum.valueOf()"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

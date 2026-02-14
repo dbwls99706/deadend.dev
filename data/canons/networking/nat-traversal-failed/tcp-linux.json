@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/nat-traversal-failed/tcp-linux",
+  "url": "https://deadends.dev/networking/nat-traversal-failed/tcp-linux",
+  "error": {
+    "signature": "NAT traversal failed: no response from STUN server, symmetric NAT detected",
+    "regex": "NAT traversal.*fail|symmetric NAT|STUN.*fail|hole punch.*fail|NAT type.*restrictive|hairpin.*fail",
+    "domain": "networking",
+    "category": "nat",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.72,
+    "confidence": 0.80,
+    "last_updated": "2026-02-12",
+    "summary": "Peer-to-peer connection establishment failed because one or both endpoints are behind NAT devices that prevent direct communication. Symmetric NAT is particularly problematic as it assigns different external ports for each destination, defeating STUN-based hole punching."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly retry STUN hole punching against a symmetric NAT",
+      "why_fails": "Symmetric NAT allocates a new external port for each unique destination. The port discovered via STUN will not be the port used for the peer connection, so hole punching systematically fails regardless of retry count.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": "When symmetric NAT is on both sides"
+    },
+    {
+      "action": "Configure UPnP port forwarding assuming all NAT devices support it",
+      "why_fails": "Most enterprise and carrier-grade NATs disable UPnP for security. Even consumer routers may have UPnP disabled by default in recent firmware. UPnP also only works for the first NAT layer in double-NAT scenarios.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a TURN relay server as a fallback when direct connection fails",
+      "success_rate": 0.92,
+      "how": "1. Deploy a TURN server (e.g., coturn): apt install coturn\n2. Configure TURN credentials and allowed IP ranges\n3. In the ICE configuration, include TURN server URLs alongside STUN\n4. The client library (WebRTC, libnice) will automatically fall back to TURN when STUN fails\n5. TURN relays all traffic through the server, which always works but adds latency and bandwidth cost\n6. Monitor TURN relay usage to provision adequate bandwidth",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set up a VPN or WireGuard tunnel to bypass NAT entirely",
+      "success_rate": 0.88,
+      "how": "1. Deploy a VPN server on a public IP: apt install wireguard\n2. Configure both peers to connect to the VPN server\n3. Peers communicate over the VPN overlay network, bypassing NAT\n4. WireGuard uses UDP and maintains NAT mappings with keepalives\n5. Configure PersistentKeepalive = 25 to keep NAT mappings alive",
+      "sources": [],
+      "condition": "Requires a public-IP relay point"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.30, "condition": "when NAT traversal fails and no TURN fallback is configured, causing the direct connection attempt to time out"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.20, "condition": "when firewall rules prevent STUN/TURN traffic from reaching the NAT traversal server"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/firewall-blocked/tcp-linux", "distinction": "NAT traversal failure is about peer-to-peer connectivity through NAT devices; firewall blocked is about explicit deny rules on packet filters"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

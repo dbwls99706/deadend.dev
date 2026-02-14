@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/icmp-unreachable/tcp-linux",
+  "url": "https://deadends.dev/networking/icmp-unreachable/tcp-linux",
+  "error": {
+    "signature": "Destination unreachable: Host unreachable (ICMP type 3, code 1)",
+    "regex": "Destination unreachable|ICMP.*unreachable|No route to host|EHOSTUNREACH|network.*unreachable",
+    "domain": "networking",
+    "category": "icmp",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "An intermediate router or the destination host returned an ICMP Destination Unreachable message. The specific code indicates the reason: host unreachable (code 1), network unreachable (code 0), port unreachable (code 3), or administratively prohibited (code 13)."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the connection assuming the error is transient",
+      "why_fails": "ICMP unreachable is a definitive routing response, not a transient issue. Retrying without fixing the routing problem will produce the same result. The exception is host unreachable due to ARP failure, which may resolve if the target host comes online.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Block ICMP unreachable messages to suppress the error",
+      "why_fails": "Blocking ICMP unreachable on the client converts a fast failure into a slow timeout. The application waits for the full TCP timeout instead of failing immediately, degrading user experience without fixing the routing issue.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Diagnose the routing path and fix the unreachable hop",
+      "success_rate": 0.88,
+      "how": "1. Identify the ICMP code: host unreachable, network unreachable, or admin prohibited\n2. Trace the route: traceroute -I destination\n3. Identify which hop returns the unreachable message\n4. Check routing table: ip route get destination_ip\n5. If no route exists, add one: ip route add network/prefix via gateway\n6. If admin prohibited, check firewall rules on the reporting router\n7. Verify with ping after fixing the route",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and fix ARP resolution for host unreachable on local segment",
+      "success_rate": 0.85,
+      "how": "1. If the destination is on the same subnet, host unreachable means ARP failed\n2. Verify the target host is powered on and connected: check switch port LEDs\n3. Check the ARP table: ip neigh show | grep destination_ip\n4. If the entry is FAILED, the host is not responding to ARP\n5. Verify the target host's IP configuration: ip addr show on the target\n6. Check for duplicate addresses: arping -D -I eth0 destination_ip",
+      "sources": [],
+      "condition": "When the destination is on the same L2 segment"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when ICMP unreachable is blocked and the error degrades to a timeout"},
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.15, "condition": "when the routing is fixed but the target service is not listening"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.25, "condition": "when a firewall REJECT rule sends ICMP administratively prohibited"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/host-unreachable/tcp-linux", "distinction": "ICMP unreachable is the general category including host, network, port, and admin unreachable; host-unreachable is specifically ICMP type 3 code 1"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

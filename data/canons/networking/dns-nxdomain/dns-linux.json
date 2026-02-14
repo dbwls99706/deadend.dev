@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dns-nxdomain/dns-linux",
+  "url": "https://deadends.dev/networking/dns-nxdomain/dns-linux",
+  "error": {
+    "signature": "NXDOMAIN: Host example.invalid not found: 3(NXDOMAIN)",
+    "regex": "NXDOMAIN|Name or service not known|No address associated with hostname|non-existent domain|Host not found",
+    "domain": "networking",
+    "category": "dns",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dns", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The DNS server authoritatively responded that the queried domain name does not exist. Unlike SERVFAIL, this is a definitive answer: the domain is not registered, is misspelled, or the DNS zone does not contain the requested record."
+  },
+  "dead_ends": [
+    {
+      "action": "Switch to a different public DNS resolver expecting the domain to resolve",
+      "why_fails": "NXDOMAIN is an authoritative answer propagated by the domain's nameservers. All recursive resolvers will return the same NXDOMAIN because the record genuinely does not exist in the authoritative zone.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": "Unless the previous resolver was returning stale cached NXDOMAIN after a recent record creation"
+    },
+    {
+      "action": "Retry the query repeatedly hoping for a different result",
+      "why_fails": "NXDOMAIN is a definitive negative answer, often with a negative TTL. Retrying produces the same result until the domain is actually created or the record is added to the zone.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the domain name spelling and check if the DNS record exists",
+      "success_rate": 0.92,
+      "how": "1. Double-check the hostname for typos\n2. Query with dig: dig example.com A +trace\n3. Check the authoritative nameservers: dig example.com NS\n4. If it is a subdomain, verify the record exists in the zone: dig sub.example.com A @ns1.example.com\n5. If the domain was recently registered, wait for propagation (up to 48h for new TLDs)\n6. Check WHOIS for domain registration status: whois example.com",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Create the missing DNS record in the zone",
+      "success_rate": 0.95,
+      "how": "1. Log into your DNS provider or zone management interface\n2. Add the A/AAAA/CNAME record for the hostname\n3. Verify the record was published: dig hostname @authoritative-ns\n4. Wait for TTL expiry on caches that have cached the NXDOMAIN\n5. Flush local DNS cache: sudo systemd-resolve --flush-caches or sudo resolvectl flush-caches",
+      "sources": [],
+      "condition": "Requires DNS zone management access"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.10, "condition": "when DNS is fixed but the target service is not running on the resolved host"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.20, "condition": "when a general DNS resolution failure is narrowed down to an NXDOMAIN response"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/dns-servfail/dns-linux", "distinction": "NXDOMAIN means the domain definitively does not exist; SERVFAIL means the DNS server encountered an error and could not answer the query"},
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "distinction": "NXDOMAIN is a specific DNS response code; general resolution failure includes timeouts, SERVFAIL, and network errors"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

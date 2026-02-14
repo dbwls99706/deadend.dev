@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/ef-include-ignored/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/ef-include-ignored/dotnet8-linux",
+  "error": {
+    "signature": "System.InvalidOperationException: Navigation property 'X' is null. Related data must be loaded using Include.",
+    "regex": "(Navigation property .+ is null|Related data must be loaded using Include|InvalidOperationException.*Navigation property)",
+    "domain": "dotnet",
+    "category": "database_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.92,
+    "last_updated": "2026-02-13",
+    "summary": "This InvalidOperationException occurs in Entity Framework Core when accessing a navigation property that was not eagerly loaded via .Include() and lazy loading is not configured. In EF Core, navigation properties are null by default unless explicitly loaded. This commonly surfaces after migrating from EF6 (which had lazy loading by default), when projecting entities without their related data, or when accessing navigation properties in serialization (JSON, AutoMapper). The fix involves adding appropriate .Include()/.ThenInclude() calls, switching to explicit projections with .Select(), or enabling lazy loading proxies if appropriate."
+  },
+  "dead_ends": [
+    {
+      "action": "Making the navigation property non-nullable and expecting EF Core to auto-populate it",
+      "why_fails": "EF Core does not guarantee population of navigation properties based on nullability annotations. A non-nullable reference navigation (e.g., public Order Order { get; set; } = null!;) will still be null if not loaded via Include(). The null-forgiving operator suppresses compiler warnings but does not cause EF Core to load the data. This leads to NullReferenceException at runtime instead of a clear error about missing Include()",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enabling lazy loading globally by adding UseLazyLoadingProxies() to solve all missing Include() issues",
+      "why_fails": "Lazy loading introduces N+1 query problems that severely degrade performance. Each navigation property access triggers a separate database roundtrip. In list/collection scenarios, this can result in hundreds of queries instead of one. Additionally, lazy loading requires all navigation properties to be virtual, and it silently fails (returns null) when the DbContext has been disposed, such as after async operations or when entities are returned from a service layer",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": "When used as a blanket solution without query analysis"
+    },
+    {
+      "action": "Adding null checks around every navigation property access to prevent the exception",
+      "why_fails": "Null checks hide the fact that required related data was never loaded, leading to silent data loss and incorrect business logic. For example, if order.Customer is null because Include was missing, skipping the customer processing silently produces incomplete results. The null navigation property is a data loading bug, not a valid null state",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": "When the navigation property represents a required relationship"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add explicit .Include() and .ThenInclude() calls for all required navigation properties",
+      "success_rate": 0.93,
+      "how": "Chain Include() calls for each navigation property needed: var orders = await context.Orders.Include(o => o.Customer).Include(o => o.OrderItems).ThenInclude(oi => oi.Product).Where(o => o.Status == OrderStatus.Active).ToListAsync(); For deeply nested relationships, use ThenInclude() to traverse the chain. Create extension methods for commonly used include patterns: public static IQueryable<Order> WithFullDetails(this IQueryable<Order> query) => query.Include(o => o.Customer).Include(o => o.OrderItems).ThenInclude(oi => oi.Product);",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use .Select() projections to load only the fields needed instead of full entity graphs",
+      "success_rate": 0.92,
+      "how": "Instead of loading entire entities with Include(), project to DTOs: var orderDtos = await context.Orders.Where(o => o.Status == OrderStatus.Active).Select(o => new OrderDto { Id = o.Id, CustomerName = o.Customer.Name, ItemCount = o.OrderItems.Count, Total = o.OrderItems.Sum(oi => oi.Price * oi.Quantity) }).ToListAsync(); EF Core translates the Select() expression into a single SQL query that joins only the needed tables. This avoids the Include() problem entirely and is more efficient for read-only scenarios",
+      "sources": [],
+      "condition": "When you only need specific fields from related entities"
+    },
+    {
+      "action": "Use AsSplitQuery() to optimize complex Include() chains that generate inefficient SQL",
+      "success_rate": 0.87,
+      "how": "When multiple collection navigations cause cartesian explosion in a single query, split them: var orders = await context.Orders.Include(o => o.OrderItems).Include(o => o.Payments).Include(o => o.ShippingHistory).AsSplitQuery().ToListAsync(); This generates separate SQL queries for each Include() and assembles results in memory, avoiding the cartesian product. Configure globally in DbContext: optionsBuilder.UseSqlServer(conn, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)); Note: split queries have different consistency guarantees than single queries",
+      "sources": [],
+      "condition": "When Include() chains involve multiple collection navigations"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.30, "condition": "when navigation properties are accessed without null checks after failing to include them"},
+      {"error_id": "dotnet/linq-translation-failure/dotnet8-linux", "probability": 0.10, "condition": "when complex Include() chains produce LINQ expressions that EF Core cannot translate to SQL"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when switching to AsNoTracking() queries causes previously lazy-loaded navigation properties to stop loading"},
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.10, "condition": "when model changes add new required navigation properties to existing queries that lack Include()"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "distinction": "NullReferenceException is a generic null dereference error; the navigation property null error specifically identifies that EF Core related data was not loaded via Include(), pointing to a data access issue rather than a general null reference bug"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

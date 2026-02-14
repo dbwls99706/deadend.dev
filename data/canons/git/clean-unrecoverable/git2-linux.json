@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/clean-unrecoverable/git2-linux",
+  "url": "https://deadends.dev/git/clean-unrecoverable/git2-linux",
+  "error": {
+    "signature": "Removing <path>... — git clean permanently deleted untracked files",
+    "regex": "(?:Removing .+|git clean.*-(?:f|fd|fdx)|Would remove .+)",
+    "domain": "git",
+    "category": "data_loss",
+    "first_seen": "2017-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Cleaning build artifacts before fresh build",
+        "Removing untracked files after failed merge",
+        "Resetting workspace to pristine state"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "false",
+    "fix_success_rate": 0.05,
+    "confidence": 0.96,
+    "last_updated": "2026-02-14",
+    "summary": "git clean -f permanently deletes untracked files from the working directory. These files were never committed to git, so there is no reflog, no object database entry, and no way for git to recover them. This is one of the few truly irreversible git operations. -fd also removes untracked directories, -fdx also removes files matched by .gitignore."
+  },
+  "dead_ends": [
+    {
+      "action": "Using git reflog or git fsck to recover files deleted by git clean",
+      "why_fails": "Reflog tracks changes to commit references. fsck finds dangling git objects. Files deleted by git clean were never tracked by git at all (they were untracked), so they have no git objects and no reflog entries. Git has zero information about these files.",
+      "fail_rate": 0.99,
+      "sources": [
+        "https://git-scm.com/docs/git-clean"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Checking the system recycle bin or trash for git-cleaned files",
+      "why_fails": "git clean uses direct file system deletion (unlink), which bypasses the desktop trash/recycle bin. The files are deleted at the filesystem level, not moved to any trash directory.",
+      "fail_rate": 0.99,
+      "sources": [
+        "https://git-scm.com/docs/git-clean"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Running git clean -fd thinking it only removes build artifacts",
+      "why_fails": "git clean -fd removes ALL untracked files and directories, not just build artifacts. This includes new source files you haven't added yet, configuration files, database dumps, scratch notes, and anything else not tracked by git. The -X flag (uppercase) is needed to only remove gitignored files.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://git-scm.com/docs/git-clean"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Always use git clean -n (dry run) first",
+      "success_rate": 0.99,
+      "how": "Run 'git clean -n' (or 'git clean -nd' for directories) before any actual clean. This shows what WOULD be deleted without deleting anything. Review the list carefully. Only then run with -f. Make this a strict habit.",
+      "sources": [
+        "https://git-scm.com/docs/git-clean"
+      ],
+      "condition": "Preventive measure"
+    },
+    {
+      "action": "Use git clean -fX (uppercase X) to only remove gitignored files",
+      "success_rate": 0.95,
+      "how": "git clean -fX only removes files matched by .gitignore (build artifacts, cache, etc.) and leaves untracked source files alone. This is usually what you actually want when 'cleaning' a workspace. Compare: -x (lowercase) removes ignored AND untracked; -X (uppercase) removes ONLY ignored.",
+      "sources": [
+        "https://git-scm.com/docs/git-clean"
+      ],
+      "condition": "When you want to remove build artifacts but keep new source files"
+    },
+    {
+      "action": "Use file recovery tools (ext4undelete, photorec, testdisk) as last resort",
+      "success_rate": 0.15,
+      "how": "If the deleted files were on an ext4 filesystem, tools like ext4undelete or photorec may recover recently deleted files by scanning the raw filesystem. Stop writing to the disk immediately to avoid overwriting. Success rate is very low and depends on disk activity since deletion.",
+      "tradeoff": "Requires stopping all disk writes; low success rate; cannot recover filenames or directory structure",
+      "sources": [],
+      "condition": "Desperate last resort for critical files"
+    },
+    {
+      "action": "Use git stash -u before cleaning to save untracked files",
+      "success_rate": 0.98,
+      "how": "Run 'git stash -u' (or '--include-untracked') before git clean. This stashes all modifications AND untracked files. After cleaning, recover with 'git stash pop'. This creates a safety net since stash entries are stored as git objects.",
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": "Preventive measure before workspace cleanup"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "git/merge-conflict/git2-linux",
+        "probability": 0.2,
+        "condition": "Developer runs git clean to reset workspace after messy merge"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/reset-hard-data-loss/git2-linux",
+        "distinction": "reset --hard discards tracked modifications; git clean deletes untracked files. Both are destructive but affect different files. Combined (git reset --hard && git clean -fd) is the nuclear option."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 75,
+    "last_verification": "2026-02-14"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-artifact-upload-size/gha-ubuntu",
+  "url": "https://deadends.dev/cicd/gha-artifact-upload-size/gha-ubuntu",
+  "error": {
+    "signature": "Error: Unable to upload artifact. Total size exceeds the maximum allowed size of 10 GB.",
+    "regex": "(?:Unable to upload artifact.*size exceeds|Total size exceeds the maximum allowed size|artifact.*exceeds.*maximum.*size|upload artifact.*size limit)",
+    "domain": "cicd",
+    "category": "resource_limit",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "ubuntu-latest"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.88,
+    "last_updated": "2026-02-13",
+    "summary": "GitHub Actions artifact upload fails because the total artifact size exceeds the 10 GB per-artifact limit (or the repository storage quota). This commonly happens with large build outputs, unfiltered directories, or accidental inclusion of node_modules or build caches."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the artifact size limit through repository or organization settings",
+      "why_fails": "The 10 GB per-artifact limit is a hard GitHub platform limit that cannot be changed through any settings. There is no configuration option to raise it.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Split the artifact into multiple upload steps without reducing total size",
+      "why_fails": "Each individual upload-artifact call still has the 10 GB limit, and the overall repository storage quota (500 MB for free, up to 50 GB for enterprise) still applies to the sum of all artifacts. Splitting does not address the root cause of excessive artifact size.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Compress the artifact directory by just adding tar without exclusions",
+      "why_fails": "If the contents are already compressed binaries, media files, or caches, tar/gzip yields minimal size reduction. Without excluding unnecessary files first, the archive will still exceed the limit.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": "When artifact contents are already compressed binaries or media"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Exclude unnecessary files and directories before uploading the artifact",
+      "success_rate": 0.91,
+      "how": "Add a step before upload-artifact that removes unneeded files: build caches, node_modules, .git directories, test fixtures, and intermediate compilation artifacts. Use the 'path' parameter to point only at the final output directory rather than a broad parent directory.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Upload large outputs to external storage (S3, GCS, Azure Blob) instead of GitHub Artifacts",
+      "success_rate": 0.93,
+      "how": "Use aws-actions/configure-aws-credentials and the AWS CLI (or equivalent for GCS/Azure) to upload large build outputs to a cloud storage bucket. Pass the object URL between jobs via outputs or a small metadata artifact.",
+      "sources": [],
+      "condition": "When artifacts genuinely need to be larger than 10 GB"
+    },
+    {
+      "action": "Use compression with aggressive exclusion patterns and split into logical components",
+      "success_rate": 0.85,
+      "how": "Compress artifacts with 'tar -czf output.tar.gz --exclude=\"*.map\" --exclude=\".cache\" --exclude=\"node_modules\" build/' to strip source maps, caches, and dependencies. If still large, split into separate logical artifacts (e.g., binaries vs. debug symbols) each under the size limit.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "probability": 0.35, "condition": "When upload fails silently or partially, downstream jobs that depend on download-artifact will fail"},
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.15, "condition": "When repeated upload retries consume significant job time"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.10, "condition": "When Docker builds produce unexpectedly large image tarballs as artifacts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-artifact-not-found/gha-linux", "distinction": "Upload size error is about exceeding limits when storing artifacts; artifact not found is about failing to retrieve a previously uploaded artifact in a downstream job"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

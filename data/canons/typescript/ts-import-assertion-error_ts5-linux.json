@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-import-assertion-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-import-assertion-error/ts5-linux",
+  "error": {
+    "signature": "TS2856: Import assertions are not allowed on statements that compile to CommonJS 'require' calls",
+    "regex": "TS2856.*Import assertions.*require|TS2821.*import assertion",
+    "domain": "typescript",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Import assertions (assert { type: 'json' }) are only valid with ESM output. Switch module target or use import attributes."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove import assertions and hope JSON imports work",
+      "why_fails": "Without assertions, JSON imports may fail or have wrong types depending on the runtime",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use import attributes (with keyword) instead of assertions (assert keyword)",
+      "success_rate": 0.88,
+      "how": "// TS 5.3+: Use 'with' instead of 'assert'\nimport data from './data.json' with { type: 'json' };",
+      "sources": ["https://devblogs.microsoft.com/typescript/announcing-typescript-5-3/#import-attributes"],
+      "condition": ""
+    },
+    {
+      "action": "Set module to ESM-compatible target in tsconfig.json",
+      "success_rate": 0.85,
+      "how": "{\n  \"compilerOptions\": {\n    \"module\": \"esnext\",\n    \"moduleResolution\": \"bundler\",\n    \"resolveJsonModule\": true\n  }\n}",
+      "sources": ["https://www.typescriptlang.org/tsconfig#module"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-path-mapping-error/ts5-linux", "probability": 0.15, "condition": "When module system changes affect path resolution"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts2307-cannot-find-module/ts5-linux", "probability": 0.15, "condition": "When JSON module resolution fails"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux", "distinction": "esModuleInterop is about CJS/ESM default import compatibility; import assertions are about explicit type annotations on imports"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

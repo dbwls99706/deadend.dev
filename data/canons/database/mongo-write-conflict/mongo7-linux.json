@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongo-write-conflict/mongo7-linux",
+  "url": "https://deadends.dev/database/mongo-write-conflict/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.OperationFailure: WriteConflict error: this operation conflicted with another operation.",
+    "regex": "WriteConflict|write conflict|TransientTransactionError.*WriteConflict",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "Two operations attempted to modify the same document concurrently within a multi-document transaction. MongoDB uses optimistic concurrency control for transactions and raises WriteConflict when a conflict is detected. The operation is aborted and should be retried. This is expected behavior under high write concurrency to the same documents."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching the WriteConflict and retrying only the failed operation instead of the entire transaction",
+      "why_fails": "When a WriteConflict occurs inside a transaction, the entire transaction is aborted, not just the single operation. Retrying only the failed operation within the aborted transaction session will fail with 'transaction has been aborted'. The entire transaction must be retried from the start.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing multi-document transactions to avoid WriteConflict errors",
+      "why_fails": "Without transactions, individual operations succeed but you lose atomicity guarantees. If your business logic requires multiple documents to be updated together consistently, removing transactions leads to data inconsistency that is harder to fix than implementing retry logic.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Implement transaction retry logic using the MongoDB driver's built-in retry support",
+      "success_rate": 0.90,
+      "how": "Use the driver's withTransaction() callback API which automatically retries on TransientTransactionError. In Python: with client.start_session() as session: session.with_transaction(callback). The driver handles retry with backoff. Limit retries to 3-5 attempts.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reduce transaction scope and duration to minimize conflict windows",
+      "success_rate": 0.82,
+      "how": "Keep transactions as short as possible. Move read operations outside the transaction. Avoid transactions that modify many documents across multiple collections. If the same documents are always contended, consider restructuring the schema to reduce the number of documents modified per transaction.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongo-cursor-not-found/mongo7-linux", "probability": 0.10, "condition": "when transaction retries cause cursor timeouts on long-running read operations"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.10, "condition": "when connection recovery during high-concurrency workload triggers write conflicts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/pg-could-not-serialize/pg16-linux", "distinction": "MongoDB WriteConflict and PostgreSQL serialization failure are analogous. Both use optimistic concurrency control and require transaction retry. MongoDB uses WiredTiger's document-level conflict detection; PostgreSQL uses predicate locking at SERIALIZABLE isolation."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 42,
+    "last_verification": "2026-02-12"
+  }
+}

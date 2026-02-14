@@ -18,6 +18,24 @@ BASE_URL = "https://deadends.dev"
 # Empty string when hosted at root domain
 BASE_PATH = ""
 
+# Domain display names for proper capitalization in titles/breadcrumbs
+DOMAIN_DISPLAY_NAMES = {
+    "aws": "AWS",
+    "cuda": "CUDA",
+    "cicd": "CI/CD",
+    "php": "PHP",
+    "dotnet": ".NET",
+    "nextjs": "Next.js",
+    "typescript": "TypeScript",
+    "pip": "pip",
+}
+
+
+def domain_display_name(domain: str) -> str:
+    """Return proper display name for a domain slug."""
+    return DOMAIN_DISPLAY_NAMES.get(domain, domain.capitalize())
+
+
 # Search engine verification codes — replace with actual codes after registering
 GOOGLE_VERIFICATION = "bOa6r9d87jFHgTQb7iuN5QokGsgy99_NYrz0x1jsSmk"
 BING_VERIFICATION = ""  # e.g., "ABCDEF1234567890"
@@ -89,6 +107,9 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
         all_sources = collect_sources(canon)
 
         # Build JSON-LD with Schema.org TechArticle + custom ErrorCanon
+        page_url = canon["url"]
+        if not page_url.endswith("/"):
+            page_url += "/"
         json_ld_data = {
             "@context": [
                 "https://schema.org",
@@ -96,9 +117,14 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
             ],
             "@type": "TechArticle",
             "name": canon["error"]["signature"],
+            "headline": f"Fix {canon['error']['signature']}",
             "description": canon["verdict"]["summary"],
-            "url": canon["url"],
+            "url": page_url,
+            "datePublished": canon["error"].get(
+                "first_seen", canon["metadata"].get("generation_date", "")
+            ),
             "dateModified": canon["verdict"]["last_updated"],
+            "image": f"{BASE_URL}/og-image.png",
             "publisher": {
                 "@type": "Organization",
                 "name": "deadends.dev",
@@ -134,11 +160,38 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
             faq_json_ld_data, indent=2, ensure_ascii=False
         )
 
+        # HowTo schema — workarounds as step-by-step fix instructions
+        howto_json_ld = ""
+        workarounds = canon.get("workarounds", [])
+        if workarounds:
+            howto_steps = []
+            for i, wa in enumerate(workarounds, 1):
+                step = {
+                    "@type": "HowToStep",
+                    "position": i,
+                    "name": wa["action"],
+                    "text": wa.get("how", wa["action"]),
+                }
+                if wa.get("tradeoff"):
+                    step["text"] += f" (Tradeoff: {wa['tradeoff']})"
+                howto_steps.append(step)
+            howto_data = {
+                "@context": "https://schema.org",
+                "@type": "HowTo",
+                "name": f"How to fix {sig}",
+                "description": canon["verdict"]["summary"],
+                "step": howto_steps,
+            }
+            howto_json_ld = json.dumps(
+                howto_data, indent=2, ensure_ascii=False
+            )
+
         html = template.render(
             env_summary=env_summary,
             all_sources=all_sources,
             json_ld=json_ld,
             faq_json_ld=faq_json_ld,
+            howto_json_ld=howto_json_ld,
             known_ids=known_ids,
             **canon,
         )
@@ -282,25 +335,18 @@ def build_sitemap(
     # Error pages (environment-specific)
     for canon in canons:
         url_elem = SubElement(urlset, "url")
-        SubElement(url_elem, "loc").text = canon["url"]
+        # Ensure trailing slash (pages are served as /path/index.html)
+        error_url = canon["url"]
+        if not error_url.endswith("/"):
+            error_url += "/"
+        SubElement(url_elem, "loc").text = error_url
         last_updated = canon["verdict"].get("last_updated", now)
         SubElement(url_elem, "lastmod").text = last_updated
         SubElement(url_elem, "changefreq").text = "monthly"
         SubElement(url_elem, "priority").text = "0.8"
 
-    # API endpoints
-    url_elem = SubElement(urlset, "url")
-    SubElement(url_elem, "loc").text = f"{BASE_URL}/api/v1/index.json"
-    SubElement(url_elem, "lastmod").text = now
-    SubElement(url_elem, "changefreq").text = "weekly"
-    SubElement(url_elem, "priority").text = "0.7"
-
-    # llms.txt
-    url_elem = SubElement(urlset, "url")
-    SubElement(url_elem, "loc").text = f"{BASE_URL}/llms.txt"
-    SubElement(url_elem, "lastmod").text = now
-    SubElement(url_elem, "changefreq").text = "weekly"
-    SubElement(url_elem, "priority").text = "0.7"
+    # Note: Non-HTML resources (JSON API, llms.txt) are excluded from sitemap
+    # to avoid diluting crawl budget. Google won't index JSON/TXT as web pages.
 
     xml_declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml_body = tostring(urlset, encoding="unicode")
@@ -312,7 +358,7 @@ def build_sitemap(
 
 def build_robots_txt() -> None:
     """Generate robots.txt with explicit AI crawler allowances."""
-    content = f"""# deadends.dev - Structured failure knowledge for AI agents
+    content = f"""# deadends.dev - Structured failure knowledge for AI coding agents
 # All crawlers welcome — this site is BUILT for AI consumption
 
 User-agent: *
@@ -415,6 +461,15 @@ Allow: /
 User-agent: Ai2Bot-Dolma
 Allow: /
 
+User-agent: GrokBot
+Allow: /
+
+User-agent: MistralBot
+Allow: /
+
+User-agent: Qwen
+Allow: /
+
 Sitemap: {BASE_URL}/sitemap.xml
 
 # AI agent config files:
@@ -434,28 +489,41 @@ Sitemap: {BASE_URL}/sitemap.xml
 # Plugin manifest: {BASE_URL}/.well-known/ai-plugin.json
 # A2A agent card:  {BASE_URL}/.well-known/agent-card.json
 # Security:        {BASE_URL}/.well-known/security.txt
+# Atom feed:       {BASE_URL}/feed.xml
 """
     (SITE_DIR / "robots.txt").write_text(content, encoding="utf-8")
     print("  Generated: robots.txt")
 
 
 def build_404_page() -> None:
-    """Generate a custom 404 page."""
+    """Generate a custom 404 page with navigation and search."""
     html = (
         "<!DOCTYPE html>\n"
         '<html lang="en"><head>\n'
-        '<meta charset="utf-8"><title>404 | deadends.dev</title>\n'
+        '<meta charset="utf-8">\n'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '<meta name="theme-color" content="#0d1117">\n'
+        "<title>404 — Error Not Found | deadends.dev</title>\n"
+        '<meta name="robots" content="noindex">\n'
+        f'<link rel="icon" href="{BASE_PATH}/favicon.svg" type="image/svg+xml">\n'
         "<style>\n"
-        "body{font-family:system-ui;max-width:800px;margin:2rem auto;\n"
-        "padding:0 1rem;color:#e0e0e0;background:#0d1117;}\n"
-        "a{color:#58a6ff;}\n"
+        "body{font-family:system-ui,-apple-system,sans-serif;max-width:800px;"
+        "margin:2rem auto;padding:0 1rem;color:#e0e0e0;background:#0d1117;}\n"
+        "a{color:#58a6ff;}h1{font-size:1.6rem;}"
+        "nav a{color:#8b949e;text-decoration:none;}nav a:hover{color:#58a6ff;}\n"
+        ".links{margin:2rem 0;}.links a{display:inline-block;margin:0.5rem 1rem 0.5rem 0;}\n"
         "</style>\n"
         "</head><body>\n"
-        "<h1>404 — Error Not Found (Ironic, isn't it?)</h1>\n"
-        '<p>This error page doesn\'t exist yet.'
-        f' <a href="{BASE_PATH}/">Browse existing errors</a> or\n'
+        f'<nav><a href="{BASE_PATH}/">deadends.dev</a></nav>\n'
+        "<h1>404 — Error Not Found</h1>\n"
+        "<p>This error page doesn't exist yet. "
+        "Ironic for a site that catalogs errors.</p>\n"
+        '<div class="links">\n'
+        f'<a href="{BASE_PATH}/search/">Search errors</a>\n'
+        f'<a href="{BASE_PATH}/">Browse all domains</a>\n'
         '<a href="https://github.com/dbwls99706/deadends.dev/issues/new">'
-        "request it</a>.</p>\n"
+        "Request this error</a>\n"
+        "</div>\n"
         "</body></html>"
     )
     (SITE_DIR / "404.html").write_text(html, encoding="utf-8")
@@ -467,6 +535,168 @@ def build_cname() -> None:
     """Generate CNAME file for custom domain."""
     (SITE_DIR / "CNAME").write_text("deadends.dev\n", encoding="utf-8")
     print("  Generated: CNAME")
+
+
+def build_stylesheet() -> None:
+    """Generate shared CSS stylesheet for all pages.
+
+    Extracting CSS to a shared file enables browser caching across
+    page navigations, improving Core Web Vitals (LCP, FCP).
+    """
+    # CSS written as joined list to avoid E501 line-length violations
+    css = "\n".join([
+        "/* deadends.dev — shared stylesheet */",
+        "body { font-family: system-ui, -apple-system, sans-serif;",
+        "  max-width: 800px; margin: 2rem auto;",
+        "  padding: 0 1rem; color: #e0e0e0; background: #0d1117; }",
+        "a { color: #58a6ff; }",
+        "h1 { font-size: 1.4rem; }",
+        "h2 { font-size: 1.1rem;",
+        "  border-bottom: 1px solid #30363d;",
+        "  padding-bottom: 0.5rem; }",
+        "code { background: #161b22;",
+        "  padding: 0.2rem 0.4rem; border-radius: 3px; }",
+        "pre { background: #161b22;",
+        "  padding: 1rem; border-radius: 6px;",
+        "  overflow-x: auto; }",
+        ".meta { color: #8b949e; font-size: 0.85rem; }",
+        "nav { margin-bottom: 1.5rem; }",
+        "nav a { color: #8b949e; text-decoration: none; }",
+        "nav a:hover { color: #58a6ff; }",
+        "footer { margin-top: 3rem;",
+        "  padding-top: 1rem;",
+        "  border-top: 1px solid #30363d; }",
+        "",
+        "/* Page-specific heading sizes */",
+        ".pg-index h1 { font-size: 1.8rem; }",
+        ".pg-index h2 { font-size: 1.2rem; }",
+        ".pg-domain h1, .pg-search h1 { font-size: 1.6rem; }",
+        "",
+        "/* Verdict colors */",
+        ".verdict-true { color: #3fb950; }",
+        ".verdict-partial { color: #d29922; }",
+        ".verdict-false { color: #f85149; }",
+        ".pg-detail .verdict-true,",
+        ".pg-detail .verdict-false,",
+        ".pg-detail .verdict-partial { font-weight: bold; }",
+        "",
+        "/* Dead ends & workarounds */",
+        ".dead-end { border-left: 4px solid #f85149;",
+        "  padding-left: 1rem; margin: 1rem 0; }",
+        ".workaround { border-left: 4px solid #3fb950;",
+        "  padding-left: 1rem; margin: 1rem 0; }",
+        ".fail-rate { color: #f85149; }",
+        ".success-rate { color: #3fb950; }",
+        "",
+        "/* Index page */",
+        ".domain-list { list-style: none; padding: 0; }",
+        ".domain-list li { padding: 0.5rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        ".domain-list li a {",
+        "  text-decoration: none; font-size: 1.05rem; }",
+        ".count { color: #8b949e; font-size: 0.9rem; }",
+        ".hero { margin: 2rem 0; }",
+        ".api-section code { font-size: 0.9rem; }",
+        "",
+        "/* Domain page */",
+        ".entry { padding: 0.75rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        "",
+        "/* Error summary page */",
+        ".env-card { border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  padding: 1rem; margin: 0.75rem 0; }",
+        ".variation { display: inline-block;",
+        "  background: #161b22;",
+        "  padding: 0.2rem 0.6rem;",
+        "  border-radius: 4px;",
+        "  margin: 0.2rem; font-size: 0.85rem; }",
+        "",
+        "/* Search page */",
+        "#search-input { width: 100%;",
+        "  padding: 0.75rem; font-size: 1rem;",
+        "  font-family: monospace;",
+        "  background: #161b22; color: #e0e0e0;",
+        "  border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  box-sizing: border-box; }",
+        "#search-input:focus {",
+        "  border-color: #58a6ff; outline: none; }",
+        "#search-input::placeholder { color: #484f58; }",
+        ".result { border: 1px solid #30363d;",
+        "  border-radius: 6px;",
+        "  padding: 1rem; margin: 0.75rem 0; }",
+        ".result:hover { border-color: #58a6ff; }",
+        ".result h3 {",
+        "  margin: 0 0 0.5rem 0; font-size: 1rem; }",
+        ".result .dead-end-count { color: #f85149; }",
+        ".result .workaround-count { color: #3fb950; }",
+        "#no-results { display: none; color: #8b949e;",
+        "  padding: 2rem; text-align: center; }",
+        "#all-errors { margin-top: 2rem; }",
+        ".error-entry { padding: 0.4rem 0;",
+        "  border-bottom: 1px solid #161b22; }",
+        "",
+    ])
+    (SITE_DIR / "style.css").write_text(css, encoding="utf-8")
+    print("  Generated: style.css")
+
+
+def build_og_image() -> None:
+    """Generate a branded OG image (1200x630 PNG) for social sharing.
+
+    Creates a minimal valid PNG using Python stdlib (zlib + struct).
+    Dark background with branded text area for social media previews.
+    """
+    import struct
+    import zlib
+
+    width, height = 1200, 630
+    # Background: #0d1117 (matches site theme)
+    bg_r, bg_g, bg_b = 0x0D, 0x11, 0x17
+    # Accent bar: #58a6ff (link color)
+    accent_r, accent_g, accent_b = 0x58, 0xA6, 0xFF
+    # Red accent: #f85149 (dead end color)
+    red_r, red_g, red_b = 0xF8, 0x51, 0x49
+
+    # Build raw pixel data row by row
+    raw_rows = []
+    for y in range(height):
+        row = b"\x00"  # PNG filter byte: None
+        for x in range(width):
+            # Top accent bar (0-6px)
+            if y < 6:
+                row += bytes([accent_r, accent_g, accent_b])
+            # Bottom accent bar
+            elif y >= height - 6:
+                row += bytes([red_r, red_g, red_b])
+            # Left accent stripe (0-6px)
+            elif x < 6:
+                row += bytes([accent_r, accent_g, accent_b])
+            # Right accent stripe
+            elif x >= width - 6:
+                row += bytes([red_r, red_g, red_b])
+            else:
+                row += bytes([bg_r, bg_g, bg_b])
+        raw_rows.append(row)
+
+    raw_data = b"".join(raw_rows)
+    compressed = zlib.compress(raw_data, 9)
+
+    def make_chunk(chunk_type: bytes, data: bytes) -> bytes:
+        chunk = chunk_type + data
+        crc = struct.pack(">I", zlib.crc32(chunk) & 0xFFFFFFFF)
+        return struct.pack(">I", len(data)) + chunk + crc
+
+    png = b"\x89PNG\r\n\x1a\n"
+    # IHDR: width, height, bit_depth=8, color_type=2(RGB), compression, filter, interlace
+    ihdr_data = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)
+    png += make_chunk(b"IHDR", ihdr_data)
+    png += make_chunk(b"IDAT", compressed)
+    png += make_chunk(b"IEND", b"")
+
+    (SITE_DIR / "og-image.png").write_bytes(png)
+    print("  Generated: og-image.png (1200x630)")
 
 
 def build_favicon() -> None:
@@ -610,6 +840,48 @@ def build_error_summary_pages(
         # Generate common variations from the regex pattern
         common_variations = _generate_variations(signature, regex, domain)
 
+        # TechArticle JSON-LD for error summary pages
+        dates = [
+            c["verdict"].get("last_updated", "")
+            for c in slug_canons
+        ]
+        first_seen_dates = [
+            c["error"].get("first_seen", "")
+            for c in slug_canons
+            if c["error"].get("first_seen")
+        ]
+        summary_json_ld = json.dumps(
+            {
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "name": signature,
+                "headline": f"Fix {signature}",
+                "description": (
+                    f"{len(environments)} environments, "
+                    f"{len(common_dead_ends)} dead ends, "
+                    f"{len(common_workarounds)} workarounds. "
+                    f"Fix rates: {min_rate}%–{max_rate}%."
+                ),
+                "url": f"{BASE_URL}/{domain}/{slug}/",
+                "datePublished": min(first_seen_dates)
+                if first_seen_dates
+                else "",
+                "dateModified": max(dates) if dates else "",
+                "image": f"{BASE_URL}/og-image.png",
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "deadends.dev",
+                    "url": BASE_URL,
+                },
+                "about": {
+                    "@type": "SoftwareSourceCode",
+                    "programmingLanguage": domain,
+                },
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+
         html = template.render(
             signature=signature,
             regex=regex,
@@ -623,6 +895,7 @@ def build_error_summary_pages(
             total_workarounds=len(common_workarounds),
             min_rate=min_rate,
             max_rate=max_rate,
+            summary_json_ld=summary_json_ld,
         )
 
         # Write to /{domain}/{slug}/index.html
@@ -706,18 +979,34 @@ def build_llms_txt(canons: list[dict]) -> None:
         "Check dead ends before attempting a fix. "
         "Check workarounds for approaches that actually work.",
         "",
-        "## About",
+        "## Integration Methods (choose one)",
         "",
-        f"- [API Index]({BASE_URL}/api/v1/index.json): "
-        "All errors with regex patterns and API URLs",
+        "### Option 1: MCP Server (recommended for AI coding agents)",
+        "",
+        "```",
+        "pip install deadends-dev",
+        "python -m mcp.server  # stdio mode",
+        "```",
+        "",
+        "Tools: `lookup_error`, `get_error_detail`, `search_errors`, "
+        "`batch_lookup`, `get_error_chain`, `list_error_domains`, "
+        "`list_errors_by_domain`, `get_domain_stats`",
+        "",
+        "### Option 2: REST API",
+        "",
         f"- [Match Endpoint]({BASE_URL}/api/v1/match.json): "
-        "Lightweight regex-only matching (fits in context window)",
+        "Lightweight regex matching (fits in context window)",
+        f"- [API Index]({BASE_URL}/api/v1/index.json): "
+        "Full error index with API URLs",
         f"- [OpenAPI Spec]({BASE_URL}/api/v1/openapi.json): "
         "Full API specification",
+        f"- [NDJSON Stream]({BASE_URL}/api/v1/errors.ndjson): "
+        "Streaming format for batch processing",
+        "",
+        "### Option 3: Full Context Dump",
+        "",
         f"- [Complete Database]({BASE_URL}/llms-full.txt): "
-        "Full error dump in plaintext",
-        f"- [Error Search]({BASE_URL}/search/): "
-        "Client-side error matching",
+        "All errors in plaintext (load into context window)",
         "",
         "## How to Use",
         "",
@@ -907,7 +1196,93 @@ def build_openapi_spec(canons: list[dict]) -> None:
                     "responses": {
                         "200": {
                             "description": "Compact matching patterns",
-                            "content": {"application/json": {}},
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "version": {"type": "string"},
+                                            "total": {"type": "integer"},
+                                            "generated": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                            },
+                                            "usage": {"type": "string"},
+                                            "patterns": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Canon ID"
+                                                            ),
+                                                        },
+                                                        "sig": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Error signature"
+                                                            ),
+                                                        },
+                                                        "re": {
+                                                            "type": "string",
+                                                            "description": (
+                                                                "Regex pattern"
+                                                            ),
+                                                        },
+                                                        "domain": {
+                                                            "type": "string",
+                                                        },
+                                                        "ok": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "true",
+                                                                "partial",
+                                                                "false",
+                                                            ],
+                                                            "description": (
+                                                                "Resolvable"
+                                                            ),
+                                                        },
+                                                        "rate": {
+                                                            "type": "number",
+                                                            "description": (
+                                                                "Fix success rate"
+                                                            ),
+                                                        },
+                                                        "conf": {
+                                                            "type": "number",
+                                                            "description": (
+                                                                "Confidence score"
+                                                            ),
+                                                        },
+                                                        "de": {
+                                                            "type": "integer",
+                                                            "description": (
+                                                                "Dead end count"
+                                                            ),
+                                                        },
+                                                        "wa": {
+                                                            "type": "integer",
+                                                            "description": (
+                                                                "Workaround count"
+                                                            ),
+                                                        },
+                                                        "url": {
+                                                            "type": "string",
+                                                            "format": "uri",
+                                                            "description": (
+                                                                "Full JSON API URL"
+                                                            ),
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
                         }
                     },
                 }
@@ -1035,7 +1410,10 @@ def build_openapi_spec(canons: list[dict]) -> None:
                                     "enum": ["true", "partial", "false"],
                                 },
                                 "fix_success_rate": {"type": "number"},
-                                "confidence": {"type": "string"},
+                                "confidence": {
+                                    "type": "number",
+                                    "description": "0.0-1.0 score",
+                                },
                                 "summary": {"type": "string"},
                             },
                         },
@@ -1100,13 +1478,19 @@ def build_well_known(canons: list[dict]) -> None:
             "before debugging an error."
         ),
         "description_for_model": (
-            "When you encounter a software error, query this service "
-            "to find: (1) dead ends — approaches that are known to fail, "
-            "(2) workarounds — approaches that actually work with success "
-            "rates, (3) error chains — what error typically comes next. "
-            "Fetch /api/v1/index.json for the full error list, then "
-            "fetch /api/v1/{id}.json for details. "
-            "Match your error message against the regex patterns."
+            "Error knowledge database with "
+            f"{len(canons)} patterns across {len(domains)} domains "
+            f"({', '.join(domains)}). "
+            "Query flow: (1) GET /api/v1/match.json (350KB, "
+            "load once, regex-match locally). "
+            "(2) On match, GET /api/v1/{id}.json for full details. "
+            "Each error returns: dead_ends[] (what fails, with "
+            "fail_rate), workarounds[] (what works, with "
+            "success_rate and how), transition_graph "
+            "(leads_to, preceded_by, frequently_confused_with). "
+            "Alt: GET /llms.txt for text summary, "
+            "GET /api/v1/errors.ndjson for streaming, "
+            "or use MCP server (8 tools). No auth required."
         ),
         "auth": {"type": "none"},
         "api": {
@@ -1167,16 +1551,20 @@ def build_well_known(canons: list[dict]) -> None:
                     "CrashLoopBackOff",
                     "TS2307: Cannot find module",
                 ],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "get-error-detail",
                 "name": "Get Error Details",
                 "description": (
                     "Get full structured failure knowledge for a specific "
-                    "error by its ID. Returns complete dead ends, workarounds, "
-                    "transition graphs, and source evidence."
+                    "error by its ID. Returns complete dead ends, "
+                    "workarounds, transition graphs, and source evidence."
                 ),
                 "tags": ["errors", "lookup", "api"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
             {
                 "id": "list-domains",
@@ -1185,9 +1573,68 @@ def build_well_known(canons: list[dict]) -> None:
                     f"List all {len(domains)} error domains with counts."
                 ),
                 "tags": ["domains", "index"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
+            },
+            {
+                "id": "search-errors",
+                "name": "Search Errors",
+                "description": (
+                    "Fuzzy keyword search across all errors. Use when "
+                    "you have a vague description rather than an exact "
+                    "error message."
+                ),
+                "tags": ["search", "errors"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
+            },
+            {
+                "id": "list-by-domain",
+                "name": "List Errors By Domain",
+                "description": (
+                    "List all errors in a specific domain with fix rates."
+                ),
+                "tags": ["domain", "list"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
+            },
+            {
+                "id": "batch-lookup",
+                "name": "Batch Lookup",
+                "description": (
+                    "Look up multiple error messages at once (max 10). "
+                    "Use for debugging error chains or log analysis."
+                ),
+                "tags": ["batch", "errors"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
+            },
+            {
+                "id": "domain-stats",
+                "name": "Domain Statistics",
+                "description": (
+                    "Get quality metrics for a domain: error counts, "
+                    "fix rates, resolvability, confidence levels."
+                ),
+                "tags": ["stats", "quality"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
+            },
+            {
+                "id": "error-chain",
+                "name": "Error Chain Traversal",
+                "description": (
+                    "Get the transition graph for an error: what errors "
+                    "follow, what precedes it, what gets confused with it."
+                ),
+                "tags": ["chain", "graph", "transitions"],
+                "inputModes": ["text"],
+                "outputModes": ["text"],
             },
         ],
-        "auth": {"type": "none"},
+        "authentication": {"schemes": ["none"]},
+        "documentationUrl": f"{BASE_URL}/api/v1/openapi.json",
+        "feedUrl": f"{BASE_URL}/feed.xml",
     }
 
     (well_known_dir / "agent-card.json").write_text(
@@ -1213,7 +1660,7 @@ def build_well_known(canons: list[dict]) -> None:
 
 
 def build_stats_json(canons: list[dict]) -> None:
-    """Generate /api/v1/stats.json — detailed dataset statistics for AI agents."""
+    """Generate /api/v1/stats.json — dataset statistics for AI coding agents."""
     domains: dict[str, list[dict]] = {}
     for c in canons:
         domains.setdefault(c["error"]["domain"], []).append(c)
@@ -1226,7 +1673,16 @@ def build_stats_json(canons: list[dict]) -> None:
         cats: dict[str, int] = {}
         for c in dcanons:
             res[c["verdict"]["resolvable"]] = res.get(c["verdict"]["resolvable"], 0) + 1
-            conf[c["verdict"]["confidence"]] = conf.get(c["verdict"]["confidence"], 0) + 1
+            raw_conf = c["verdict"]["confidence"]
+            if isinstance(raw_conf, (int, float)):
+                conf_label = (
+                    "high" if raw_conf >= 0.8
+                    else "medium" if raw_conf >= 0.5
+                    else "low"
+                )
+            else:
+                conf_label = str(raw_conf)
+            conf[conf_label] = conf.get(conf_label, 0) + 1
             cat = c["error"]["category"]
             cats[cat] = cats.get(cat, 0) + 1
 
@@ -1275,13 +1731,13 @@ def build_ndjson(canons: list[dict]) -> None:
 
 
 def build_version_json(canons: list[dict]) -> None:
-    """Generate /api/v1/version.json — service metadata for AI agents."""
+    """Generate /api/v1/version.json — service metadata for AI coding agents."""
     domains = sorted({c["error"]["domain"] for c in canons})
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     version_data = {
         "service": "deadends.dev",
-        "version": "1.1.0",
+        "version": "1.4.0",
         "description": (
             "Structured failure knowledge for AI coding agents. "
             "Dead ends, workarounds, and error chains."
@@ -1344,6 +1800,9 @@ def build_match_json(canons: list[dict]) -> None:
             "domain": canon["error"]["domain"],
             "ok": canon["verdict"]["resolvable"],
             "rate": canon["verdict"]["fix_success_rate"],
+            "conf": canon["verdict"]["confidence"],
+            "de": len(canon["dead_ends"]),
+            "wa": len(canon.get("workarounds", [])),
             "url": f"{BASE_URL}/api/v1/{canon['id']}.json",
         })
 
@@ -1419,6 +1878,79 @@ def build_indexnow(canons: list[dict]) -> None:
     print(f"  Generated: {INDEXNOW_KEY}.txt + indexnow-urls.txt ({len(urls)} URLs)")
 
 
+def build_feed(canons: list[dict]) -> None:
+    """Generate Atom feed (feed.xml) for AI agent subscriptions."""
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    # Sort by generation date (newest first), take top 50
+    dated = sorted(
+        canons,
+        key=lambda c: c["metadata"].get("generation_date", "2020-01-01"),
+        reverse=True,
+    )[:50]
+
+    ns = "http://www.w3.org/2005/Atom"
+    feed = Element("feed", xmlns=ns)
+    SubElement(feed, "title").text = (
+        "deadends.dev — New Error Patterns"
+    )
+    SubElement(feed, "subtitle").text = (
+        "Structured failure knowledge for AI coding agents"
+    )
+    link_self = SubElement(feed, "link")
+    link_self.set("href", f"{BASE_URL}/feed.xml")
+    link_self.set("rel", "self")
+    link_self.set("type", "application/atom+xml")
+    link_alt = SubElement(feed, "link")
+    link_alt.set("href", BASE_URL)
+    link_alt.set("rel", "alternate")
+    SubElement(feed, "id").text = f"{BASE_URL}/"
+    SubElement(feed, "updated").text = now
+    author = SubElement(feed, "author")
+    SubElement(author, "name").text = "deadends.dev"
+
+    for canon in dated:
+        entry = SubElement(feed, "entry")
+        cid = canon["id"]
+        sig = canon["error"]["signature"]
+        domain = canon["error"]["domain"]
+        rate = int(canon["verdict"]["fix_success_rate"] * 100)
+        resolvable = canon["verdict"]["resolvable"]
+        de_count = len(canon["dead_ends"])
+        wa_count = len(canon.get("workarounds", []))
+        gen_date = canon["metadata"].get(
+            "generation_date", "2026-01-01"
+        )
+
+        SubElement(entry, "title").text = f"[{domain}] {sig}"
+        elink = SubElement(entry, "link")
+        elink.set("href", f"{BASE_URL}/{cid}")
+        elink.set("rel", "alternate")
+        SubElement(entry, "id").text = f"{BASE_URL}/{cid}"
+        SubElement(entry, "updated").text = f"{gen_date}T00:00:00Z"
+
+        summary_text = (
+            f"Resolvable: {resolvable} | "
+            f"Fix rate: {rate}% | "
+            f"Dead ends: {de_count} | "
+            f"Workarounds: {wa_count}\n\n"
+            f"{canon['verdict']['summary']}\n\n"
+            f"JSON API: {BASE_URL}/api/v1/{cid}.json"
+        )
+        content = SubElement(entry, "content")
+        content.set("type", "text")
+        content.text = summary_text
+
+        cat = SubElement(entry, "category")
+        cat.set("term", domain)
+
+    xml_bytes = tostring(feed, encoding="unicode", xml_declaration=False)
+    xml_out = '<?xml version="1.0" encoding="utf-8"?>\n' + xml_bytes
+
+    (SITE_DIR / "feed.xml").write_text(xml_out, encoding="utf-8")
+    print(f"  Generated: feed.xml ({len(dated)} entries)")
+
+
 def main():
     print("Building deadends.dev static site...\n")
 
@@ -1442,6 +1974,7 @@ def main():
     )
     jinja_env.globals["base_path"] = BASE_PATH
     jinja_env.globals["base_url"] = BASE_URL
+    jinja_env.filters["display_name"] = domain_display_name
 
     # Build pages
     print("Generating error pages...")
@@ -1512,8 +2045,20 @@ def main():
     build_ndjson(canons)
     print()
 
+    print("Generating Atom feed...")
+    build_feed(canons)
+    print()
+
     print("Generating IndexNow support...")
     build_indexnow(canons)
+    print()
+
+    print("Generating shared stylesheet...")
+    build_stylesheet()
+    print()
+
+    print("Generating OG image for social sharing...")
+    build_og_image()
     print()
 
     print("Generating favicon...")

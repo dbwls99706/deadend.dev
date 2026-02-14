@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/interface-assertion-nil/go1.22-linux",
+  "url": "https://deadends.dev/go/interface-assertion-nil/go1.22-linux",
+  "error": {
+    "signature": "interface conversion: interface is nil, not SomeType",
+    "regex": "interface conversion:.*interface is nil, not",
+    "domain": "go",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "A type assertion was attempted on a nil interface value. The interface holds no concrete value, so the assertion panics at runtime."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap the assertion in a recover() without fixing the root cause",
+      "why_fails": "Masking panics hides the nil interface bug — the code path that should set the value is still broken",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://go.dev/ref/spec#Type_assertions"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the comma-ok idiom to safely check the assertion",
+      "success_rate": 0.95,
+      "how": "val, ok := iface.(ConcreteType)\nif !ok {\n    // handle nil or wrong type\n}",
+      "sources": [
+        "https://go.dev/ref/spec#Type_assertions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add a nil check before the type assertion",
+      "success_rate": 0.90,
+      "how": "if iface != nil {\n    val := iface.(ConcreteType)\n}",
+      "sources": [
+        "https://go.dev/doc/effective_go#interface_conversions"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/nil-pointer-dereference/go1-linux",
+        "probability": 0.25,
+        "condition": "when the nil interface is used without assertion"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/interface-conversion-panic/go121-linux",
+        "probability": 0.20,
+        "condition": "when fixing wrong-type assertion leads to nil-value assertion"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/interface-nil-not-nil/go1-linux",
+        "distinction": "'interface is nil, not' is a runtime panic from type-asserting a nil interface, while the nil-interface-not-nil bug is about an interface holding a nil concrete pointer appearing non-nil."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

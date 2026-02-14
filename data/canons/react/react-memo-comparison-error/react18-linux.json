@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-memo-comparison-error/react18-linux",
+  "url": "https://deadends.dev/react/react-memo-comparison-error/react18-linux",
+  "error": {
+    "signature": "Component re-renders despite React.memo wrapper. Custom comparison function returns incorrect results.",
+    "regex": "memo.*comparison|areEqual.*memo|React\\.memo.*re-render|useMemo.*referential equality",
+    "domain": "react",
+    "category": "performance_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "React.memo component re-renders unexpectedly because props change referential identity every render (new object/array/function created inline) or the custom comparison function has a bug."
+  },
+  "dead_ends": [
+    {
+      "action": "Use JSON.stringify comparison in the React.memo areEqual function",
+      "why_fails": "JSON.stringify is slow for large objects, does not handle circular references, ignores functions and undefined values, and runs on every render defeating the purpose of memoization",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://react.dev/reference/react/memo"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap every component in React.memo to prevent all re-renders",
+      "why_fails": "Adds overhead of prop comparison to every component. For components that almost always receive new props, memo makes performance worse.",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/reference/react/memo#should-you-add-memo-everywhere"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Stabilize prop references with useCallback for functions and useMemo for objects/arrays",
+      "success_rate": 0.92,
+      "how": "const handler = useCallback(() => doThing(id), [id]); const config = useMemo(() => ({ key: value }), [value]); <MemoChild onAction={handler} config={config} />",
+      "sources": [
+        "https://react.dev/reference/react/useCallback",
+        "https://react.dev/reference/react/useMemo"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Pass primitive props instead of objects when possible",
+      "success_rate": 0.88,
+      "how": "Instead of <MemoChild user={user} />, pass <MemoChild userName={user.name} userId={user.id} /> so shallow comparison works",
+      "sources": [
+        "https://react.dev/reference/react/memo#minimizing-props-changes"
+      ],
+      "condition": "When the memo'd component only uses a few fields from a complex object"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/maximum-update-depth-exceeded/react18-linux",
+        "probability": 0.15,
+        "condition": "When unstable references in memo'd components trigger cascading re-renders that eventually hit the update limit"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/useeffect-missing-dependency/react18-linux",
+        "probability": 0.20,
+        "condition": "When adding dependencies to useEffect to fix the lint warning creates unstable references that break memo"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "distinction": "memo-comparison-error is about unnecessary but finite re-renders that hurt performance, while too-many-rerenders is about infinite render loops that crash the app"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

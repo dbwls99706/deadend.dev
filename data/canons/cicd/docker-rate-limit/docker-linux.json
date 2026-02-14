@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/docker-rate-limit/docker-linux",
+  "url": "https://deadends.dev/cicd/docker-rate-limit/docker-linux",
+  "error": {
+    "signature": "toomanyrequests: You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limit",
+    "regex": "(?i)(?:toomanyrequests|pull rate limit|rate limit.*exceeded|429 Too Many Requests.*docker)",
+    "domain": "cicd",
+    "category": "registry",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "docker", "version_range": ">=20.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Docker Hub rate limits were exceeded for anonymous or free-tier pulls. Anonymous pulls are limited to 100 per 6 hours per IP; authenticated free users get 200. CI environments sharing IPs hit this quickly."
+  },
+  "dead_ends": [
+    {
+      "action": "Waiting for the rate limit to reset without implementing a long-term fix",
+      "why_fails": "The rate limit will be hit again on the next CI run cycle since the underlying pull pattern has not changed",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using a VPN or rotating IPs to bypass the rate limit",
+      "why_fails": "This violates Docker Hub terms of service and is unreliable. Shared CI runner IPs still converge on the same rate limits.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Authenticate with Docker Hub to increase the rate limit",
+      "success_rate": 0.90,
+      "how": "Create a Docker Hub account and add credentials to CI. For GitHub Actions: store DOCKER_USERNAME and DOCKER_PASSWORD as secrets, add a docker/login-action step before pulls. This doubles the rate limit to 200 pulls/6hr.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a registry mirror or cache proxy",
+      "success_rate": 0.92,
+      "how": "Set up a pull-through cache registry (e.g., registry:2 with proxy.remoteurl=https://registry-1.docker.io). Or use cloud provider mirrors: AWS ECR Public, GitHub Container Registry (ghcr.io), or Google Mirror (mirror.gcr.io).",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.30, "condition": "when rate-limited base image pulls cause Dockerfile FROM to fail"},
+      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.15, "condition": "when attempting to authenticate to avoid rate limits but credentials are misconfigured"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "probability": 0.20, "condition": "when failed authentication falls back to anonymous pulls which then hit rate limits"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-docker-login-failed/gha-linux", "distinction": "docker-rate-limit is about exceeding pull quotas; docker-login-failed is about authentication credential errors"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

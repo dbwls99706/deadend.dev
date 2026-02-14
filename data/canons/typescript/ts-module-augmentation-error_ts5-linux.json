@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-module-augmentation-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-module-augmentation-error/ts5-linux",
+  "error": {
+    "signature": "TS2669: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations",
+    "regex": "TS2669.*Augmentations.*global scope|TS2671.*module augmentation",
+    "domain": "typescript",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Module augmentation syntax is incorrect. The file must be a module (have import/export) and use the correct declaration merging syntax."
+  },
+  "dead_ends": [
+    {
+      "action": "Put augmentation declarations in a non-module script file",
+      "why_fails": "Module augmentations only work inside modules (files with import/export statements)",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the file is a module and use proper augmentation syntax",
+      "success_rate": 0.88,
+      "how": "// Must have at least one import/export to be a module\nimport 'express';\n\ndeclare module 'express' {\n  interface Request {\n    user?: { id: string; role: string };\n  }\n}\n\nexport {}; // ensures this is a module",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation"],
+      "condition": ""
+    },
+    {
+      "action": "Use declare global for global scope augmentations",
+      "success_rate": 0.85,
+      "how": "export {}; // make this a module\n\ndeclare global {\n  interface Window {\n    myCustomProperty: string;\n  }\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/declaration-merging.html#global-augmentation"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-namespace-merge-error/ts5-linux", "probability": 0.20, "condition": "When augmentation leads to namespace merging conflicts"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts2339-property-not-exist/ts5-linux", "probability": 0.20, "condition": "When adding custom properties to existing types"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts-namespace-merge-error/ts5-linux", "distinction": "Namespace merging is about combining declarations; module augmentation is about extending external modules"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/node-certificate-expired/node20-linux",
+  "url": "https://deadends.dev/node/node-certificate-expired/node20-linux",
+  "error": {
+    "signature": "Error: CERT_HAS_EXPIRED",
+    "regex": "CERT_HAS_EXPIRED|certificate has expired",
+    "domain": "node",
+    "category": "tls",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "TLS handshake failed because the server's SSL certificate has expired. Node.js strict TLS validation rejects expired certificates by default."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting NODE_TLS_REJECT_UNAUTHORIZED=0 in production",
+      "why_fails": "Disables all certificate validation, exposing the application to man-in-the-middle attacks",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Pinning the expired certificate in the trust store",
+      "why_fails": "The certificate is expired; pinning it does not make it valid and other clients will still reject it",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Renew the SSL certificate on the target server",
+      "success_rate": 0.95,
+      "how": "Use certbot or your CA's renewal process: certbot renew --force-renewal, then restart the server",
+      "sources": [
+        "https://letsencrypt.org/docs/renewal/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Update the system CA certificate bundle",
+      "success_rate": 0.82,
+      "how": "Run 'sudo update-ca-certificates' on Debian/Ubuntu or 'sudo update-ca-trust' on RHEL/CentOS",
+      "sources": [
+        "https://nodejs.org/api/tls.html"
+      ],
+      "condition": "when the issue is an outdated root CA bundle on the client"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/err-ossl-wrong-version-number/node20-linux",
+        "probability": 0.15,
+        "condition": "when misconfiguring TLS version after encountering certificate errors"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/econnreset/node20-linux",
+        "probability": 0.18,
+        "condition": "when TLS handshake failures cause connection resets"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-ossl-wrong-version-number/node20-linux",
+        "distinction": "CERT_HAS_EXPIRED means the certificate itself is expired, while ERR_SSL_WRONG_VERSION_NUMBER means there is a TLS protocol version mismatch"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

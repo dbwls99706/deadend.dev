@@ -75,14 +75,7 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "pip/import-error-version-mismatch/pip23-macos",
-        "probability": 0.45,
-        "condition": "When the conflict is bypassed, incompatible package versions cause runtime errors",
-        "typical_delay": "immediate on import"
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [],
     "frequently_confused_with": [
       {

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/abstract-method-error/jdk17-linux",
+  "url": "https://deadends.dev/java/abstract-method-error/jdk17-linux",
+  "error": {
+    "signature": "java.lang.AbstractMethodError",
+    "regex": "java\\.lang\\.AbstractMethodError",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "AbstractMethodError occurs when an application tries to call an abstract method that has not been implemented. This almost always indicates a binary incompatibility between compiled classes, typically caused by mismatched library versions at compile time vs. runtime."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the missing method implementation to the concrete class without checking dependency versions",
+      "why_fails": "The error usually occurs because a different version of a library was compiled against than what is on the classpath at runtime. Adding a method to your own code won't fix a binary incompatibility in a third-party JAR.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrading the JDK version to avoid the error",
+      "why_fails": "AbstractMethodError is caused by classpath/dependency version mismatches, not JDK version issues. Downgrading the JDK does not resolve the underlying binary incompatibility between libraries.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Align dependency versions so compile-time and runtime JARs match",
+      "success_rate": 0.90,
+      "how": "1. Run 'mvn dependency:tree' or 'gradle dependencies' to find conflicting versions of the library that defines the abstract method. 2. Identify which version was used at compile time and which is on the runtime classpath. 3. Exclude the older/conflicting transitive dependency and explicitly declare the correct version. 4. Rebuild and verify the error is resolved.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Maven Enforcer Plugin or Gradle's failOnVersionConflict to detect version mismatches early",
+      "success_rate": 0.85,
+      "how": "1. Add the Maven Enforcer Plugin with the 'dependencyConvergence' rule, or add resolutionStrategy.failOnVersionConflict() in Gradle. 2. Run the build — it will fail if transitive dependencies pull in conflicting versions. 3. Resolve each conflict by pinning the correct version. 4. This prevents AbstractMethodError from ever reaching runtime.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.25, "condition": "when fixing one binary incompatibility reveals another missing method"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.30, "condition": "when a dependency conflict causes different library versions at compile vs runtime"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "distinction": "NoSuchMethodError means the method does not exist at all in the class; AbstractMethodError means the method exists but is abstract (not implemented) in the version found at runtime"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

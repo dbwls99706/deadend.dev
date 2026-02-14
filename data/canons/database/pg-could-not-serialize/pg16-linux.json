@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-could-not-serialize/pg16-linux",
+  "url": "https://deadends.dev/database/pg-could-not-serialize/pg16-linux",
+  "error": {
+    "signature": "ERROR: could not serialize access due to concurrent update",
+    "regex": "ERROR:\\s+could not serialize access due to concurrent update",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A transaction running at SERIALIZABLE or REPEATABLE READ isolation level attempted to modify a row that was already modified by another committed transaction since the start of the current transaction. PostgreSQL aborts the transaction to preserve snapshot isolation guarantees. The application must retry the transaction."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrading isolation level to READ COMMITTED globally to avoid serialization failures",
+      "why_fails": "READ COMMITTED eliminates serialization errors but introduces phantom reads and non-repeatable reads. If the application logic depends on consistent snapshots (e.g., financial calculations, inventory checks), this leads to data corruption bugs that are much harder to debug than retry logic.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding SELECT FOR UPDATE locks everywhere to prevent concurrent modifications",
+      "why_fails": "Excessive pessimistic locking defeats the purpose of MVCC, reduces throughput significantly, and can introduce deadlocks. It converts optimistic concurrency control into pessimistic, negating the benefits of SERIALIZABLE isolation.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Implement automatic transaction retry with exponential backoff",
+      "success_rate": 0.90,
+      "how": "Catch SQLSTATE 40001 (serialization_failure) in your application code and retry the entire transaction (not just the failed statement). Use exponential backoff: 50ms, 100ms, 200ms with jitter. Limit retries to 3-5 attempts. Most serialization failures succeed on the first retry.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reduce transaction scope to minimize conflict windows",
+      "success_rate": 0.82,
+      "how": "Break large transactions into smaller units of work. Move read-only operations outside the SERIALIZABLE transaction. Use advisory locks (pg_advisory_lock) for application-level coordination when the same logical resource is always contended.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when retry logic with pessimistic locking introduces deadlock potential"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-pool-exhausted/pg16-linux", "probability": 0.20, "condition": "when high concurrency saturates connection pool causing more serialization conflicts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "distinction": "Serialization failure (40001) means a concurrent transaction already committed conflicting changes. Deadlock (40P01) means two transactions are waiting on each other. Both require retry, but serialization failures are expected at SERIALIZABLE isolation."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 52,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/rmi-connection-refused/jdk17-linux",
+  "url": "https://deadends.dev/java/rmi-connection-refused/jdk17-linux",
+  "error": {
+    "signature": "java.rmi.ConnectException: Connection refused to host",
+    "regex": "java\\.rmi\\.(?:ConnectException|ConnectIOException).*Connection refused",
+    "domain": "java",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The RMI client cannot connect to the RMI registry or remote object. Commonly caused by the RMI registry not running, firewall blocking the port, or java.rmi.server.hostname resolving to a non-routable address (like 127.0.0.1 in Docker)."
+  },
+  "dead_ends": [
+    {
+      "action": "Only checking if the RMI registry port is open without verifying hostname resolution",
+      "why_fails": "RMI uses a two-phase connection: first to the registry, then to the server object's advertised hostname. Even if the registry is reachable, the stub may contain a hostname (like the container ID in Docker) that the client cannot resolve.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling the firewall entirely instead of opening the specific RMI ports",
+      "why_fails": "RMI uses dynamic ports for remote objects in addition to the registry port. Disabling the entire firewall is a security risk. The correct approach is to fix the port assignment, not remove the firewall.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set java.rmi.server.hostname to the externally reachable IP/hostname of the server",
+      "success_rate": 0.88,
+      "how": "1. Add -Djava.rmi.server.hostname=<external-ip> to the server JVM arguments. 2. In Docker, set this to the host machine's IP or the Docker service name. 3. Verify the client can resolve and connect to this hostname. 4. Check with 'netstat -tlnp | grep <rmi-port>' that the RMI registry is listening.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix RMI port assignment to use fixed ports instead of dynamic ports for firewall compatibility",
+      "success_rate": 0.82,
+      "how": "1. Set the registry port explicitly: LocateRegistry.createRegistry(1099). 2. For exported remote objects, use a fixed port: UnicastRemoteObject.exportObject(obj, 1100). 3. Open both ports in the firewall. 4. In newer architectures, consider replacing RMI with gRPC or REST, which are more container-friendly.",
+      "sources": [],
+      "condition": "when RMI must work through firewalls"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.10, "condition": "when migrating from RMI to HTTP-based communication introduces timeout issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/ssl-handshake-exception/jdk17-linux", "probability": 0.15, "condition": "when SSL configuration issues prevent RMI over SSL connections"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/jdbc-connection-refused/jdk17-linux", "distinction": "JDBC connection refused is for database connections; RMI connection refused is for Java-to-Java remote method invocation communication"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

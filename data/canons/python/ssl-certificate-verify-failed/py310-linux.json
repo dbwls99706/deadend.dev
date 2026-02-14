@@ -83,21 +83,8 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/requests-connectionerror-ssl/py310-linux",
-        "probability": 0.15,
-        "condition": "When verification is disabled but the server requires mutual TLS (client certificate)",
-        "typical_delay": "immediate"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/docker-build-pip-ssl-error/py310-linux",
-        "probability": 0.35,
-        "condition": "pip install fails during Docker build because the base image lacks ca-certificates"
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "python/ssl-certificate-verify-failed/py311-macos",

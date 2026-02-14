@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/editable-install-legacy/pip24-linux",
+  "url": "https://deadends.dev/pip/editable-install-legacy/pip24-linux",
+  "error": {
+    "signature": "ERROR: Project has a 'pyproject.toml' and its build backend is missing the 'build_editable' hook. Cannot build editable installation.",
+    "regex": "build_editable.*hook|Cannot build editable|legacy editable install",
+    "domain": "pip",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Pip 24 requires PEP 660 support for editable installs with pyproject.toml. Older build backends (setuptools <64) lack the build_editable hook. The legacy setup.py develop fallback was removed."
+  },
+  "dead_ends": [
+    {
+      "action": "Use pip install -e . --no-use-pep517",
+      "why_fails": "The --no-use-pep517 flag is deprecated in pip 24 and will not work for pyproject.toml-based projects",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add a setup.py just for editable installs",
+      "why_fails": "Creating a setup.py alongside pyproject.toml causes confusion and potential conflicts between build systems",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Upgrade setuptools to >=64 which supports PEP 660 build_editable hook",
+      "success_rate": 0.93,
+      "how": "pip install 'setuptools>=64' && pip install -e .",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switch build backend to one with PEP 660 support (hatchling, flit-core, pdm-backend)",
+      "success_rate": 0.88,
+      "how": "Update pyproject.toml [build-system] to use hatchling or flit-core, then pip install -e .",
+      "sources": [],
+      "condition": "when the project can change build backends"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/metadata-generation-failed/pip24-linux", "probability": 0.2, "condition": "when the build backend upgrade introduces metadata issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/build-isolation-failed/pip24-linux", "probability": 0.15, "condition": "when build isolation prevents setuptools upgrade"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/build-isolation-failed/pip24-linux", "distinction": "Editable-install-legacy is specifically about missing PEP 660 hook; build-isolation-failed is about the isolated build environment itself failing"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

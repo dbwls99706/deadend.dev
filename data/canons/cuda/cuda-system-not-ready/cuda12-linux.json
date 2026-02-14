@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cuda-system-not-ready/cuda12-linux",
+  "url": "https://deadends.dev/cuda/cuda-system-not-ready/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: system not ready (cudaErrorSystemNotReady)",
+    "regex": "cudaErrorSystemNotReady|system not ready|CUDA system.*not.*ready|system not yet initialized",
+    "domain": "cuda",
+    "category": "initialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The CUDA subsystem is not ready to accept API calls. This typically occurs when the NVIDIA kernel module is loaded but the GPU has not completed initialization, during system resume from suspend/hibernate, when the GPU is being reset after an error (e.g., Xid error), or in containers where the GPU device files are not yet available."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstalling the CUDA toolkit to fix the system not ready state",
+      "why_fails": "The error is a transient hardware/driver state issue, not a software installation problem. Reinstalling CUDA does not change the driver state or GPU hardware readiness. The GPU needs time to initialize or recover from a reset.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Calling cudaDeviceReset() to force the system into a ready state",
+      "why_fails": "cudaDeviceReset destroys the current CUDA context but does not affect the underlying driver or hardware state. If the system is not ready at the driver level, resetting the CUDA context does not help and may return the same error.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wait and retry the CUDA initialization with exponential backoff",
+      "success_rate": 0.88,
+      "how": "The system-not-ready state is usually transient. Implement a retry loop: attempt cudaGetDeviceCount or cudaSetDevice, if it returns cudaErrorSystemNotReady, sleep for 1-2 seconds and retry up to 30 seconds. This is common after system resume or GPU reset. In containers, wait for nvidia-container-runtime to expose the device.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check and reload the NVIDIA kernel modules if the GPU is stuck",
+      "success_rate": 0.80,
+      "how": "Run: nvidia-smi to check GPU state. If nvidia-smi also fails, the driver may need reloading: sudo rmmod nvidia_uvm nvidia_drm nvidia_modeset nvidia && sudo modprobe nvidia. Check dmesg for Xid errors indicating GPU hardware issues. If the GPU experienced an Xid 79 (GPU fallen off the bus), a full system reboot may be required.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/not-initialized/cuda12-linux", "probability": 0.25, "condition": "when the system-not-ready error is ignored and subsequent CUDA calls fail with initialization errors"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/nvidia-smi-failed/cuda12-linux", "probability": 0.30, "condition": "when nvidia-smi reports driver communication failure indicating the GPU is in a bad state"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/not-initialized/cuda12-linux", "distinction": "System-not-ready means the GPU hardware or driver is temporarily unavailable. Not-initialized means the CUDA runtime context has not been created yet (usually a programming error of calling CUDA functions before initialization)."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

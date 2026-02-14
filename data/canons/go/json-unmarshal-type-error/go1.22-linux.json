@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/json-unmarshal-type-error/go1.22-linux",
+  "url": "https://deadends.dev/go/json-unmarshal-type-error/go1.22-linux",
+  "error": {
+    "signature": "json: cannot unmarshal string into Go struct field Foo.Bar of type int",
+    "regex": "json: cannot unmarshal .* into Go (struct field|value).*of type",
+    "domain": "go",
+    "category": "serialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The JSON field type does not match the Go struct field type. For example, JSON has a string \"123\" but the Go field is int. The encoding/json package returns *json.UnmarshalTypeError."
+  },
+  "dead_ends": [
+    {
+      "action": "Use interface{} for all struct fields to avoid type mismatches",
+      "why_fails": "Loses all type safety and requires manual type assertions everywhere the fields are used, creating more bugs",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Unmarshal"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use json.Number for fields that may be string or number",
+      "success_rate": 0.90,
+      "how": "decoder := json.NewDecoder(reader)\ndecoder.UseNumber()\n// or use json.Number type in struct",
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Number"
+      ],
+      "condition": "when API sends numbers as strings inconsistently"
+    },
+    {
+      "action": "Implement custom UnmarshalJSON to handle flexible input types",
+      "success_rate": 0.92,
+      "how": "func (f *FlexInt) UnmarshalJSON(b []byte) error {\n    var n int\n    if err := json.Unmarshal(b, &n); err == nil {\n        *f = FlexInt(n); return nil\n    }\n    var s string\n    if err := json.Unmarshal(b, &s); err == nil {\n        i, err := strconv.Atoi(s)\n        *f = FlexInt(i); return err\n    }\n    return fmt.Errorf(\"cannot unmarshal %s\", string(b))\n}",
+      "sources": [
+        "https://pkg.go.dev/encoding/json#Unmarshaler"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/nil-pointer-dereference/go1-linux",
+        "probability": 0.20,
+        "condition": "when unmarshal silently skips fields, leaving pointers nil"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/json-unmarshal-wrong-type/go1-linux",
+        "probability": 0.15,
+        "condition": "when fixing the basic unmarshal target leads to field-level type mismatches"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/json-unmarshal-wrong-type/go1-linux",
+        "distinction": "'cannot unmarshal ... into Go struct field' is a field-level type mismatch, while 'cannot unmarshal ... into Go value of type' is a top-level type mismatch (e.g., array into struct)."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

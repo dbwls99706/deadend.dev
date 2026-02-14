@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/argocd-sync-failed/argocd-linux",
+  "url": "https://deadends.dev/cicd/argocd-sync-failed/argocd-linux",
+  "error": {
+    "signature": "ComparisonError: failed to sync application: one or more objects failed to apply",
+    "regex": "(?i)(?:failed to sync|sync.*failed|OutOfSync|SyncError|ComparisonError)",
+    "domain": "cicd",
+    "category": "gitops",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "argocd",
+      "version_range": ">=2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "ArgoCD failed to sync the desired state from Git to the Kubernetes cluster. Causes include invalid manifests, RBAC issues, resource conflicts, or CRDs not installed in the target cluster."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly clicking Sync in the ArgoCD UI without fixing the manifests",
+      "why_fails": "If the manifests are invalid or the cluster state prevents application, retrying sync produces the same error",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using --force flag to override sync conflicts",
+      "why_fails": "Force sync can delete and recreate resources, causing downtime and data loss. It masks the underlying issue without resolving it.",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check ArgoCD app diff and fix manifest issues",
+      "success_rate": 0.88,
+      "how": "Run argocd app diff <app-name> to see what differs between desired and live state. Fix YAML issues in Git. Check argocd app get <app-name> for detailed sync status and error messages.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure CRDs and dependencies are installed before syncing",
+      "success_rate": 0.85,
+      "how": "Use ArgoCD sync waves and hooks: annotate CRDs with argocd.argoproj.io/sync-wave: '-1' to install them before dependent resources. Verify CRDs exist: kubectl get crd.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cicd/helm-upgrade-failed/helm-linux",
+        "probability": 0.2,
+        "condition": "when ArgoCD uses Helm and the underlying Helm release fails"
+      },
+      {
+        "error_id": "cicd/fluxcd-reconciliation-failed/fluxcd-linux",
+        "probability": 0.1,
+        "condition": "when migrating between GitOps tools reveals similar manifest issues"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "cicd/fluxcd-reconciliation-failed/fluxcd-linux",
+        "distinction": "ArgoCD sync failures occur in ArgoCD's pull-based model; FluxCD reconciliation failures occur in FluxCD's controller-based model. Different tools, similar GitOps concepts."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

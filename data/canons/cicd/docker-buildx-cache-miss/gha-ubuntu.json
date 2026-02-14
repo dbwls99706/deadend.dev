@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/docker-buildx-cache-miss/gha-ubuntu",
+  "url": "https://deadends.dev/cicd/docker-buildx-cache-miss/gha-ubuntu",
+  "error": {
+    "signature": "ERROR: cache export feature is currently not supported for docker driver",
+    "regex": "(?:cache export feature is currently not supported for docker driver|cache export.*not supported.*docker driver|unsupported cache export.*docker driver)",
+    "domain": "cicd",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "ubuntu-latest"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-13",
+    "summary": "Docker buildx cache-to/cache-from options fail because the default 'docker' driver does not support cache export. The docker-container or remote driver must be used to enable buildx advanced caching features such as GitHub Actions cache backend or registry-based cache."
+  },
+  "dead_ends": [
+    {
+      "action": "Add --cache-to and --cache-from flags to a regular docker build command",
+      "why_fails": "The classic 'docker build' command does not support buildx cache export/import flags. These flags require 'docker buildx build' with a compatible driver, not the legacy builder.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set DOCKER_BUILDKIT=1 and assume cache export will work with the default driver",
+      "why_fails": "DOCKER_BUILDKIT=1 enables BuildKit as the build engine but still uses the 'docker' driver, which does not support cache export. The driver type is what matters, not whether BuildKit is enabled.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Attempt to use --cache-to=type=local without switching the buildx driver",
+      "why_fails": "All cache-to backends (local, registry, gha, inline) are blocked when using the docker driver. The error occurs before any cache type logic is evaluated because the driver itself lacks the capability.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use docker/setup-buildx-action to create a buildx builder with the docker-container driver",
+      "success_rate": 0.95,
+      "how": "Add 'uses: docker/setup-buildx-action@v3' as a step before docker/build-push-action. This creates a new builder instance using the docker-container driver which supports all cache export features. Then use cache-to: type=gha and cache-from: type=gha in the build-push-action.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use inline cache with registry-based caching as a simpler alternative",
+      "success_rate": 0.88,
+      "how": "After setting up buildx with docker-container driver, use 'cache-from: type=registry,ref=ghcr.io/org/repo:buildcache' and 'cache-to: type=inline' in docker/build-push-action. Inline cache embeds cache metadata in the image itself, which is simpler but only caches the final stage.",
+      "sources": [],
+      "condition": "When only single-stage cache is needed and simplicity is preferred"
+    },
+    {
+      "action": "Use GitHub Actions cache backend (type=gha) for full multi-stage layer caching",
+      "success_rate": 0.92,
+      "how": "With docker/setup-buildx-action configured, set 'cache-from: type=gha' and 'cache-to: type=gha,mode=max' in docker/build-push-action. The 'mode=max' ensures all layers (not just final stage) are cached. This uses the GitHub Actions cache storage automatically.",
+      "sources": [],
+      "condition": "When multi-stage Dockerfiles need full layer caching"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.20, "condition": "When lack of caching causes full Docker image rebuilds that exceed runner time limits"},
+      {"error_id": "cicd/gha-cache-miss/gha-linux", "probability": 0.15, "condition": "When GHA cache backend is configured but the cache key has changed or expired"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "When attempting to add caching to fix slow Docker builds in CI"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-cache-miss/gha-linux", "distinction": "Buildx cache error is about the Docker buildx driver not supporting cache export at all; GHA cache miss is about the GitHub Actions cache action failing to find a matching cache key"},
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "Buildx cache error occurs specifically with cache configuration; Docker build failed covers general build failures like Dockerfile syntax errors or missing dependencies"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

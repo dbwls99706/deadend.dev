@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/checkpoint-device-mismatch/cuda12-linux",
+  "url": "https://deadends.dev/cuda/checkpoint-device-mismatch/cuda12-linux",
+  "error": {
+    "signature": "RuntimeError: Attempting to deserialize object on a CUDA device but torch.cuda.is_available() is False",
+    "regex": "Attempting to deserialize object on a CUDA device.*torch\\.cuda\\.is_available\\(\\) is False",
+    "domain": "cuda",
+    "category": "serialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=11.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "NVIDIA",
+      "vram_gb": 24
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.96,
+    "confidence": 0.95,
+    "last_updated": "2026-02-13",
+    "summary": "A model checkpoint saved on a GPU machine is being loaded on a CPU-only machine (or a machine where CUDA is unavailable). torch.load() defaults to restoring tensors to their original device, which fails when that device does not exist."
+  },
+  "dead_ends": [
+    {
+      "action": "Install CUDA toolkit on the CPU-only machine to make torch.cuda.is_available() return True",
+      "why_fails": "CUDA requires an NVIDIA GPU with driver support; installing the toolkit alone on a machine without a GPU will not make CUDA available",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://pytorch.org/docs/stable/cuda.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert the checkpoint file manually by editing binary data",
+      "why_fails": "PyTorch checkpoint files use a complex pickle-based format; manual editing corrupts the file and loses tensor data",
+      "fail_rate": 0.98,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.save.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade PyTorch version to bypass the device check",
+      "why_fails": "The device validation has existed across all modern PyTorch versions; downgrading introduces compatibility issues without fixing the root cause",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.load.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use map_location parameter in torch.load() to remap tensors to CPU",
+      "success_rate": 0.97,
+      "how": "checkpoint = torch.load('model.pt', map_location=torch.device('cpu'))\nmodel.load_state_dict(checkpoint)",
+      "sources": [
+        "https://pytorch.org/docs/stable/generated/torch.load.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use map_location='cpu' shorthand and then move to GPU if available",
+      "success_rate": 0.95,
+      "how": "checkpoint = torch.load('model.pt', map_location='cpu')\nmodel.load_state_dict(checkpoint)\ndevice = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nmodel = model.to(device)",
+      "sources": [
+        "https://pytorch.org/tutorials/beginner/saving_loading_models.html"
+      ],
+      "condition": "Code must work on both GPU and CPU machines"
+    },
+    {
+      "action": "Save checkpoints with device-agnostic state_dict instead of the full model",
+      "success_rate": 0.93,
+      "how": "# When saving:\ntorch.save(model.state_dict(), 'model_weights.pt')\n# When loading (works on any device):\nmodel = MyModel()\nmodel.load_state_dict(torch.load('model_weights.pt', map_location='cpu'))",
+      "sources": [
+        "https://pytorch.org/tutorials/beginner/saving_loading_models.html#save-load-state-dict-recommended"
+      ],
+      "condition": "Prevention: adopt this pattern to avoid the error entirely"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/tensor-device-mismatch/cuda12-linux",
+        "probability": 0.25,
+        "condition": "After loading to CPU, running inference without moving the model to GPU causes device mismatch with CUDA inputs"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/nvidia-smi-failed/cuda12-linux",
+        "probability": 0.15,
+        "condition": "Driver failure makes CUDA unavailable, causing subsequent checkpoint loads to fail"
+      },
+      {
+        "error_id": "cuda/torch-not-compiled-cuda/cuda12-rtx4090",
+        "probability": 0.20,
+        "condition": "CPU-only PyTorch installation causes torch.cuda.is_available() to return False"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/tensor-device-mismatch/cuda12-linux",
+        "distinction": "Device mismatch occurs during computation when tensors are on different devices; checkpoint-device-mismatch occurs during deserialization before any computation"
+      },
+      {
+        "error_id": "python/pickle-unpickling-error/py311-linux",
+        "distinction": "Pickle errors are about corrupted or incompatible serialization formats; checkpoint-device-mismatch is specifically about CUDA device availability during loading"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

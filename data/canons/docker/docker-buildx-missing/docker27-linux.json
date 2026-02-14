@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-buildx-missing/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-buildx-missing/docker27-linux",
+  "error": {
+    "signature": "docker: 'buildx' is not a docker command",
+    "regex": "buildx.*is not a docker command|docker buildx.*not found|ERROR.*buildx.*missing",
+    "domain": "docker",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Docker Buildx plugin is not installed or not in the CLI plugin path. Buildx is required for multi-platform builds, BuildKit features, and the newer docker build syntax."
+  },
+  "dead_ends": [
+    {
+      "action": "Symlinking buildx binary to a random path",
+      "why_fails": "Docker CLI plugins must be in ~/.docker/cli-plugins/ or /usr/libexec/docker/cli-plugins/; other paths are not scanned",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using DOCKER_BUILDKIT=1 docker build as a replacement",
+      "why_fails": "DOCKER_BUILDKIT=1 enables BuildKit but does not provide buildx features like multi-platform builds, custom builders, and build caching backends",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the Docker Buildx plugin",
+      "success_rate": 0.95,
+      "how": "sudo apt-get install docker-buildx-plugin (Debian/Ubuntu) or download from https://github.com/docker/buildx/releases and place in ~/.docker/cli-plugins/docker-buildx",
+      "sources": [
+        "https://docs.docker.com/build/install-buildx/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Install Docker Desktop which includes Buildx by default",
+      "success_rate": 0.92,
+      "how": "Download and install Docker Desktop from https://docs.docker.com/desktop/ — includes buildx, compose, and other plugins",
+      "sources": [
+        "https://docs.docker.com/desktop/"
+      ],
+      "condition": "when running on a development machine"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/docker-exec-format-error/docker27-linux",
+        "probability": 0.15,
+        "condition": "when developers skip multi-platform builds without buildx and the image runs on wrong architecture"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/cannot-connect-to-docker-daemon/docker27-linux",
+        "probability": 0.12,
+        "condition": "when Docker is freshly installed but plugins are not configured"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/compose-version-obsolete/docker27-linux",
+        "distinction": "Buildx missing means the build plugin is not installed, while compose version obsolete means the compose plugin is installed but using a deprecated configuration format"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

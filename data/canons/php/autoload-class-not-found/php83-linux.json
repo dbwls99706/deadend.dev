@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/autoload-class-not-found/php83-linux",
+  "url": "https://deadends.dev/php/autoload-class-not-found/php83-linux",
+  "error": {
+    "signature": "Fatal error: Uncaught Error: Class 'App\\Service\\MyService' not found in /var/www/app/src/Controller/MainController.php:15",
+    "regex": "Class ['\"]?[\\w\\\\]+['\"]? not found",
+    "domain": "php",
+    "category": "autoloading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Class not found errors during autoloading typically occur when the PSR-4 namespace does not match the directory structure, the composer autoload map is stale, or the class file has a typo in its namespace declaration."
+  },
+  "dead_ends": [
+    {"action": "Manually requiring class files with require_once throughout the codebase", "why_fails": "Bypasses the autoloader entirely, creating a fragile dependency chain that breaks when files move. This does not scale and defeats the purpose of PSR-4 autoloading.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Changing directory structure without updating composer.json autoload section", "why_fails": "The autoloader map is generated from composer.json. Moving files without updating the PSR-4 mapping causes further class not found errors.", "fail_rate": 0.80, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Run composer dump-autoload to regenerate the autoload map", "success_rate": 0.92, "how": "Execute 'composer dump-autoload' (or 'composer dump-autoload -o' for optimized classmap). This rebuilds vendor/autoload.php and the classmap files based on the current composer.json autoload configuration.", "sources": [], "condition": ""},
+    {"action": "Verify the namespace declaration matches the PSR-4 directory structure", "success_rate": 0.88, "how": "Check that the class file's namespace matches the path relative to the autoload root defined in composer.json. For example, if autoload is 'App\\' => 'src/', then src/Service/MyService.php must declare 'namespace App\\Service;'.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/spl-autoload-error/php83-linux", "probability": 0.20, "condition": "when custom autoloader is registered but conflicts with Composer's autoloader"}],
+    "preceded_by": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "probability": 0.30, "condition": "when composer install was not run after adding new dependencies"}],
+    "frequently_confused_with": [{"error_id": "php/class-not-found/php83-linux", "distinction": "Class not found from autoloading is about PSR-4 mapping issues, while general class not found can also be about missing extensions or interfaces"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

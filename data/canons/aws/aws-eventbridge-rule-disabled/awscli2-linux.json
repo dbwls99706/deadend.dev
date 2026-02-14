@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-eventbridge-rule-disabled/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-eventbridge-rule-disabled/awscli2-linux",
+  "error": {
+    "signature": "EventBridge rule is in DISABLED state and not triggering targets",
+    "regex": "(Rule .+ is (DISABLED|disabled)|Events are not being delivered|No invocations for rule)",
+    "domain": "aws",
+    "category": "config_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "EventBridge rule is disabled or event pattern does not match incoming events, so targets are never invoked."
+  },
+  "dead_ends": [
+    {
+      "action": "Create a duplicate rule instead of fixing the existing one",
+      "why_fails": "If the event pattern is wrong, the duplicate will have the same issue; also creates management overhead",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check CloudWatch Logs without verifying the rule state first",
+      "why_fails": "If the rule is disabled, no events are processed and there will be nothing in logs to find",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable the rule and verify the event pattern matches incoming events",
+      "success_rate": 0.92,
+      "how": "aws events enable-rule --name RULE_NAME && aws events test-event-pattern --event-pattern PATTERN --event EVENT_JSON",
+      "sources": [
+        "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-troubleshooting.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the target has a resource-based policy allowing EventBridge to invoke it",
+      "success_rate": 0.85,
+      "how": "For Lambda targets: aws lambda get-policy --function-name FUNC to verify events.amazonaws.com has invoke permission",
+      "sources": [
+        "https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-use-resource-based.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.1,
+        "condition": "Permission errors during rule creation may leave rule in disabled state"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-step-functions-timeout/awscli2-linux",
+        "distinction": "Step Functions timeout is about state machine execution duration; EventBridge rule disabled is about event routing not triggering"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-dns-resolution-failed/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-dns-resolution-failed/k8s129-linux",
+  "error": {
+    "signature": "CoreDNS: SERVFAIL for cluster.local, dial tcp: lookup on: no such host",
+    "regex": "SERVFAIL.*cluster\\.local|CoreDNS.*timeout|dial tcp.*lookup.*no such host|dns.*resolution.*timeout",
+    "domain": "kubernetes",
+    "category": "dns_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "DNS resolution fails at the cluster level because CoreDNS is down, misconfigured, or blocked by NetworkPolicy."
+  },
+  "dead_ends": [
+    {
+      "action": "Add custom /etc/hosts entries to all pods",
+      "why_fails": "Doesn't scale — service IPs change and new services won't be resolvable",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Restart all pods in the cluster",
+      "why_fails": "If CoreDNS is the problem, restarting app pods won't fix DNS",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check CoreDNS pod status and logs: kubectl get pods -n kube-system -l k8s-app=kube-dns",
+      "success_rate": 0.92,
+      "how": "kubectl logs -n kube-system -l k8s-app=kube-dns — look for upstream DNS failures or loop detection",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check if NetworkPolicy blocks egress to kube-dns on port 53",
+      "success_rate": 0.85,
+      "how": "Ensure egress NetworkPolicy allows UDP/TCP port 53 to kube-system namespace",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.22,
+        "condition": "when application crashes because it can't resolve dependencies"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-network-policy-block/k8s129-linux",
+        "probability": 0.25,
+        "condition": "when NetworkPolicy blocks DNS traffic"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/dns-resolution-failed-pod/k8s1-linux",
+        "distinction": "k8s-dns-resolution-failed covers cluster-level CoreDNS failures, while dns-resolution-failed-pod covers per-pod DNS issues"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

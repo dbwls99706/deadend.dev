@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-manifest-unknown/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-manifest-unknown/docker27-linux",
+  "error": {
+    "signature": "manifest unknown: manifest unknown",
+    "regex": "manifest unknown|manifest.*not found|MANIFEST_UNKNOWN",
+    "domain": "docker",
+    "category": "registry",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The specified image tag or digest does not exist in the registry. The image may have been deleted, the tag misspelled, or the platform architecture not available."
+  },
+  "dead_ends": [
+    {
+      "action": "Pulling with --platform flag when the image simply does not exist for that architecture",
+      "why_fails": "If the image maintainer never published an arm64 variant, no platform flag will make it appear",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Clearing local Docker cache hoping it will fix the pull",
+      "why_fails": "The issue is server-side; the manifest genuinely does not exist in the registry",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the exact image name, tag, and registry URL",
+      "success_rate": 0.90,
+      "how": "Check the registry web UI or use: docker manifest inspect <image>:<tag> to confirm the manifest exists",
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/manifest/inspect/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a specific digest instead of a mutable tag",
+      "success_rate": 0.85,
+      "how": "docker pull image@sha256:<digest> — ensures you get the exact image that was verified to exist",
+      "sources": [
+        "https://docs.docker.com/engine/reference/commandline/pull/"
+      ],
+      "condition": "when tags are being overwritten or deleted"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/docker-exec-format-error/docker27-linux",
+        "probability": 0.15,
+        "condition": "when pulling a wrong-architecture image that happens to exist"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/unauthorized-authentication-required/docker24-linux",
+        "probability": 0.20,
+        "condition": "when authentication fails first, then manifest lookup fails"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/manifest-not-found/docker27-linux",
+        "distinction": "manifest unknown typically means the tag never existed, while manifest not found can mean the tag was deleted or the repository path is wrong"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

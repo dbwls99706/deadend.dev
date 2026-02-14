@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-actix-payload-error/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-actix-payload-error/rust1.77-linux",
+  "error": {
+    "signature": "JsonPayloadError: Payload error: payload reached size limit",
+    "regex": "JsonPayloadError.*[Pp]ayload.*size limit",
+    "domain": "rust",
+    "category": "web_framework_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "Actix-web rejects payloads exceeding the default size limit (256KB). Increase the limit via JsonConfig."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable payload size checking entirely",
+      "why_fails": "Opens the server to denial-of-service attacks via oversized payloads",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure JsonConfig with an appropriate payload size limit",
+      "success_rate": 0.93,
+      "how": "use actix_web::web;\nApp::new()\n    .app_data(web::JsonConfig::default().limit(1048576)) // 1MB\n    .service(my_handler)",
+      "sources": ["https://actix.rs/docs/extractors/"],
+      "condition": ""
+    },
+    {
+      "action": "Use streaming deserialization for very large payloads",
+      "success_rate": 0.80,
+      "how": "Use actix_web::web::Payload stream instead of Json<T> extractor for bodies > 10MB",
+      "sources": ["https://actix.rs/docs/request/"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/rust-serde-deserialize-error/rust1.77-linux", "probability": 0.20, "condition": "After size limit is fixed, deserialization errors may appear"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/rust-hyper-connection-reset/rust1.77-linux", "probability": 0.10, "condition": "When connection resets mask the real payload issue"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/rust-serde-deserialize-error/rust1.77-linux", "distinction": "Serde errors are about type mismatches; payload errors are about request body size limits"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

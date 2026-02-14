@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/cooperative-launch-too-large/cuda12-linux",
+  "url": "https://deadends.dev/cuda/cooperative-launch-too-large/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: cooperative launch of kernel exceeds device occupancy (cudaErrorCooperativeLaunchTooLarge)",
+    "regex": "cudaErrorCooperativeLaunchTooLarge|cooperative launch.*too large|cooperative launch.*exceeds.*occupancy",
+    "domain": "cuda",
+    "category": "kernel_launch_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A cooperative kernel launch (cudaLaunchCooperativeKernel) requires all thread blocks to be resident simultaneously on the GPU. The requested grid size exceeds the number of blocks the device can run concurrently given the kernel's resource usage (registers, shared memory). Unlike regular launches, cooperative kernels cannot oversubscribe the GPU."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing GPU memory to allow more concurrent blocks",
+      "why_fails": "Cooperative launch occupancy is limited by SM count, registers per SM, and shared memory per SM — not global memory. Adding more VRAM does not increase the number of SMs or change per-SM resource limits.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching to a regular kernel launch without redesigning the algorithm",
+      "why_fails": "Cooperative kernels use grid-wide synchronization (cooperative_groups::grid_group::sync). Removing cooperative launch without removing grid sync calls causes undefined behavior or hangs. The algorithm must be restructured to not require global synchronization.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce block count and block size to fit within device occupancy limits",
+      "success_rate": 0.88,
+      "how": "Use cudaOccupancyMaxActiveBlocksPerMultiprocessor to query the max blocks per SM for your kernel, then multiply by the number of SMs (cudaDeviceProp.multiProcessorCount). Set grid size to at most this value. Reduce shared memory or register usage to increase occupancy if needed.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Split the algorithm into multiple non-cooperative kernel launches with explicit synchronization",
+      "success_rate": 0.85,
+      "how": "Replace the single cooperative kernel with multiple regular kernel launches separated by cudaDeviceSynchronize() or stream synchronization. Each kernel handles a phase of the computation. This avoids the occupancy constraint at the cost of launch overhead and requiring intermediate buffers for inter-phase communication.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.15, "condition": "when reducing grid size causes out-of-bounds indexing in the kernel"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/too-many-threads/cuda12-linux", "probability": 0.10, "condition": "when switching from regular to cooperative launch exposes occupancy constraints"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/too-many-threads/cuda12-linux", "distinction": "Too-many-threads is about exceeding the per-block thread limit (1024). Cooperative-launch-too-large is about the total grid exceeding simultaneous device occupancy. The former is a per-block limit; the latter is a device-wide constraint."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

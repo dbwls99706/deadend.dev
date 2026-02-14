@@ -75,21 +75,8 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/process-oom-killed/node20-linux",
-        "probability": 0.4,
-        "condition": "When heap limit is raised beyond available system memory, the Linux OOM killer terminates the process",
-        "typical_delay": "minutes to hours"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "node/gc-warning-ineffective/node20-linux",
-        "probability": 0.2,
-        "condition": "Node may emit GC-related warnings before the final heap exhaustion crash"
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "node/segfault-native-module/node20-linux",

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-backend-migration-error/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-backend-migration-error/tf1.7-linux",
+  "error": {
+    "signature": "Error: Backend configuration changed: backend migration is required",
+    "regex": "(Backend configuration changed|backend migration .+ required|Error migrating state|failed to migrate state|Backend reinitialization required)",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform backend configuration changed and state needs to be migrated to the new backend."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the .terraform directory and reinitialize without migrating",
+      "why_fails": "Skipping migration loses the existing state file, making Terraform think no resources exist",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually copy the state file to the new backend location",
+      "why_fails": "Manual copies miss metadata, may corrupt state, and do not handle locking correctly",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run terraform init -migrate-state to properly migrate state to the new backend",
+      "success_rate": 0.88,
+      "how": "terraform init -migrate-state will prompt to copy existing state to the new backend configuration",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform init -reconfigure if you intentionally want a fresh state",
+      "success_rate": 0.8,
+      "how": "terraform init -reconfigure reinitializes the backend without migrating state (use only if state in new backend is correct)",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

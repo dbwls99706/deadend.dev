@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-iot-certificate-error/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-iot-certificate-error/awscli2-linux",
+  "error": {
+    "signature": "MQTT connection failed: certificate not active or not attached to a thing/policy",
+    "regex": "(certificate .+ not (active|attached)|MQTT .+ (TLS|SSL|certificate) error|IoT .+ UNAUTHORIZED)",
+    "domain": "aws",
+    "category": "auth_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "IoT device cannot connect because the certificate is inactive, not attached to a thing, or missing a policy."
+  },
+  "dead_ends": [
+    {
+      "action": "Generate new certificates without deactivating the old ones",
+      "why_fails": "Old certificates remain active and create security risk; new certs need same policy attachment",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use IAM credentials instead of certificates for IoT devices",
+      "why_fails": "IoT Core primarily uses X.509 certificates for device auth; IAM is for management plane only",
+      "fail_rate": 0.85,
+      "sources": ["https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html"],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Activate the certificate and attach it to both a thing and a policy",
+      "success_rate": 0.90,
+      "how": "aws iot update-certificate --certificate-id ID --new-status ACTIVE && aws iot attach-thing-principal && aws iot attach-policy",
+      "sources": ["https://docs.aws.amazon.com/iot/latest/developerguide/create-iot-resources.html"],
+      "condition": ""
+    },
+    {
+      "action": "Verify the IoT policy allows the required MQTT actions on the correct topic ARNs",
+      "success_rate": 0.82,
+      "how": "aws iot get-policy --policy-name POLICY to check iot:Connect, iot:Publish, iot:Subscribe, iot:Receive actions",
+      "sources": ["https://docs.aws.amazon.com/iot/latest/developerguide/iot-policies.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.15, "condition": "Certificate is active but policy denies the specific action"}
+    ],
+    "preceded_by": [
+      {"error_id": "aws/resource-not-found/awscli2-linux", "probability": 0.10, "condition": "Thing or certificate resource was deleted but device still tries to connect"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "distinction": "AccessDenied is about IAM permission for API calls; IoT certificate error is about X.509 certificate-based device authentication"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

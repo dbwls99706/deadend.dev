@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-provider-rate-limit/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-provider-rate-limit/tf1.7-linux",
+  "error": {
+    "signature": "Error: Provider API rate limit exceeded: Throttling or TooManyRequestsException",
+    "regex": "(rate limit exceeded|Throttling|TooManyRequests|429 Too Many Requests|API rate limit|RequestLimitExceeded)",
+    "domain": "terraform",
+    "category": "throttle_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform is making too many API calls to the cloud provider, triggering rate limiting."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry immediately without any delay",
+      "why_fails": "Immediate retries increase the request rate and extend the throttling window",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increase parallelism to speed through rate limits",
+      "why_fails": "Higher parallelism means more concurrent API calls, making rate limiting worse",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce parallelism with -parallelism flag",
+      "success_rate": 0.85,
+      "how": "terraform apply -parallelism=5 (default is 10) to reduce concurrent API calls",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/apply"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wait and retry with exponential backoff, or split into smaller configurations",
+      "success_rate": 0.82,
+      "how": "Wait a few minutes then retry; for large infrastructure, split into separate state files by service or team",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/state"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/tf-provider-authentication/tf1.7-linux",
+        "distinction": "Provider authentication is about invalid credentials; provider rate limit is about valid credentials exceeding API call quotas"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

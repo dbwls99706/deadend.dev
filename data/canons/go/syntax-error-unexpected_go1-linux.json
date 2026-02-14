@@ -80,11 +80,11 @@
     "frequently_confused_with": [
       {
         "error_id": "go/import-cycle-not-allowed/go121-linux",
-        "distinction": "'syntax error' indicates a Python syntax error, while 'import cycle not allowed' indicates a dependency cycle in Terraform resources."
+        "distinction": "'syntax error: unexpected ...' indicates a Go parser error (missing brace, wrong token, etc.), while 'import cycle not allowed' indicates a circular dependency between Go packages."
       },
       {
         "error_id": "go/race-condition-detected/go1-linux",
-        "distinction": "'syntax error' indicates a Python syntax error, while 'WARNING' indicates a data race detected by the race detector."
+        "distinction": "'syntax error: unexpected ...' indicates a Go parser error caught at compile time, while 'WARNING: DATA RACE' indicates a runtime concurrency issue detected by the Go race detector."
       }
     ]
   },

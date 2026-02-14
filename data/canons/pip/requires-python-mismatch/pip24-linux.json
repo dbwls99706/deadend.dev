@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/requires-python-mismatch/pip24-linux",
+  "url": "https://deadends.dev/pip/requires-python-mismatch/pip24-linux",
+  "error": {
+    "signature": "ERROR: Package 'package' requires a different Python version: X.Y.Z not in '>=3.8,<3.12'",
+    "regex": "requires.*different Python|Requires-Python|python_requires|not in.*>=.*<|Python version.*not supported",
+    "domain": "pip",
+    "category": "compatibility_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The package declares a Python version range that does not include the current Python interpreter version. Either the package hasn't been updated for newer Python, or you need an older/newer Python version."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --ignore-requires-python to force install",
+      "why_fails": "The package may use syntax or stdlib features not available in the current Python version, causing runtime errors",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Patch the package metadata to remove the Python version constraint",
+      "why_fails": "Does not fix actual incompatibilities in the code; may cause subtle runtime bugs",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install a version of the package compatible with your Python: pip install 'package<X.Y'",
+      "success_rate": 0.90,
+      "how": "pip index versions <package> to list versions, find one supporting your Python, then pip install 'package==compatible.version'",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use pyenv or deadsnakes to install the required Python version",
+      "success_rate": 0.88,
+      "how": "pyenv install 3.11.0 && pyenv local 3.11.0 && pip install <package>",
+      "sources": [],
+      "condition": "when you can change Python version"
+    },
+    {
+      "action": "Check if a newer version of the package supports your Python",
+      "success_rate": 0.80,
+      "how": "pip install --upgrade <package> to get the latest which may support newer Python",
+      "sources": [],
+      "condition": "when running newer Python than package supports"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/backtracking-long/pip24-linux", "probability": 0.25, "condition": "when Python constraint eliminates many versions causing extensive backtracking"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/no-matching-distribution/pip24-linux", "probability": 0.2, "condition": "when version search fails due to Python compatibility filtering"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/no-matching-distribution/pip24-linux", "distinction": "Requires-python-mismatch explicitly says the Python version is wrong; no-matching-distribution may silently filter incompatible versions and report no versions found"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

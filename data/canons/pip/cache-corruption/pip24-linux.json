@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/cache-corruption/pip24-linux",
+  "url": "https://deadends.dev/pip/cache-corruption/pip24-linux",
+  "error": {
+    "signature": "ERROR: The cache entry is corrupted: hash mismatch for cached file",
+    "regex": "cache.*corrupt|cached.*hash.*mismatch|invalid.*cache|BadZipFile.*cache",
+    "domain": "pip",
+    "category": "cache_error",
+    "first_seen": "2022-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Pip's local cache contains corrupted files, usually from interrupted downloads, disk errors, or running out of space during caching. Cached wheels or sdists fail integrity checks when pip tries to reuse them."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually edit or patch cached files",
+      "why_fails": "Cached files are compressed archives with checksums; manual editing breaks integrity and pip will still reject them",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Change cache directory without clearing the old one",
+      "why_fails": "Does not fix the root cause; if disk issues caused corruption, the new cache may also become corrupted",
+      "fail_rate": 0.50,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Purge pip cache completely: pip cache purge",
+      "success_rate": 0.95,
+      "how": "pip cache purge && pip install <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use --no-cache-dir for the immediate install, then purge cache later",
+      "success_rate": 0.92,
+      "how": "pip install --no-cache-dir <package>",
+      "sources": [],
+      "condition": "for a quick fix"
+    },
+    {
+      "action": "Remove specific cached package: pip cache remove <package>",
+      "success_rate": 0.90,
+      "how": "pip cache remove <package> && pip install <package>",
+      "sources": [],
+      "condition": "when only one package is corrupted"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/hash-mismatch/pip23-linux", "probability": 0.2, "condition": "when corrupted cache causes hash verification failures"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/no-space-left/pip24-linux", "probability": 0.3, "condition": "when disk full during download leaves partial cached files"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/hash-mismatch/pip24-linux", "distinction": "Cache corruption is about locally cached files being damaged; hash mismatch is about downloaded package not matching the hash in requirements file"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

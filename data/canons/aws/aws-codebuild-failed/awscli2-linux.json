@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-codebuild-failed/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-codebuild-failed/awscli2-linux",
+  "error": {
+    "signature": "Build failed with status: FAILED",
+    "regex": "(Build failed|COMMAND_EXECUTION_ERROR|Phase .+ failed with exit code \\d+)",
+    "domain": "aws",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "CodeBuild project failed during one of the build phases due to command errors, permissions, or environment issues."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the build without checking logs",
+      "why_fails": "If the failure is deterministic (bad buildspec, missing deps), retries will fail identically",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switch to a different compute type to fix build errors",
+      "why_fails": "Compute type changes only fix resource exhaustion, not command or permission errors",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check CloudWatch logs for the specific phase and command that failed",
+      "success_rate": 0.88,
+      "how": "aws logs get-log-events --log-group-name /aws/codebuild/PROJECT_NAME --log-stream-name BUILD_ID",
+      "sources": ["https://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html"],
+      "condition": ""
+    },
+    {
+      "action": "Verify CodeBuild service role has required permissions for all AWS services used",
+      "success_rate": 0.78,
+      "how": "Check IAM role attached to the CodeBuild project has access to S3, ECR, Secrets Manager, etc.",
+      "sources": ["https://docs.aws.amazon.com/codebuild/latest/userguide/setting-up.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "aws/aws-codepipeline-action-failed/awscli2-linux", "probability": 0.35, "condition": "CodeBuild failure causes pipeline stage to fail"}
+    ],
+    "preceded_by": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.20, "condition": "IAM permission issues during build commands"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "aws/aws-codepipeline-action-failed/awscli2-linux", "distinction": "CodeBuild failure is about the build itself; CodePipeline failure is about the orchestration stage that wraps it"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

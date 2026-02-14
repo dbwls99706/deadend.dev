@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-output-reference-error/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-output-reference-error/tf1.7-linux",
+  "error": {
+    "signature": "Error: Reference to undeclared output value or output not found in module",
+    "regex": "(Reference to undeclared output|output .+ not found|module .+ has no output named|Reference to undefined output)",
+    "domain": "terraform",
+    "category": "reference_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "Configuration references an output that does not exist in the module or root configuration."
+  },
+  "dead_ends": [
+    {
+      "action": "Access module internals directly instead of using outputs",
+      "why_fails": "Terraform modules are encapsulated; you cannot reference internal resources without explicit outputs",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform console to force-read the value",
+      "why_fails": "terraform console has the same access restrictions as plan/apply; undefined outputs remain undefined",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add the missing output block to the module",
+      "success_rate": 0.92,
+      "how": "Add output \"name\" { value = resource.type.name.attribute } to the module's outputs.tf",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/values/outputs"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for typos in the output name reference",
+      "success_rate": 0.88,
+      "how": "Compare module.NAME.OUTPUT_NAME with the actual output names defined in the module source",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/modules/syntax"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "terraform/invalid-reference/tf1-linux",
+        "probability": 0.2,
+        "condition": "Missing output leads to invalid reference chains in dependent resources"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/tf-module-version-mismatch/tf1.7-linux",
+        "probability": 0.15,
+        "condition": "Module version update removed or renamed an output"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-workspace-not-found/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-workspace-not-found/tf1.7-linux",
+  "error": {
+    "signature": "Error: Workspace not found: the workspace does not exist",
+    "regex": "(Workspace .+ not found|workspace .+ does not exist|No workspace named|Currently selected workspace .+ does not exist)",
+    "domain": "terraform",
+    "category": "state_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform workspace referenced in configuration or CLI does not exist in the backend."
+  },
+  "dead_ends": [
+    {
+      "action": "Edit the .terraform/environment file to force-set the workspace",
+      "why_fails": "If the workspace does not exist in the backend, manually setting the file creates an invalid state",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use terraform.workspace in conditions without creating the workspace first",
+      "why_fails": "References to terraform.workspace assume the workspace exists; plan fails if it does not",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create the missing workspace using terraform workspace new",
+      "success_rate": 0.92,
+      "how": "terraform workspace new WORKSPACE_NAME",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/workspace/new"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Switch to an existing workspace using terraform workspace select",
+      "success_rate": 0.9,
+      "how": "terraform workspace list to see available workspaces, then terraform workspace select WORKSPACE_NAME",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/workspace/select"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "terraform/tf-backend-migration-error/tf1.7-linux",
+        "probability": 0.15,
+        "condition": "Backend migration to new backend does not migrate workspaces automatically"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

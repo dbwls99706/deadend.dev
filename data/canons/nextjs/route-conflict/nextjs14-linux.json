@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/route-conflict/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/route-conflict/nextjs14-linux",
+  "error": {
+    "signature": "Error: Conflicting route found. The route at '/api/X' already exists.",
+    "regex": "Conflicting route.+already exists",
+    "domain": "nextjs",
+    "category": "routing_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-13",
+    "summary": "Two or more route definitions resolve to the same URL path. This commonly occurs when both App Router (app/) and Pages Router (pages/) define the same route, or when route groups and parallel routes create overlapping paths."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the .next build cache and rebuild",
+      "why_fails": "The conflict exists in the source code file structure, not in the build cache. Clearing .next will not resolve duplicate route definitions. The error will reappear on the next build.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Rename one route to use a different HTTP method to differentiate them",
+      "why_fails": "Route conflicts are path-based, not method-based. In the App Router, a single route.ts file handles all HTTP methods via named exports (GET, POST, etc.). Two route.ts files at the same path will always conflict regardless of which methods they export.",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use middleware to rewrite one of the conflicting routes",
+      "why_fails": "Middleware rewrites happen at request time, but the route conflict is detected at build time during route resolution. The build will still fail before middleware can run.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Remove the duplicate route from either pages/ or app/ directory",
+      "success_rate": 0.95,
+      "how": "# Identify conflicting files:\n# app/api/users/route.ts  <-- App Router route\n# pages/api/users.ts      <-- Pages Router route\n# Delete one of them. Prefer keeping the App Router version:\nrm pages/api/users.ts",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration#migrating-from-pages-to-app"
+      ],
+      "condition": "Conflict between App Router and Pages Router"
+    },
+    {
+      "action": "Use route groups with distinct paths to separate overlapping route logic",
+      "success_rate": 0.90,
+      "how": "# Instead of two conflicting routes:\n# app/(marketing)/about/page.tsx\n# app/(shop)/about/page.tsx\n# Restructure to avoid the same path:\n# app/(marketing)/about/page.tsx\n# app/(shop)/shop-about/page.tsx\n# Or consolidate into a single page with conditional logic",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-groups"
+      ],
+      "condition": "Conflict caused by overlapping route groups"
+    },
+    {
+      "action": "Consolidate duplicate API route handlers into a single route.ts with multiple method exports",
+      "success_rate": 0.93,
+      "how": "// app/api/users/route.ts\n// Combine all HTTP methods in one file:\nexport async function GET(request: Request) {\n  // handle GET\n}\n\nexport async function POST(request: Request) {\n  // handle POST\n}\n\nexport async function DELETE(request: Request) {\n  // handle DELETE\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers#supported-http-methods"
+      ],
+      "condition": "Multiple files were created for different HTTP methods at the same path"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/dynamic-server-usage/nextjs14-linux",
+        "probability": 0.10,
+        "condition": "After resolving the conflict, the remaining route may trigger dynamic server usage errors if it uses request-dependent APIs"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/module-not-found-resolve/nextjs14-linux",
+        "probability": 0.10,
+        "condition": "Developer creates new route files during module refactoring and accidentally duplicates paths"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/middleware-redirect-loop/nextjs14-linux",
+        "distinction": "Middleware redirect loops are runtime infinite redirect issues; route conflicts are build-time errors about duplicate path definitions"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

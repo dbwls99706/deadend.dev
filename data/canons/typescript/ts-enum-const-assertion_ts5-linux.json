@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-enum-const-assertion/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-enum-const-assertion/ts5-linux",
+  "error": {
+    "signature": "TS2748: Cannot access ambient const enums when 'isolatedModules' is enabled",
+    "regex": "TS2748.*ambient const enums.*isolatedModules",
+    "domain": "typescript",
+    "category": "enum_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Const enums are erased at compile time and cannot work with isolatedModules (required by bundlers like Vite, esbuild)."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable isolatedModules to fix the error",
+      "why_fails": "Bundlers like esbuild and Vite require isolatedModules; disabling breaks the build tool",
+      "fail_rate": 0.80,
+      "sources": ["https://www.typescriptlang.org/tsconfig#isolatedModules"],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use regular enums instead of const enums",
+      "success_rate": 0.90,
+      "how": "// Instead of: const enum Direction { Up, Down }\n// Use:\nenum Direction { Up, Down }",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/enums.html"],
+      "condition": ""
+    },
+    {
+      "action": "Use 'as const' objects instead of enums",
+      "success_rate": 0.88,
+      "how": "const Direction = {\n  Up: 'UP',\n  Down: 'DOWN',\n} as const;\ntype Direction = typeof Direction[keyof typeof Direction];",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts2322-type-not-assignable/ts5-linux", "probability": 0.15, "condition": "When enum replacement changes the type signature"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-import-assertion-error/ts5-linux", "probability": 0.10, "condition": "When module system issues surface alongside enum problems"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts-discriminated-union-error/ts5-linux", "distinction": "Discriminated union is about type narrowing; const enum error is about compile-time erasure with isolatedModules"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

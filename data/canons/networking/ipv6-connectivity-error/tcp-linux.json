@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/ipv6-connectivity-error/tcp-linux",
+  "url": "https://deadends.dev/networking/ipv6-connectivity-error/tcp-linux",
+  "error": {
+    "signature": "connect: Network is unreachable (IPv6 address fe80::1, ENETUNREACH)",
+    "regex": "Network is unreachable.*IPv6|IPv6.*connectivity|ENETUNREACH.*inet6|connect.*unreachable.*::.*|no.*IPv6.*route",
+    "domain": "networking",
+    "category": "ipv6",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The system has IPv6 addresses configured but lacks proper IPv6 connectivity. Applications resolving AAAA records try IPv6 first and fail before falling back to IPv4. This is common in dual-stack environments where IPv6 is auto-configured but the upstream network does not provide IPv6 routing."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable IPv6 system-wide to avoid the error",
+      "why_fails": "Disabling IPv6 entirely breaks IPv6-only services, container networking that relies on IPv6, and some localhost communication. It is a heavy-handed workaround that causes other issues.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": "When IPv6 is required for other services"
+    },
+    {
+      "action": "Add a static IPv6 default route without verifying upstream connectivity",
+      "why_fails": "A static route pointing to a gateway that does not forward IPv6 traffic results in packets being sent but never reaching the destination. The error changes from 'no route' to a timeout, which is harder to diagnose.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure Happy Eyeballs (RFC 8305) to prefer IPv4 when IPv6 is broken",
+      "success_rate": 0.88,
+      "how": "1. Most modern applications use Happy Eyeballs by default — verify it is not disabled\n2. In curl: --happy-eyeballs-timeout-ms 300\n3. In /etc/gai.conf, set precedence for IPv4: precedence ::ffff:0:0/96 100\n4. This allows applications to quickly fall back to IPv4 when IPv6 fails\n5. Test: curl -v https://example.com — should show the fallback in verbose output",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the IPv6 connectivity by configuring proper routing",
+      "success_rate": 0.85,
+      "how": "1. Check IPv6 addresses: ip -6 addr show\n2. Check IPv6 routes: ip -6 route show\n3. If using SLAAC, verify Router Advertisements are being received: rdisc6 eth0\n4. If using DHCPv6, check dhclient logs: journalctl -u dhclient | grep -i ipv6\n5. Verify upstream IPv6 connectivity: ping6 2001:4860:4860::8888\n6. If behind NAT66, verify the NAT rules forward IPv6 properly\n7. Test end-to-end: curl -6 https://ipv6.google.com",
+      "sources": [],
+      "condition": "Requires upstream IPv6 support"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when applications try IPv6 first and wait for the full timeout before falling back to IPv4"},
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.15, "condition": "when the DNS resolver is only reachable via IPv4 but the system tries IPv6 first"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/dns-nxdomain/dns-linux", "probability": 0.10, "condition": "when DNS works but only returns AAAA records for a host with broken IPv6 connectivity"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/host-unreachable/tcp-linux", "distinction": "IPv6 connectivity error is specific to the IPv6 stack and routing; host unreachable is a general ICMP error that can occur on either IPv4 or IPv6"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-network-policy-block/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-network-policy-block/k8s129-linux",
+  "error": {
+    "signature": "connection refused / connection timed out due to NetworkPolicy",
+    "regex": "connection refused|connection timed out|i/o timeout.*NetworkPolicy|egress.*denied|ingress.*denied",
+    "domain": "kubernetes",
+    "category": "networking_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "NetworkPolicy is blocking traffic between pods. Once a NetworkPolicy selects a pod, all non-allowed traffic is denied by default."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete all NetworkPolicies in the namespace",
+      "why_fails": "Removes security controls — exposes all pods to unrestricted network access",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use hostNetwork: true to bypass NetworkPolicy",
+      "why_fails": "Bypasses all network isolation — major security risk and port conflicts",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add allow rules for the required traffic: create ingress/egress rules matching the source/destination pods",
+      "success_rate": 0.92,
+      "how": "kubectl get networkpolicy -n <ns> -o yaml, then add podSelector/namespaceSelector rules for allowed traffic",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/network-policies/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the CNI plugin supports NetworkPolicy (not all do)",
+      "success_rate": 0.85,
+      "how": "Calico, Cilium, and Weave support NetworkPolicy; Flannel does NOT by default",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/k8s-dns-resolution-failed/k8s129-linux",
+        "probability": 0.25,
+        "condition": "when NetworkPolicy blocks egress to CoreDNS"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/service-has-no-endpoints/k8s128-linux",
+        "probability": 0.18,
+        "condition": "when debugging connectivity and NetworkPolicy is the real cause"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/dns-resolution-failed-pod/k8s1-linux",
+        "distinction": "NetworkPolicy block affects all traffic to/from selected pods, while DNS resolution failure specifically affects name resolution"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

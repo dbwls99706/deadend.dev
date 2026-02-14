@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/aws-codedeploy-failed/codedeploy-linux",
+  "url": "https://deadends.dev/cicd/aws-codedeploy-failed/codedeploy-linux",
+  "error": {
+    "signature": "The deployment failed because no instances were found for the deployment group",
+    "regex": "(?i)(?:deployment failed|CodeDeploy.*failed|no instances.*found.*deployment|ApplicationStop.*failed|lifecycle event.*failed)",
+    "domain": "cicd",
+    "category": "deployment",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws-codedeploy", "version_range": ">=1.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "AWS CodeDeploy deployment failed due to no matching instances, lifecycle hook script failures, or agent communication issues. The CodeDeploy agent must be running and the instances must match the deployment group's tag filters."
+  },
+  "dead_ends": [
+    {
+      "action": "Re-deploying immediately without checking the CodeDeploy agent status",
+      "why_fails": "If the agent is stopped or not installed on target instances, redeployment will fail with the same error",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Modifying the appspec.yml hooks without testing locally",
+      "why_fails": "Lifecycle hook scripts may have permission issues, missing dependencies, or syntax errors that only surface at deployment time",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify CodeDeploy agent is running and instances match deployment group tags",
+      "success_rate": 0.88,
+      "how": "SSH into the target instance and check: sudo service codedeploy-agent status. Verify EC2 instance tags match the deployment group tag filters in the CodeDeploy console. Check agent logs at /var/log/aws/codedeploy-agent/codedeploy-agent.log.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Check lifecycle event logs to identify the failing hook",
+      "success_rate": 0.85,
+      "how": "In the CodeDeploy console, click on the failed deployment and check which lifecycle event failed. Review the script output. Check /opt/codedeploy-agent/deployment-root/<deployment-group-id>/<deployment-id>/logs/scripts.log on the instance.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "probability": 0.25, "condition": "when the failed deployment triggers an automatic rollback that also fails"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.15, "condition": "when AWS credentials or region environment variables are not configured"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "distinction": "aws-codedeploy-failed is the initial deployment failure; deploy-rollback-failed is when the rollback mechanism itself fails after a deployment failure"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -75,19 +75,8 @@
   ],
   "transition_graph": {
     "leads_to": [],
-    "preceded_by": [
-      {
-        "error_id": "docker/compose-network-create/docker24-linux",
-        "probability": 0.4,
-        "condition": "Running docker-compose up creates networks automatically, which can trigger subnet conflicts"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/network-not-found/docker24-linux",
-        "distinction": "Pool overlap means Docker cannot create a new network because its subnet conflicts with an existing one. Network not found means a container references a network that does not exist. Different directions of the same subsystem."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

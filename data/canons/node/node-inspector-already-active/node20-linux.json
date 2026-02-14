@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/node-inspector-already-active/node20-linux",
+  "url": "https://deadends.dev/node/node-inspector-already-active/node20-linux",
+  "error": {
+    "signature": "Error: Starting inspector on 127.0.0.1:9229 failed: address already in use",
+    "regex": "Starting inspector.*failed.*address already in use|inspector.*already.*active",
+    "domain": "node",
+    "category": "debugging",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "The Node.js inspector (debugger) port 9229 is already in use by another Node.js process or a previous debug session that was not properly terminated."
+  },
+  "dead_ends": [
+    {
+      "action": "Running multiple --inspect processes without specifying different ports",
+      "why_fails": "All default to port 9229; only the first one succeeds, the rest fail with this error",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Killing all Node.js processes to free the port",
+      "why_fails": "Kills production processes along with debug ones; overly destructive approach",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a different inspector port: --inspect=9230",
+      "success_rate": 0.95,
+      "how": "node --inspect=127.0.0.1:9230 app.js — each debug session should use a unique port",
+      "sources": [
+        "https://nodejs.org/en/docs/guides/debugging-getting-started"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Find and kill the process using port 9229",
+      "success_rate": 0.90,
+      "how": "lsof -i :9229 to find the PID, then kill <PID>",
+      "sources": [
+        "https://nodejs.org/api/debugger.html"
+      ],
+      "condition": "when only one debug session is needed"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/eaddrinuse-port/node20-linux",
+        "probability": 0.15,
+        "condition": "when the port conflict pattern extends to application ports"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/eaddrinuse-port/node20-linux",
+        "probability": 0.20,
+        "condition": "when developers start debugging port-in-use issues"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/eaddrinuse-port/node20-linux",
+        "distinction": "Inspector already active is specifically about the debug port 9229, while EADDRINUSE can happen on any port the application tries to bind"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

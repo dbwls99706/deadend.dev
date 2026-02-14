@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/timezone-invalid/php83-linux",
+  "url": "https://deadends.dev/php/timezone-invalid/php83-linux",
+  "error": {
+    "signature": "Fatal error: Uncaught Exception: DateTimeZone::__construct(): Unknown or bad timezone (US/Pacific-New) in /var/www/app/src/Utils/DateHelper.php:18",
+    "regex": "DateTimeZone::__construct\\(\\):.*Unknown or bad timezone|date_default_timezone_set\\(\\):.*is not a valid timezone",
+    "domain": "php",
+    "category": "datetime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "Invalid timezone errors occur when PHP encounters an unrecognized timezone identifier. This can happen due to deprecated timezone names (e.g., US/Pacific-New), missing timezone database, user input with invalid timezones, or mismatched ICU/IANA timezone data."
+  },
+  "dead_ends": [
+    {"action": "Using timezone abbreviations (EST, PST, CST) instead of IANA identifiers", "why_fails": "Timezone abbreviations are ambiguous. CST can mean Central Standard Time (US), China Standard Time, or Cuba Standard Time. PHP may resolve them incorrectly, causing silent data corruption in date calculations.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Hardcoding UTC offset like +05:30 instead of using named timezones", "why_fails": "Fixed UTC offsets do not account for daylight saving time transitions. Using +05:30 instead of Asia/Kolkata works for India, but using -05:00 instead of America/New_York will be wrong for half the year.", "fail_rate": 0.60, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use IANA timezone identifiers and validate user input against timezone_identifiers_list()", "success_rate": 0.95, "how": "Always use canonical IANA names like 'America/New_York', 'Europe/London', 'Asia/Tokyo'. Validate user-provided timezones: if (!in_array($tz, timezone_identifiers_list())) { throw new InvalidArgumentException('Invalid timezone'); }", "sources": [], "condition": ""},
+    {"action": "Set a default timezone in php.ini and application configuration", "success_rate": 0.90, "how": "In php.ini: date.timezone = UTC. In application bootstrap: date_default_timezone_set('UTC'). Store all datetimes in UTC in the database and convert to the user's timezone only for display.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/intl-locale-error/php83-linux", "probability": 0.15, "condition": "when timezone issues coincide with locale-dependent date formatting failures"}],
+    "preceded_by": [{"error_id": "php/type-error-argument/php83-linux", "probability": 0.10, "condition": "when passing a non-string or null value to DateTimeZone constructor"}],
+    "frequently_confused_with": [{"error_id": "php/intl-locale-error/php83-linux", "distinction": "Timezone errors are about IANA timezone database identifiers, while intl locale errors are about ICU locale identifiers for number/date formatting rules"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

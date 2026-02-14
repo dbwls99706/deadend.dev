@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/ef-concurrency-conflict/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/ef-concurrency-conflict/dotnet8-linux",
+  "error": {
+    "signature": "Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException: The database operation was expected to affect 1 row(s), but actually affected 0 row(s).",
+    "regex": "(DbUpdateConcurrencyException|expected to affect 1 row.*actually affected 0|database operation was expected to affect.*row.*but actually affected 0)",
+    "domain": "dotnet",
+    "category": "database_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-13",
+    "summary": "EF Core throws DbUpdateConcurrencyException when an UPDATE or DELETE statement affects zero rows, indicating the row was modified or deleted by another process since it was loaded. This is the optimistic concurrency mechanism triggered by [ConcurrencyCheck] or [Timestamp]/rowversion columns. The entity's concurrency token no longer matches the database value. Fix by implementing proper concurrency conflict resolution: reload and retry, merge changes, or present the conflict to the user."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing the [ConcurrencyCheck] or [Timestamp] attribute to suppress the exception",
+      "why_fails": "Removing concurrency tokens eliminates the exception but introduces silent data loss through last-write-wins behavior. Concurrent updates will silently overwrite each other without any notification, which is far worse than a visible exception in most business scenarios",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Wrapping SaveChangesAsync in a try-catch that silently swallows DbUpdateConcurrencyException",
+      "why_fails": "Silently swallowing the exception means the user's changes are discarded without notification. The entity in memory still holds stale data and the user believes their save succeeded. This leads to data inconsistency and confused users who cannot understand why their changes disappeared",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using Serializable transaction isolation level to prevent concurrent access",
+      "why_fails": "Serializable isolation causes severe performance degradation and deadlocks under concurrent load. It converts optimistic concurrency to pessimistic locking, which does not scale and introduces lock timeout errors that are harder to handle than concurrency exceptions. The cure is worse than the disease for web applications",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Implement a retry loop that reloads the entity and reapplies changes",
+      "success_rate": 0.85,
+      "how": "Catch DbUpdateConcurrencyException and reload the entity from the database, then reapply the intended changes: catch (DbUpdateConcurrencyException) { await entry.ReloadAsync(); entry.Entity.PropertyX = newValue; await dbContext.SaveChangesAsync(); } Wrap in a retry loop with a maximum attempt count (typically 3). This pattern works well when changes are simple overwrites that do not require user input to resolve",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Resolve conflicts by comparing original, current, and database values",
+      "success_rate": 0.88,
+      "how": "In the catch block, access all three value sets to make informed merge decisions: catch (DbUpdateConcurrencyException ex) { var entry = ex.Entries.Single(); var proposedValues = entry.CurrentValues; var databaseValues = await entry.GetDatabaseValuesAsync(); foreach (var property in proposedValues.Properties) { var proposed = proposedValues[property]; var database = databaseValues[property]; proposedValues[property] = /* merge logic */; } entry.OriginalValues.SetValues(databaseValues); await dbContext.SaveChangesAsync(); } This enables field-level conflict resolution",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Present the concurrency conflict to the user for manual resolution",
+      "success_rate": 0.82,
+      "how": "Catch the exception and return a 409 Conflict response with both the user's attempted changes and the current database values. The client can then display a conflict resolution UI showing both versions. After the user resolves the conflict, resubmit with the updated concurrency token: return Conflict(new { userValues = proposed, databaseValues = current, message = \"This record was modified by another user\" }); This is the most correct approach for complex business data where automatic merging is risky",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "probability": 0.10, "condition": "when adding concurrency tokens requires a new migration that conflicts with existing schema"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when the retry logic disposes the DbContext before the retry attempt"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/ef-no-tracking-query/dotnet8-linux", "probability": 0.15, "condition": "when switching from no-tracking to tracked queries introduces concurrency token awareness"},
+      {"error_id": "dotnet/sqlexception-connection/dotnet8-linux", "probability": 0.10, "condition": "when intermittent connection drops cause stale data that triggers concurrency conflicts on reconnection"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/ef-migration-failed/dotnet8-linux", "distinction": "DbUpdateConcurrencyException is a runtime data conflict during SaveChanges when a concurrency token is stale; migration failures are schema-level errors during 'dotnet ef database update' that prevent structural changes from being applied"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

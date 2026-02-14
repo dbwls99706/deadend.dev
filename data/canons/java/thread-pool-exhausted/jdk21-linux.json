@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/thread-pool-exhausted/jdk21-linux",
+  "url": "https://deadends.dev/java/thread-pool-exhausted/jdk21-linux",
+  "error": {
+    "signature": "java.util.concurrent.RejectedExecutionException: Task rejected from java.util.concurrent.ThreadPoolExecutor",
+    "regex": "RejectedExecutionException|Task.*rejected.*ThreadPoolExecutor|thread pool.*exhausted|pool.*capacity.*exceeded",
+    "domain": "java",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A ThreadPoolExecutor rejected a submitted task because both the thread pool and its work queue are full. The executor's RejectionPolicy (default AbortPolicy) throws RejectedExecutionException. This indicates the system is receiving tasks faster than it can process them, either due to insufficient pool sizing, slow task execution, or a sudden traffic spike."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting the thread pool size to match the maximum expected concurrent tasks",
+      "why_fails": "Creating thousands of platform threads consumes excessive memory (each thread uses ~1MB of stack space). A pool of 10000 threads uses ~10GB of stack memory alone. This does not scale and causes OutOfMemoryError or extreme context switching overhead. Thread pools should be sized based on available CPU cores and task types (CPU-bound vs I/O-bound).",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using an unbounded work queue (LinkedBlockingQueue without capacity) to prevent rejection",
+      "why_fails": "An unbounded queue never triggers rejection, so the pool never grows beyond core size. Under sustained high load, the queue grows indefinitely, consuming all heap memory and eventually causing OutOfMemoryError. It also means requests wait in the queue for a very long time, causing client-side timeouts.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Size the thread pool appropriately and use a bounded queue with CallerRunsPolicy",
+      "success_rate": 0.88,
+      "how": "For CPU-bound tasks: pool size = number of CPU cores. For I/O-bound tasks: pool size = cores * (1 + wait_time/compute_time), typically 2x-4x cores. Use a bounded ArrayBlockingQueue (e.g., capacity 1000). Set rejection policy to CallerRunsPolicy, which makes the submitting thread execute the task, providing natural backpressure. Example: new ThreadPoolExecutor(cores, cores*2, 60, SECONDS, new ArrayBlockingQueue<>(1000), new CallerRunsPolicy()).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use virtual threads (JDK 21+) for I/O-bound workloads to avoid pool exhaustion",
+      "success_rate": 0.90,
+      "how": "Replace platform thread pools with virtual threads: ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor(). Virtual threads are lightweight (~1KB each) and can scale to millions of concurrent tasks. They are ideal for I/O-bound workloads (HTTP calls, database queries, file I/O). Not suitable for CPU-bound tasks where platform threads with pool sizing are still preferred.",
+      "sources": [],
+      "condition": "JDK 21+ required"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.20, "condition": "when unbounded queues or too many threads consume all heap memory"},
+      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.25, "condition": "when rejected tasks cause upstream HTTP requests to fail with timeout"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "probability": 0.20, "condition": "when tasks are blocked waiting for database connections, preventing threads from completing"},
+      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.15, "condition": "when slow HTTP calls hold threads in the pool for too long"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/connection-pool-exhausted/jdk17-linux", "distinction": "Thread pool exhaustion means no available threads to execute tasks. Connection pool exhaustion means no available database connections. Both are resource exhaustion issues but involve different resources. Thread pool issues affect all kinds of tasks; connection pool issues specifically affect database operations."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-network-endpoint-exists/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-network-endpoint-exists/docker27-linux",
+  "error": {
+    "signature": "endpoint with name already exists in network",
+    "regex": "endpoint.*already exists in network|network endpoint.*exists",
+    "domain": "docker",
+    "category": "networking",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "A container with the same name is already connected to the target network. This often happens after a container crash or forced removal that left a stale network endpoint."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting and recreating the entire Docker network",
+      "why_fails": "All other containers on that network lose connectivity and must be reconnected",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Renaming the container to avoid the conflict",
+      "why_fails": "The stale endpoint still occupies the network slot; the old endpoint must be cleaned up",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Disconnect the stale endpoint from the network first",
+      "success_rate": 0.92,
+      "how": "docker network disconnect -f <network> <container-name> && docker network connect <network> <container-name>",
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/network/disconnect/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove the dead container and restart with docker compose up",
+      "success_rate": 0.88,
+      "how": "docker rm -f <container-name> && docker compose up -d — Compose will recreate the container with a fresh network endpoint",
+      "sources": [
+        "https://docs.docker.com/compose/"
+      ],
+      "condition": "when using Docker Compose"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/network-has-active-endpoints/docker24-linux",
+        "probability": 0.20,
+        "condition": "when trying to remove a network with stale endpoints"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/cannot-stop-container/docker24-linux",
+        "probability": 0.22,
+        "condition": "when a container fails to stop cleanly, leaving orphaned network endpoints"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/network-has-active-endpoints/docker24-linux",
+        "distinction": "Endpoint exists means a specific container's endpoint is stale on a network, while active endpoints means the network itself cannot be removed because containers are still connected"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

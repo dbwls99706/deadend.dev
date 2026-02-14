@@ -1,12 +1,11 @@
 """deadends.dev MCP Server — Error knowledge for AI coding agents.
 
 Exposes structured failure knowledge through the Model Context Protocol.
-AI agents can query error signatures to get dead ends, workarounds,
+AI coding agents can query error signatures to get dead ends, workarounds,
 and error chains without web search.
 
 Usage:
     python -m mcp.server              # stdio mode (for Claude Desktop, Cursor)
-    python -m mcp.server --port 8080  # HTTP mode
 
 Claude Desktop config (~/.claude/claude_desktop_config.json):
 {
@@ -76,7 +75,14 @@ def _get_domain_index() -> dict[str, list[str]]:
 
 
 def match_error(error_message: str, canons: list[dict]) -> list[dict]:
-    """Match an error message against all known patterns."""
+    """Match an error message against all known patterns.
+
+    Returns matches sorted by (regex_match, fix_success_rate) so exact
+    regex hits always rank above partial keyword matches.
+    """
+    if not error_message or not error_message.strip():
+        return []
+
     matches = []
     for canon in canons:
         try:
@@ -114,6 +120,10 @@ def match_error(error_message: str, canons: list[dict]) -> list[dict]:
                     "url": canon["url"],
                 })
         except re.error:
+            sys.stderr.write(
+                f"WARNING: Invalid regex in {canon['id']}: "
+                f"{canon['error']['regex']}\n"
+            )
             continue
 
     matches.sort(key=lambda m: m["fix_success_rate"], reverse=True)
@@ -153,9 +163,36 @@ def _suggest_domains(error_message: str) -> str:
         "kubernetes": ["kubernetes", "k8s", "kubectl", "pod", "deploy"],
         "terraform": ["terraform", "tf ", "state", "provider", "hcl"],
         "aws": ["aws", "s3", "ec2", "iam", "lambda", "cloudformation"],
-        "nextjs": ["next.js", "nextjs", "next/", "getserverside", "getstaticprops"],
+        "nextjs": [
+            "next.js", "nextjs", "next/", "getserverside",
+            "getstaticprops", "app router",
+        ],
         "react": ["react", "usestate", "useeffect", "jsx", "component"],
         "pip": ["pip install", "pip3", "pypi", "wheel", "sdist"],
+        "java": [
+            "java", "jvm", "maven", "gradle", "classnotfound",
+            "nullpointerexception", "spring", ".jar",
+        ],
+        "database": [
+            "sql", "mysql", "postgres", "mongodb", "redis",
+            "sqlite", "deadlock", "connection pool",
+        ],
+        "cicd": [
+            "github actions", "jenkins", "gitlab ci", "circleci",
+            "pipeline", "workflow", "deploy", "artifact",
+        ],
+        "php": [
+            "php", "laravel", "composer", "symfony",
+            "artisan", "eloquent",
+        ],
+        "dotnet": [
+            ".net", "dotnet", "c#", "csharp", "nuget",
+            "aspnet", "blazor", "entity framework",
+        ],
+        "networking": [
+            "connection refused", "timeout", "dns", "ssl",
+            "tls", "certificate", "econnrefused", "socket",
+        ],
     }
     for domain, keywords in keyword_map.items():
         for kw in keywords:
@@ -175,9 +212,9 @@ TOOLS = [
             "errors. Returns dead ends (what NOT to try), workarounds (what "
             "works), and error chains (what comes next). Use this BEFORE "
             "attempting to fix any error to avoid wasting time on approaches "
-            "that are known to fail. Covers 14 domains: python, node, docker, "
+            "that are known to fail. Covers 20 domains: python, node, docker, "
             "git, cuda, pip, typescript, rust, go, kubernetes, terraform, aws, "
-            "nextjs, react."
+            "nextjs, react, java, database, cicd, php, dotnet, networking."
         ),
         "inputSchema": {
             "type": "object",
@@ -228,7 +265,8 @@ TOOLS = [
         "description": (
             "List all error domains and counts in the deadends.dev database. "
             "Domains include: python, node, docker, git, cuda, pip, "
-            "typescript, rust, go, kubernetes, terraform, aws, nextjs, react."
+            "typescript, rust, go, kubernetes, terraform, aws, nextjs, react, "
+            "java, database, cicd, php, dotnet, networking."
         ),
         "inputSchema": {
             "type": "object",
@@ -368,6 +406,36 @@ TOOLS = [
             "openWorldHint": False,
         },
     },
+    {
+        "name": "get_error_chain",
+        "description": (
+            "Traverse the error transition graph for a specific error. "
+            "Shows what errors typically follow this one (leads_to), "
+            "what errors usually precede it (preceded_by), and what "
+            "errors are frequently confused with it. Use this to "
+            "diagnose cascading failures and predict what comes next."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "error_id": {
+                    "type": "string",
+                    "description": (
+                        "The error ID (domain/slug/env) to get the "
+                        "transition graph for"
+                    ),
+                }
+            },
+            "required": ["error_id"],
+        },
+        "annotations": {
+            "title": "Error chain",
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
+        },
+    },
 ]
 
 
@@ -375,15 +443,13 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
     """Handle a JSON-RPC request."""
     if method == "initialize":
         return {
-            "protocolVersion": "2024-11-05",
+            "protocolVersion": "2025-03-26",
             "capabilities": {
                 "tools": {},
-                "resources": {},
-                "prompts": {},
             },
             "serverInfo": {
                 "name": "deadends-dev",
-                "version": "1.3.0",
+                "version": "1.4.0",
             },
         }
     elif method == "ping":
@@ -399,7 +465,17 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
         args = params.get("arguments", {})
 
         if tool_name == "lookup_error":
-            error_msg = args.get("error_message", "")
+            error_msg = args.get("error_message", "").strip()
+            if not error_msg:
+                return {
+                    "content": [{
+                        "type": "text",
+                        "text": (
+                            "Empty error message. Please provide the "
+                            "full error message to look up."
+                        ),
+                    }],
+                }
             matches = match_error(error_msg, canons)
             if not matches:
                 suggested = _suggest_domains(error_msg)
@@ -492,7 +568,14 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
             }
 
         elif tool_name == "search_errors":
-            query = args.get("query", "").lower()
+            query = args.get("query", "").strip().lower()
+            if not query:
+                return {
+                    "content": [{
+                        "type": "text",
+                        "text": "Empty search query. Provide keywords.",
+                    }],
+                }
             domain_filter = args.get("domain", "")
             limit = min(args.get("limit", 10), 20)
             scored = []
@@ -503,7 +586,12 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
                 score = 0
                 sig = c["error"]["signature"].lower()
                 summary = c["verdict"]["summary"].lower()
-                q_words = set(query.split())
+                _stopwords = {
+                    "", "the", "a", "an", "is", "of", "in", "to",
+                    "for", "and", "or", "no", "not", "on", "at",
+                    "error", "failed", "exception", "cannot",
+                }
+                q_words = set(query.split()) - _stopwords
                 for w in q_words:
                     if w in sig:
                         score += 10
@@ -624,7 +712,17 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
                     cat = c["error"]["category"]
                     categories[cat] = categories.get(cat, 0) + 1
                     conf = c["verdict"]["confidence"]
-                    conf_levels[conf] = conf_levels.get(conf, 0) + 1
+                    if isinstance(conf, (int, float)):
+                        conf_label = (
+                            "high" if conf >= 0.8
+                            else "medium" if conf >= 0.5
+                            else "low"
+                        )
+                    else:
+                        conf_label = str(conf)
+                    conf_levels[conf_label] = (
+                        conf_levels.get(conf_label, 0) + 1
+                    )
                 top_cats = sorted(
                     categories.items(), key=lambda x: x[1], reverse=True
                 )[:5]
@@ -644,6 +742,99 @@ def handle_request(method: str, params: dict, canons: list[dict]) -> dict:
                 ]
                 for cat, count in top_cats:
                     parts.append(f"  - {cat}: {count}")
+                text = "\n".join(parts)
+            return {"content": [{"type": "text", "text": text}]}
+
+        elif tool_name == "get_error_chain":
+            error_id = args.get("error_id", "")
+            canon = lookup_by_id(error_id, canons)
+            if not canon:
+                partial = [
+                    c for c in canons
+                    if error_id in c["id"] or c["id"] in error_id
+                ]
+                if partial:
+                    suggestions = [c["id"] for c in partial[:5]]
+                    text = (
+                        f"Error ID not found: {error_id}\n\n"
+                        f"Did you mean one of these?\n"
+                        + "\n".join(f"- {s}" for s in suggestions)
+                    )
+                else:
+                    text = f"Error ID not found: {error_id}"
+            else:
+                graph = canon.get("transition_graph", {})
+                parts = [
+                    f"## Error Chain: {canon['error']['signature']}",
+                    f"ID: {error_id}\n",
+                ]
+                leads_to = graph.get("leads_to", [])
+                if leads_to:
+                    parts.append("### This error often leads to:")
+                    for lt in leads_to:
+                        lt_canon = lookup_by_id(lt["error_id"], canons)
+                        if lt_canon:
+                            sig = lt_canon["error"]["signature"]
+                            rate = int(
+                                lt_canon["verdict"]["fix_success_rate"] * 100
+                            )
+                            parts.append(
+                                f"- **{sig}** (p={lt['probability']}, "
+                                f"fix rate: {rate}%) — {lt['error_id']}"
+                            )
+                        else:
+                            parts.append(
+                                f"- {lt['error_id']} "
+                                f"(p={lt['probability']})"
+                            )
+                        if lt.get("condition"):
+                            parts.append(
+                                f"  Condition: {lt['condition']}"
+                            )
+                    parts.append("")
+
+                preceded = graph.get("preceded_by", [])
+                if preceded:
+                    parts.append("### Usually preceded by:")
+                    for pb in preceded:
+                        pb_canon = lookup_by_id(pb["error_id"], canons)
+                        if pb_canon:
+                            sig = pb_canon["error"]["signature"]
+                            parts.append(
+                                f"- **{sig}** (p={pb['probability']}) "
+                                f"— {pb['error_id']}"
+                            )
+                        else:
+                            parts.append(
+                                f"- {pb['error_id']} "
+                                f"(p={pb['probability']})"
+                            )
+                    parts.append("")
+
+                confused = graph.get("frequently_confused_with", [])
+                if confused:
+                    parts.append("### Frequently confused with:")
+                    for fc in confused:
+                        fc_canon = lookup_by_id(fc["error_id"], canons)
+                        if fc_canon:
+                            sig = fc_canon["error"]["signature"]
+                            parts.append(
+                                f"- **{sig}** — {fc['error_id']}"
+                            )
+                        else:
+                            parts.append(f"- {fc['error_id']}")
+                        if fc.get("distinction"):
+                            parts.append(
+                                f"  Distinction: {fc['distinction']}"
+                            )
+                    parts.append("")
+
+                if not leads_to and not preceded and not confused:
+                    parts.append(
+                        "No transition graph data for this error. "
+                        "It may be a standalone error."
+                    )
+
                 text = "\n".join(parts)
             return {"content": [{"type": "text", "text": text}]}
 

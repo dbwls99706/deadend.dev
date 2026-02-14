@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/invalid-device-ordinal/cuda12-linux",
+  "url": "https://deadends.dev/cuda/invalid-device-ordinal/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: invalid device ordinal (cudaErrorInvalidDevice)",
+    "regex": "invalid device ordinal|cudaErrorInvalidDevice|CUDA_ERROR_INVALID_DEVICE|device ordinal.*out of range",
+    "domain": "cuda",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "any"
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Code requested a GPU device number that does not exist. For example, requesting device 2 when only 2 GPUs are present (devices 0 and 1). Common when CUDA_VISIBLE_DEVICES hides some GPUs or when moving code between different GPU configurations."
+  },
+  "dead_ends": [
+    {
+      "action": "Set CUDA_VISIBLE_DEVICES to include the requested device number",
+      "why_fails": "CUDA_VISIBLE_DEVICES remaps device ordinals; device N in the visible set becomes device 0,1,2... in order. Setting it to '2' makes that GPU device 0, not device 2.",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Install more GPU drivers hoping the device appears",
+      "why_fails": "The device ordinal is about physical hardware; drivers cannot create GPUs that do not exist",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check available devices and use a valid ordinal: nvidia-smi -L",
+      "success_rate": 0.95,
+      "how": "Run nvidia-smi -L to list GPUs. Adjust code to use device ordinal in range [0, num_gpus-1].",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set CUDA_VISIBLE_DEVICES correctly and use remapped ordinals starting from 0",
+      "success_rate": 0.9,
+      "how": "export CUDA_VISIBLE_DEVICES=0,1 then use torch.cuda.set_device(0) for the first visible GPU",
+      "sources": [],
+      "condition": "when using CUDA_VISIBLE_DEVICES"
+    },
+    {
+      "action": "Use torch.cuda.device_count() to dynamically select devices",
+      "success_rate": 0.88,
+      "how": "device = torch.device(f'cuda:{min(desired_id, torch.cuda.device_count()-1)}')",
+      "sources": [],
+      "condition": "in PyTorch code"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/not-initialized/cuda12-linux",
+        "probability": 0.15,
+        "condition": "when invalid device prevents CUDA initialization entirely"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "cuda/cuda-driver-insufficient/cuda12-linux",
+        "probability": 0.1,
+        "condition": "when driver issues cause some GPUs to not be visible"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

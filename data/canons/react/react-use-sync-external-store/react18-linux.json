@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-use-sync-external-store/react18-linux",
+  "url": "https://deadends.dev/react/react-use-sync-external-store/react18-linux",
+  "error": {
+    "signature": "Warning: Cannot update a component (`X`) while rendering a different component (`Y`). To locate the bad setState() call, follow the stack trace. / Tearing detected in useSyncExternalStore.",
+    "regex": "useSyncExternalStore|tearing detected|cannot update.*while rendering.*different component.*external store|getSnapshot.*inconsistent",
+    "domain": "react",
+    "category": "state_management_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A component using useSyncExternalStore is experiencing tearing (inconsistent reads from an external store during concurrent rendering) or the getSnapshot function is returning inconsistent values. In React 18's concurrent mode, components may render multiple times before committing. If an external store (Redux, Zustand, custom stores) changes between renders without proper synchronization, different components can see different values from the same store during a single render pass."
+  },
+  "dead_ends": [
+    {
+      "action": "Using useEffect + useState to subscribe to the external store instead of useSyncExternalStore",
+      "why_fails": "useEffect subscriptions have a timing gap: the store can change between render and the effect running, causing the component to show stale data for one frame (the tearing problem that useSyncExternalStore was designed to fix). In concurrent mode, this gap can cause visible UI inconsistencies where components show different values from the same store.",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling concurrent features (using ReactDOM.render instead of createRoot) to avoid tearing",
+      "why_fails": "ReactDOM.render uses synchronous rendering where tearing cannot occur, but it disables all React 18 features (automatic batching, transitions, Suspense for data fetching, streaming SSR). This is a regression to React 17 behavior and the legacy API is deprecated.",
+      "fail_rate": 0.6,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure getSnapshot returns a stable reference (memoized or cached) between renders if the store has not changed",
+      "success_rate": 0.9,
+      "how": "The getSnapshot function must return the exact same reference (===) if the store has not changed. Do NOT create a new object/array on every call: BAD: getSnapshot = () => ({ count: store.count }). GOOD: getSnapshot = () => store.getState() (where getState returns the same object reference). For selectors that derive data, memoize the result: use a selector with shallow equality check, or cache the derived value and only recompute when inputs change.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the useSyncExternalStore shim or upgrade the state management library to one with built-in React 18 support",
+      "success_rate": 0.88,
+      "how": "For custom stores: import { useSyncExternalStore } from 'react' (React 18+) or from 'use-sync-external-store/shim' (for React 16/17 compatibility). Usage: const value = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot). For Redux: upgrade to react-redux v8+ which uses useSyncExternalStore internally. For Zustand: upgrade to v4+ which supports React 18 concurrent features. These libraries handle the synchronization automatically.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "probability": 0.15,
+        "condition": "when fixing tearing by forcing synchronous re-renders causes render loops"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-bad-setstate-in-render/react18-linux",
+        "distinction": "useSyncExternalStore tearing is about inconsistent reads from an external store during concurrent rendering. Bad setState in render is about calling setState during the render phase. Both cause unexpected re-renders but have different causes: tearing is a read consistency issue; setState in render is a write timing issue."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

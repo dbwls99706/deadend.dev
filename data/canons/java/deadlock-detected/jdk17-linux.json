@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/deadlock-detected/jdk17-linux",
+  "url": "https://deadends.dev/java/deadlock-detected/jdk17-linux",
+  "error": {
+    "signature": "Found one Java-level deadlock",
+    "regex": "Found one Java-level deadlock|deadlock detected",
+    "domain": "java",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.75,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "Two or more threads are each holding a lock while waiting to acquire a lock held by another, creating a circular dependency that prevents any of them from progressing. Detected by JVM thread dump analysis or JMX MXBeans."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing thread pool size to work around the deadlock",
+      "why_fails": "Adding more threads does not resolve a deadlock — the circular lock dependency remains. New threads may also deadlock on the same resources, making the situation worse.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding synchronized blocks around existing synchronized blocks to force ordering",
+      "why_fails": "Adding more synchronization without careful analysis often creates new deadlock opportunities. Nested synchronization increases the chance of circular dependencies.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Establish a consistent global lock ordering and refactor code to always acquire locks in the same order",
+      "success_rate": 0.88,
+      "how": "1. Take a thread dump (jstack <pid> or kill -3 <pid>) to identify the deadlocked threads and locks. 2. Map out the lock acquisition order of each thread. 3. Define a global ordering for all locks (e.g., by object hash code or a logical hierarchy). 4. Refactor all code paths to acquire locks in that order. 5. Use java.util.concurrent.locks.ReentrantLock with tryLock(timeout) as a safety net.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace synchronized blocks with java.util.concurrent data structures and Lock objects",
+      "success_rate": 0.85,
+      "how": "1. Replace synchronized HashMap with ConcurrentHashMap. 2. Replace synchronized blocks with ReentrantLock.tryLock(timeout) which fails gracefully instead of deadlocking. 3. Use higher-level concurrency utilities (CompletableFuture, ExecutorService) instead of manual lock management. 4. Consider lock-free algorithms where possible.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "java/thread-pool-exhausted/jdk21-linux",
+        "probability": 0.25,
+        "condition": "when deadlocked threads hold up the thread pool causing all threads to eventually block"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "java/concurrentmodificationexception/jdk17-linux",
+        "probability": 0.1,
+        "condition": "when a developer adds synchronization to fix ConcurrentModificationException but introduces a deadlock"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "java/thread-pool-exhausted/jdk21-linux",
+        "distinction": "Thread pool exhaustion means no available threads for work; deadlock means specific threads are permanently blocked waiting for each other's locks"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

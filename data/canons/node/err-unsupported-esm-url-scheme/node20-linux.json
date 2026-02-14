@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/err-unsupported-esm-url-scheme/node20-linux",
+  "url": "https://deadends.dev/node/err-unsupported-esm-url-scheme/node20-linux",
+  "error": {
+    "signature": "Error [ERR_UNSUPPORTED_ESM_URL_SCHEME]: Only URLs with a scheme in: file, data, and node are supported by the default ESM loader.",
+    "regex": "ERR_UNSUPPORTED_ESM_URL_SCHEME.*Only URLs with a scheme in.*are supported",
+    "domain": "node",
+    "category": "module_error",
+    "first_seen": "2021-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18.0.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "windows",
+        "wsl",
+        "cross-platform",
+        "dynamic import"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.9,
+    "last_updated": "2026-02-01",
+    "summary": "Windows file paths (C:\\...) are being treated as URLs by the ESM loader. The drive letter 'C:' is interpreted as a URL scheme. Convert file paths to file:// URLs using url.pathToFileURL()."
+  },
+  "dead_ends": [
+    {
+      "action": "Changing the type field in package.json between module and commonjs",
+      "why_fails": "This error is not about ESM vs CJS mode. It is about Windows file paths being treated as URLs in ESM dynamic imports. Switching module type does not fix path resolution.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "common_misconception": "All ESM-related errors are assumed to be ESM/CJS configuration issues."
+    },
+    {
+      "action": "Using path.resolve() instead of import.meta.url",
+      "why_fails": "path.resolve() returns a file system path string. ESM dynamic import() expects a URL. Passing a Windows path (C:\\foo\\bar) to import() triggers this error because 'C:' is parsed as a URL scheme.",
+      "fail_rate": 0.8,
+      "sources": [],
+      "common_misconception": "File paths and URLs are treated as interchangeable in ESM when they are fundamentally different."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use url.pathToFileURL() to convert file paths to file:// URLs",
+      "how": "import { pathToFileURL } from 'url'; const mod = await import(pathToFileURL(filePath).href); This converts 'C:\\foo\\bar.js' to 'file:///C:/foo/bar.js' which is a valid ESM URL.",
+      "success_rate": 0.95,
+      "tradeoff": "Requires importing from 'url' module",
+      "sources": [
+        "https://nodejs.org/api/url.html#urlpathtofileurlpath"
+      ]
+    },
+    {
+      "action": "Use import.meta.dirname (Node 21.2+) instead of URL manipulation",
+      "how": "import.meta.dirname gives a plain path string directly, avoiding URL scheme issues. import.meta.filename provides the full file path. These are available since Node 21.2 and stable in Node 22+.",
+      "success_rate": 0.88,
+      "tradeoff": "Requires Node 21.2+ (not available in Node 18 or 20 LTS)",
+      "sources": [
+        "https://nodejs.org/api/esm.html#importmetadirname"
+      ]
+    },
+    {
+      "action": "Use fileURLToPath for path operations and pathToFileURL for imports",
+      "how": "Establish a consistent two-way conversion pattern: const __dirname = fileURLToPath(new URL('.', import.meta.url)); for path operations, and pathToFileURL() when passing back to import(). This handles both Unix and Windows correctly.",
+      "success_rate": 0.92,
+      "tradeoff": "More verbose than CJS __dirname",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "distinction": "ERR_UNSUPPORTED_ESM_URL_SCHEME means the path format is wrong (file path instead of URL). ERR_MODULE_NOT_FOUND means the URL format is correct but the module does not exist at that location."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 40,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

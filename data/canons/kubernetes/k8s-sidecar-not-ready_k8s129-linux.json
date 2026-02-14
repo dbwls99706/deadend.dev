@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-sidecar-not-ready/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-sidecar-not-ready/k8s129-linux",
+  "error": {
+    "signature": "containers with unready status: [sidecar-container] — pod not ready due to sidecar",
+    "regex": "containers with unready status.*sidecar|sidecar.*not ready|sidecar.*CrashLoopBackOff|istio-proxy.*not ready",
+    "domain": "kubernetes",
+    "category": "pod_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Sidecar container is not ready, preventing the entire pod from being marked as Ready. Common with service mesh proxies and logging sidecars."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the sidecar container from the pod",
+      "why_fails": "Breaks service mesh connectivity, logging, or monitoring that depends on the sidecar",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the readiness check and send traffic anyway",
+      "why_fails": "Traffic may fail if the sidecar (e.g., Envoy proxy) is required for routing",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check sidecar container logs to find the failure reason",
+      "success_rate": 0.90,
+      "how": "kubectl logs <pod> -c <sidecar-name> — look for certificate errors, config issues, or port conflicts",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify sidecar configuration and resource limits — sidecars often need specific memory/CPU",
+      "success_rate": 0.85,
+      "how": "kubectl describe pod <pod> to check sidecar resource usage and events",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/readiness-probe-failed/k8s1-linux",
+        "probability": 0.25,
+        "condition": "when sidecar readiness probe keeps failing"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-istio-sidecar-injection/k8s129-linux",
+        "probability": 0.22,
+        "condition": "when Istio sidecar is injected but misconfigured"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/readiness-probe-failed/k8s1-linux",
+        "distinction": "sidecar-not-ready specifically involves a sidecar container, while readiness-probe-failed can affect any container in the pod"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

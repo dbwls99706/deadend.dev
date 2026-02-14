@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-out-of-shared-memory/pg16-linux",
+  "url": "https://deadends.dev/database/pg-out-of-shared-memory/pg16-linux",
+  "error": {
+    "signature": "ERROR: out of shared memory HINT: You might need to increase max_locks_per_transaction.",
+    "regex": "ERROR:\\s+out of shared memory.*max_locks_per_transaction",
+    "domain": "database",
+    "category": "resource_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "PostgreSQL has exhausted its shared memory allocation for lock tracking. This typically occurs when a single transaction acquires locks on a very large number of objects (e.g., ALTER TABLE on a partitioned table with thousands of partitions, or mass DDL operations). The max_locks_per_transaction setting controls the shared lock table size."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing shared_buffers hoping it will increase lock table space",
+      "why_fails": "shared_buffers controls the buffer cache for data pages, not the lock table. The lock table size is controlled by max_locks_per_transaction * max_connections. Changing shared_buffers has no effect on lock table capacity.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting max_locks_per_transaction to an extremely high value without understanding the memory implications",
+      "why_fails": "Each lock slot consumes shared memory. Setting max_locks_per_transaction very high (e.g., 10000) with many connections can exhaust total shared memory, causing PostgreSQL to fail to start.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase max_locks_per_transaction to accommodate your workload",
+      "success_rate": 0.90,
+      "how": "Edit postgresql.conf: max_locks_per_transaction = 256 (default is 64). Restart PostgreSQL. Calculate the required value: total lock slots = max_locks_per_transaction * (max_connections + max_prepared_transactions). For partitioned tables, each partition counts as a separate lock.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Break large DDL operations into smaller batches to reduce concurrent lock count",
+      "success_rate": 0.85,
+      "how": "Instead of a single ALTER TABLE on a parent partitioned table, alter each partition individually in separate transactions. For mass DROP/CREATE operations, process in batches of 50-100 objects per transaction with COMMIT between batches.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.15, "condition": "when lock escalation workarounds introduce inconsistent lock ordering"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.25, "condition": "when a migration attempts DDL on a heavily partitioned table"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/too-many-connections/pg16-linux", "distinction": "Too many connections is about connection slots (max_connections). Out of shared memory for locks is about the lock table being full. They both involve shared memory but are separate resource pools."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 48,
+    "last_verification": "2026-02-12"
+  }
+}

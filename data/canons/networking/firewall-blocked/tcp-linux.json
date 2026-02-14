@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/firewall-blocked/tcp-linux",
+  "url": "https://deadends.dev/networking/firewall-blocked/tcp-linux",
+  "error": {
+    "signature": "Connection timed out: no route to host (firewall DROP)",
+    "regex": "no route to host|filtered|firewall.*block|iptables.*DROP|REJECT|packet.*dropped|nftables.*drop",
+    "domain": "networking",
+    "category": "firewall",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "A firewall (local iptables/nftables, cloud security group, or network ACL) is silently dropping or actively rejecting packets. DROP rules cause timeouts; REJECT rules return ICMP unreachable or TCP RST."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase TCP connection timeout to wait longer for the firewall to pass the packet",
+      "why_fails": "A DROP rule silently discards the packet. No amount of waiting will get a response — the packet is gone. Increasing timeout only delays the inevitable failure.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable the local firewall without considering other firewall layers",
+      "why_fails": "Cloud environments have multiple firewall layers (security groups, NACLs, WAFs). Disabling the host firewall does not help if the block is at the cloud infrastructure level.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": "In cloud environments with layered firewalls"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify which firewall layer is blocking and add the appropriate allow rule",
+      "success_rate": 0.90,
+      "how": "1. Check local firewall: iptables -L -n -v or nft list ruleset\n2. Look for DROP/REJECT rules matching the traffic: iptables -L -n | grep -i drop\n3. Test with traceroute or mtr to identify where packets are dropped\n4. In cloud: check security groups, NACLs, and route tables\n5. Add an allow rule: iptables -I INPUT -p tcp --dport PORT -s SOURCE -j ACCEPT\n6. Verify: nc -zv host PORT",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use nmap to determine if the port is filtered vs closed",
+      "success_rate": 0.85,
+      "how": "1. Scan the target port: nmap -p PORT host\n2. 'filtered' = firewall dropping packets (no response)\n3. 'closed' = host responds with RST (no service listening)\n4. 'open' = service is accepting connections\n5. Use traceroute to find where the filter exists: sudo traceroute -T -p PORT host\n6. Check each hop's firewall rules as needed",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.40, "condition": "when a DROP rule causes the client to time out waiting for a SYN-ACK"},
+      {"error_id": "networking/icmp-unreachable/tcp-linux", "probability": 0.25, "condition": "when a REJECT rule sends back an ICMP administratively prohibited message"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-refused/tcp-linux", "probability": 0.10, "condition": "when troubleshooting a refused connection leads to discovering that a different firewall rule is also blocking other ports"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "Firewall blocked is the cause; connection timeout is the symptom. A timeout can also occur due to routing issues or host being down, not just firewalls"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -98,35 +98,12 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/runtime-error-backward-twice/torch2.0-linux",
-        "probability": 0.18,
-        "condition": "When user calls backward() again without retain_graph=True",
-        "typical_delay": "immediate"
-      },
-      {
-        "error_id": "python/torch-compile-graph-break/torch2.0-linux",
-        "probability": 0.22,
-        "condition": "When using fullgraph=True with operations that require eager-mode autograd",
-        "typical_delay": "immediate"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/torch-compile-error/torch2.0-linux",
-        "probability": 0.28,
-        "condition": "torch.compile() transforms the graph in a way that breaks gradient tracking"
-      }
-    ],
+    "leads_to": [],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "python/attributeerror-tensor-no-grad/torch2.1-linux",
         "distinction": "In PyTorch 2.0, torch.compile() and the lazy tensor subsystem introduce additional causes for this error. In PyTorch 2.1, lazy tensors were refactored and torch.compile() has improved autograd support, making compile-related .grad issues less common."
-      },
-      {
-        "error_id": "python/runtimeerror-grad-non-leaf/torch2.0-linux",
-        "distinction": "AttributeError means .grad was never populated. RuntimeError about non-leaf tensors means the tensor is in the graph but is not a leaf, so gradients are not retained by default."
       }
     ]
   },

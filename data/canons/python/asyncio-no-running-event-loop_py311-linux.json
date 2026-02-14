@@ -28,7 +28,7 @@
   "dead_ends": [
     {
       "action": "Use asyncio.get_event_loop() to create one",
-      "why_fails": "Deprecated in 3.12+ — raises error in non-main threads",
+      "why_fails": "In Python 3.10+ this emits DeprecationWarning if no running loop exists. In Python 3.12+, calling get_event_loop() from a thread with no running loop raises RuntimeError instead of silently creating a new loop. Use asyncio.run() or asyncio.new_event_loop() explicitly.",
       "fail_rate": 0.75,
       "sources": [
         "https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop"

@@ -78,18 +78,11 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/module-not-found/node20-macos",
-        "probability": 0.25,
-        "condition": "When the missing file is a required module",
-        "typical_delay": "immediate"
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/eacces-permission-denied/node20-macos",
+        "error_id": "node/eacces-permission-denied/node20-linux",
         "distinction": "ENOENT means the file does not exist; EACCES means it exists but permissions deny access. Check the errno code in the error message."
       }
     ]

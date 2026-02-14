@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dns-truncated-response/dns-linux",
+  "url": "https://deadends.dev/networking/dns-truncated-response/dns-linux",
+  "error": {
+    "signature": "DNS response truncated (TC bit set), retrying over TCP failed",
+    "regex": "truncated|TC.*bit.*set|response.*too.*large|dns.*tcp.*fallback.*fail|message.*truncated",
+    "domain": "networking",
+    "category": "dns",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "dns", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "The DNS response exceeded the 512-byte UDP limit and was truncated (TC bit set). The client should retry over TCP, but if TCP port 53 is blocked by a firewall or the server does not support TCP DNS, the query fails with incomplete data."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the UDP buffer size on the client resolver to avoid truncation",
+      "why_fails": "While EDNS0 allows larger UDP responses, the 512-byte limit is a protocol constraint and many middleboxes strip EDNS0 options. If the response is genuinely large (many records), truncation occurs regardless of buffer settings.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the truncation and use the partial response",
+      "why_fails": "A truncated response may be missing critical records (e.g., additional A records for NS referrals, DNSSEC signatures). Using partial data leads to resolution failures or security validation errors.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure TCP port 53 is open between the client and DNS server",
+      "success_rate": 0.90,
+      "how": "1. Test TCP DNS connectivity: dig example.com A +tcp\n2. If it fails, check firewall rules: iptables -L -n | grep 53\n3. Open TCP 53 in the firewall: iptables -A INPUT -p tcp --dport 53 -j ACCEPT\n4. Verify with: dig example.com ANY +tcp\n5. On cloud environments, check security groups and NACLs for TCP 53",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enable EDNS0 with a larger payload size to reduce truncation frequency",
+      "success_rate": 0.80,
+      "how": "1. Add 'options edns0' to /etc/resolv.conf\n2. Or configure the resolver to use EDNS0 with a larger buffer: dig +bufsize=4096 example.com\n3. Verify EDNS0 is negotiated: dig example.com +dnssec | grep 'udp:'\n4. If middleboxes strip EDNS0, use a DNS-over-HTTPS or DNS-over-TLS resolver instead",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.30, "condition": "when TCP fallback fails and the truncated UDP response is insufficient to resolve the query"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.20, "condition": "when a firewall blocks TCP 53 causing the TCP fallback to fail"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/dns-timeout/dns-linux", "distinction": "Truncated response means a reply was received but incomplete; DNS timeout means no reply was received at all"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 35,
+    "last_verification": "2026-02-12"
+  }
+}

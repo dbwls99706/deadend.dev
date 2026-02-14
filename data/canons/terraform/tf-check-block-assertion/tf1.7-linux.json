@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-check-block-assertion/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-check-block-assertion/tf1.7-linux",
+  "error": {
+    "signature": "Warning: Check block assertion failed: condition evaluated to false",
+    "regex": "(Check block assertion failed|check .+ condition .+ false|assertion .+ failed|check .+ error_message)",
+    "domain": "terraform",
+    "category": "validation_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A check block assertion condition evaluated to false, indicating infrastructure does not meet the expected state."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the check block to suppress the warning",
+      "why_fails": "Check blocks exist to catch infrastructure drift and misconfigurations; removing them hides real problems",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/checks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Change the condition to always return true",
+      "why_fails": "Hardcoding true defeats the purpose of the check and leaves infrastructure issues undetected",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the underlying infrastructure issue that the check block detected",
+      "success_rate": 0.85,
+      "how": "Read the error_message from the check block, identify the failing condition, and fix the resource or data source",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/checks"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Update the check condition if the assertion is outdated or too strict",
+      "success_rate": 0.82,
+      "how": "Review the check block condition and error_message; adjust the condition to reflect current valid states",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/checks"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/invalid-reference/tf1-linux",
+        "distinction": "Invalid reference is about syntax/type errors in expressions; check block assertion is about runtime condition evaluation"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

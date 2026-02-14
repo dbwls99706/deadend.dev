@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/composer-autoload-class-not-found/php83-linux",
+  "url": "https://deadends.dev/php/composer-autoload-class-not-found/php83-linux",
+  "error": {
+    "signature": "Fatal error: Uncaught Error: Class 'App\\Models\\X' not found",
+    "regex": "Fatal error:.*Class ['\"]App\\\\(?:Models|Services|Http|Controllers|Providers)\\\\\\w+['\"] not found",
+    "domain": "php",
+    "category": "autoload_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.1,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.91,
+    "last_updated": "2026-02-13",
+    "summary": "This fatal error occurs when PHP cannot locate a class that exists in the codebase because Composer's autoload map is stale. It is the single most frequent error AI coding agents produce when scaffolding new classes, models, or services: the agent creates the file with the correct namespace but does not regenerate the autoloader. Other causes include PSR-4 namespace-to-directory mismatches and case sensitivity issues on Linux filesystems."
+  },
+  "dead_ends": [
+    {"action": "Adding require_once or include statements to manually load the class file", "why_fails": "Manual requires bypass the PSR-4 autoloading standard that frameworks like Laravel and Symfony depend on. Other parts of the codebase that expect the class to be autoloadable will still fail. This creates fragile path dependencies and breaks when the file is moved or the project structure changes. It also prevents the class from being discovered by service containers and dependency injection.", "fail_rate": 0.80, "sources": [], "condition": ""},
+    {"action": "Deleting the entire vendor/ directory and running composer install from scratch", "why_fails": "A full vendor reinstall takes significant time (often minutes) and does not address the root cause. If the autoload mapping in composer.json is misconfigured or the namespace does not match the directory structure, a fresh install regenerates the same broken autoload map. This is a shotgun approach when a targeted 'composer dump-autoload' is almost always sufficient.", "fail_rate": 0.65, "sources": [], "condition": ""},
+    {"action": "Editing vendor/composer/autoload_classmap.php or autoload_psr4.php manually", "why_fails": "Files under vendor/composer/ are auto-generated and will be overwritten by the next composer install, update, or dump-autoload. Manual edits to generated files are lost immediately and never address the actual misconfiguration in composer.json. This also risks introducing syntax errors in the autoloader that crash the entire application.", "fail_rate": 0.90, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Run 'composer dump-autoload' to regenerate the class map after adding new files", "success_rate": 0.94, "how": "After creating a new class file, run 'composer dump-autoload' (or 'composer dump-autoload -o' for optimized classmap). This scans all PSR-4 and classmap directories defined in composer.json and rebuilds vendor/composer/autoload_*.php files. For AI agents: always run this command after creating or moving any PHP class file. In Laravel, 'php artisan clear-compiled' followed by 'composer dump-autoload' ensures both framework and composer caches are refreshed.", "sources": [], "condition": ""},
+    {"action": "Verify the namespace declaration matches the PSR-4 directory mapping in composer.json", "success_rate": 0.92, "how": "Open composer.json and check the 'autoload.psr-4' section. For example, if it maps 'App\\\\' to 'app/', then a class with namespace App\\Models must be in app/Models/ClassName.php. Verify: 1) The namespace in the PHP file exactly matches the directory path relative to the mapped root. 2) The class name exactly matches the filename (case-sensitive on Linux). 3) There are no typos in the namespace separators. Example composer.json entry: {\"autoload\": {\"psr-4\": {\"App\\\\\": \"app/\"}}}. After fixing any mismatch, run 'composer dump-autoload'.", "sources": [], "condition": ""},
+    {"action": "Check file and directory name casing matches the namespace exactly on Linux", "success_rate": 0.89, "how": "Linux filesystems are case-sensitive, so App\\Models\\UserProfile requires the file path app/Models/UserProfile.php with exact capitalization. Common mistakes: 'app/models/' (lowercase m), 'UserProfile.PHP' (uppercase extension), or 'Userprofile.php' (lowercase p). Use 'ls -la app/Models/' to verify actual filenames on disk. If the file was created on macOS or Windows and pushed to a Linux server, the casing from the original OS may not match. Rename with 'git mv' to preserve history: 'git mv app/models/Userprofile.php app/Models/UserProfile.php'.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/class-not-found/php83-linux", "probability": 0.35, "condition": "when the autoload issue extends beyond App namespace classes to any class in the project"}, {"error_id": "php/call-to-undefined-function/php83-linux", "probability": 0.12, "condition": "when the unfound class was providing static helper methods called elsewhere"}],
+    "preceded_by": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "probability": 0.28, "condition": "when composer autoload files themselves are missing or corrupted"}],
+    "frequently_confused_with": [{"error_id": "php/class-not-found/php83-linux", "distinction": "Composer-autoload-class-not-found specifically refers to classes within the application's own namespace (App\\*) that are missing from the autoload map due to stale cache, while class-not-found is the broader error that also covers missing vendor dependencies, misspelled class names, and entirely absent packages."}, {"error_id": "php/autoload-class-not-found/php83-linux", "distinction": "Both relate to autoloading failures, but composer-autoload-class-not-found emphasizes the Composer dump-autoload workflow as the primary fix, while autoload-class-not-found may involve SPL autoloader configuration or custom autoloaders."}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

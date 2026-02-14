@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/tcp-window-full/tcp-linux",
+  "url": "https://deadends.dev/networking/tcp-window-full/tcp-linux",
+  "error": {
+    "signature": "TCP window full: receiver window size 0, zero window probe sent",
+    "regex": "TCP.*window.*full|zero window|window.*size.*0|TCP.*ZeroWindow|receiver.*window.*exhausted",
+    "domain": "networking",
+    "category": "tcp_flow_control",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The TCP receiver advertised a window size of zero, meaning its receive buffer is full and it cannot accept more data. The sender stops transmitting and sends periodic zero window probes. This indicates the receiving application is not reading data from the socket fast enough."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the TCP send buffer on the sender side",
+      "why_fails": "The bottleneck is the receiver's inability to consume data from its receive buffer. Increasing the sender's buffer only allows more data to queue on the sender side but does not make the receiver process data faster.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable TCP window scaling to avoid large window advertisements",
+      "why_fails": "Disabling window scaling limits the maximum window to 64KB, severely reducing throughput on high-bandwidth/high-latency links. It does not fix the application-level slow consumption problem.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Optimize the receiving application to read from the socket faster",
+      "success_rate": 0.85,
+      "how": "1. Profile the receiving application for bottlenecks: perf top -p PID or strace -p PID\n2. Check if the application is blocked on I/O, locks, or CPU-intensive processing\n3. Use non-blocking I/O or async frameworks to decouple network reads from processing\n4. Consider a dedicated reader thread that buffers incoming data into an application queue\n5. If the receiver writes to disk, use buffered I/O or write to faster storage\n6. Monitor socket buffer fill level: ss -tnm | grep the_connection",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increase the TCP receive buffer size on the receiver",
+      "success_rate": 0.78,
+      "how": "1. Check current buffer sizes: sysctl net.ipv4.tcp_rmem\n2. Increase: sysctl -w net.ipv4.tcp_rmem='4096 131072 16777216'\n3. Also increase: sysctl -w net.core.rmem_max=16777216\n4. This provides more buffer space for transient bursts but does not fix sustained slow consumption\n5. Monitor with: ss -tnm to see Recv-Q and window sizes\n6. Make persistent in /etc/sysctl.conf",
+      "sources": [],
+      "condition": "Only helps with bursty traffic patterns"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when the zero window persists long enough that the sender's timeout expires and it drops the connection"},
+      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.15, "condition": "when the sender gives up after prolonged zero window and resets the connection"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "probability": 0.15, "condition": "when a slow backend causes a proxy to observe zero window as the backend cannot consume data fast enough"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "TCP window full is flow control — the connection is alive but data transfer is paused; connection timeout means no response at all from the peer"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

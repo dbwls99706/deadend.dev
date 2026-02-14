@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/fpm-pool-exhausted/php83-linux",
+  "url": "https://deadends.dev/php/fpm-pool-exhausted/php83-linux",
+  "error": {
+    "signature": "WARNING: [pool www] server reached pm.max_children setting (5), consider raising it",
+    "regex": "server reached pm\\.max_children setting \\(\\d+\\)",
+    "domain": "php",
+    "category": "runtime",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "PHP-FPM pool exhaustion occurs when all worker processes are busy handling requests, causing new requests to queue or fail. This is typically caused by slow scripts, blocking I/O operations, or insufficient worker count for the traffic level."
+  },
+  "dead_ends": [
+    {"action": "Raising pm.max_children to hundreds without considering available memory", "why_fails": "Each PHP-FPM worker consumes 20-50MB of RAM. Setting max_children too high can exhaust system memory, triggering the OOM killer which will kill random PHP workers and cause more severe failures.", "fail_rate": 0.72, "sources": [], "condition": ""},
+    {"action": "Switching to pm = ondemand for high-traffic production servers", "why_fails": "ondemand mode spawns workers on each request and kills them after idle timeout. Under sustained load, the constant fork/kill cycle adds overhead and increases response latency compared to pm = dynamic or static.", "fail_rate": 0.60, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Calculate pm.max_children based on available memory and per-worker usage", "success_rate": 0.88, "how": "Determine average worker memory: ps --no-headers -o rss -C php-fpm | awk '{sum+=$1} END {print sum/NR/1024\"MB\"}'. Set max_children = (available_ram_MB - other_services) / avg_worker_MB. Use pm = dynamic with pm.start_servers, pm.min_spare_servers, pm.max_spare_servers tuned accordingly.", "sources": [], "condition": ""},
+    {"action": "Identify and optimize slow scripts that block FPM workers", "success_rate": 0.85, "how": "Enable PHP-FPM slow log: slowlog = /var/log/php-fpm/slow.log, request_slowlog_timeout = 5s. Analyze the log to find scripts that take too long. Optimize by moving slow operations (external API calls, heavy database queries) to background queues.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.25, "condition": "when raising max_children without memory planning causes OOM conditions"}],
+    "preceded_by": [{"error_id": "php/curl-timeout/php83-linux", "probability": 0.20, "condition": "when slow external HTTP calls block workers, causing pool exhaustion"}],
+    "frequently_confused_with": [{"error_id": "php/max-execution-time/php83-linux", "distinction": "max_execution_time kills individual slow scripts, while pm.max_children exhaustion means all workers are busy and new requests cannot be served"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

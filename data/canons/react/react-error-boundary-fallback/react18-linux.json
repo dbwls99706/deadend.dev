@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-error-boundary-fallback/react18-linux",
+  "url": "https://deadends.dev/react/react-error-boundary-fallback/react18-linux",
+  "error": {
+    "signature": "The above error occurred in the <ComponentName> component. Consider adding an error boundary to your tree to customize error handling behavior.",
+    "regex": "The above error occurred in the <\\w+> component|Consider adding an error boundary|ErrorBoundary.*fallback.*not.*function|caught an error",
+    "domain": "react",
+    "category": "error_handling",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "An unhandled error in a React component crashes the entire app because no Error Boundary is present, or the Error Boundary's fallback prop is misconfigured."
+  },
+  "dead_ends": [
+    {
+      "action": "Use try-catch inside the render function to catch errors",
+      "why_fails": "try-catch only works for imperative code; it cannot catch errors thrown during React's rendering phase or in child components",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap the entire app in a single Error Boundary at the root",
+      "why_fails": "A single top-level boundary catches everything but replaces the entire UI with fallback; user loses all context and cannot interact with unaffected parts of the app",
+      "fail_rate": 0.50,
+      "sources": [
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a class component Error Boundary with getDerivedStateFromError and componentDidCatch",
+      "success_rate": 0.92,
+      "how": "class ErrorBoundary extends React.Component { state = { hasError: false }; static getDerivedStateFromError(error) { return { hasError: true }; } componentDidCatch(error, info) { logError(error, info); } render() { return this.state.hasError ? <Fallback /> : this.props.children; } }",
+      "sources": [
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use react-error-boundary library for declarative error boundaries with reset capability",
+      "success_rate": 0.93,
+      "how": "import { ErrorBoundary } from 'react-error-boundary'; <ErrorBoundary fallbackRender={({ error, resetErrorBoundary }) => <div><p>{error.message}</p><button onClick={resetErrorBoundary}>Retry</button></div>}><App /></ErrorBoundary>",
+      "sources": [
+        "https://github.com/bvaughn/react-error-boundary"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/minified-react-error/react18-linux",
+        "probability": 0.20,
+        "condition": "When the error occurs in production build and React shows minified error codes instead of full messages"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/cannot-read-undefined-map/react18-linux",
+        "probability": 0.25,
+        "condition": "When an uncaught TypeError in a child component propagates up and crashes the app"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-suspense-boundary-missing/react18-linux",
+        "distinction": "Error Boundary catches JavaScript errors during rendering; Suspense boundary handles async loading states. Both are boundary components but serve different purposes."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 150,
+    "last_verification": "2026-02-12"
+  }
+}

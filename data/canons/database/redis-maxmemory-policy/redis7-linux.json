@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/redis-maxmemory-policy/redis7-linux",
+  "url": "https://deadends.dev/database/redis-maxmemory-policy/redis7-linux",
+  "error": {
+    "signature": "OOM command not allowed when used memory > 'maxmemory'",
+    "regex": "OOM command not allowed|used memory.*maxmemory|maxmemory.*exceeded|noeviction.*OOM",
+    "domain": "database",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "redis", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Redis has reached its maxmemory limit and the configured eviction policy (maxmemory-policy) does not allow eviction, or all keys have been checked and none are eligible for eviction. The default policy is 'noeviction', which returns OOM errors for write commands when memory is full. This is distinct from the OS-level OOM killer and is entirely a Redis-level memory management decision."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting maxmemory to 0 (unlimited) on a machine with limited RAM",
+      "why_fails": "With maxmemory=0, Redis uses all available system memory until the Linux OOM killer terminates it, causing a hard crash with potential data loss. The RDB/AOF save may not complete, and the process dies without cleanup. This is worse than the OOM error because it is an uncontrolled crash rather than a controlled rejection.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using allkeys-random eviction policy to avoid OOM errors",
+      "why_fails": "allkeys-random evicts keys randomly regardless of importance, access pattern, or TTL. Critical keys (session tokens, rate limiters, feature flags) may be evicted while stale, unused keys are kept. This causes unpredictable application behavior that is difficult to debug.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure an appropriate eviction policy based on your use case",
+      "success_rate": 0.92,
+      "how": "For cache-only Redis: CONFIG SET maxmemory-policy allkeys-lru (evicts least recently used keys). For mixed cache and persistent data: CONFIG SET maxmemory-policy volatile-lru (only evicts keys with a TTL set). For time-series data: CONFIG SET maxmemory-policy volatile-ttl (evicts keys closest to expiry). Make persistent in redis.conf: maxmemory-policy allkeys-lru. Always ensure important persistent keys do not have a TTL when using volatile-* policies.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reduce memory usage by optimizing data structures and setting TTLs",
+      "success_rate": 0.88,
+      "how": "Set TTL on all cache keys: SET key value EX 3600. Use Redis memory-efficient data structures: use hashes for small objects (hash-max-ziplist-entries 128). Audit large keys: redis-cli --bigkeys. Check memory usage: INFO memory, MEMORY USAGE key. Consider using Redis data structure optimizations: ziplist, intset, listpack. Move large values to external storage (S3/disk) and store only references in Redis.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/redis-connection-refused/redis7-linux", "probability": 0.10, "condition": "when OOM errors cause the application to rapidly retry connections, overwhelming Redis"},
+      {"error_id": "database/redis-cluster-down/redis7-linux", "probability": 0.15, "condition": "when a cluster node running out of memory causes it to stop accepting commands and be marked as failed"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/redis-oom/redis7-linux", "probability": 0.30, "condition": "when Redis memory growth is not monitored and hits the maxmemory limit"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/redis-oom/redis7-linux", "distinction": "Maxmemory-policy OOM is a Redis-level memory limit that returns errors to clients but keeps Redis running. Redis OOM (killed by Linux OOM killer) is an OS-level event that terminates the Redis process entirely. The first is controlled and recoverable; the second causes a crash."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

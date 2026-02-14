@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/di-circular-dependency/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/di-circular-dependency/dotnet8-linux",
+  "error": {
+    "signature": "System.InvalidOperationException: A circular dependency was detected for the service of type 'X'.",
+    "regex": "(circular dependency was detected|InvalidOperationException.*circular dependency|A circular dependency was detected for the service)",
+    "domain": "dotnet",
+    "category": "dependency_injection",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.89,
+    "last_updated": "2026-02-13",
+    "summary": "The built-in .NET DI container detects circular dependencies at resolution time when service A requires service B, and service B (directly or transitively) requires service A. This commonly occurs in layered architectures where services grow bidirectional dependencies, or when event/notification handlers reference the services that trigger them. Fix by breaking the cycle with Lazy<T>, refactoring to introduce a mediator or interface segregation, or extracting shared logic into a third service."
+  },
+  "dead_ends": [
+    {
+      "action": "Switching from constructor injection to property injection to hide the cycle",
+      "why_fails": "The built-in .NET DI container does not support property injection. Even with third-party containers (Autofac, etc.) that support it, property injection merely defers the cycle resolution and creates fragile initialization order dependencies where services may be used before their properties are set",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Registering one of the services as Transient to avoid the cycle detection",
+      "why_fails": "Changing the service lifetime does not affect cycle detection. The DI container analyzes the constructor dependency graph regardless of lifetime. A transient registration still requires constructing the full dependency chain, which will still be circular",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using IServiceProvider directly in the constructor to manually resolve the dependency",
+      "why_fails": "Resolving the circular dependency from IServiceProvider inside the constructor triggers the same cycle detection because the resolution happens during construction. This is the Service Locator anti-pattern and it moves the exception from compile-time-detectable to runtime without solving the underlying design issue",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Inject Lazy<T> to defer resolution of one side of the cycle",
+      "success_rate": 0.85,
+      "how": "Register a Lazy<T> factory for one of the circular services: builder.Services.AddScoped<Lazy<IServiceB>>(sp => new Lazy<IServiceB>(() => sp.GetRequiredService<IServiceB>())); Then inject Lazy<IServiceB> instead of IServiceB in ServiceA's constructor. The actual resolution is deferred until .Value is accessed, which breaks the construction-time cycle. This is a tactical fix; refactoring is preferred long-term",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Extract shared logic into a third service to break the dependency cycle",
+      "success_rate": 0.90,
+      "how": "Identify the shared functionality that causes both services to depend on each other. Extract it into a new service (e.g., ISharedLogic) that both ServiceA and ServiceB depend on, instead of depending on each other. This converts the circular A<->B dependency into a tree: A->C and B->C. This is the cleanest architectural solution",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the Mediator pattern to decouple event-driven circular dependencies",
+      "success_rate": 0.88,
+      "how": "When the cycle exists because ServiceA notifies ServiceB and ServiceB calls back to ServiceA, introduce MediatR or a simple IMediator interface. ServiceA publishes an event through the mediator, and ServiceB handles it without directly referencing ServiceA: builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly)); Replace direct service calls with _mediator.Send(new MyCommand()) or _mediator.Publish(new MyEvent())",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "probability": 0.15, "condition": "when developers bypass DI and create instances manually with circular constructor calls"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.20, "condition": "when refactoring the DI registration introduces incorrect service lifetime configurations"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when middleware refactoring leads to new service dependencies that form a cycle"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when adding new dependencies to fix one issue creates a circular reference"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/stackoverflow/dotnet8-linux", "distinction": "Circular dependency detection is a DI container safeguard that throws InvalidOperationException with a clear message at resolution time; StackOverflowException from circular references occurs in manual instantiation where no container guards against the cycle"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

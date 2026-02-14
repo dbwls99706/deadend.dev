@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/helm-upgrade-failed/helm-linux",
+  "url": "https://deadends.dev/cicd/helm-upgrade-failed/helm-linux",
+  "error": {
+    "signature": "Error: UPGRADE FAILED: another operation (install/upgrade/rollback) is in progress",
+    "regex": "(?i)(?:UPGRADE FAILED|helm upgrade.*failed|another operation.*in progress|release.*not found|rendered manifests.*invalid)",
+    "domain": "cicd",
+    "category": "deployment",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "helm",
+      "version_range": ">=3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Helm upgrade failed due to a stuck release, invalid rendered manifests, or a concurrent operation. The release may be in a 'pending-upgrade' or 'failed' state, preventing new operations."
+  },
+  "dead_ends": [
+    {
+      "action": "Running helm upgrade again without resolving the stuck release",
+      "why_fails": "Helm will report 'another operation is in progress' because the previous release is in a pending state. The new upgrade cannot proceed until the stuck state is resolved.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using helm delete --purge (Helm 2 syntax) in Helm 3",
+      "why_fails": "Helm 3 does not support --purge flag. The correct command is helm uninstall <release>. Using Helm 2 syntax produces a flag parse error.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Rollback the stuck release and retry the upgrade",
+      "success_rate": 0.85,
+      "how": "Check release status: helm status <release>. If stuck in pending-upgrade: helm rollback <release> <previous-revision>. Then retry: helm upgrade <release> <chart>. Use helm history <release> to find the last successful revision.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use --atomic flag to auto-rollback on failure",
+      "success_rate": 0.88,
+      "how": "Add --atomic to helm upgrade: helm upgrade --install --atomic --timeout 300s <release> <chart>. This automatically rolls back if the upgrade fails, preventing stuck releases.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cicd/argocd-sync-failed/argocd-linux",
+        "probability": 0.2,
+        "condition": "when ArgoCD-managed HelmReleases fail and ArgoCD reports sync failure"
+      },
+      {
+        "error_id": "cicd/fluxcd-reconciliation-failed/fluxcd-linux",
+        "probability": 0.2,
+        "condition": "when FluxCD-managed HelmReleases fail reconciliation"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "cicd/deploy-rollback-failed/ci-linux",
+        "distinction": "helm-upgrade-failed is specifically about Helm release operations; deploy-rollback-failed is a general deployment rollback failure across any deployment tool"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

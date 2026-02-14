@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/tls-handshake-timeout/go1.22-linux",
+  "url": "https://deadends.dev/go/tls-handshake-timeout/go1.22-linux",
+  "error": {
+    "signature": "net/http: TLS handshake timeout",
+    "regex": "TLS handshake timeout|tls: handshake failure|tls handshake.*timeout",
+    "domain": "go",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "The TLS handshake did not complete within the configured timeout. Causes include slow DNS, network congestion, misconfigured TLS, or connecting to a non-TLS port with a TLS client."
+  },
+  "dead_ends": [
+    {
+      "action": "Set InsecureSkipVerify=true on TLS config",
+      "why_fails": "InsecureSkipVerify skips certificate validation but does not fix handshake timeouts — the timeout occurs before certificate verification",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://pkg.go.dev/crypto/tls#Config"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade to HTTP instead of HTTPS",
+      "why_fails": "Removes transport security entirely — only masks the problem",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase TLSHandshakeTimeout on the HTTP transport",
+      "success_rate": 0.85,
+      "how": "client := &http.Client{\n    Transport: &http.Transport{\n        TLSHandshakeTimeout: 15 * time.Second,\n    },\n}",
+      "sources": [
+        "https://pkg.go.dev/net/http#Transport"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the target server supports the TLS version your client offers",
+      "success_rate": 0.80,
+      "how": "Set tls.Config MinVersion and MaxVersion to match server capabilities. Use openssl s_client -connect host:port to diagnose.",
+      "sources": [
+        "https://pkg.go.dev/crypto/tls#Config"
+      ],
+      "condition": "when server uses TLS 1.3 only and client defaults to TLS 1.2"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/context-deadline-exceeded/go1-linux",
+        "probability": 0.30,
+        "condition": "when TLS handshake timeout causes the overall request context to expire"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/net-dial-timeout/go1.22-linux",
+        "probability": 0.25,
+        "condition": "when TCP connection succeeds but TLS negotiation stalls"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/net-dial-timeout/go1.22-linux",
+        "distinction": "'TLS handshake timeout' occurs after TCP connection is established during TLS negotiation, while 'dial timeout' occurs during the initial TCP connection."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

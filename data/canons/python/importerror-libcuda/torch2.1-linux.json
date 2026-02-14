@@ -95,31 +95,14 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "python/cuda-version-mismatch/torch2.1-linux",
-        "probability": 0.3,
-        "condition": "After installing the driver, the driver CUDA version may not match PyTorch's expected CUDA version",
-        "typical_delay": "immediate"
-      },
-      {
         "error_id": "python/cuda-out-of-memory/torch2.1-a100-40gb",
         "probability": 0.1,
         "condition": "After fixing the driver issue, the GPU may have insufficient memory for the workload",
         "typical_delay": "minutes"
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "python/pip-install-torch-cpu-only/torch2.1-linux",
-        "probability": 0.25,
-        "condition": "User installed CPU-only PyTorch then switched to GPU code"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/importerror-libcudart/torch2.1-linux",
-        "distinction": "libcuda.so.1 is from the NVIDIA driver. libcudart.so is from the CUDA toolkit runtime. Missing libcuda means no driver; missing libcudart means the CUDA toolkit is not installed or not on the path."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

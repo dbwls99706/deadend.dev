@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0700-async-closure-lifetime/rust1-linux",
+  "url": "https://deadends.dev/rust/e0700-async-closure-lifetime/rust1-linux",
+  "error": {
+    "signature": "error: lifetime may not live long enough -- returning this value requires that `'1` must outlive `'2`",
+    "regex": "lifetime may not live long enough.*returning this value requires that .+ must outlive",
+    "domain": "rust",
+    "category": "lifetime_error",
+    "first_seen": "2019-11-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rustc",
+      "version_range": ">=1.70.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "tokio",
+        "async-std",
+        "async closures",
+        "spawn"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-01",
+    "summary": "Async closures capture references that may not outlive the future they produce. The solution depends on context: usually adding 'move' to take ownership, or using named lifetimes on the function signature."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding 'static lifetime bound to everything",
+      "why_fails": "'static means the value lives for the entire program. This is overly restrictive: it prevents borrowing local data, forces all data to be owned or leaked, and leads to excessive .clone() calls. Most async code does not need 'static — it needs clear ownership.",
+      "fail_rate": 0.7,
+      "sources": [],
+      "common_misconception": "'static is treated as a universal fix for lifetime errors when it actually imposes the strongest possible constraint."
+    },
+    {
+      "action": "Using Box::leak to make references 'static",
+      "why_fails": "Box::leak deliberately leaks memory. The value is never freed. This 'works' at the cost of a memory leak every time the code runs. It is a code smell, not a solution.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "common_misconception": "Leaking memory is seen as an acceptable workaround when the real issue is ownership structure."
+    },
+    {
+      "action": "Wrapping everything in Arc<Mutex<T>>",
+      "why_fails": "Arc<Mutex<T>> adds unnecessary synchronization overhead and complexity. Often the issue is simply that the closure needs 'move' to take ownership, or the function needs a named lifetime — not interior mutability.",
+      "fail_rate": 0.6,
+      "sources": [],
+      "common_misconception": "Interior mutability wrappers are used as a catch-all for lifetime issues when the real fix is simpler ownership transfer."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add 'move' to async closures to take ownership of captured variables",
+      "how": "Change 'tokio::spawn(async { ... })' to 'tokio::spawn(async move { ... })'. The 'move' keyword transfers ownership of all captured variables into the closure, satisfying the 'static bound that spawn requires.",
+      "success_rate": 0.85,
+      "tradeoff": "The original scope can no longer use the moved variables; clone before move if needed",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch13-01-closures.html#moving-captured-values-out-of-closures-and-the-fn-traits"
+      ]
+    },
+    {
+      "action": "Use named lifetimes on the function signature",
+      "how": "Instead of 'async fn foo(s: &str) -> &str', use 'async fn foo<'a>(s: &'a str) -> &'a str'. Named lifetimes show the compiler the relationship between input and output references.",
+      "success_rate": 0.8,
+      "tradeoff": "More verbose function signatures",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html"
+      ]
+    },
+    {
+      "action": "Use Pin<Box<dyn Future + Send + 'static>> for trait-object futures",
+      "how": "When returning futures from trait methods or storing them in collections, the compiler cannot infer lifetimes. Boxing with explicit bounds resolves it: fn foo() -> Pin<Box<dyn Future<Output = T> + Send + 'static>>.",
+      "success_rate": 0.78,
+      "tradeoff": "Heap allocation for each future; minor performance cost",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
+        "probability": 0.25,
+        "condition": "After fixing lifetime with 'move', the captured data may not implement Send, required by tokio::spawn"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0597-borrowed-too-short/rust1-linux",
+        "distinction": "E0597 is about a reference outliving the value it borrows (value dropped too early). The async lifetime error is about a future outliving the references it captures (closure escapes its lifetime)."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 50,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

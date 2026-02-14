@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-cargo-feature-conflict/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-cargo-feature-conflict/rust1.77-linux",
+  "error": {
+    "signature": "error: failed to select a version for `crate_name` which could resolve this conflict",
+    "regex": "failed to select a version.*which could resolve this conflict",
+    "domain": "rust",
+    "category": "dependency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "Two or more dependencies require incompatible features or versions of the same crate. Resolve by aligning dependency versions."
+  },
+  "dead_ends": [
+    {
+      "action": "Use [patch] to force a single version without checking compatibility",
+      "why_fails": "API differences between versions cause compile errors or runtime panics",
+      "fail_rate": 0.70,
+      "sources": ["https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html"],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use cargo tree -d to find duplicate dependencies and align versions",
+      "success_rate": 0.85,
+      "how": "cargo tree -d  # find duplicates\n# Then update Cargo.toml to use compatible version ranges",
+      "sources": ["https://doc.rust-lang.org/cargo/commands/cargo-tree.html"],
+      "condition": ""
+    },
+    {
+      "action": "Use workspace dependency resolution for monorepo projects",
+      "success_rate": 0.82,
+      "how": "# In workspace Cargo.toml:\n[workspace.dependencies]\nshared-crate = \"1.5\"\n# In member Cargo.toml:\n[dependencies]\nshared-crate.workspace = true",
+      "sources": ["https://doc.rust-lang.org/cargo/reference/workspaces.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "probability": 0.25, "condition": "When resolving conflicts reveals missing feature flags"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "probability": 0.20, "condition": "When adding features triggers version conflicts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "distinction": "Feature-not-found means a feature doesn't exist; feature-conflict means two features or versions are incompatible"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

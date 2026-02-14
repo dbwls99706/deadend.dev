@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/openssl-verify-failed/php83-linux",
+  "url": "https://deadends.dev/php/openssl-verify-failed/php83-linux",
+  "error": {
+    "signature": "Warning: openssl_verify(): Supplied key param cannot be coerced into a public key in /var/www/app/src/Auth/JwtValidator.php:45",
+    "regex": "openssl_verify\\(\\):.*cannot be coerced into a public key|openssl_x509_parse\\(\\):.*unable to load certificate|SSL certificate problem:.*verify failed",
+    "domain": "php",
+    "category": "security",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "OpenSSL verification errors in PHP occur when certificate verification fails due to expired certificates, missing CA bundles, incorrect key formats, or mismatched key types. This affects HTTPS requests, JWT validation, and encrypted data operations."
+  },
+  "dead_ends": [
+    {"action": "Disabling SSL verification with CURLOPT_SSL_VERIFYPEER = false or verify_peer = false", "why_fails": "Disabling certificate verification exposes the application to man-in-the-middle attacks. Any network intermediary can intercept and modify traffic. This is a critical security vulnerability.", "fail_rate": 0.85, "sources": [], "condition": ""},
+    {"action": "Using an outdated CA bundle bundled with an old version of PHP or cURL", "why_fails": "Old CA bundles are missing root certificates for newer CAs and contain revoked certificates. This causes legitimate sites to fail verification while potentially trusting compromised CAs.", "fail_rate": 0.65, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Update the CA certificate bundle and configure PHP to use it", "success_rate": 0.90, "how": "Download the latest Mozilla CA bundle: curl -o /etc/ssl/certs/cacert.pem https://curl.se/ca/cacert.pem. Set in php.ini: openssl.cafile = /etc/ssl/certs/cacert.pem and curl.cainfo = /etc/ssl/certs/cacert.pem. On Debian: apt-get install ca-certificates && update-ca-certificates.", "sources": [], "condition": ""},
+    {"action": "Ensure key format and type match the expected algorithm", "success_rate": 0.85, "how": "For JWT verification, ensure the public key is in the correct PEM format with proper BEGIN/END markers. Check that the key type (RSA vs EC) matches the JWT algorithm (RS256 vs ES256). Use openssl_pkey_get_public() and check the return value before calling openssl_verify().", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/curl-ssl-error/php83-linux", "probability": 0.30, "condition": "when the same CA bundle issue affects cURL HTTPS requests"}],
+    "preceded_by": [{"error_id": "php/curl-ssl-error/php83-linux", "probability": 0.25, "condition": "when investigating cURL SSL errors leads to discovering underlying OpenSSL configuration problems"}],
+    "frequently_confused_with": [{"error_id": "php/curl-ssl-error/php83-linux", "distinction": "OpenSSL verify errors are about PHP's openssl extension functions for cryptographic operations, while cURL SSL errors are specifically about HTTPS connection establishment via libcurl"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

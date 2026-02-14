@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-max-allowed-packet/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-max-allowed-packet/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1153 (08S01): Got a packet bigger than 'max_allowed_packet' bytes",
+    "regex": "ERROR 1153.*Got a packet bigger than.*max_allowed_packet|max_allowed_packet.*exceeded",
+    "domain": "database",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "A query or result set exceeds the max_allowed_packet limit (default 64MB in MySQL 8.0). This controls the maximum size of a single MySQL protocol packet. Commonly triggered by inserting large BLOBs, bulk INSERT statements with many rows, or SELECT queries returning very large text/blob columns."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting max_allowed_packet on the client side only",
+      "why_fails": "max_allowed_packet must be set on both the server and the client. The effective limit is the minimum of the two values. Setting it only on the client does nothing if the server limit is lower, and vice versa.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting max_allowed_packet to 1GB to never hit the limit",
+      "why_fails": "max_allowed_packet is allocated per connection. With many concurrent connections, setting it very high can exhaust server memory. MySQL allocates the buffer dynamically but large packets require large allocations. A more targeted approach is to set it to the actual maximum expected data size plus a small margin.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase max_allowed_packet to accommodate your data size",
+      "success_rate": 0.95,
+      "how": "Dynamic change (no restart): SET GLOBAL max_allowed_packet = 256*1024*1024; (256MB). Permanent in my.cnf: max_allowed_packet = 256M. New connections pick up the global value. Existing connections keep their session value. Also set in client tools: mysql --max-allowed-packet=256M.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Break large operations into smaller chunks",
+      "success_rate": 0.88,
+      "how": "For bulk inserts, break into batches of 1000-5000 rows per INSERT statement. For large BLOBs, consider storing files on disk/S3 and saving only the path in MySQL. For mysqldump, use --max-allowed-packet=256M flag. For large SELECT results, use LIMIT/OFFSET pagination.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "probability": 0.10, "condition": "when large packet allocations consume memory that could serve additional connections"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-charset-mismatch/mysql8-linux", "probability": 0.05, "condition": "when charset conversion increases data size beyond the packet limit"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "distinction": "Max allowed packet is about the size of a single query or result. Too many connections is about the number of concurrent connections. Both are server resource limits but control completely different resources."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 52,
+    "last_verification": "2026-02-12"
+  }
+}

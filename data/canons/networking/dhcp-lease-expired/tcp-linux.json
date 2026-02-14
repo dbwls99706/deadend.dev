@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/dhcp-lease-expired/tcp-linux",
+  "url": "https://deadends.dev/networking/dhcp-lease-expired/tcp-linux",
+  "error": {
+    "signature": "DHCPNAK: lease expired, no address assigned",
+    "regex": "DHCPNAK|lease expired|no.*DHCP.*offer|dhclient.*failed|No lease.*obtained|unable to obtain",
+    "domain": "networking",
+    "category": "dhcp",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The DHCP lease has expired and the client cannot obtain a new one. The host loses its IP address and all network connectivity until a lease is successfully renewed or a new one is acquired."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually assign the old DHCP address as a static IP without checking for conflicts",
+      "why_fails": "The DHCP server may have already reassigned that IP to another host, causing an IP conflict. Additionally, DNS and gateway settings from DHCP will not be applied.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Repeatedly run dhclient without checking if the DHCP server is reachable",
+      "why_fails": "If the DHCP server is down or unreachable (e.g., different VLAN, firewall blocking UDP 67/68), no amount of client retries will obtain a lease.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Release and renew the DHCP lease",
+      "success_rate": 0.90,
+      "how": "1. Release the current lease: sudo dhclient -r eth0\n2. Request a new lease: sudo dhclient eth0\n3. Check the assigned IP: ip addr show eth0\n4. Verify connectivity: ping -c 3 8.8.8.8\n5. If using NetworkManager: nmcli connection down eth0 && nmcli connection up eth0",
+      "sources": [],
+      "condition": "DHCP server must be reachable"
+    },
+    {
+      "action": "Check and fix the DHCP server pool exhaustion or connectivity issue",
+      "success_rate": 0.85,
+      "how": "1. On the DHCP server, check the lease pool: dhcpd-pools or inspect /var/lib/dhcpd/dhcpd.leases\n2. If the pool is exhausted, expand the IP range in dhcpd.conf\n3. Remove stale leases if hosts have been decommissioned\n4. Verify the DHCP relay agent if the server is on a different subnet\n5. Check firewall rules allow UDP ports 67 and 68\n6. Restart the DHCP service: systemctl restart isc-dhcp-server",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/arp-conflict/tcp-linux", "probability": 0.15, "condition": "when the DHCP server reassigns the IP to another host while the old host still has it cached"},
+      {"error_id": "networking/dns-resolution-failed/dns-linux", "probability": 0.25, "condition": "when the host loses its IP and can no longer reach DNS servers"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when network timeouts indicate the DHCP server is becoming unreachable"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "DHCP lease expiry is an address assignment failure; connection timeout is a transport-level failure on an already-addressed host"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

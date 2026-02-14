@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/broken-pipe/jdk17-linux",
+  "url": "https://deadends.dev/java/broken-pipe/jdk17-linux",
+  "error": {
+    "signature": "java.io.IOException: Broken pipe",
+    "regex": "java\\.io\\.IOException:\\s*Broken pipe",
+    "domain": "java",
+    "category": "io_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Broken pipe occurs when the application writes to a socket or pipe whose reading end has already been closed by the remote peer. Common in HTTP servers when clients disconnect before the response is fully sent."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing socket timeout values to prevent the broken pipe",
+      "why_fails": "Broken pipe is not a timeout issue — the remote end has actively closed the connection. Increasing timeouts does not prevent the peer from disconnecting and only delays detection of the problem.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retrying the write operation immediately after the broken pipe",
+      "why_fails": "Once the pipe is broken, the connection is dead. Retrying writes on the same socket will produce the same IOException. A new connection must be established before retrying.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Catch the IOException gracefully and log it at a lower severity, since client disconnections are often expected",
+      "success_rate": 0.88,
+      "how": "1. Wrap the write operation in a try-catch for IOException. 2. Check if the message contains 'Broken pipe'. 3. Log at WARN or DEBUG level rather than ERROR, since clients disconnecting mid-response is normal behavior (e.g., user navigates away). 4. Clean up the connection resources in the finally block.",
+      "sources": [],
+      "condition": "when the broken pipe is caused by normal client disconnections"
+    },
+    {
+      "action": "Implement connection keep-alive probes and check connection state before writing large responses",
+      "success_rate": 0.82,
+      "how": "1. Enable TCP keep-alive on the socket: socket.setKeepAlive(true). 2. For large responses, periodically flush and check for write errors early rather than buffering the entire response. 3. In HTTP servers, check if the client connection is still alive before beginning expensive response generation.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "probability": 0.20, "condition": "when the broken pipe handling triggers a connection reset on related sockets"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/http-timeout/jdk17-linux", "probability": 0.15, "condition": "when the client times out waiting and closes the connection before the server finishes writing"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/socketexception-connection-reset/jdk17-linux", "distinction": "Connection reset means the remote end sent a RST packet; Broken pipe means the local end tried to write to a socket whose remote end has already closed"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

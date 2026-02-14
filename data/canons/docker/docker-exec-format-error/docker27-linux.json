@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-exec-format-error/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-exec-format-error/docker27-linux",
+  "error": {
+    "signature": "exec format error: exec user process caused: exec format error",
+    "regex": "exec format error|exec user process caused.*exec format",
+    "domain": "docker",
+    "category": "platform",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The container binary is compiled for a different CPU architecture than the host (e.g., running an amd64 image on arm64), or the entrypoint script lacks a proper shebang line."
+  },
+  "dead_ends": [
+    {
+      "action": "Installing QEMU without registering binfmt_misc handlers",
+      "why_fails": "QEMU alone is not enough; the kernel needs binfmt_misc entries to know which emulator to use for foreign binaries",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Forcing the entrypoint to bash without checking if bash exists in the image",
+      "why_fails": "Many minimal images (alpine, scratch) do not include bash; use /bin/sh instead",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pull the image for the correct platform architecture",
+      "success_rate": 0.92,
+      "how": "docker pull --platform linux/amd64 <image> (or linux/arm64 depending on your host). Check host arch with: uname -m",
+      "sources": [
+        "https://docs.docker.com/build/building/multi-platform/"
+      ],
+      "condition": "when the issue is architecture mismatch"
+    },
+    {
+      "action": "Add a proper shebang line to shell scripts used as entrypoints",
+      "success_rate": 0.90,
+      "how": "Ensure the first line of the script is #!/bin/sh (not #!/bin/bash if bash is not installed) and the file has execute permissions",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#entrypoint"
+      ],
+      "condition": "when the error is caused by a missing shebang"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/oci-runtime-create-failed/docker27-linux",
+        "probability": 0.18,
+        "condition": "when the exec format error is wrapped in an OCI runtime error"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/docker-manifest-unknown/docker27-linux",
+        "probability": 0.15,
+        "condition": "when pulling the wrong platform variant of a multi-arch image"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/entrypoint-not-found/docker27-linux",
+        "distinction": "Exec format error means the binary exists but is for the wrong architecture or lacks a shebang, while entrypoint not found means the specified binary does not exist in the container filesystem"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

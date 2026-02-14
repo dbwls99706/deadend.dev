@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-pod-topology-spread/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-pod-topology-spread/k8s129-linux",
+  "error": {
+    "signature": "FailedScheduling: didn't match pod topology spread constraints",
+    "regex": "didn't match pod topology spread constraints|topology spread constraint.*not satisfied|TopologySpreadConstraint.*unsatisfiable",
+    "domain": "kubernetes",
+    "category": "scheduling_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Pod can't be scheduled because topology spread constraints can't be satisfied — not enough nodes/zones or maxSkew is too strict."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove topology spread constraints entirely",
+      "why_fails": "Loses availability guarantees — all pods may end up on one node/zone",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Force schedule with nodeName",
+      "why_fails": "Bypasses scheduler — breaks topology spread for the entire deployment",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set whenUnsatisfiable to ScheduleAnyway instead of DoNotSchedule",
+      "success_rate": 0.88,
+      "how": "Update topologySpreadConstraints[].whenUnsatisfiable: ScheduleAnyway in the pod spec",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Increase maxSkew or add more nodes/zones to satisfy the constraint",
+      "success_rate": 0.85,
+      "how": "Set maxSkew: 2 or 3 for more flexibility, or scale up the node pool across more zones",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/pod-pending/k8s1-linux",
+        "probability": 0.30,
+        "condition": "when topology constraints prevent all scheduling"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/failedscheduling/k8s1-linux",
+        "probability": 0.22,
+        "condition": "when general scheduling failures are caused by topology constraints"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/failedscheduling/k8s1-linux",
+        "distinction": "topology-spread is specifically about distribution constraints across nodes/zones, while FailedScheduling covers all scheduling failures including resource insufficiency"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

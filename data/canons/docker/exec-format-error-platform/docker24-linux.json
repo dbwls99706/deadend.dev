@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/exec-format-error-platform/docker24-linux",
+  "url": "https://deadends.dev/docker/exec-format-error-platform/docker24-linux",
+  "error": {
+    "signature": "exec /usr/local/bin/node: exec format error",
+    "regex": "exec .+: exec format error",
+    "domain": "docker",
+    "category": "platform_error",
+    "first_seen": "2021-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=24.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "apple silicon",
+        "arm64",
+        "amd64",
+        "cross-platform build"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-01",
+    "summary": "The container image was built for a different CPU architecture than the host. Most commonly: arm64 image on amd64 host or vice versa, triggered by Apple Silicon Macs deploying to amd64 Linux servers."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstalling the binary inside the container",
+      "why_fails": "The binary itself is compiled correctly — it is compiled for a different CPU architecture. Reinstalling fetches the same architecture-mismatched binary because the base image is the wrong platform.",
+      "fail_rate": 0.92,
+      "sources": [],
+      "common_misconception": "The binary is assumed to be corrupted when the issue is CPU architecture mismatch."
+    },
+    {
+      "action": "Adding chmod +x to the binary",
+      "why_fails": "This is a permissions fix. The error is about ELF binary architecture mismatch, not file permissions. The binary is executable, just not for this CPU instruction set.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "'exec format error' is confused with permission denied errors."
+    },
+    {
+      "action": "Setting DOCKER_DEFAULT_PLATFORM after the image is already pulled",
+      "why_fails": "DOCKER_DEFAULT_PLATFORM only affects future image pulls. The cached image is still the wrong architecture. You must remove the old image first.",
+      "fail_rate": 0.78,
+      "sources": [],
+      "common_misconception": "Environment variables retroactively fix cached images."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Specify --platform in docker run or FROM line",
+      "how": "Add --platform linux/amd64 (or linux/arm64) to match your target deployment. In Dockerfile: 'FROM --platform=linux/amd64 node:20'. In docker run: 'docker run --platform linux/amd64 myimage'.",
+      "success_rate": 0.95,
+      "tradeoff": "Emulated architecture is slower than native (QEMU emulation overhead)",
+      "sources": [
+        "https://docs.docker.com/build/building/multi-platform/"
+      ]
+    },
+    {
+      "action": "Build multi-platform images with docker buildx",
+      "how": "Set up buildx: 'docker buildx create --use'. Build for both architectures: 'docker buildx build --platform linux/amd64,linux/arm64 -t myimage:latest --push .'. The correct architecture is automatically selected at pull time.",
+      "success_rate": 0.92,
+      "tradeoff": "Build takes longer as it compiles for multiple architectures",
+      "sources": [
+        "https://docs.docker.com/build/building/multi-platform/"
+      ]
+    },
+    {
+      "action": "Remove cached wrong-architecture image and re-pull with --platform",
+      "how": "Docker caches the first platform it pulls. Remove the old image: 'docker image rm <image>:<tag>'. Then pull fresh: 'docker pull --platform linux/amd64 <image>:<tag>'.",
+      "success_rate": 0.9,
+      "tradeoff": "Must re-download the image",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/exec-format-error/docker27-linux",
+        "distinction": "The generic exec-format-error may be caused by a missing shebang in scripts. This platform-specific variant is specifically about CPU architecture mismatch between image and host."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 70,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

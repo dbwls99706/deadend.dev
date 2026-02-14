@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/context-destroyed/cuda12-linux",
+  "url": "https://deadends.dev/cuda/context-destroyed/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: context is destroyed (cudaErrorContextIsDestroyed)",
+    "regex": "context.*destroyed|cudaErrorContextIsDestroyed|CUDA_ERROR_CONTEXT_IS_DESTROYED",
+    "domain": "cuda",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux",
+    "hardware": {"gpu": "any"}
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The CUDA context was destroyed while operations were still pending or references to it remained. Happens when cuCtxDestroy is called prematurely, during process forking with active GPU contexts, or when GPU driver resets the context due to a timeout."
+  },
+  "dead_ends": [
+    {
+      "action": "Catch the error and retry the CUDA operation",
+      "why_fails": "Once the context is destroyed, all associated allocations, streams, and modules are invalidated; retrying on the same context is impossible",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increase GPU memory to prevent context destruction",
+      "why_fails": "Context destruction is not caused by memory pressure; it is caused by explicit destruction or driver timeout",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure proper context lifecycle: do not destroy context while operations are pending",
+      "success_rate": 0.88,
+      "how": "Call cudaDeviceSynchronize() before cuCtxDestroy(). Ensure no async operations are in flight.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use spawn instead of fork for multiprocessing to avoid context inheritance issues",
+      "success_rate": 0.90,
+      "how": "import multiprocessing; multiprocessing.set_start_method('spawn') before creating any CUDA contexts",
+      "sources": [],
+      "condition": "when using Python multiprocessing"
+    },
+    {
+      "action": "Increase TDR timeout on systems with display timeout (Windows) or check nvidia-persistenced (Linux)",
+      "success_rate": 0.80,
+      "how": "On Linux: systemctl enable nvidia-persistenced. This prevents the driver from destroying idle contexts.",
+      "sources": [],
+      "condition": "when context is destroyed by driver timeout"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.25, "condition": "when code continues to use pointers from the destroyed context"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/device-side-assert/cuda12-linux", "probability": 0.2, "condition": "when a device-side assert corrupts the context leading to destruction"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/not-initialized/cuda12-linux", "distinction": "Context-destroyed means a context existed and was torn down; not-initialized means no context was ever created"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -35,7 +35,7 @@
       "sources": [
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
-      "common_misconception": "npm cache clean is often suggested as a catch-all fix for npm errors, but ENOENT specifically indicates a missing file path \u2014 cache is unrelated."
+      "common_misconception": "npm cache clean is often suggested as a catch-all fix for npm errors, but ENOENT specifically indicates a missing file path — cache is unrelated."
     },
     {
       "action": "Deleting node_modules and reinstalling",
@@ -70,14 +70,7 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "node/gyp-rebuild-error/node20-linux-arm64",
-        "probability": 0.3,
-        "condition": "When attempting npm rebuild for native modules",
-        "typical_delay": "immediate"
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [],
     "frequently_confused_with": [
       {

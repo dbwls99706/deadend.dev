@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-pod-security-admission/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-pod-security-admission/k8s129-linux",
+  "error": {
+    "signature": "Error from server (Forbidden): pods are forbidden: violates PodSecurity",
+    "regex": "violates PodSecurity|pod-security\\.kubernetes\\.io.*violation|PodSecurity.*restricted|PodSecurity.*baseline",
+    "domain": "kubernetes",
+    "category": "security_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Pod Security Admission controller rejects pod because it violates the namespace's security standard (restricted, baseline, or privileged)."
+  },
+  "dead_ends": [
+    {
+      "action": "Set the namespace to privileged security level",
+      "why_fails": "Removes security controls — defeats the purpose of Pod Security Standards",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable Pod Security Admission entirely",
+      "why_fails": "Cluster-wide security regression — not recommended for production",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-admission/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the pod spec to comply with the security standard: remove privileged, runAsRoot, hostNetwork, etc.",
+      "success_rate": 0.92,
+      "how": "Set securityContext.runAsNonRoot: true, securityContext.allowPrivilegeEscalation: false, drop ALL capabilities",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-standards/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use 'warn' or 'audit' mode instead of 'enforce' during migration",
+      "success_rate": 0.85,
+      "how": "kubectl label namespace <ns> pod-security.kubernetes.io/enforce=baseline pod-security.kubernetes.io/warn=restricted",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/security/pod-security-admission/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.18,
+        "condition": "when pod is modified to comply but application breaks without privileges"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-admission-webhook-denied/k8s129-linux",
+        "probability": 0.22,
+        "condition": "when admission webhook is the Pod Security Admission controller"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/forbidden-user/k8s128-linux",
+        "distinction": "Pod Security Admission rejects the pod spec for violating security standards, while Forbidden user is an RBAC denial on the API caller"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

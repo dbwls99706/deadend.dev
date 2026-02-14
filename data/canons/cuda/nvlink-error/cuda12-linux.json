@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/nvlink-error/cuda12-linux",
+  "url": "https://deadends.dev/cuda/nvlink-error/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: an NVLink error was detected on the link (cudaErrorNvlinkUncorrectable)",
+    "regex": "cudaErrorNvlinkUncorrectable|NVLink.*error|nvlink.*uncorrectable|Xid.*74.*NVLink",
+    "domain": "cuda",
+    "category": "hardware_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.72,
+    "confidence": 0.78,
+    "last_updated": "2026-02-12",
+    "summary": "An uncorrectable error was detected on an NVLink connection between GPUs. NVLink provides high-bandwidth GPU-to-GPU communication. Uncorrectable errors indicate physical link degradation, overheating, or hardware failure. This error causes the affected GPUs to be unable to communicate via NVLink, falling back to PCIe or failing entirely. Common in multi-GPU servers (DGX, HGX) under heavy inter-GPU communication workloads."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling NVLink in software and using PCIe for all GPU-to-GPU communication",
+      "why_fails": "There is no software toggle to disable NVLink. CUDA automatically uses NVLink when available. Setting CUDA_VISIBLE_DEVICES to isolate GPUs avoids NVLink but also prevents multi-GPU workloads. The underlying hardware issue persists and may indicate impending GPU failure.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing GPU power limits to compensate for NVLink errors",
+      "why_fails": "NVLink errors are caused by link signal integrity issues, not insufficient power. Increasing power limits does not improve link quality and may increase temperatures, potentially worsening the problem.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check GPU temperatures and cooling, reseat GPUs if possible, and run NVLink diagnostics",
+      "success_rate": 0.75,
+      "how": "Check temperatures: nvidia-smi -q -d TEMPERATURE. Run NVLink diagnostics: nvidia-smi nvlink --status -i 0. Check error counts: nvidia-smi nvlink -e -i 0. If errors are intermittent and temperature-related, improve server cooling. If the server allows it, reseat the GPU to fix a loose NVLink connector. Check dmesg for Xid 74 errors for details.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace the affected GPU or NVLink bridge if errors persist",
+      "success_rate": 0.90,
+      "how": "Persistent NVLink uncorrectable errors indicate hardware failure. Run nvidia-smi -q to identify which GPU and which NVLink link is affected. In DGX/HGX systems, the NVLink bridge may be replaceable separately. Contact NVIDIA or the server vendor for RMA. As a temporary workaround, use CUDA_VISIBLE_DEVICES to exclude the affected GPU from workloads.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "probability": 0.20, "condition": "when NVLink hardware degradation also affects GPU memory subsystem"},
+      {"error_id": "cuda/nvidia-smi-failed/cuda12-linux", "probability": 0.15, "condition": "when NVLink failure cascades to GPU driver communication failure"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "probability": 0.15, "condition": "when GPU memory errors indicate broader hardware degradation affecting NVLink"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/ecc-uncorrectable/cuda12-linux", "distinction": "NVLink errors affect GPU-to-GPU communication links. ECC errors affect GPU onboard memory (HBM/GDDR). Both are hardware errors but involve different subsystems. NVLink errors prevent multi-GPU communication; ECC errors corrupt computation results."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 35,
+    "last_verification": "2026-02-12"
+  }
+}

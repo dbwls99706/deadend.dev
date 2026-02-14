@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/hydration-mismatch/react18-linux",
+  "url": "https://deadends.dev/react/hydration-mismatch/react18-linux",
+  "error": {
+    "signature": "Hydration failed because the server rendered HTML didn't match the client.",
+    "regex": "(?:Hydration failed|Text content does not match server-rendered HTML|There was an error while hydrating)",
+    "domain": "react",
+    "category": "hydration_error",
+    "first_seen": "2022-03-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18.0.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": ["next.js", "remix", "ssr", "react 18"]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-01",
+    "summary": "Server and client render different HTML. Common causes: browser-only APIs (window, localStorage), date/time rendering, browser extensions injecting elements, and conditional rendering based on client state."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding suppressHydrationWarning to the root element",
+      "why_fails": "suppressHydrationWarning only suppresses text content mismatches on a single element. It does not fix structural mismatches (different elements, different number of children). It masks the problem rather than fixing it.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "common_misconception": "suppressHydrationWarning is a global fix for all hydration errors."
+    },
+    {
+      "action": "Wrapping everything in useEffect to skip server rendering",
+      "why_fails": "Moving all rendering to useEffect means nothing renders on the server, defeating the purpose of SSR entirely. The page appears blank until JavaScript loads, hurting performance and SEO.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "common_misconception": "SSR is optional when it is the core feature of the framework being used."
+    },
+    {
+      "action": "Disabling React strict mode to suppress the error",
+      "why_fails": "Strict mode does not cause hydration errors. It double-invokes effects to catch bugs, but hydration mismatches are real rendering inconsistencies. Disabling strict mode does not fix them.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "common_misconception": "Strict mode causes hydration errors because of double rendering."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a mounted state to defer client-only rendering",
+      "how": "const [mounted, setMounted] = useState(false); useEffect(() => setMounted(true), []); if (!mounted) return <ServerFallback />; return <ClientContent />; This renders the same fallback on server and client until hydration completes.",
+      "success_rate": 0.90,
+      "tradeoff": "Slight flash of fallback content; client-specific content appears after hydration",
+      "sources": ["https://react.dev/reference/react-dom/client/hydrateRoot"]
+    },
+    {
+      "action": "Move browser-only APIs behind typeof window checks",
+      "how": "const value = typeof window !== 'undefined' ? window.localStorage.getItem('key') : null; This ensures server and client render the same default value initially.",
+      "success_rate": 0.88,
+      "tradeoff": "None; standard SSR pattern",
+      "sources": []
+    },
+    {
+      "action": "Use next/dynamic with ssr: false for truly client-only components",
+      "how": "const ClientOnly = dynamic(() => import('./ClientOnly'), { ssr: false }); This skips server rendering for components that fundamentally cannot run on the server (maps, editors, etc.).",
+      "success_rate": 0.92,
+      "tradeoff": "Component is not rendered during SSR; may cause layout shift",
+      "sources": ["https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"]
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 75,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

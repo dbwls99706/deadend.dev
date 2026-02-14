@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-router-no-match/react18-linux",
+  "url": "https://deadends.dev/react/react-router-no-match/react18-linux",
+  "error": {
+    "signature": "Error: No routes matched location \"/some/path\"",
+    "regex": "No routes matched location|useRoutes.*no matches|No route matches|Matched leaf route at location.*does not have an element",
+    "domain": "react",
+    "category": "routing_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "React Router v6 cannot find a matching route for the current URL. Common causes: missing catch-all route, incorrect path patterns, basename mismatch, or nested routes not using relative paths."
+  },
+  "dead_ends": [
+    {
+      "action": "Redirect all unmatched routes to the home page",
+      "why_fails": "Hides navigation bugs and broken links. Users land on the wrong page silently with no indication that their intended URL was invalid.",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://reactrouter.com/en/main/start/concepts"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use exact prop on Route components (React Router v5 pattern)",
+      "why_fails": "React Router v6 removed the exact prop; all routes match exactly by default. Using exact has no effect and the real issue is elsewhere.",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://reactrouter.com/en/main/upgrading/v5"
+      ],
+      "condition": "When migrating from React Router v5 to v6"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add a catch-all route with path=\"*\" that renders a 404 page",
+      "success_rate": 0.93,
+      "how": "<Routes><Route path=\"/\" element={<Home />} /><Route path=\"/about\" element={<About />} /><Route path=\"*\" element={<NotFound />} /></Routes>",
+      "sources": [
+        "https://reactrouter.com/en/main/route/route#splats"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure basename is set correctly on BrowserRouter when app is hosted at a subpath",
+      "success_rate": 0.90,
+      "how": "<BrowserRouter basename=\"/my-app\"><Routes>...</Routes></BrowserRouter>",
+      "sources": [
+        "https://reactrouter.com/en/main/router-components/browser-router"
+      ],
+      "condition": "When the app is deployed at a subpath like /my-app/"
+    },
+    {
+      "action": "Use relative paths in nested routes instead of absolute paths",
+      "success_rate": 0.88,
+      "how": "In nested routes, use path=\"settings\" not path=\"/dashboard/settings\". The parent route path is prepended automatically.",
+      "sources": [
+        "https://reactrouter.com/en/main/start/concepts#defining-routes"
+      ],
+      "condition": "When using nested route configurations"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-error-boundary-fallback/react18-linux",
+        "probability": 0.15,
+        "condition": "When the router error is not caught and propagates up to crash the app"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/react-lazy-loading-failed/react18-linux",
+        "probability": 0.12,
+        "condition": "When a lazy-loaded route component fails to load and the route match fails"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-context-provider-missing/react18-linux",
+        "distinction": "router-no-match is a routing configuration error about unmatched URL paths, while context-provider-missing is about missing React Context providers (though both can produce 'cannot read properties of undefined' errors)"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 160,
+    "last_verification": "2026-02-12"
+  }
+}

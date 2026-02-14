@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/searchparams-sync-access/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/searchparams-sync-access/nextjs14-linux",
+  "error": {
+    "signature": "Error: Route used `searchParams.X`. `searchParams` should be awaited before using its properties.",
+    "regex": "searchParams.+should be awaited before using its properties",
+    "domain": "nextjs",
+    "category": "runtime_error",
+    "first_seen": "2024-10-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=15,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.95,
+    "last_updated": "2026-02-13",
+    "summary": "Next.js 15 changed searchParams and params from synchronous objects to Promises. Code that accesses searchParams.X directly without awaiting will fail. This is a breaking change from Next.js 14."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrade to Next.js 14 to avoid the breaking change",
+      "why_fails": "Downgrading avoids the immediate error but locks the project out of Next.js 15 features and security updates. The migration is straightforward and should be done instead.",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://nextjs.org/blog/next-15#async-request-apis-breaking-change"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Type searchParams as a plain object (e.g., { X: string }) without Promise",
+      "why_fails": "TypeScript types may suppress editor errors, but at runtime searchParams is still a Promise. Accessing properties without await returns undefined or throws.",
+      "fail_rate": 0.92,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page#searchparams-optional"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useSearchParams() hook in a Server Component to get synchronous access",
+      "why_fails": "useSearchParams() is a Client Component hook and cannot be used in Server Components. In Server Components, the only way to access search params is through the page/layout props which are now Promises.",
+      "fail_rate": 0.88,
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ],
+      "condition": "Attempting in a Server Component"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Await searchParams before accessing its properties in Server Components",
+      "success_rate": 0.96,
+      "how": "// Next.js 15+ page.tsx\nexport default async function Page({\n  searchParams,\n}: {\n  searchParams: Promise<{ q?: string }>\n}) {\n  const params = await searchParams;\n  const query = params.q;\n  return <div>Search: {query}</div>;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page#searchparams-optional",
+        "https://nextjs.org/blog/next-15#async-request-apis-breaking-change"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use React.use() to unwrap the searchParams promise in Client Components",
+      "success_rate": 0.90,
+      "how": "'use client';\nimport { use } from 'react';\n\nexport default function Page({\n  searchParams,\n}: {\n  searchParams: Promise<{ q?: string }>\n}) {\n  const params = use(searchParams);\n  return <div>Search: {params.q}</div>;\n}",
+      "sources": [
+        "https://nextjs.org/blog/next-15#async-request-apis-breaking-change"
+      ],
+      "condition": "Component is a Client Component and cannot use async/await"
+    },
+    {
+      "action": "Use the next/headers cookies() and headers() with await as well during migration",
+      "success_rate": 0.92,
+      "how": "// Next.js 15: all request APIs are now async\nimport { cookies, headers } from 'next/headers';\n\nexport default async function Page({\n  searchParams,\n}: {\n  searchParams: Promise<{ q?: string }>\n}) {\n  const [params, cookieStore, headerList] = await Promise.all([\n    searchParams,\n    cookies(),\n    headers(),\n  ]);\n  // use params.q, cookieStore.get('token'), etc.\n}",
+      "sources": [
+        "https://nextjs.org/blog/next-15#async-request-apis-breaking-change"
+      ],
+      "condition": "Multiple async request APIs need to be accessed together"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/async-client-component/nextjs14-linux",
+        "probability": 0.20,
+        "condition": "Developer makes a Client Component async to await searchParams"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/cannot-read-properties-searchparams/nextjs14-linux",
+        "probability": 0.35,
+        "condition": "Upgrading from Next.js 14 to 15 where searchParams was accessed synchronously"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/cannot-read-properties-searchparams/nextjs14-linux",
+        "distinction": "cannot-read-properties-searchparams is about searchParams being undefined/null at runtime; searchparams-sync-access is specifically about the Next.js 15 async API migration"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

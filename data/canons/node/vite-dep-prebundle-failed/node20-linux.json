@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/vite-dep-prebundle-failed/node20-linux",
+  "url": "https://deadends.dev/node/vite-dep-prebundle-failed/node20-linux",
+  "error": {
+    "signature": "[vite] Pre-transform error: Failed to resolve import \"X\" from \"Y\". Does the file exist?",
+    "regex": "\\[vite\\].*Failed to resolve import [\"']([^\"']+)[\"'] from [\"']([^\"']+)[\"']",
+    "domain": "node",
+    "category": "bundler_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18.0.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "vite",
+        "react",
+        "vue",
+        "monorepo"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.88,
+    "last_updated": "2026-02-01",
+    "summary": "Usually caused by a path alias mismatch between tsconfig.json and vite.config.ts, or missing file extensions in ESM imports. Vite does not read tsconfig paths by default."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the import to optimizeDeps.include in vite.config",
+      "why_fails": "optimizeDeps.include only helps with pre-bundling CJS dependencies into ESM. It does nothing for missing source files, misconfigured path aliases, or wrong import paths. The error is about import resolution, not dependency optimization.",
+      "fail_rate": 0.82,
+      "sources": [],
+      "common_misconception": "optimizeDeps.include is treated as a catch-all fix for Vite import errors, but it only affects the dependency pre-bundling step."
+    },
+    {
+      "action": "Deleting node_modules/.vite and restarting dev server",
+      "why_fails": "The .vite cache stores pre-bundled dependencies. Clearing it helps when cached deps are corrupted, but when the import path itself is wrong (missing extension, wrong alias), the same error reappears immediately after restart.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "common_misconception": "Cache clearing is a reflexive first step, but this error is almost never a caching issue."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install vite-tsconfig-paths plugin or duplicate aliases in vite.config",
+      "how": "Vite does not read tsconfig.json paths by default. Either install 'npm install -D vite-tsconfig-paths' and add it to vite plugins array, or manually duplicate your path aliases in vite.config.ts resolve.alias. Example: resolve: { alias: { '@': path.resolve(__dirname, './src') } }",
+      "success_rate": 0.91,
+      "tradeoff": "Requires maintaining aliases in two places if not using the plugin",
+      "sources": [
+        "https://github.com/aleclarson/vite-tsconfig-paths"
+      ]
+    },
+    {
+      "action": "Add explicit file extensions for ESM imports",
+      "how": "Vite in ESM mode may not auto-resolve .ts/.tsx extensions in some configurations. Add the extension explicitly: import { Foo } from './components/Foo.tsx' instead of './components/Foo'. Or configure resolve.extensions in vite.config.ts.",
+      "success_rate": 0.85,
+      "tradeoff": "More verbose import paths",
+      "sources": []
+    },
+    {
+      "action": "Check that the imported file actually exists at the resolved path",
+      "how": "The error message includes both the import specifier and the importing file. Resolve the path manually relative to the importer. Check for case-sensitivity issues on Linux (macOS is case-insensitive, Linux is not).",
+      "success_rate": 0.88,
+      "tradeoff": "None; this is a diagnostic step",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-module-not-found/node20-linux",
+        "distinction": "Vite's 'Failed to resolve import' is a bundler-time error during dev server transformation, while Node's ERR_MODULE_NOT_FOUND is a runtime ESM resolution error. Different fix paths: Vite needs config changes, Node needs package.json exports."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 60,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

@@ -66,19 +66,8 @@
   ],
   "transition_graph": {
     "leads_to": [],
-    "preceded_by": [
-      {
-        "error_id": "docker/install-fresh/docker24-linux",
-        "probability": 0.6,
-        "condition": "Fresh Docker installation where the post-install group setup step was skipped"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "docker/daemon-not-running/docker24-linux",
-        "distinction": "Permission denied means the daemon is running but you lack access. 'Cannot connect to the Docker daemon' means the daemon is not running at all. Check 'systemctl status docker' to distinguish."
-      }
-    ]
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

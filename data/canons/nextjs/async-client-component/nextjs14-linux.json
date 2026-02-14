@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/async-client-component/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/async-client-component/nextjs14-linux",
+  "error": {
+    "signature": "Error: async/await is not yet supported in Client Components, only Server Components.",
+    "regex": "async/await is not yet supported in Client Components",
+    "domain": "nextjs",
+    "category": "component_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.94,
+    "last_updated": "2026-02-13",
+    "summary": "A component marked with 'use client' uses async/await at the component level. Client Components cannot be async functions. Data fetching must use useEffect, Server Actions, or the data should be fetched in a Server Component parent."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the 'use client' directive to make it a Server Component",
+      "why_fails": "If the component uses React hooks (useState, useEffect, useRef) or browser APIs (window, document, localStorage), removing 'use client' will trigger hook/browser API errors. The component is a Client Component for a reason.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ],
+      "condition": "Component uses hooks or browser APIs"
+    },
+    {
+      "action": "Use a top-level await inside the client component body",
+      "why_fails": "Top-level await is a module-level feature and cannot be used inside React component functions. React component rendering must be synchronous in Client Components.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://react.dev/reference/rsc/server-components"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap the async component in Suspense to make it work as a client component",
+      "why_fails": "Suspense boundaries handle loading states for lazy-loaded or server components, but they do not enable async/await syntax in Client Component function bodies. The component function itself still cannot be async.",
+      "fail_rate": 0.88,
+      "sources": [
+        "https://react.dev/reference/react/Suspense"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move the async data fetching into useEffect with useState",
+      "success_rate": 0.94,
+      "how": "'use client';\nimport { useState, useEffect } from 'react';\n\nexport default function MyComponent() {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    async function fetchData() {\n      const res = await fetch('/api/data');\n      setData(await res.json());\n    }\n    fetchData();\n  }, []);\n  if (!data) return <div>Loading...</div>;\n  return <div>{data.title}</div>;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching#fetching-data-on-the-client"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Fetch data in a Server Component parent and pass it as props",
+      "success_rate": 0.95,
+      "how": "// page.tsx (Server Component, no 'use client')\nimport { ClientComponent } from './ClientComponent';\nexport default async function Page() {\n  const data = await fetch('https://api.example.com/data').then(r => r.json());\n  return <ClientComponent data={data} />;\n}\n\n// ClientComponent.tsx\n'use client';\nexport function ClientComponent({ data }) {\n  const [state, setState] = useState(data);\n  return <div>{state.title}</div>;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a Server Action for on-demand data fetching from the client",
+      "success_rate": 0.89,
+      "how": "// actions.ts\n'use server';\nexport async function getData(id: string) {\n  const res = await fetch(`https://api.example.com/data/${id}`);\n  return res.json();\n}\n\n// ClientComponent.tsx\n'use client';\nimport { getData } from './actions';\nimport { useTransition } from 'react';\n\nexport function ClientComponent() {\n  const [isPending, startTransition] = useTransition();\n  const [data, setData] = useState(null);\n  const handleClick = () => {\n    startTransition(async () => {\n      const result = await getData('123');\n      setData(result);\n    });\n  };\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ],
+      "condition": "Data fetching is triggered by user interaction"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.25,
+        "condition": "Developer removes 'use client' to use async but the component uses hooks"
+      },
+      {
+        "error_id": "nextjs/rsc-serialization-error/nextjs14-linux",
+        "probability": 0.10,
+        "condition": "Server Component passes non-serializable fetched data to Client Component"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.20,
+        "condition": "Developer adds 'use client' directive and then tries to make the component async"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "distinction": "server-component-client-hook is about using hooks without 'use client'; async-client-component is about using async/await with 'use client'"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

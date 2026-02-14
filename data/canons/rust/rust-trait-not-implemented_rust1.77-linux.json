@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-trait-not-implemented/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-trait-not-implemented/rust1.77-linux",
+  "error": {
+    "signature": "the trait `X` is not implemented for `Y`",
+    "regex": "the trait `.*` is not implemented for `.*`",
+    "domain": "rust",
+    "category": "trait_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "A required trait bound is missing. Either implement the trait for your type or use a type that already implements it."
+  },
+  "dead_ends": [
+    {
+      "action": "Add a blanket impl for all types using generics",
+      "why_fails": "Blanket impls conflict with existing implementations and create coherence issues",
+      "fail_rate": 0.75,
+      "sources": ["https://doc.rust-lang.org/reference/items/implementations.html"],
+      "condition": ""
+    },
+    {
+      "action": "Downcast with as to force type compatibility",
+      "why_fails": "Rust's as keyword only works for primitive numeric conversions, not trait conformance",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Derive or manually implement the required trait",
+      "success_rate": 0.92,
+      "how": "#[derive(Clone, Debug)]\nstruct MyType { ... }\n// or: impl MyTrait for MyType { ... }",
+      "sources": ["https://doc.rust-lang.org/book/ch10-02-traits.html"],
+      "condition": ""
+    },
+    {
+      "action": "Use a newtype wrapper that implements the needed trait",
+      "success_rate": 0.80,
+      "how": "struct Wrapper(InnerType);\nimpl RequiredTrait for Wrapper { ... }",
+      "sources": ["https://doc.rust-lang.org/book/ch19-03-advanced-traits.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/e0277-trait-not-implemented/rust1-linux", "probability": 0.30, "condition": "When adding trait bounds reveals more missing impls"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/e0277-trait-bound/rust1-linux", "probability": 0.25, "condition": "When generic function calls require traits"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/e0277-trait-not-implemented/rust1-linux", "distinction": "E0277 is the specific compiler code; this is the general trait-not-implemented message pattern"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

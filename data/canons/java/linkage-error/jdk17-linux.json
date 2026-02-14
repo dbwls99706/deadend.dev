@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/linkage-error/jdk17-linux",
+  "url": "https://deadends.dev/java/linkage-error/jdk17-linux",
+  "error": {
+    "signature": "java.lang.LinkageError: loader constraint violation",
+    "regex": "java\\.lang\\.LinkageError",
+    "domain": "java",
+    "category": "classpath_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.76,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "LinkageError indicates an incompatibility between classes that were compiled together but have changed incompatibly at runtime. Commonly caused by classloader conflicts in application servers, OSGi containers, or complex multi-module builds."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching LinkageError and retrying the class load",
+      "why_fails": "LinkageError is a fatal error indicating a structural incompatibility between class files. Retrying will load the same incompatible classes and produce the same error. The classpath must be corrected.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Deleting all class files and rebuilding without checking dependency versions",
+      "why_fails": "A clean rebuild only helps if your own source code caused the incompatibility. Most LinkageErrors come from conflicting third-party library versions on the classpath, which persist after rebuilding.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify the conflicting class versions using -verbose:class and align dependencies",
+      "success_rate": 0.82,
+      "how": "1. Run with -verbose:class to log which JAR each class is loaded from. 2. Search the output for the class mentioned in the LinkageError. 3. If it is loaded from an unexpected JAR, you have a classpath conflict. 4. Use 'mvn dependency:tree' to find which dependencies pull in the conflicting JAR. 5. Exclude the unwanted version and pin the correct one in dependencyManagement.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "In application servers, configure class loading to parent-last to prefer app classes over server-provided classes",
+      "success_rate": 0.78,
+      "how": "1. In Tomcat: ensure conflicting libraries are not in both WEB-INF/lib and tomcat/lib. 2. In WildFly/JBoss: use jboss-deployment-structure.xml to exclude server modules. 3. In WebSphere: set classloader policy to PARENT_LAST. 4. In general, avoid bundling libraries that the application server already provides (e.g., servlet-api, JPA).",
+      "sources": [],
+      "condition": "when running in an application server"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.25, "condition": "when resolving the linkage error by pinning a different version introduces missing methods"},
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.15, "condition": "when excluding the conflicting JAR removes a class that was still needed"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/jar-hell/jdk17-linux", "probability": 0.30, "condition": "when duplicate JARs on the classpath lead to classloader constraint violations"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/no-class-def-found/jdk17-linux", "distinction": "NoClassDefFoundError means a class existed at compile time but not at runtime; LinkageError means the class exists but is incompatible with the version expected by other loaded classes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

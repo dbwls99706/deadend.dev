@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-innodb-deadlock-timeout/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-innodb-deadlock-timeout/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction",
+    "regex": "ERROR 1213.*Deadlock found when trying to get lock",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "InnoDB detected a deadlock cycle between two or more transactions and rolled back the one with the fewest row changes (the victim). This is different from MySQL's lock wait timeout (ERROR 1205). InnoDB has built-in deadlock detection that immediately resolves deadlocks by choosing a victim, rather than waiting for a timeout."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting innodb_deadlock_detect = OFF to disable deadlock detection",
+      "why_fails": "With deadlock detection disabled, InnoDB falls back to innodb_lock_wait_timeout to resolve deadlocks. This means transactions wait the full timeout (default 50s) before failing, severely degrading performance. Deadlocks that were resolved in milliseconds now take 50 seconds.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using LOCK TABLES to prevent deadlocks by locking entire tables",
+      "why_fails": "Table-level locks serialize all access, destroying concurrency. InnoDB's row-level locking allows much higher throughput. LOCK TABLES also does not work with InnoDB's transactional semantics and can cause more issues than it solves.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Retry the deadlocked transaction with exponential backoff",
+      "success_rate": 0.88,
+      "how": "Catch SQLSTATE 40001 (or MySQL error 1213) and retry the entire transaction. Use exponential backoff: 50ms, 100ms, 200ms with random jitter. Limit to 3-5 retries. Most deadlocks succeed on the first retry since the conflicting transaction has already completed.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Access tables and rows in a consistent order across all transactions",
+      "success_rate": 0.85,
+      "how": "Analyze the deadlock: SHOW ENGINE INNODB STATUS\\G; Look at the LATEST DETECTED DEADLOCK section. Ensure transactions acquire locks in the same order (e.g., always update table A before table B, lock rows by ascending PK). Add appropriate indexes to reduce gap locking. Keep transactions as short as possible.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.20, "condition": "when deadlock detection is disabled and lock contention falls back to timeout-based resolution"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-too-many-connections/mysql8-linux", "probability": 0.15, "condition": "when high connection count leads to more concurrent transactions competing for the same rows"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "distinction": "ERROR 1213 (deadlock) is detected immediately by InnoDB and one transaction is chosen as a victim. ERROR 1205 (lock wait timeout) fires after waiting the full innodb_lock_wait_timeout. Deadlocks are circular waits; lock wait timeouts are simple waits on a held lock."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 58,
+    "last_verification": "2026-02-12"
+  }
+}

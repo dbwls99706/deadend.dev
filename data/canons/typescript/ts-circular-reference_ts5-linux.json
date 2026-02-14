@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-circular-reference/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-circular-reference/ts5-linux",
+  "error": {
+    "signature": "TS2456: Type alias 'X' circularly references itself",
+    "regex": "TS2456.*circularly references itself",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "A type alias references itself directly or through a chain. Use interfaces for recursive types or break the cycle."
+  },
+  "dead_ends": [
+    {
+      "action": "Use any to break the circular reference",
+      "why_fails": "Loses all type safety at the recursion point, defeating the purpose of TypeScript",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use an interface instead of a type alias for recursive types",
+      "success_rate": 0.90,
+      "how": "// Instead of: type Tree = { children: Tree[] }\n// Use:\ninterface Tree {\n  children: Tree[];\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"],
+      "condition": ""
+    },
+    {
+      "action": "Break the cycle with an intermediate interface",
+      "success_rate": 0.85,
+      "how": "interface JsonValue {\n  [key: string]: string | number | boolean | null | JsonValue | JsonValue[];\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/objects.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-excessive-stack-depth/ts5-linux", "probability": 0.20, "condition": "When circular types cause infinite type expansion"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-conditional-type-error/ts5-linux", "probability": 0.15, "condition": "When conditional types create unintentional cycles"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts-excessive-stack-depth/ts5-linux", "distinction": "Circular reference is a direct self-reference; excessive stack depth is the compiler running out of recursion depth"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

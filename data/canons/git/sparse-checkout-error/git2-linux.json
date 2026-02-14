@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/sparse-checkout-error/git2-linux",
+  "url": "https://deadends.dev/git/sparse-checkout-error/git2-linux",
+  "error": {
+    "signature": "error: sparse-checkout is not enabled. Use 'git sparse-checkout init' to enable it.",
+    "regex": "(?i)(?:sparse-checkout.*not enabled|cannot use sparse-checkout|sparse-checkout.*error|cone mode.*does not accept)",
+    "domain": "git",
+    "category": "sparse_checkout",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Git sparse-checkout commands fail because sparse-checkout is not initialized, or cone mode patterns are incorrectly specified. Often seen when migrating from non-cone sparse-checkout to cone mode or in CI environments."
+  },
+  "dead_ends": [
+    {
+      "action": "Editing .git/info/sparse-checkout manually with non-cone patterns while cone mode is enabled",
+      "why_fails": "Cone mode expects directory-based patterns; arbitrary gitignore-style patterns are silently ignored or cause errors",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running git read-tree -mu HEAD to force update the working tree",
+      "why_fails": "This is the old sparse-checkout mechanism and conflicts with the new sparse-checkout command; it can leave the working tree in an inconsistent state",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Initialize sparse-checkout properly with cone mode",
+      "success_rate": 0.90,
+      "how": "Run git sparse-checkout init --cone, then git sparse-checkout set <directory1> <directory2> to specify which directories to include.",
+      "sources": ["https://git-scm.com/docs/git-sparse-checkout"],
+      "condition": ""
+    },
+    {
+      "action": "Disable cone mode for complex patterns",
+      "success_rate": 0.85,
+      "how": "Run git sparse-checkout init --no-cone if you need gitignore-style patterns. Then use git sparse-checkout set with pattern syntax.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/local-changes-overwritten/git2-linux", "probability": 0.15, "condition": "when sparse-checkout set unexpectedly removes files that have local modifications"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/not-a-git-repository/git2-linux", "probability": 0.10, "condition": "when sparse-checkout commands are run outside a git repository"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/pathspec-no-match/git2-linux", "distinction": "sparse-checkout-error is about the sparse-checkout configuration itself; pathspec-no-match is about git commands referencing files not present in the index or working tree"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

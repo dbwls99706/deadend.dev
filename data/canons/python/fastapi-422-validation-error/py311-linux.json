@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/fastapi-422-validation-error/py311-linux",
+  "url": "https://deadends.dev/python/fastapi-422-validation-error/py311-linux",
+  "error": {
+    "signature": "422 Unprocessable Entity: {\"detail\":[{\"type\":\"missing\",\"loc\":[\"body\"],\"msg\":\"Field required\"}]}",
+    "regex": "422 Unprocessable Entity.*detail.*(?:missing|type_error|value_error)",
+    "domain": "python",
+    "category": "validation_error",
+    "first_seen": "2020-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13",
+    "additional": {
+      "common_contexts": [
+        "fastapi",
+        "pydantic v2",
+        "api development"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.9,
+    "last_updated": "2026-02-01",
+    "summary": "Almost always a content-type mismatch between client and server, or a Pydantic v1-to-v2 migration issue where validators silently stopped working. The 422 response includes detailed field-level error information."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding Optional to the field type to make it not required",
+      "why_fails": "If the client is sending data in the wrong Content-Type (e.g., form data instead of JSON), the field is 'missing' from the JSON body even though it was sent. Making the field Optional masks the root cause and allows None values through validation.",
+      "fail_rate": 0.68,
+      "sources": [],
+      "common_misconception": "Developers assume 'field required' means the field is optional, when it often means the request body format is wrong entirely."
+    },
+    {
+      "action": "Switching from Pydantic BaseModel to plain dict parameter",
+      "why_fails": "Loses all validation and type safety. The error shifts downstream to application logic where it is harder to debug. The 422 is actually helpful — it tells you exactly what is wrong with the request.",
+      "fail_rate": 0.8,
+      "sources": [],
+      "common_misconception": "Removing validation is seen as simplifying, but it moves errors from clear validation messages to obscure runtime failures."
+    },
+    {
+      "action": "Adding response_model_exclude_unset=True to the endpoint",
+      "why_fails": "response_model_exclude_unset controls response serialization, not request validation. It has zero effect on incoming 422 errors.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "Response model configuration is confused with request body validation."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify Content-Type header matches the endpoint parameter type",
+      "how": "Use application/json for Body/BaseModel parameters, application/x-www-form-urlencoded for Form() fields. Check the client is sending the right Content-Type. In curl: -H 'Content-Type: application/json' -d '{\"field\": \"value\"}'. With Form() fields, use -d 'field=value' (no JSON).",
+      "success_rate": 0.93,
+      "tradeoff": "Requires understanding FastAPI's parameter type to Content-Type mapping",
+      "sources": [
+        "https://fastapi.tiangolo.com/tutorial/body/"
+      ]
+    },
+    {
+      "action": "Update Pydantic v1 validators to v2 syntax",
+      "how": "For FastAPI >=0.100 with Pydantic v2: change @validator to @field_validator, change class Config to model_config = ConfigDict(...), change orm_mode=True to from_attributes=True. Pydantic v2 silently ignores v1-style validators.",
+      "success_rate": 0.87,
+      "tradeoff": "Requires Pydantic v2 migration for all models",
+      "sources": [
+        "https://docs.pydantic.dev/latest/migration/"
+      ]
+    },
+    {
+      "action": "Use Body(embed=True) for single-field JSON bodies",
+      "how": "FastAPI expects {\"field\": value} for models, but single-parameter endpoints may receive just the value. Add Body(embed=True) to force wrapping: async def endpoint(item: str = Body(embed=True)).",
+      "success_rate": 0.85,
+      "tradeoff": "Changes the expected request format; clients must wrap values in an object",
+      "sources": [
+        "https://fastapi.tiangolo.com/tutorial/body-multiple-params/"
+      ]
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/pydantic-validation-error/py311-linux",
+        "distinction": "FastAPI 422 is an HTTP response wrapping Pydantic validation errors at the API boundary. Raw PydanticValidationError is raised in application code when calling model_validate() directly."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 80,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

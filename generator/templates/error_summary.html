@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{ signature }} — All Environments & Fixes | deadends.dev</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <title>Fix {{ signature }} — {{ environments|length }} Environments, {{ min_rate }}%–{{ max_rate }}% Success | deadends.dev</title>
   <meta name="description" content="How to fix {{ signature }}. Covers {{ environments|length }} environments with {{ total_dead_ends }} dead ends to avoid and {{ total_workarounds }} verified workarounds. Fix rates: {{ min_rate }}%–{{ max_rate }}%.">
   <meta name="robots" content="index, follow, max-snippet:-1">
   <link rel="icon" href="{{ base_path }}/favicon.svg" type="image/svg+xml">
@@ -11,36 +13,41 @@
   <link rel="canonical" href="{{ base_url }}/{{ domain }}/{{ slug }}/">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="{{ signature }} — All Environments & Fixes">
+  <meta property="og:title" content="Fix {{ signature }} — {{ min_rate }}%–{{ max_rate }}% Success Rate">
   <meta property="og:description" content="{{ environments|length }} environments, {{ total_dead_ends }} dead ends, {{ total_workarounds }} workarounds. Fix rates from {{ min_rate }}% to {{ max_rate }}%.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="{{ base_url }}/{{ domain }}/{{ slug }}/">
-  <meta property="og:site_name" content="deadends.dev — Structured Failure Knowledge">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:site_name" content="deadends.dev">
+  <meta property="og:image" content="{{ base_url }}/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ base_url }}/og-image.png">
 
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
-    a { color: #58a6ff; }
-    h1 { font-size: 1.4rem; }
-    h2 { font-size: 1.1rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    .meta { color: #8b949e; font-size: 0.85rem; }
-    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; }
-    nav a { color: #8b949e; text-decoration: none; }
-    nav a:hover { color: #58a6ff; }
-    .verdict-false { color: #f85149; }
-    .verdict-partial { color: #d29922; }
-    .verdict-true { color: #3fb950; }
-    .fail-rate { color: #f85149; }
-    .success-rate { color: #3fb950; }
-    .env-card { border: 1px solid #30363d; border-radius: 6px; padding: 1rem; margin: 0.75rem 0; }
-    .dead-end { border-left: 4px solid #f85149; padding-left: 1rem; margin: 1rem 0; }
-    .workaround { border-left: 4px solid #3fb950; padding-left: 1rem; margin: 1rem 0; }
-    .variation { display: inline-block; background: #161b22; padding: 0.2rem 0.6rem; border-radius: 4px; margin: 0.2rem; font-size: 0.85rem; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
-  </style>
+  <!-- BreadcrumbList for Google rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "deadends.dev", "item": "{{ base_url }}"},
+      {"@type": "ListItem", "position": 2, "name": "{{ domain | display_name }}", "item": "{{ base_url }}/{{ domain }}/"},
+      {"@type": "ListItem", "position": 3, "name": "{{ signature }}"}
+    ]
+  }
+  </script>
+
+  <!-- TechArticle JSON-LD for error summary -->
+  {% if summary_json_ld %}
+  <script type="application/ld+json">
+{{ summary_json_ld | safe }}
+  </script>
+  {% endif %}
+
+  <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
-<body>
+<body class="pg-summary">
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">ERROR={{ signature }}
 REGEX={{ regex }}
@@ -55,14 +62,14 @@ JSON_API_PATTERN={{ base_url }}/api/v1/{{ domain }}/{{ slug }}/{env}.json
 MATCH_API={{ base_url }}/api/v1/match.json</pre>
   {% endautoescape %}
 
-  <nav><a href="{{ base_path }}/">deadends.dev</a> / <a href="{{ base_path }}/{{ domain }}/">{{ domain }}</a></nav>
+  <nav><a href="{{ base_path }}/">deadends.dev</a> / <a href="{{ base_path }}/{{ domain }}/">{{ domain | display_name }}</a></nav>
 
   <header>
     <h1><code>{{ signature }}</code></h1>
     <p class="meta">{{ environments|length }} environment{{ 's' if environments|length != 1 else '' }} · {{ total_dead_ends }} dead ends · {{ total_workarounds }} workarounds · Fix rates: {{ min_rate }}%–{{ max_rate }}%</p>
   </header>
 
-  <!-- TL;DR for AI agents -->
+  <!-- TL;DR for AI coding agents -->
   <section id="tldr" style="background:#161b22;border:1px solid #30363d;border-radius:6px;padding:1rem;margin:1rem 0;">
     <strong>TL;DR:</strong> Fix rates range from {{ min_rate }}% to {{ max_rate }}% across {{ environments|length }} environments.
     Top dead end: <em>{{ common_dead_ends[0].action }}</em> ({{ (common_dead_ends[0].fail_rate * 100)|int }}% fail).

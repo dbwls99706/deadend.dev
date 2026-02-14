@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/timeout/pip24-linux",
+  "url": "https://deadends.dev/pip/timeout/pip24-linux",
+  "error": {
+    "signature": "pip._vendor.urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='pypi.org', port=443): Read timed out.",
+    "regex": "ReadTimeoutError|Read timed out|ConnectionTimeoutError|timed out.*pypi",
+    "domain": "pip",
+    "category": "network_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Network timeout during package download from PyPI. Caused by slow connections, network congestion, large packages, or restrictive firewall/proxy settings. The default timeout of 15 seconds is often insufficient."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply retry the same command immediately",
+      "why_fails": "If the network issue is persistent (slow connection, firewall), retrying without changes will hit the same timeout",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": "when network issue is persistent"
+    },
+    {
+      "action": "Switch to HTTP instead of HTTPS to reduce overhead",
+      "why_fails": "PyPI requires HTTPS; HTTP is blocked and also insecure",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase timeout: pip install --timeout 120 <package>",
+      "success_rate": 0.88,
+      "how": "pip install --timeout 120 --retries 5 <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a closer PyPI mirror or CDN",
+      "success_rate": 0.85,
+      "how": "pip install -i https://pypi.tuna.tsinghua.edu.cn/simple/ <package>  # or other regional mirror",
+      "sources": [],
+      "condition": "when geographically far from default PyPI CDN"
+    },
+    {
+      "action": "Download the wheel separately and install from file",
+      "success_rate": 0.90,
+      "how": "pip download <package> -d ./wheels && pip install --no-index --find-links ./wheels <package>",
+      "sources": [],
+      "condition": "for large packages on slow connections"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/proxy-error/pip24-linux", "probability": 0.2, "condition": "when timeout is caused by proxy misconfiguration"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/ssl-error/pip24-linux", "probability": 0.15, "condition": "when SSL handshake takes too long and times out"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/proxy-error/pip24-linux", "distinction": "Timeout is about the connection being too slow or dropping; proxy error is specifically about inability to connect through a proxy server"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

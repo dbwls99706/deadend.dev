@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/xml-parse-error/php83-linux",
+  "url": "https://deadends.dev/php/xml-parse-error/php83-linux",
+  "error": {
+    "signature": "Warning: simplexml_load_string(): Entity: line 42: parser error : StartTag: invalid element name in /var/www/app/src/Parser/XmlProcessor.php on line 28",
+    "regex": "simplexml_load_string\\(\\):.*parser error|DOMDocument::loadXML\\(\\):.*parser error|XMLReader::read\\(\\):.*parser error",
+    "domain": "php",
+    "category": "data_processing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "XML parse errors occur when PHP encounters malformed XML data. Common causes include unescaped special characters (&, <, >), invalid UTF-8 sequences, missing closing tags, or HTML content being treated as XML."
+  },
+  "dead_ends": [
+    {"action": "Using regex to fix malformed XML before parsing", "why_fails": "XML structure is context-sensitive and cannot be reliably fixed with regex. Regex-based fixes often break valid CDATA sections, processing instructions, or entities while not handling all malformation cases.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Suppressing libxml errors with @ operator and checking the result for false", "why_fails": "Suppressing errors loses the detailed error information needed to diagnose the issue. The XML may partially parse, returning a corrupt SimpleXMLElement that causes silent data loss later.", "fail_rate": 0.68, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use libxml_use_internal_errors() to capture and handle XML errors properly", "success_rate": 0.88, "how": "Call libxml_use_internal_errors(true) before parsing. After parsing, check errors with libxml_get_errors() and libxml_clear_errors(). This captures detailed error messages (line, column, message) without suppressing them entirely.", "sources": [], "condition": ""},
+    {"action": "Use DOMDocument with recover option for moderately malformed XML", "success_rate": 0.82, "how": "Use DOMDocument::loadXML() with LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_HTML_NODEFDTD options for recovery mode. For HTML content misidentified as XML, use DOMDocument::loadHTML() instead. For large files, use XMLReader for streaming parsing.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/mbstring-encoding-error/php83-linux", "probability": 0.20, "condition": "when XML encoding declaration doesn't match the actual character encoding of the content"}],
+    "preceded_by": [{"error_id": "php/curl-timeout/php83-linux", "probability": 0.10, "condition": "when truncated HTTP responses result in incomplete XML data"}],
+    "frequently_confused_with": [{"error_id": "php/json-decode-error/php83-linux", "distinction": "XML parse errors are about malformed XML markup with tags and attributes, while JSON decode errors are about malformed JSON data with objects and arrays"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

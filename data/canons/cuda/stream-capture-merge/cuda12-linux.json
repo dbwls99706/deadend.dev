@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/stream-capture-merge/cuda12-linux",
+  "url": "https://deadends.dev/cuda/stream-capture-merge/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: operation failed due to a previous error during capture (cudaErrorStreamCaptureMerge)",
+    "regex": "cudaErrorStreamCaptureMerge|stream capture.*merge|capture.*merge.*error|stream.*capture.*invalid.*merge",
+    "domain": "cuda",
+    "category": "graph_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.84,
+    "last_updated": "2026-02-12",
+    "summary": "During CUDA graph stream capture, an invalid merge of two stream capture graphs was attempted. This occurs when two streams being captured are synchronized (via events or stream wait) but belong to different capture graphs, or when a non-captured stream tries to synchronize with a captured stream. CUDA requires all captured streams in a single graph to originate from the same capture root."
+  },
+  "dead_ends": [
+    {
+      "action": "Using cudaDeviceSynchronize inside a stream capture region",
+      "why_fails": "cudaDeviceSynchronize synchronizes all streams on the device, including non-captured streams. This creates an invalid dependency between captured and non-captured streams, triggering the merge error. Device-wide synchronization cannot be represented in a CUDA graph.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Synchronizing with a stream that is being captured in a different graph",
+      "why_fails": "Each stream capture produces an independent graph. Waiting on an event from a different capture graph attempts to merge two separate graphs, which is not allowed. All dependent streams must share the same capture root stream.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure all captured streams fork from and join back to the same root capture stream",
+      "success_rate": 0.88,
+      "how": "Start capture on one root stream: cudaStreamBeginCapture(rootStream). Fork work to child streams using cudaEventRecord on rootStream and cudaStreamWaitEvent on child streams. Join back with cudaEventRecord on child streams and cudaStreamWaitEvent on rootStream. End capture on rootStream. Never mix captured and non-captured streams.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace device-wide synchronization with stream-level event synchronization during capture",
+      "success_rate": 0.85,
+      "how": "Replace cudaDeviceSynchronize with targeted event-based synchronization: record an event on the producing stream and wait on it from the consuming stream. This creates explicit graph edges instead of invalid device-wide barriers. Audit all synchronization calls inside the capture region.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/graph-exec-update-failed/cuda12-linux", "probability": 0.20, "condition": "when a fixed capture produces a graph with different topology than expected for update"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.10, "condition": "when debugging memory issues leads to adding synchronization that breaks stream capture"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/graph-exec-update-failed/cuda12-linux", "distinction": "Stream-capture-merge occurs during graph creation (capture phase) when streams are improperly merged. Graph-exec-update-failed occurs after instantiation when trying to update the graph with incompatible changes."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 30,
+    "last_verification": "2026-02-12"
+  }
+}

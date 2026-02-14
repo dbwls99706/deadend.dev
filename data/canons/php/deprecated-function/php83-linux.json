@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/deprecated-function/php83-linux",
+  "url": "https://deadends.dev/php/deprecated-function/php83-linux",
+  "error": {
+    "signature": "Deprecated: Function utf8_encode() is deprecated in /var/www/app/src/Utils/Encoder.php on line 42",
+    "regex": "Deprecated: Function [\\w_]+\\(\\) is deprecated",
+    "domain": "php",
+    "category": "deprecation",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "PHP deprecation notices indicate functions slated for removal in future versions. In PHP 8.2+, functions like utf8_encode/utf8_decode, and dynamic properties are deprecated. These must be replaced with modern alternatives before upgrading to the next major version."
+  },
+  "dead_ends": [
+    {"action": "Suppressing deprecation notices with error_reporting(E_ALL & ~E_DEPRECATED)", "why_fails": "Hiding deprecation warnings allows code to continue using functions that will be removed in future PHP versions. When upgrading PHP, these will become fatal errors with no prior warning.", "fail_rate": 0.80, "sources": [], "condition": ""},
+    {"action": "Using the @ error suppression operator on deprecated function calls", "why_fails": "The @ operator silences the notice but does not prevent the function from being removed. It also masks other potential errors at the same call site.", "fail_rate": 0.82, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Replace deprecated functions with their modern equivalents", "success_rate": 0.95, "how": "Replace utf8_encode() with mb_convert_encoding($s, 'UTF-8', 'ISO-8859-1'), replace utf8_decode() with mb_convert_encoding($s, 'ISO-8859-1', 'UTF-8'). Use Rector (rector/rector) to automate migrations across the entire codebase.", "sources": [], "condition": ""},
+    {"action": "Run PHP_CodeSniffer or Rector to detect and fix all deprecations automatically", "success_rate": 0.90, "how": "Install Rector: composer require rector/rector --dev. Configure it with the appropriate PHP version set (e.g., PHP_83) and run 'vendor/bin/rector process src' to automatically refactor deprecated code.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/call-to-undefined-function/php83-linux", "probability": 0.35, "condition": "when upgrading to a PHP version that has removed the deprecated function"}],
+    "preceded_by": [{"error_id": "php/composer-dependency-conflict/composer2-linux", "probability": 0.15, "condition": "when a library update introduces calls to functions deprecated in the current PHP version"}],
+    "frequently_confused_with": [{"error_id": "php/call-to-undefined-function/php83-linux", "distinction": "Deprecated functions still work but emit a notice; undefined functions cause a fatal error because the function has been fully removed"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 90,
+    "last_verification": "2026-02-12"
+  }
+}

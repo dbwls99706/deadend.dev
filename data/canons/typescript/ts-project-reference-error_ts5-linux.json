@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-project-reference-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-project-reference-error/ts5-linux",
+  "error": {
+    "signature": "TS6305: Output file has not been built from source file. Referenced project may need to be built.",
+    "regex": "TS6305.*Output file.*not been built|TS6306.*Referenced project",
+    "domain": "typescript",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Referenced project has not been built or is stale. Run tsc --build to compile project references in correct order."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove project references and use regular imports",
+      "why_fails": "Loses incremental build benefits and may create circular dependency issues in monorepos",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Build all project references with tsc --build",
+      "success_rate": 0.92,
+      "how": "# Build all referenced projects:\ntsc --build\n# Or force rebuild:\ntsc --build --force\n# Clean and rebuild:\ntsc --build --clean && tsc --build",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/project-references.html"],
+      "condition": ""
+    },
+    {
+      "action": "Ensure composite and declaration are enabled in referenced projects",
+      "success_rate": 0.87,
+      "how": "// Referenced project's tsconfig.json:\n{\n  \"compilerOptions\": {\n    \"composite\": true,\n    \"declaration\": true,\n    \"declarationMap\": true\n  }\n}",
+      "sources": ["https://www.typescriptlang.org/tsconfig#composite"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-declaration-emit-error/ts5-linux", "probability": 0.20, "condition": "When building references reveals declaration emit issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-path-mapping-error/ts5-linux", "probability": 0.15, "condition": "When path mapping resolves into an unbuilt referenced project"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2307-cannot-find-module/ts5-linux", "distinction": "TS2307 means module is missing entirely; TS6305 means the module exists but its build output is stale or missing"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

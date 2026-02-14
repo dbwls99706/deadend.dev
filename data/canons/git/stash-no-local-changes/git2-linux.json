@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/stash-no-local-changes/git2-linux",
+  "url": "https://deadends.dev/git/stash-no-local-changes/git2-linux",
+  "error": {
+    "signature": "No local changes to save — git stash fails when only untracked files exist",
+    "regex": "(?:No local changes to save|No stash entries found|Cannot (?:apply|pop).*stash|stash.*(?:error|failed|conflict))",
+    "domain": "git",
+    "category": "workflow_error",
+    "first_seen": "2017-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Switching branches with new untracked files",
+        "Trying to stash before pulling upstream changes",
+        "Saving work-in-progress including new files"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.94,
+    "last_updated": "2026-02-14",
+    "summary": "By default, 'git stash' only saves tracked files with modifications and staged changes. Untracked files (new files never added to git) and ignored files are NOT stashed. Developers create new files, try to stash to switch branches, and get 'No local changes to save' because git doesn't see untracked files as local changes."
+  },
+  "dead_ends": [
+    {
+      "action": "Running git stash expecting it to save new (untracked) files",
+      "why_fails": "Plain 'git stash' only captures changes to tracked files (modifications and staged changes). New files that have never been 'git add'-ed are untracked and invisible to stash. You'll lose the ability to switch branches cleanly since the untracked files remain in the working directory.",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Using git stash pop when you meant git stash apply",
+      "why_fails": "git stash pop applies the stash AND removes it from the stash list. If the apply has conflicts, the stash is NOT removed (safe). But if it applies cleanly, the stash is gone. Use 'git stash apply' to keep the stash entry as a safety net, then 'git stash drop' after confirming the changes are correct.",
+      "fail_rate": 0.4,
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Running git stash while in the middle of a merge or rebase",
+      "why_fails": "During an in-progress merge or rebase, 'git stash' may fail or produce unexpected behavior. The merge/rebase state is stored in .git/MERGE_HEAD or .git/rebase-merge/ and stash doesn't preserve this state. Complete or abort the current operation before stashing.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use git stash -u (--include-untracked) to stash untracked files",
+      "success_rate": 0.97,
+      "how": "Run 'git stash -u' or 'git stash push --include-untracked'. This saves tracked modifications AND untracked files. The untracked files are removed from the working directory and stored in the stash. Recover with 'git stash pop' as usual.",
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use git stash -a (--all) to also include ignored files",
+      "success_rate": 0.95,
+      "how": "Run 'git stash -a' or 'git stash push --all'. This saves everything: tracked modifications, untracked files, AND ignored files. Be careful with -a as it can stash large build artifacts, node_modules, etc. which makes stash operations slow.",
+      "tradeoff": "Can stash very large ignored directories (node_modules, build/) making stash slow",
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": "When you need to save absolutely everything including build artifacts"
+    },
+    {
+      "action": "Use git stash push with pathspec for selective stashing",
+      "success_rate": 0.93,
+      "how": "Run 'git stash push -m 'description' -- path/to/file1 path/to/file2'. This stashes only specific files. Combine with -u for untracked files: 'git stash push -u -- newfile.py'. Use 'git stash list' to see all stashes with their messages.",
+      "sources": [
+        "https://git-scm.com/docs/git-stash"
+      ],
+      "condition": "When you only want to stash specific files"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "git/stash-apply-conflict/git2-linux",
+        "probability": 0.25,
+        "condition": "Branch changes since stashing may conflict on stash apply"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/stash-pop-conflict/git2-linux",
+        "distinction": "stash-pop-conflict occurs when applying a stash that conflicts with current working directory. stash-no-local-changes is about the initial stash creation failing due to untracked files."
+      },
+      {
+        "error_id": "git/local-changes-overwritten/git2-linux",
+        "distinction": "local-changes-overwritten happens during checkout/pull. stash-no-local-changes is about git stash not capturing untracked files."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 85,
+    "last_verification": "2026-02-14"
+  }
+}

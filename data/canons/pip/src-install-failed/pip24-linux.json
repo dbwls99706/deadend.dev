@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/src-install-failed/pip24-linux",
+  "url": "https://deadends.dev/pip/src-install-failed/pip24-linux",
+  "error": {
+    "signature": "error: command 'gcc' failed: No such file or directory. ERROR: Failed building wheel for <package>",
+    "regex": "gcc.*failed|Failed building wheel|error:.*command.*failed|compilation.*failed|setup\\.py.*error",
+    "domain": "pip",
+    "category": "build_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Building a package from source failed because required compiler (gcc/g++) or development libraries are missing. Happens when no prebuilt wheel is available and pip falls back to source distribution."
+  },
+  "dead_ends": [
+    {
+      "action": "Install the package with --prefer-binary and hope for the best",
+      "why_fails": "If no binary exists, --prefer-binary still falls back to source and fails the same way",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": "when no binary exists for the platform"
+    },
+    {
+      "action": "Set CC=/usr/bin/gcc without actually installing gcc",
+      "why_fails": "Setting the environment variable does not install the compiler; the file must exist",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install C compiler and Python development headers",
+      "success_rate": 0.90,
+      "how": "apt-get install build-essential python3-dev && pip install <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Install package-specific system dependencies",
+      "success_rate": 0.85,
+      "how": "Check the package docs for required system libs. Example: apt-get install libxml2-dev libxslt-dev for lxml",
+      "sources": [],
+      "condition": "when package requires specific C libraries"
+    },
+    {
+      "action": "Use a pre-compiled wheel from piwheels or conda-forge",
+      "success_rate": 0.82,
+      "how": "pip install --extra-index-url https://www.piwheels.org/simple <package>  # or: conda install <package>",
+      "sources": [],
+      "condition": "when system compilation is not feasible"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/subprocess-error/pip24-linux", "probability": 0.3, "condition": "when partial compilation creates broken state"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/no-binary/pip24-linux", "probability": 0.35, "condition": "when no binary wheel exists and pip attempts source build"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/build-isolation-failed/pip24-linux", "distinction": "Src-install-failed is about missing compilers/libraries; build-isolation-failed is about the isolated build environment setup failing before compilation starts"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

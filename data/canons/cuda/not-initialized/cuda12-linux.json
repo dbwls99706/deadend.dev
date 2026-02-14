@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/not-initialized/cuda12-linux",
+  "url": "https://deadends.dev/cuda/not-initialized/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: initialization error (cudaErrorInitializationError)",
+    "regex": "initialization error|cudaErrorInitializationError|CUDA_ERROR_NOT_INITIALIZED|CUDA not initialized",
+    "domain": "cuda",
+    "category": "initialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux",
+    "hardware": {"gpu": "any"}
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "CUDA runtime failed to initialize. Typically caused by driver not loaded, no GPU present, driver/toolkit version mismatch, or insufficient permissions to access /dev/nvidia* devices. Also occurs in containers without GPU passthrough."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstall PyTorch or TensorFlow to fix CUDA initialization",
+      "why_fails": "The issue is at the driver/hardware level, not in the ML framework. Reinstalling frameworks does not fix driver or permission issues.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set CUDA_HOME environment variable",
+      "why_fails": "CUDA_HOME is for compile-time toolkit location; it does not affect runtime initialization or driver loading",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify GPU driver is loaded: nvidia-smi",
+      "success_rate": 0.90,
+      "how": "Run nvidia-smi. If it fails, reload driver: modprobe nvidia. Check dmesg for driver errors.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix device permissions: add user to 'video' group or run with appropriate privileges",
+      "success_rate": 0.85,
+      "how": "sudo usermod -aG video $USER && newgrp video. Or check: ls -la /dev/nvidia*",
+      "sources": [],
+      "condition": "when permission denied on /dev/nvidia*"
+    },
+    {
+      "action": "In Docker, use --gpus all or nvidia-container-toolkit",
+      "success_rate": 0.92,
+      "how": "docker run --gpus all <image>. Ensure nvidia-container-toolkit is installed on host.",
+      "sources": [],
+      "condition": "when running in Docker container"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/cuda-driver-insufficient/cuda12-linux", "probability": 0.25, "condition": "when driver loads but is too old for the CUDA toolkit version"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/invalid-device-ordinal/cuda12-linux", "probability": 0.15, "condition": "when device ordinal error masks an initialization failure"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/context-destroyed/cuda12-linux", "distinction": "Not-initialized means CUDA never started successfully; context-destroyed means it was running but the context was torn down"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

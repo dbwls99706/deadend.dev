@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-data-source-not-found/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-data-source-not-found/tf1.7-linux",
+  "error": {
+    "signature": "Error: No matching resource found or data source returned no results",
+    "regex": "(data source .+ (not found|no results|returned empty)|No matching .+ found|InvalidParameterValue.*data source|your query returned no results)",
+    "domain": "terraform",
+    "category": "data_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A data source query returned no results because the referenced resource does not exist or filters are too restrictive."
+  },
+  "dead_ends": [
+    {
+      "action": "Add a depends_on to make the data source wait",
+      "why_fails": "If the resource simply does not exist, waiting will not help; depends_on cannot create missing resources",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use try() to ignore the missing data source error",
+      "why_fails": "try() cannot suppress provider-level errors from data sources, only expression evaluation errors",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the resource exists and the data source filter values are correct",
+      "success_rate": 0.88,
+      "how": "Check the cloud console or CLI that the resource exists in the same region/account, and that filter values match exactly",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/data-sources"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create the resource with a Terraform resource block instead of referencing it as a data source",
+      "success_rate": 0.82,
+      "how": "If the resource should be managed by Terraform, convert data block to a resource block",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/data-sources"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "terraform/invalid-reference/tf1-linux",
+        "probability": 0.15,
+        "condition": "Incorrect data source leads to invalid reference errors in dependent resources"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "terraform/tf-provider-authentication/tf1.7-linux",
+        "probability": 0.1,
+        "condition": "Wrong credentials point to wrong account where resource does not exist"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

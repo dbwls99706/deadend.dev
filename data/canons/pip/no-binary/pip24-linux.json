@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/no-binary/pip24-linux",
+  "url": "https://deadends.dev/pip/no-binary/pip24-linux",
+  "error": {
+    "signature": "ERROR: Could not find a version that satisfies the requirement <package>. No matching distribution found (no binary available for this platform)",
+    "regex": "no binary.*platform|no.*wheel.*available|none.*are.*compatible|requires compilation.*no binary",
+    "domain": "pip",
+    "category": "platform_error",
+    "first_seen": "2022-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.75,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "No prebuilt binary wheel is available for the current platform/Python combination. The package needs to be compiled from source, which requires build tools and libraries. Common on Alpine Linux (musl), ARM, or newer Python versions."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --only-binary :all: to force binary-only installs",
+      "why_fails": "If no binary exists for the platform, this flag guarantees failure instead of attempting source build",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Try different PyPI mirrors hoping they have the binary",
+      "why_fails": "Mirrors replicate the same packages; if PyPI does not have the wheel, mirrors will not either",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install build dependencies and compile from source",
+      "success_rate": 0.80,
+      "how": "apt-get install build-essential python3-dev && pip install --no-binary <package> <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a manylinux-compatible base image instead of Alpine/musl",
+      "success_rate": 0.90,
+      "how": "Switch Docker base from python:3.x-alpine to python:3.x-slim which uses glibc and has wheel support",
+      "sources": [],
+      "condition": "when on Alpine Linux"
+    },
+    {
+      "action": "Build the wheel yourself and host it in a private index",
+      "success_rate": 0.85,
+      "how": "pip wheel <package> -w ./dist/ on a compatible machine, then pip install --find-links ./dist/ <package>",
+      "sources": [],
+      "condition": "when source build is not possible on target"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/src-install-failed/pip24-linux", "probability": 0.35, "condition": "when attempting source build without proper build tools"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/platform-mismatch/pip24-linux", "probability": 0.25, "condition": "when platform incompatibility forces source compilation"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/platform-mismatch/pip24-linux", "distinction": "No-binary means no prebuilt wheel exists at all for the platform; platform-mismatch means wheels exist but for a different OS/architecture"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

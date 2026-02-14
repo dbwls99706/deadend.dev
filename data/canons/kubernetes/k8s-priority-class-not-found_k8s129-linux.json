@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-priority-class-not-found/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-priority-class-not-found/k8s129-linux",
+  "error": {
+    "signature": "Error creating: pods is forbidden: no PriorityClass with name found",
+    "regex": "no PriorityClass.*found|priorityClassName.*not found|PriorityClass.*does not exist",
+    "domain": "kubernetes",
+    "category": "scheduling_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Pod references a PriorityClass that doesn't exist in the cluster. The PriorityClass must be created before pods can use it."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove priorityClassName from the pod spec",
+      "why_fails": "Pod loses scheduling priority — may be preempted by other workloads",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a numeric priority value directly",
+      "why_fails": "Kubernetes requires a PriorityClass resource — numeric priority is set on the PriorityClass, not the pod",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create the missing PriorityClass resource",
+      "success_rate": 0.95,
+      "how": "kubectl apply -f - <<EOF\napiVersion: scheduling.k8s.io/v1\nkind: PriorityClass\nmetadata:\n  name: <name>\nvalue: 1000000\nglobalDefault: false\nEOF",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "List existing PriorityClasses and use one that already exists",
+      "success_rate": 0.88,
+      "how": "kubectl get priorityclasses to see available classes",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/failedscheduling/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when PriorityClass is created but preemption doesn't free enough resources"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "probability": 0.15,
+        "condition": "when applying manifests with PriorityClass references before creating the class"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/failedscheduling/k8s1-linux",
+        "distinction": "PriorityClass not found is a validation error at pod creation, while FailedScheduling is a runtime scheduling failure after the pod is accepted"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

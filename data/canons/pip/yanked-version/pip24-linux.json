@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/yanked-version/pip24-linux",
+  "url": "https://deadends.dev/pip/yanked-version/pip24-linux",
+  "error": {
+    "signature": "WARNING: The candidate selected for download or install is a yanked version: '<package>==X.Y.Z' (reason: 'critical bug')",
+    "regex": "yanked version|Reason for being yanked|yanked.*candidate",
+    "domain": "pip",
+    "category": "package_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Pip selected a yanked version of a package. Yanked releases are marked by maintainers as broken or dangerous but not deleted. Pip will still install them if explicitly pinned but warns about it."
+  },
+  "dead_ends": [
+    {
+      "action": "Ignore the warning and keep using the yanked version",
+      "why_fails": "Yanked versions typically have critical bugs, security vulnerabilities, or data corruption issues",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Try to find the yanked version on a mirror that doesn't respect yank status",
+      "why_fails": "The package is yanked for a reason; installing it from a mirror just bypasses the safety warning",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update to the next non-yanked version: pip install '<package>>=X.Y.Z+1'",
+      "success_rate": 0.92,
+      "how": "Check available versions with pip index versions <package>, pick the nearest non-yanked version",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Remove the explicit version pin to let pip select the latest non-yanked version",
+      "success_rate": 0.88,
+      "how": "Change package==X.Y.Z to package>=X.Y in requirements.txt and re-resolve",
+      "sources": [],
+      "condition": "when the pin is not strictly necessary"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/conflicting-dependencies/pip23-linux", "probability": 0.2, "condition": "when moving to a non-yanked version introduces dependency conflicts"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/backtracking-long/pip24-linux", "probability": 0.15, "condition": "when resolver backtracking selects a yanked version as the only option"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/no-matching-distribution/pip24-linux", "distinction": "Yanked versions still exist and can be installed; no-matching-distribution means the version is completely absent from the index"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

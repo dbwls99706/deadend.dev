@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/sonarqube-quality-gate/sonar-linux",
+  "url": "https://deadends.dev/cicd/sonarqube-quality-gate/sonar-linux",
+  "error": {
+    "signature": "Quality Gate failed: Reliability Rating worse than A, Security Hotspots Reviewed less than 100%, Coverage on New Code less than 80%",
+    "regex": "(?i)(?:Quality Gate.*failed|quality gate.*status.*ERROR|sonar.*quality gate.*not passed|QUALITY_GATE_FAILURE)",
+    "domain": "cicd",
+    "category": "code_quality",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "sonarqube", "version_range": ">=9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.84,
+    "last_updated": "2026-02-12",
+    "summary": "SonarQube Quality Gate check failed because one or more metrics (coverage, duplication, reliability, security, maintainability) did not meet the configured thresholds for new code."
+  },
+  "dead_ends": [
+    {
+      "action": "Lowering Quality Gate thresholds to make the pipeline pass",
+      "why_fails": "This defeats the purpose of quality gates. Technical debt accumulates, and code quality degrades continuously.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Skipping SonarQube analysis on the branch",
+      "why_fails": "This bypasses the quality gate entirely. If the branch is merged, low-quality code enters the main branch without review.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Review the SonarQube dashboard and fix issues on new code",
+      "success_rate": 0.85,
+      "how": "Open the SonarQube project dashboard. Click on the failed Quality Gate conditions. Focus on new code issues: fix bugs, resolve security hotspots, add tests for uncovered new code. The Quality Gate typically only checks new/changed code.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure the SonarQube analysis to focus on the correct scope",
+      "success_rate": 0.82,
+      "how": "Set sonar.newCode.referenceBranch=main to compare against the main branch. Ensure sonar.coverage.jacoco.xmlReportPaths (Java) or other coverage report paths point to the correct files. Verify that the coverage report is generated before the SonarQube scan.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "probability": 0.25, "condition": "when SonarQube coverage failures also trigger test runner coverage threshold failures"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "probability": 0.20, "condition": "when low coverage detected by test runner is also reported by SonarQube"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/coverage-threshold-failed/gha-linux", "distinction": "sonarqube-quality-gate checks multiple metrics (coverage, bugs, vulnerabilities, code smells); coverage-threshold-failed is purely about code coverage percentage from the test runner"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

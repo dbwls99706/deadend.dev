@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/template-execution-error/go1.22-linux",
+  "url": "https://deadends.dev/go/template-execution-error/go1.22-linux",
+  "error": {
+    "signature": "template: index.html:10:5: executing \"index.html\" at <.Foo>: can't evaluate field Foo in type main.Data",
+    "regex": "template:.*executing.*at <.*>:.*can't evaluate field|template:.*nil pointer evaluating|template:.*is not a method but has arguments",
+    "domain": "go",
+    "category": "template_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Template execution failed because the data passed to the template does not match what the template expects. Common issues: unexported fields, missing fields, nil pointers in the template data, or calling methods with wrong arguments."
+  },
+  "dead_ends": [
+    {
+      "action": "Use text/template instead of html/template to avoid escaping issues",
+      "why_fails": "text/template has the same evaluation rules — switching template packages does not fix data/field mismatches, and removes XSS protection",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/html/template"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure struct fields used in templates are exported (capitalized)",
+      "success_rate": 0.92,
+      "how": "type Data struct {\n    Foo string  // exported, accessible in template as .Foo\n}",
+      "sources": [
+        "https://pkg.go.dev/text/template#hdr-Actions"
+      ],
+      "condition": "when error says 'can't evaluate field'"
+    },
+    {
+      "action": "Use template.FuncMap to register custom functions",
+      "success_rate": 0.88,
+      "how": "tmpl := template.New(\"\").Funcs(template.FuncMap{\n    \"safeHTML\": func(s string) template.HTML { return template.HTML(s) },\n})",
+      "sources": [
+        "https://pkg.go.dev/text/template#FuncMap"
+      ],
+      "condition": "when template calls an unregistered function"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/nil-pointer-dereference/go1-linux",
+        "probability": 0.15,
+        "condition": "when template data contains nil pointer fields"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/syntax-error-unexpected/go1-linux",
+        "probability": 0.18,
+        "condition": "when fixing Go source syntax leads to template execution errors"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/reflect-panic/go1.22-linux",
+        "distinction": "Template execution errors reference template file/line and use template syntax, while reflect panics are raw 'reflect: call of reflect.Value.X on zero Value' from Go code."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

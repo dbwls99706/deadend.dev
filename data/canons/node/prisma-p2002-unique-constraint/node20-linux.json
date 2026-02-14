@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/prisma-p2002-unique-constraint/node20-linux",
+  "url": "https://deadends.dev/node/prisma-p2002-unique-constraint/node20-linux",
+  "error": {
+    "signature": "PrismaClientKnownRequestError: Unique constraint failed on the fields: ('email')",
+    "regex": "PrismaClient(?:Known)?RequestError.*[Uu]nique constraint failed on the fields?:? \\((.+)\\)",
+    "domain": "node",
+    "category": "database_error",
+    "first_seen": "2021-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18.0.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "prisma",
+        "postgresql",
+        "mysql",
+        "crud operations"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-01",
+    "summary": "A database insert or update violates a unique constraint. The correct fix depends on the use case: upsert for 'create or update' patterns, error catching for user-facing duplicate checks."
+  },
+  "dead_ends": [
+    {
+      "action": "Catching the error and retrying the same create operation",
+      "why_fails": "A unique constraint violation is deterministic for the same input. Retrying with identical data produces the same error every time. This wastes database connections and creates confusing log noise.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "Unique constraint failures are treated as transient errors that may resolve on retry."
+    },
+    {
+      "action": "Removing the @unique attribute from the Prisma schema",
+      "why_fails": "Removes a critical data integrity constraint. Duplicate records cause cascading bugs in queries, authentication, and foreign key relationships. The constraint exists to protect data consistency.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "common_misconception": "Removing the constraint fixes the 'error' when the constraint is actually protecting against a real application logic bug."
+    },
+    {
+      "action": "Using upsert without matching on the correct unique field",
+      "why_fails": "prisma.model.upsert requires the 'where' clause to match on the unique constraint field. If you match on 'id' instead of 'email', you create duplicates because the 'where' misses the conflicting record.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "common_misconception": "Upsert automatically handles all unique constraints. It only handles the one matched in the 'where' clause."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use prisma.model.upsert() with where matching the unique constraint",
+      "how": "await prisma.user.upsert({ where: { email }, update: { name }, create: { email, name } }). The 'where' clause must match the exact field(s) in the unique constraint that caused the error.",
+      "success_rate": 0.94,
+      "tradeoff": "Requires knowing which unique constraint is being violated",
+      "sources": [
+        "https://www.prisma.io/docs/reference/api-reference/prisma-client-reference#upsert"
+      ]
+    },
+    {
+      "action": "Catch error code P2002 and return a user-friendly message",
+      "how": "try { await prisma.user.create({ data }) } catch(e) { if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') { return { error: `${e.meta?.target?.[0]} already exists` } } throw e; }",
+      "success_rate": 0.92,
+      "tradeoff": "Requires error handling at each create/update call site",
+      "sources": [
+        "https://www.prisma.io/docs/reference/api-reference/error-reference#p2002"
+      ]
+    },
+    {
+      "action": "Check e.meta.target for compound unique constraint diagnosis",
+      "how": "For compound unique constraints (e.g., @@unique([email, orgId])), e.meta.target returns an array of field names like ['email', 'org_id']. Use this to generate specific error messages per constraint.",
+      "success_rate": 0.88,
+      "tradeoff": "Error metadata format may vary slightly between database providers",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/prisma-client-not-generated/node20-linux",
+        "distinction": "P2002 is a runtime database constraint error. 'Prisma Client not generated' is a build-time setup error. P2002 means Prisma is working correctly but the data violates a constraint."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 70,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

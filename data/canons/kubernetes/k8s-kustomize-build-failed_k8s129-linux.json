@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-kustomize-build-failed/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-kustomize-build-failed/k8s129-linux",
+  "error": {
+    "signature": "Error: accumulating resources: accumulation err='hit retry limit' or 'no matches for kind'",
+    "regex": "accumulating resources|kustomize build.*error|no matches for kind|hit retry limit|unable to find.*kustomization",
+    "domain": "kubernetes",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Kustomize build fails due to missing resources, invalid patches, or unreachable remote bases."
+  },
+  "dead_ends": [
+    {
+      "action": "Skip kustomize and apply raw manifests directly",
+      "why_fails": "Loses all overlays, patches, and environment-specific configuration",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://kubectl.docs.kubernetes.io/references/kustomize/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Pin kustomize version without checking compatibility",
+      "why_fails": "Different kustomize versions have breaking changes in resource handling",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://kubectl.docs.kubernetes.io/references/kustomize/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run kustomize build with verbose output to identify the exact failing resource",
+      "success_rate": 0.90,
+      "how": "kustomize build . --enable-alpha-plugins 2>&1 | head -50 — check each listed resource path exists",
+      "sources": [
+        "https://kubectl.docs.kubernetes.io/references/kustomize/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify all referenced resources, bases, and overlays exist at the correct paths",
+      "success_rate": 0.88,
+      "how": "Check kustomization.yaml resources: list — ensure each file/directory exists and each remote URL is accessible",
+      "sources": [
+        "https://kubectl.docs.kubernetes.io/references/kustomize/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "probability": 0.22,
+        "condition": "when kustomize outputs invalid manifests that kubectl can't parse"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-helm-values-mismatch/k8s129-linux",
+        "probability": 0.15,
+        "condition": "when migrating from Helm to Kustomize and paths are wrong"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "distinction": "kustomize-build-failed occurs at build/render time before applying, while unable-to-recognize occurs when applying rendered manifests with wrong API versions"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -92,27 +92,9 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/requests-connectionerror-ssl/py311-macos",
-        "probability": 0.2,
-        "condition": "When the certificate issue is worked around with verify=False but the server requires client certificates",
-        "typical_delay": "immediate"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/pip-install-ssl-error/py311-macos",
-        "probability": 0.4,
-        "condition": "pip itself may fail to download packages over HTTPS before certifi is installed"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/ssl-certificate-expired/py311-macos",
-        "distinction": "CERTIFICATE_VERIFY_FAILED with 'unable to get local issuer certificate' means the CA bundle is missing. 'certificate has expired' means the CA bundle is present but the target server's certificate is genuinely expired."
-      }
-    ]
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

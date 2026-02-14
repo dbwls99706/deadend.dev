@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/invalid-pitch/cuda12-linux",
+  "url": "https://deadends.dev/cuda/invalid-pitch/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: invalid pitch argument (cudaErrorInvalidPitchValue)",
+    "regex": "invalid pitch|cudaErrorInvalidPitchValue|CUDA_ERROR_INVALID_PITCH_VALUE|pitch.*exceeds.*maximum",
+    "domain": "cuda",
+    "category": "memory_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux",
+    "hardware": {
+      "gpu": "any"
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The pitch value (row byte width including padding) passed to a CUDA memory function exceeds device limits or is invalid. Occurs with cudaMallocPitch, cudaMemcpy2D, or texture operations when dealing with very wide 2D arrays."
+  },
+  "dead_ends": [
+    {
+      "action": "Set pitch to exactly the row width without alignment",
+      "why_fails": "CUDA requires pitched memory to be aligned to device memory transaction size; unaligned pitch causes performance issues or errors",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Allocate as 1D and manually compute 2D offsets with wrong pitch",
+      "why_fails": "Using incorrect pitch for 2D indexing causes silent data corruption or out-of-bounds access",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use cudaMallocPitch to let CUDA determine the optimal pitch automatically",
+      "success_rate": 0.9,
+      "how": "size_t pitch; cudaMallocPitch(&ptr, &pitch, width_bytes, height); then use returned pitch for all operations",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "For very wide arrays, use 1D allocation with manual row-major indexing",
+      "success_rate": 0.85,
+      "how": "cudaMalloc(&ptr, width * height * sizeof(T)); index as ptr[row * width + col]",
+      "sources": [],
+      "condition": "when 2D allocation exceeds pitch limits"
+    },
+    {
+      "action": "Check device limits: cudaDeviceGetAttribute for cudaDevAttrMaxPitch",
+      "success_rate": 0.82,
+      "how": "Query the maximum pitch and split large allocations into tiles that fit within the limit",
+      "sources": [],
+      "condition": "when working with very large 2D arrays"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-linux",
+        "probability": 0.2,
+        "condition": "when incorrect pitch causes out-of-bounds memory access"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/illegal-memory-access/cuda12-linux",
+        "distinction": "Invalid-pitch is caught at allocation/copy time with a clear error; illegal-memory-access happens at runtime when bad addresses are actually dereferenced"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

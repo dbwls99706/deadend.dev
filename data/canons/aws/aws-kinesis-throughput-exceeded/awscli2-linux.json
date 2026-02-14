@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-kinesis-throughput-exceeded/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-kinesis-throughput-exceeded/awscli2-linux",
+  "error": {
+    "signature": "ProvisionedThroughputExceededException: Rate exceeded for shard",
+    "regex": "(ProvisionedThroughputExceededException|Rate exceeded for shard|WriteProvisionedThroughputExceeded)",
+    "domain": "aws",
+    "category": "throttle_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Kinesis shard throughput limit exceeded. Each shard supports 1 MB/s write and 2 MB/s read."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry immediately without backoff",
+      "why_fails": "Aggressive retries without backoff amplify the problem and cause more throttling",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://docs.aws.amazon.com/streams/latest/dev/troubleshooting-producers.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a single partition key for all records",
+      "why_fails": "Single partition key sends all records to one shard, creating a hot shard that will always throttle",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase the number of shards or enable on-demand capacity mode",
+      "success_rate": 0.9,
+      "how": "aws kinesis update-shard-count --stream-name NAME --target-shard-count N --scaling-type UNIFORM_SCALING or switch to ON_DEMAND mode",
+      "sources": [
+        "https://docs.aws.amazon.com/streams/latest/dev/kinesis-using-sdk-java-resharding.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Distribute records across shards using random or high-cardinality partition keys",
+      "success_rate": 0.85,
+      "how": "Use UUID or composite keys as partition key to distribute records evenly across all shards",
+      "sources": [
+        "https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "aws/throttling-exception/awscli2-linux",
+        "probability": 0.2,
+        "condition": "Kinesis throttling may cascade to other AWS API throttling"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "aws/throttling-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "General AWS API throttling limits the ability to manage Kinesis streams"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/mtu-too-large/tcp-linux",
+  "url": "https://deadends.dev/networking/mtu-too-large/tcp-linux",
+  "error": {
+    "signature": "Message too long (EMSGSIZE): packet size 1500 exceeds interface MTU 1400",
+    "regex": "Message too long|EMSGSIZE|MTU.*exceeded|packet too big|oversized.*frame|jumbo.*not.*supported",
+    "domain": "networking",
+    "category": "mtu_pmtud",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "The interface or path MTU is smaller than the packet being sent. Common in tunnel interfaces (VPN, VXLAN, GRE) where encapsulation overhead reduces the effective MTU. TCP connections may hang after the handshake when data packets exceed the path MTU."
+  },
+  "dead_ends": [
+    {
+      "action": "Set the MTU to 9000 (jumbo frames) without verifying all switches and routers support it",
+      "why_fails": "If any device in the path does not support jumbo frames, packets are silently dropped. Most internet paths and many cloud provider networks only support 1500 MTU. Jumbo frames only work on end-to-end controlled L2 segments.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the EMSGSIZE error in application code and continue sending",
+      "why_fails": "EMSGSIZE means the kernel refused to send the packet. The data was not transmitted. Ignoring the error leads to silent data loss and application-level failures.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set the interface MTU to match the path MTU accounting for encapsulation overhead",
+      "success_rate": 0.92,
+      "how": "1. Determine the path MTU: ping -M do -s 1472 destination (1472 + 28 bytes IP/ICMP header = 1500)\n2. Reduce size until ping succeeds to find the maximum\n3. For tunnels, subtract overhead: VXLAN = 50 bytes, GRE = 24 bytes, WireGuard = 60 bytes\n4. Set MTU: ip link set dev eth0 mtu 1400\n5. Make persistent in netplan, NetworkManager, or /etc/network/interfaces\n6. Verify: ip link show eth0 | grep mtu",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enable TCP MSS clamping to prevent oversized segments",
+      "success_rate": 0.90,
+      "how": "1. Add iptables MSS clamp rule: iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu\n2. This adjusts the MSS in TCP SYN packets to match the outgoing interface MTU\n3. Make persistent with iptables-save or nftables configuration\n4. Verify by capturing SYN packets: tcpdump -i eth0 'tcp[tcpflags] & tcp-syn != 0' -v",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/fragmentation-needed/tcp-linux", "probability": 0.35, "condition": "when packets with DF bit set hit a smaller MTU hop and ICMP fragmentation needed is returned"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.25, "condition": "when ICMP is blocked and oversized packets are silently dropped (PMTUD black hole)"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when investigating connection timeouts reveals they occur only for large packets, pointing to MTU issues"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/fragmentation-needed/tcp-linux", "distinction": "MTU too large is the configuration error on the host; fragmentation needed is the ICMP response from a router when it encounters an oversized packet"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

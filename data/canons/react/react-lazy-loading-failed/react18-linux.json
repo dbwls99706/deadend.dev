@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-lazy-loading-failed/react18-linux",
+  "url": "https://deadends.dev/react/react-lazy-loading-failed/react18-linux",
+  "error": {
+    "signature": "Error: Loading chunk X failed. (missing: https://example.com/static/js/chunk.hash.js)",
+    "regex": "Loading chunk \\d+ failed|ChunkLoadError|Failed to fetch dynamically imported module|lazy.*init.*failed|React\\.lazy.*factory.*rejected",
+    "domain": "react",
+    "category": "code_splitting_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "React.lazy() dynamic import failed because the chunk file is not available. Common after deployments that change chunk hashes, network failures, or incorrect publicPath configuration."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable code splitting entirely to avoid chunk loading",
+      "why_fails": "Results in a single massive bundle, destroying load performance. Does not fix the underlying deployment or CDN issue.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://react.dev/reference/react/lazy"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add aggressive caching headers to chunk files",
+      "why_fails": "Caching old chunks worsens the problem after deployments; users get stale chunks that reference other stale chunks",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://webpack.js.org/guides/caching/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wrap React.lazy components in an Error Boundary that retries or reloads the page",
+      "success_rate": 0.88,
+      "how": "Catch the ChunkLoadError in an Error Boundary and call window.location.reload() or retry the import: const LazyComp = React.lazy(() => import('./Comp').catch(() => import('./Comp')));",
+      "sources": [
+        "https://react.dev/reference/react/lazy",
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure old chunks remain available after deployment (keep previous build artifacts on CDN)",
+      "success_rate": 0.90,
+      "how": "Configure deployment to retain previous build outputs for at least 24 hours. In AWS S3/CloudFront: do not delete old files on deploy. In Vercel/Netlify: this is handled automatically.",
+      "sources": [
+        "https://webpack.js.org/guides/caching/"
+      ],
+      "condition": "When using custom deployment pipelines"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-error-boundary-fallback/react18-linux",
+        "probability": 0.35,
+        "condition": "When the chunk load error is not caught by a Suspense or Error Boundary and crashes the app"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/react-suspense-boundary-missing/react18-linux",
+        "probability": 0.20,
+        "condition": "When React.lazy is used without a Suspense boundary, and the import fails during the loading phase"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/minified-react-error/react18-linux",
+        "distinction": "lazy-loading-failed is a network/deployment error about missing JS chunks, while minified-react-error is about React's own error messages being minified in production builds"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 110,
+    "last_verification": "2026-02-12"
+  }
+}

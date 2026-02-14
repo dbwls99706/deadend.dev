@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/buildpack-detect-failed/buildpack-linux",
+  "url": "https://deadends.dev/cicd/buildpack-detect-failed/buildpack-linux",
+  "error": {
+    "signature": "ERROR: No buildpack groups passed detection. Please check that you are running against the correct path.",
+    "regex": "(?i)(?:No buildpack.*passed detection|buildpack.*detect.*failed|unable to detect.*buildpack|no compatible buildpack)",
+    "domain": "cicd",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cloud-native-buildpacks", "version_range": ">=0.10"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Cloud Native Buildpacks (pack, Heroku, Cloud Foundry) cannot detect the application type. The detection phase examines files like package.json, requirements.txt, go.mod, etc. Failure means no buildpack in the group matched the application structure."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding multiple conflicting language files to trick detection",
+      "why_fails": "Multiple detection matches can cause ambiguous buildpack ordering or selection of the wrong buildpack, leading to build failures later in the process",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Specifying a buildpack URL without verifying it supports the app type",
+      "why_fails": "An incompatible buildpack will fail at the build phase instead of detection, producing more confusing errors",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the correct project files exist in the root directory",
+      "success_rate": 0.90,
+      "how": "For Node.js: ensure package.json is in the root. For Python: add requirements.txt or setup.py. For Go: add go.mod. For Java: add pom.xml or build.gradle. Check that the build path points to the correct directory.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Explicitly specify the buildpack to use",
+      "success_rate": 0.88,
+      "how": "Use pack build --buildpack <buildpack-uri> or add a project.toml file with [[build.buildpacks]] entries to explicitly select the buildpack instead of relying on auto-detection.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.15, "condition": "when buildpack failures lead teams to switch to Dockerfile-based builds"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-checkout-failed/gha-linux", "probability": 0.15, "condition": "when checkout failure results in an incomplete source tree missing detection files"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "distinction": "buildpack-detect-failed is specific to Cloud Native Buildpacks auto-detection; docker-build-failed is a Dockerfile-based build error"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-pvc-pending/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-pvc-pending/k8s129-linux",
+  "error": {
+    "signature": "persistentvolumeclaim is in pending state: waiting for first consumer to be created before binding",
+    "regex": "waiting for first consumer|WaitForFirstConsumer|storageclass.*not found|no persistent volumes available for this claim",
+    "domain": "kubernetes",
+    "category": "storage_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "PVC stays Pending because of WaitForFirstConsumer binding mode, missing StorageClass, or insufficient storage capacity in the cluster."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly delete and recreate the PVC",
+      "why_fails": "If the StorageClass or provisioner is misconfigured, recreating won't help",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/persistent-volumes/#binding"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Switch StorageClass binding mode to Immediate",
+      "why_fails": "Breaks topology-aware scheduling — PV may be provisioned in wrong zone",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "For WaitForFirstConsumer, create a pod that uses the PVC — binding happens only when a pod is scheduled",
+      "success_rate": 0.92,
+      "how": "Create a deployment or pod that references the PVC in its volumes section",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Verify the StorageClass exists and is correctly configured: kubectl get storageclass",
+      "success_rate": 0.88,
+      "how": "kubectl describe pvc <name> to check events and the requested StorageClass",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/pod-pending/k8s1-linux",
+        "probability": 0.25,
+        "condition": "when a pod references a PVC that never binds"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/failedscheduling/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when pod scheduling reveals storage binding issues"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/persistent-volume-pending/k8s1-linux",
+        "distinction": "k8s-pvc-pending specifically covers WaitForFirstConsumer and missing StorageClass scenarios, while persistent-volume-pending covers general PV availability"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

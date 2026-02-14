@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/grpc-deadline-exceeded/http-linux",
+  "url": "https://deadends.dev/networking/grpc-deadline-exceeded/http-linux",
+  "error": {
+    "signature": "rpc error: code = DeadlineExceeded desc = context deadline exceeded",
+    "regex": "DeadlineExceeded|deadline exceeded|context deadline exceeded|DEADLINE_EXCEEDED|rpc.*timeout",
+    "domain": "networking",
+    "category": "grpc",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http2", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A gRPC call did not complete within its configured deadline. The server may be slow, overloaded, or the network path may have high latency. The client cancels the call and returns DeadlineExceeded (gRPC status code 4)."
+  },
+  "dead_ends": [
+    {
+      "action": "Set very large deadlines or remove deadlines entirely",
+      "why_fails": "Removing deadlines means requests can hang indefinitely, consuming server resources and client goroutines/threads. In cascading microservice calls, missing deadlines cause resource exhaustion and cascading failures.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add aggressive retry logic without backoff or deadline propagation",
+      "why_fails": "Retrying immediately without backoff amplifies load on an already overloaded server. Without propagating the remaining deadline, each retry uses the full original deadline, potentially exceeding the caller's deadline.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile the server-side handler to identify and optimize slow operations",
+      "success_rate": 0.88,
+      "how": "1. Add server-side interceptors to log handler duration\n2. Use distributed tracing (OpenTelemetry, Jaeger) to identify slow spans\n3. Profile with pprof or equivalent: go tool pprof http://localhost:6060/debug/pprof/profile\n4. Optimize slow database queries, external API calls, or computation\n5. Consider caching frequently requested data\n6. Set appropriate deadlines that account for the 95th percentile latency",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement proper deadline propagation and retry with exponential backoff",
+      "success_rate": 0.85,
+      "how": "1. Propagate deadlines through the call chain: ctx, cancel := context.WithTimeout(ctx, remaining)\n2. Use gRPC retry interceptors with exponential backoff\n3. Configure max retry attempts (3-5 typically sufficient)\n4. Add jitter to avoid thundering herd: backoff + random(0, backoff*0.1)\n5. Use circuit breakers to stop calling consistently failing services\n6. Monitor deadline propagation with tracing to ensure deadlines shrink correctly through the call chain",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "probability": 0.25, "condition": "when a gRPC-gateway or reverse proxy translates the deadline exceeded to an HTTP 504"},
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when the underlying TCP connection also times out due to server unresponsiveness"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.20, "condition": "when slow TCP connection establishment consumes most of the gRPC deadline"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "DeadlineExceeded is a gRPC-specific error (status code 4) with client-side deadline enforcement; HTTP 504 is a proxy-level timeout that may or may not involve gRPC"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

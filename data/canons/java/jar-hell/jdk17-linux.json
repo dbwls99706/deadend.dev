@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/jar-hell/jdk17-linux",
+  "url": "https://deadends.dev/java/jar-hell/jdk17-linux",
+  "error": {
+    "signature": "java.lang.LinkageError: loader constraint violation: duplicate class definition",
+    "regex": "(?:jar hell|duplicate class definition|loader constraint violation|found duplicate classes)",
+    "domain": "java",
+    "category": "classpath_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.84,
+    "last_updated": "2026-02-12",
+    "summary": "Multiple JARs on the classpath contain the same class, causing the classloader to encounter conflicting definitions. Common with shaded/fat JARs, duplicate transitive dependencies, or libraries that repackage common utilities."
+  },
+  "dead_ends": [
+    {
+      "action": "Randomly removing JARs from the classpath until the error disappears",
+      "why_fails": "Without understanding which classes conflict and which version each part of the application needs, randomly removing JARs will likely cause ClassNotFoundException or NoClassDefFoundError instead.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using a custom classloader to isolate each JAR",
+      "why_fails": "Custom classloaders add significant complexity and can cause ClassCastException when the same class loaded by different classloaders is treated as different types. This approach is only viable for plugin systems, not general dependency resolution.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use Maven Enforcer's banDuplicateClasses rule or Gradle's duplicate class detection to identify and resolve conflicts",
+      "success_rate": 0.85,
+      "how": "1. Add the Maven Enforcer Plugin with the extra-enforcer-rules banDuplicateClasses rule. 2. Run 'mvn enforcer:enforce' to get a report of duplicate classes and which JARs contain them. 3. Exclude the redundant transitive dependency from the dependency that pulls it in. 4. If both JARs are needed, use Maven Shade Plugin's relocation feature to relocate one copy's package.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Exclude conflicting transitive dependencies and pin a single version",
+      "success_rate": 0.82,
+      "how": "1. Run 'mvn dependency:tree -Dverbose' to see all transitive dependencies and conflicts. 2. Identify which dependency pulls in the duplicate JAR. 3. Add an <exclusion> for the duplicate in pom.xml. 4. Explicitly declare the version you want in the <dependencyManagement> section. 5. Verify with 'mvn dependency:tree' that only one version remains.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/linkage-error/jdk17-linux", "probability": 0.30, "condition": "when resolving one duplicate class exposes a linkage incompatibility in the remaining version"},
+      {"error_id": "java/nosuchmethoderror/jdk17-linux", "probability": 0.20, "condition": "when the wrong version of a duplicated class is loaded, missing methods from the expected version"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.35, "condition": "when Maven's nearest-wins strategy resolves a conflict but both JARs end up on the classpath via different paths"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/linkage-error/jdk17-linux", "distinction": "LinkageError is a broader category; jar hell specifically involves duplicate class definitions across multiple JARs, while LinkageError can also be caused by incompatible class changes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

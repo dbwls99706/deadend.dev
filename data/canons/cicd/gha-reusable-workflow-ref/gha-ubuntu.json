@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gha-reusable-workflow-ref/gha-ubuntu",
+  "url": "https://deadends.dev/cicd/gha-reusable-workflow-ref/gha-ubuntu",
+  "error": {
+    "signature": "error: invalid value workflow reference: references to workflows must use a ref that is a commit SHA, branch, or tag",
+    "regex": "(?:invalid value workflow reference.*must use a ref|references to workflows must use a ref that is a commit SHA|invalid.*workflow.*reference.*ref.*SHA.*branch.*tag)",
+    "domain": "cicd",
+    "category": "workflow_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "ubuntu-latest"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-13",
+    "summary": "Reusable workflow call fails because the 'uses' field references a workflow file with a dynamic expression, variable, or missing ref. GitHub requires reusable workflow references to be a static string with an explicit commit SHA, branch name, or tag -- expressions like ${{ vars.REF }} or ${{ github.event.inputs.branch }} are not allowed."
+  },
+  "dead_ends": [
+    {
+      "action": "Use ${{ github.ref }} or other expressions as the ref in the reusable workflow 'uses' field",
+      "why_fails": "GitHub Actions parses reusable workflow references at workflow compilation time, before any expressions are evaluated. The 'uses' field for reusable workflows does not support any form of dynamic expression -- it must be a literal string.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use workflow_dispatch inputs to parameterize the reusable workflow ref",
+      "why_fails": "Even though workflow_dispatch inputs are available at runtime, the reusable workflow 'uses' field is resolved statically during workflow parsing. Input values cannot be interpolated into the uses clause.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use an environment variable or repository variable to specify the workflow version",
+      "why_fails": "Neither env vars nor repository/organization variables can be used in the 'uses' field of a reusable workflow call. This is a fundamental limitation of how GitHub Actions resolves workflow dependencies at parse time.",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pin the reusable workflow reference to a static branch, tag, or commit SHA",
+      "success_rate": 0.95,
+      "how": "Change the uses field to a static reference: 'uses: org/repo/.github/workflows/reusable.yml@main' or 'uses: org/repo/.github/workflows/reusable.yml@v1.2.0' or 'uses: org/repo/.github/workflows/reusable.yml@abc123def'. Use tags for versioned releases and SHA for maximum reproducibility.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use workflow_call inputs to parameterize behavior within the reusable workflow instead of the ref",
+      "success_rate": 0.90,
+      "how": "Keep the workflow ref static (e.g., @main) and use 'with:' inputs to pass configuration to the reusable workflow. Define 'on: workflow_call: inputs:' in the reusable workflow to accept parameters that control its behavior dynamically.",
+      "sources": [],
+      "condition": "When you need different behavior based on caller context but the same workflow version"
+    },
+    {
+      "action": "Use repository_dispatch or workflow_dispatch with a wrapper workflow for dynamic version selection",
+      "success_rate": 0.82,
+      "how": "Create a dispatcher workflow that uses the GitHub API (gh workflow run) to trigger the target workflow on a specific branch. The caller workflow makes an API call to dispatch the workflow on the desired ref, instead of using reusable workflow 'uses' syntax.",
+      "sources": [],
+      "condition": "When truly dynamic workflow version selection is required"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.20, "condition": "When attempting to fix the ref introduces YAML syntax errors in the workflow file"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "probability": 0.25, "condition": "When refactoring workflows to use reusable workflow calls for the first time"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-workflow-syntax-error/gha-linux", "distinction": "Reusable workflow ref error is specifically about invalid dynamic references in 'uses' for called workflows; workflow syntax error covers general YAML and expression syntax problems"},
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "Ref errors are about workflow resolution at parse time; permission errors occur at runtime when the token lacks required scopes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

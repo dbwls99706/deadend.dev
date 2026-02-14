@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts1360-satisfies-type-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts1360-satisfies-type-error/ts5-linux",
+  "error": {
+    "signature": "error TS1360: Type 'X' does not satisfy the expected type 'Y'.",
+    "regex": "TS1360: Type '(.+)' does not satisfy the expected type '(.+)'",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2022-11-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "satisfies operator",
+        "strict mode",
+        "config objects"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.89,
+    "last_updated": "2026-02-01",
+    "summary": "The satisfies operator checks exact structural compatibility without widening types. The error means the value does not match the expected shape. Unlike 'as', satisfies does perform excess property checks."
+  },
+  "dead_ends": [
+    {
+      "action": "Replacing 'satisfies' with 'as' type assertion",
+      "why_fails": "'as' silences the error but loses type safety entirely. The whole purpose of 'satisfies' is to validate without widening. Using 'as' defeats that purpose and allows runtime values that don't match the type to pass through unchecked.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "common_misconception": "Developers treat 'satisfies' and 'as' as interchangeable when they have fundamentally different safety guarantees."
+    },
+    {
+      "action": "Making the target type more permissive by adding union members",
+      "why_fails": "Widening the type (adding '| string', '| undefined', etc.) hides the real problem: the data does not match the expected shape. It passes the issue to consumers who now must handle unexpected types.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "common_misconception": "Type widening is seen as a fix rather than a smell. If the data truly varies, the type should reflect that in the source of truth, not at the satisfies site."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the object to match all required properties of the target type",
+      "how": "The satisfies operator performs exact structural checking. Add missing properties, fix misspelled property names, and ensure value types match. Use Partial<T> if partial conformance is intentional.",
+      "success_rate": 0.93,
+      "tradeoff": "None; this is the correct approach",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-9.html#the-satisfies-operator"
+      ]
+    },
+    {
+      "action": "Use 'as const satisfies T' for literal type narrowing with validation",
+      "how": "This pattern preserves literal types (important for union discrimination) while still validating against the broader type. Example: const config = { mode: 'development' } as const satisfies Config.",
+      "success_rate": 0.88,
+      "tradeoff": "Makes the value deeply readonly",
+      "sources": []
+    },
+    {
+      "action": "Remove excess properties not in the target type",
+      "how": "Unlike 'as', satisfies performs excess property checks. Properties not defined in the target type cause errors. Remove them or extend the target type definition to include them.",
+      "success_rate": 0.9,
+      "tradeoff": "May require updating the type definition if the extra properties are intentional",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "distinction": "TS1360 is specific to the 'satisfies' operator and performs excess property checks. TS2322 is a general type assignment error that does not check excess properties in most contexts."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 35,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-cannot-find-module-declaration/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-cannot-find-module-declaration/ts5-linux",
+  "error": {
+    "signature": "Could not find a declaration file for module 'package-name'. 'path/index.js' implicitly has an 'any' type.",
+    "regex": "Could not find a declaration file for module.*implicitly has an 'any' type",
+    "domain": "typescript",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The package exists but has no TypeScript declarations. Install @types/ package or create a declaration file."
+  },
+  "dead_ends": [
+    {
+      "action": "Set noImplicitAny to false in tsconfig.json",
+      "why_fails": "Disables a core type safety check across the entire project, not just the problematic module",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the @types/ package for the library",
+      "success_rate": 0.90,
+      "how": "npm install --save-dev @types/package-name",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/type-declarations.html"],
+      "condition": ""
+    },
+    {
+      "action": "Create a minimal declaration file for the module",
+      "success_rate": 0.85,
+      "how": "// Create src/types/package-name.d.ts:\ndeclare module 'package-name' {\n  const content: any;\n  export default content;\n  // Add specific exports as needed\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/declaration-files/introduction.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts2322-type-not-assignable/ts5-linux", "probability": 0.20, "condition": "After adding types, type mismatches surface"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts2307-cannot-find-module/ts5-linux", "probability": 0.25, "condition": "When module is found but declarations are missing"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2307-cannot-find-module/ts5-linux", "distinction": "TS2307 means module cannot be found at all; this error means module exists but lacks type declarations"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

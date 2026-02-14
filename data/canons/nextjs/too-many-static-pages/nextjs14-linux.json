@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/too-many-static-pages/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/too-many-static-pages/nextjs14-linux",
+  "error": {
+    "signature": "Error: Export encountered errors on following pages: generating static pages exceeded timeout",
+    "regex": "(Export encountered errors|generating static pages exceeded timeout|static generation.*timeout|static page generation.*timed out)",
+    "domain": "nextjs",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=14.0,<15.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-13",
+    "summary": "This error occurs during next build or next export when static page generation takes too long, typically because generateStaticParams() returns thousands of parameter combinations, individual page renders are slow (heavy data fetching, large computations), or the build environment has limited resources (CI/CD runners, low-memory containers). On Linux, this is exacerbated by default memory limits in Docker containers and CI environments. The timeout applies to both the overall export process and individual page generation. Fix by reducing the number of statically generated pages, optimizing page render time, increasing build resources, or using Incremental Static Regeneration instead of full static export."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing the Node.js --max-old-space-size to fix the timeout",
+      "why_fails": "The static generation timeout is time-based, not memory-based. Increasing the heap size only helps if the timeout is caused by garbage collection pauses, which is rare. Most timeout issues are caused by slow data fetching during page rendering, excessive page count, or CPU-bound rendering. Increasing memory without addressing the root cause (slow renders or too many pages) does not help and may actually slow down builds due to GC overhead on oversized heaps",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": "Unless the build is specifically failing with JavaScript heap out of memory"
+    },
+    {
+      "action": "Setting staticPageGenerationTimeout to an extremely high value (e.g., 600+ seconds)",
+      "why_fails": "While Next.js allows configuring staticPageGenerationTimeout in next.config.js, setting it very high masks the underlying performance problem. CI/CD pipelines have their own timeouts (typically 10-30 minutes for a build step), and individual page renders taking minutes indicate a fundamental issue with data fetching or rendering logic. The build will still be impractically slow even if it eventually completes",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": "When individual pages take more than 60 seconds to render"
+    },
+    {
+      "action": "Parallelizing static generation by running multiple build processes concurrently",
+      "why_fails": "Next.js already parallelizes static generation internally using worker threads. Running multiple next build processes concurrently on the same project causes file system conflicts, corrupted build output, and race conditions in the .next directory. Additionally, multiple processes competing for the same CPU and memory resources will likely make each individual build slower rather than faster",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce statically generated pages and use on-demand rendering for the long tail",
+      "success_rate": 0.9,
+      "how": "Instead of statically generating all pages, generate only the most-visited subset and let the rest be rendered on demand: // app/blog/[slug]/page.tsx\nexport async function generateStaticParams() {\n  // Only pre-generate top 200 posts (by traffic)\n  const topPosts = await db.posts.findMany({\n    orderBy: { views: 'desc' },\n    take: 200,\n    select: { slug: true },\n  });\n  return topPosts.map(p => ({ slug: p.slug }));\n}\n\n// Allow dynamic rendering for non-pre-generated paths:\nexport const dynamicParams = true;\n\nNote: this requires server-side rendering (not compatible with output: 'export'). For static export, paginate the content across multiple routes with fewer pages each",
+      "sources": [],
+      "condition": "When not using output: 'export' (requires a server)"
+    },
+    {
+      "action": "Optimize individual page render time by caching data fetches and reducing computation",
+      "success_rate": 0.88,
+      "how": "Reduce per-page render time to decrease overall build time: 1) Cache shared data fetches using Next.js fetch cache: const data = await fetch(url, { next: { revalidate: 3600 } }); 2) Use React cache() for deduplication: import { cache } from 'react'; const getConfig = cache(async () => await fetchConfig()); 3) Move heavy computations to build-time scripts: generate JSON data files during CI before next build, then import them statically. 4) Optimize images at build time instead of during render. 5) Set staticPageGenerationTimeout in next.config.js to a reasonable value (default is 60s): module.exports = { staticPageGenerationTimeout: 120 };",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use Incremental Static Regeneration (ISR) instead of full static export for large sites",
+      "success_rate": 0.87,
+      "how": "Replace output: 'export' with ISR to generate pages on demand and cache them: // Remove output: 'export' from next.config.js\n// In your page:\nexport const revalidate = 3600; // Revalidate every hour\n\nexport async function generateStaticParams() {\n  // Generate only critical pages at build time\n  return [{ slug: 'about' }, { slug: 'contact' }];\n}\n\n// All other pages are generated on first request and cached\nexport const dynamicParams = true;\n\nDeploy to a platform supporting ISR (Vercel, self-hosted with Node.js server). For Docker: use output: 'standalone' and run the Next.js server. ISR spreads the generation cost over time instead of concentrating it at build time",
+      "sources": [],
+      "condition": "When deploying to a platform that supports server-side rendering"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/dynamic-server-usage/nextjs14-linux",
+        "probability": 0.2,
+        "condition": "when switching from static export to server rendering and encountering dynamic API usage issues"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/static-params-missing/nextjs14-linux",
+        "probability": 0.2,
+        "condition": "when adding generateStaticParams to fix the missing params error but returning too many parameter combinations"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

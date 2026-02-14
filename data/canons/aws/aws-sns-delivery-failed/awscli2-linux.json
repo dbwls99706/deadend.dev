@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-sns-delivery-failed/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-sns-delivery-failed/awscli2-linux",
+  "error": {
+    "signature": "SNS delivery to endpoint failed: Endpoint is disabled or does not exist",
+    "regex": "(SNS .+ delivery .+ failed|Endpoint is disabled|InvalidParameter.*endpoint|DeliveryFailure)",
+    "domain": "aws",
+    "category": "messaging_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "SNS message delivery to a subscription endpoint failed due to disabled endpoint, permission issues, or endpoint errors."
+  },
+  "dead_ends": [
+    {
+      "action": "Republish the same message repeatedly to a disabled endpoint",
+      "why_fails": "Disabled endpoints reject all messages; republishing without re-enabling won't help",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Delete and recreate the SNS topic to fix delivery issues",
+      "why_fails": "Recreating the topic loses all subscriptions and requires reconfiguring all subscribers",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable delivery status logging to identify the specific failure reason",
+      "success_rate": 0.88,
+      "how": "Configure delivery status logging in SNS topic attributes, then check CloudWatch Logs for delivery failure details",
+      "sources": [
+        "https://docs.aws.amazon.com/sns/latest/dg/sns-topic-attributes.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Re-enable disabled endpoints or resubscribe for platforms like SQS, Lambda, HTTP",
+      "success_rate": 0.85,
+      "how": "aws sns set-subscription-attributes or delete/recreate the subscription for the failing endpoint",
+      "sources": [
+        "https://docs.aws.amazon.com/sns/latest/dg/sns-troubleshooting.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "SNS topic policy denies the publishing principal"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

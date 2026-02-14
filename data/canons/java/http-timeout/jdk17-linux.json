@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/http-timeout/jdk17-linux",
+  "url": "https://deadends.dev/java/http-timeout/jdk17-linux",
+  "error": {
+    "signature": "java.net.http.HttpTimeoutException: request timed out",
+    "regex": "(?:HttpTimeoutException|SocketTimeoutException|ConnectTimeoutException).*timed? ?out",
+    "domain": "java",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "java",
+      "version_range": ">=17,<21"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "An HTTP request exceeded its configured timeout (connection timeout or read timeout). Can indicate a slow or unreachable server, network issues, DNS problems, or overly aggressive timeout settings."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting the timeout to an extremely large value or disabling it entirely",
+      "why_fails": "Removing timeouts means a single slow request can block a thread indefinitely, leading to thread pool exhaustion and cascading failures across the application. Timeouts are a critical circuit-breaker mechanism.",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retrying immediately in a tight loop without backoff",
+      "why_fails": "If the server is overloaded, aggressive retries make the situation worse. This can trigger rate limiting or cause a retry storm that overwhelms both the client and server.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure separate connection and read timeouts with appropriate values and add retry with exponential backoff",
+      "success_rate": 0.88,
+      "how": "1. Set connection timeout to 5-10 seconds (how long to wait for TCP handshake). 2. Set read/response timeout based on expected response time (e.g., 30 seconds for API calls). 3. Implement retry with exponential backoff: 1s, 2s, 4s, with a maximum of 3 retries. 4. Use a library like resilience4j or Spring Retry to handle retry logic cleanly. 5. Add jitter to backoff to avoid thundering herd.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement circuit breaker pattern for external service calls",
+      "success_rate": 0.85,
+      "how": "1. Use resilience4j CircuitBreaker to wrap HTTP client calls. 2. Configure failure threshold (e.g., open circuit after 5 consecutive timeouts). 3. Set a wait duration before half-opening (e.g., 30 seconds). 4. Provide a fallback response (cached data, default value, or graceful error). 5. Monitor circuit breaker state to detect persistent downstream issues.",
+      "sources": [],
+      "condition": "when calling unreliable external services"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "java/thread-pool-exhausted/jdk21-linux",
+        "probability": 0.2,
+        "condition": "when many threads are blocked waiting for timed-out HTTP responses"
+      },
+      {
+        "error_id": "java/broken-pipe/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when the server eventually responds after the client has given up and closed the connection"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "java/connection-pool-exhausted/jdk17-linux",
+        "probability": 0.15,
+        "condition": "when connection pool exhaustion delays HTTP request initiation"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "java/socketexception-connection-reset/jdk17-linux",
+        "distinction": "Connection reset means the server actively rejected or dropped the connection; timeout means the server did not respond within the allowed time"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

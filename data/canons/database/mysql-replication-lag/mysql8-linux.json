@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-replication-lag/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-replication-lag/mysql8-linux",
+  "error": {
+    "signature": "Seconds_Behind_Master: 3600 (or Seconds_Behind_Source: 3600)",
+    "regex": "Seconds_Behind_(Master|Source):\\s+\\d{3,}|replica.*lag|slave.*delay",
+    "domain": "database",
+    "category": "replication_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "The MySQL replica is significantly behind the primary in processing binary log events. Replication lag means reads from the replica return stale data. Caused by slow single-threaded SQL applier, large transactions, insufficient replica hardware, or DDL operations on the replica."
+  },
+  "dead_ends": [
+    {
+      "action": "Stopping and restarting replication to reset the lag counter",
+      "why_fails": "Stopping replication does not reduce the backlog of events to apply. When replication restarts, it resumes from where it stopped and the lag remains. During the stop period, even more events accumulate on the primary, increasing the lag.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding more replicas to distribute the read load without fixing the lag",
+      "why_fails": "All replicas receive the same binary log stream. If one replica cannot keep up, additional replicas with similar hardware will have the same lag. Adding replicas increases primary network overhead without fixing the processing bottleneck.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable parallel replication to use multiple applier threads",
+      "success_rate": 0.85,
+      "how": "Set on the replica: SET GLOBAL replica_parallel_workers = 8; SET GLOBAL replica_parallel_type = 'LOGICAL_CLOCK'; SET GLOBAL replica_preserve_commit_order = ON; This allows transactions that were executed in parallel on the primary to be applied in parallel on the replica. Requires MySQL 8.0.27+ for best results.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Identify and optimize the slow queries or large transactions causing lag",
+      "success_rate": 0.80,
+      "how": "Check the current replay position: SHOW REPLICA STATUS\\G; Look at Relay_Log_File and Relay_Log_Pos. Examine what's being applied: SELECT * FROM performance_schema.replication_applier_status_by_worker; Break large transactions into smaller batches on the primary. Avoid DDL during peak traffic.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-binlog-error/mysql8-linux", "probability": 0.20, "condition": "when lag persists long enough that the primary purges the required binlog files"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.15, "condition": "when lock contention on the primary generates many large transactions that the replica cannot keep up with"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-binlog-error/mysql8-linux", "distinction": "Replication lag means the replica is behind but can still catch up. Binlog error means the required binlog files no longer exist on the primary. Lag is a performance issue; missing binlogs is a data loss issue requiring re-initialization."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

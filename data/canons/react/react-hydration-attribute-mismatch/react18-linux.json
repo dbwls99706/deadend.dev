@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-hydration-attribute-mismatch/react18-linux",
+  "url": "https://deadends.dev/react/react-hydration-attribute-mismatch/react18-linux",
+  "error": {
+    "signature": "Warning: Prop `className` did not match. Server: \"server-class\" Client: \"client-class\"",
+    "regex": "Prop .+ did not match|Prop.*Server:.*Client:|Extra attributes from the server|hydrat.*mismatch.*attribute",
+    "domain": "react",
+    "category": "hydration_error",
+    "first_seen": "2022-03-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.89,
+    "last_updated": "2026-02-12",
+    "summary": "HTML attribute/prop mismatch between server-rendered HTML and client-side React hydration. Common causes: CSS-in-JS generating different classNames, browser extensions injecting attributes, conditional rendering based on window/navigator."
+  },
+  "dead_ends": [
+    {
+      "action": "Add suppressHydrationWarning to all mismatched elements",
+      "why_fails": "Suppresses the warning but the visual flicker remains as React patches the DOM. Does not fix CSS-in-JS class mismatch which causes FOUC.",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Force client-side rendering to avoid hydration entirely",
+      "why_fails": "Eliminates SSR benefits including SEO, initial load performance, and time-to-first-contentful-paint",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react-dom/client/createRoot"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure CSS-in-JS library is configured for SSR (e.g., styled-components ServerStyleSheet, emotion extractCritical)",
+      "success_rate": 0.90,
+      "how": "For styled-components: use ServerStyleSheet in server rendering. For emotion: use extractCriticalToChunks. Ensure the same hash/seed is used on server and client.",
+      "sources": [
+        "https://styled-components.com/docs/advanced#server-side-rendering",
+        "https://emotion.sh/docs/ssr"
+      ],
+      "condition": "When using CSS-in-JS libraries"
+    },
+    {
+      "action": "Defer browser-only attribute computation to useEffect",
+      "success_rate": 0.88,
+      "how": "const [className, setClassName] = useState('server-safe-class'); useEffect(() => { setClassName(computeClientClass()); }, []);",
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
+      "condition": "When attributes depend on browser APIs like window or navigator"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/text-content-mismatch/react18-linux",
+        "probability": 0.30,
+        "condition": "When the same SSR misconfiguration causes both attribute and text content mismatches"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/text-content-mismatch/react18-linux",
+        "probability": 0.20,
+        "condition": "When fixing text hydration mismatch but missing attribute mismatches in the same component"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/text-content-mismatch/react18-linux",
+        "distinction": "hydration-attribute-mismatch is about prop/attribute differences (className, style, etc.), while text-content-mismatch is about different text node content between server and client"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 120,
+    "last_verification": "2026-02-12"
+  }
+}

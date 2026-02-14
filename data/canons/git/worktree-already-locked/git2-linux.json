@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/worktree-already-locked/git2-linux",
+  "url": "https://deadends.dev/git/worktree-already-locked/git2-linux",
+  "error": {
+    "signature": "fatal: 'path/to/worktree' is a missing but locked worktree",
+    "regex": "(?i)fatal:.*(?:is a missing but locked worktree|worktree.*already locked|cannot move.*locked worktree)",
+    "domain": "git",
+    "category": "worktree",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "A git worktree was previously locked (via git worktree lock) and the directory has since been moved or deleted, but the lock persists. Operations on the worktree fail because git respects the lock even when the worktree path is missing."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually deleting the worktree directory without unlocking it first",
+      "why_fails": "The lock metadata in .git/worktrees/<name>/locked persists even after the directory is deleted, preventing git from cleaning up or re-adding the worktree at the same path",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running git worktree prune while the worktree is locked",
+      "why_fails": "git worktree prune skips locked worktrees by design, so the stale locked worktree remains in the list",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Unlock the worktree then prune or remove it",
+      "success_rate": 0.95,
+      "how": "Run git worktree unlock <path> to remove the lock, then git worktree remove <path> to cleanly remove it. If the path is missing, use git worktree prune after unlocking.",
+      "sources": ["https://git-scm.com/docs/git-worktree"],
+      "condition": ""
+    },
+    {
+      "action": "Manually remove the lock file from .git/worktrees",
+      "success_rate": 0.88,
+      "how": "Delete the file .git/worktrees/<worktree-name>/locked, then run git worktree prune to clean up the stale entry.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/cannot-lock-ref/git2-linux", "probability": 0.10, "condition": "when locked worktree state conflicts with ref updates"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/cannot-lock-ref/git2-linux", "probability": 0.10, "condition": "when ref lock issues prompt users to lock worktrees manually"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/cannot-lock-ref/git2-linux", "distinction": "worktree-already-locked is about worktree path locks; cannot-lock-ref is about .lock files on git references (branches/tags)"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

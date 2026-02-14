@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/goroutine-leak/go1.22-linux",
+  "url": "https://deadends.dev/go/goroutine-leak/go1.22-linux",
+  "error": {
+    "signature": "goroutine leak detected: found unexpected goroutines still running",
+    "regex": "goroutine leak|leaked goroutine|goroutine.*still running|too many goroutines",
+    "domain": "go",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Goroutines are created but never terminate, typically because they are blocked on channel reads/writes, network I/O, or waiting on a mutex that is never released. Detected by goleak or runtime.NumGoroutine() growth."
+  },
+  "dead_ends": [
+    {
+      "action": "Call runtime.GC() to clean up leaked goroutines",
+      "why_fails": "GC does not terminate goroutines — goroutines are not garbage collected, they must exit their function",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://go.dev/doc/effective_go#goroutines"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Increase GOMAXPROCS to handle more goroutines",
+      "why_fails": "Leaked goroutines still consume memory and stack space regardless of GOMAXPROCS — the leak is unbounded",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pass a context.Context to goroutines and select on ctx.Done()",
+      "success_rate": 0.92,
+      "how": "go func(ctx context.Context) {\n    select {\n    case <-ctx.Done():\n        return\n    case msg := <-ch:\n        handle(msg)\n    }\n}(ctx)",
+      "sources": [
+        "https://pkg.go.dev/context"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use goleak in tests to detect goroutine leaks early",
+      "success_rate": 0.88,
+      "how": "import \"go.uber.org/goleak\"\nfunc TestMain(m *testing.M) {\n    goleak.VerifyTestMain(m)\n}",
+      "sources": [
+        "https://pkg.go.dev/go.uber.org/goleak"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/too-many-open-files/go1-linux",
+        "probability": 0.25,
+        "condition": "when leaked goroutines hold open file descriptors or connections"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/context-canceled/go1.22-linux",
+        "probability": 0.20,
+        "condition": "when context cancellation is not propagated to spawned goroutines"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/channel-deadlock/go1-linux",
+        "distinction": "Goroutine leaks are goroutines blocked forever but not detected by the runtime (because other goroutines are still running), while deadlock is when ALL goroutines are blocked and the runtime detects it."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

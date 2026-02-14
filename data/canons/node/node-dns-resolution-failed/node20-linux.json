@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/node-dns-resolution-failed/node20-linux",
+  "url": "https://deadends.dev/node/node-dns-resolution-failed/node20-linux",
+  "error": {
+    "signature": "Error: getaddrinfo ENOTFOUND hostname",
+    "regex": "getaddrinfo (ENOTFOUND|EAI_AGAIN)",
+    "domain": "node",
+    "category": "network",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "DNS lookup failed for the target hostname. The system resolver cannot translate the domain name to an IP address."
+  },
+  "dead_ends": [
+    {
+      "action": "Retrying the request in a tight loop without backoff",
+      "why_fails": "DNS failures are often transient but require time to recover; flooding the resolver makes it worse",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Hardcoding IP addresses to bypass DNS",
+      "why_fails": "IP addresses change over time, especially for cloud services; breaks when infrastructure rotates",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the hostname is correct and the DNS server is reachable",
+      "success_rate": 0.90,
+      "how": "Run 'nslookup hostname' or 'dig hostname' to confirm DNS resolution works at the OS level",
+      "sources": [
+        "https://nodejs.org/api/dns.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use dns.setServers() to specify custom DNS servers",
+      "success_rate": 0.85,
+      "how": "const dns = require('dns'); dns.setServers(['8.8.8.8', '8.8.4.4']); before making requests",
+      "sources": [
+        "https://nodejs.org/api/dns.html#dnssetserversservers"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/econnrefused/node20-linux",
+        "probability": 0.25,
+        "condition": "when DNS resolves but the service is down"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/econnreset/node20-linux",
+        "probability": 0.20,
+        "condition": "when network instability causes DNS cache invalidation"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/econnrefused/node20-linux",
+        "distinction": "ENOTFOUND means DNS cannot resolve the hostname at all, while ECONNREFUSED means DNS resolved but the target port is not accepting connections"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

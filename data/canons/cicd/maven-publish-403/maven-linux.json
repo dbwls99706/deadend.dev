@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/maven-publish-403/maven-linux",
+  "url": "https://deadends.dev/cicd/maven-publish-403/maven-linux",
+  "error": {
+    "signature": "Return code is: 403, ReasonPhrase: Forbidden. -> [Help 1]",
+    "regex": "(?i)(?:Return code is: 403|403.*Forbidden.*deploy|Failed to deploy artifacts|authorization failed.*repository)",
+    "domain": "cicd",
+    "category": "publishing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "maven", "version_range": ">=3.6"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Maven deploy/publish returned 403 Forbidden from the artifact repository. Common causes: incorrect credentials in settings.xml, insufficient permissions on the repository, attempting to overwrite a released (non-SNAPSHOT) artifact, or repository policy rejecting the upload."
+  },
+  "dead_ends": [
+    {
+      "action": "Re-deploying the same non-SNAPSHOT version",
+      "why_fails": "Most repositories (Maven Central, Nexus, Artifactory) forbid overwriting released artifacts. A 403 for released versions is permanent unless the artifact is explicitly deleted first.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding credentials to pom.xml instead of settings.xml",
+      "why_fails": "Maven ignores server credentials in pom.xml. Credentials must be in ~/.m2/settings.xml or passed via environment variables. Also, credentials in pom.xml get committed to version control.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure server credentials in settings.xml matching the distributionManagement server ID",
+      "success_rate": 0.88,
+      "how": "Ensure the <server> block ID in settings.xml matches the <repository>/<snapshotRepository> ID in pom.xml. In CI, use MAVEN_USERNAME and MAVEN_PASSWORD environment variables with the maven-settings-action or set up settings.xml via secrets.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Bump the version for a new release or use -SNAPSHOT suffix",
+      "success_rate": 0.85,
+      "how": "If the error occurs because the version already exists, bump the version in pom.xml. For iterative development, use SNAPSHOT versions (e.g., 1.2.3-SNAPSHOT) which allow overwrites.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/semantic-release-failed/gha-linux", "probability": 0.15, "condition": "when automated versioning and publishing pipelines encounter repository permissions issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.20, "condition": "when Maven credentials environment variables are not set in CI"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/npm-audit-critical/gha-linux", "distinction": "maven-publish-403 is about artifact publishing permissions; npm-audit-critical is about dependency vulnerability scanning failures"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

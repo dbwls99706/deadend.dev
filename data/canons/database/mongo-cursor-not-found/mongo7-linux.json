@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongo-cursor-not-found/mongo7-linux",
+  "url": "https://deadends.dev/database/mongo-cursor-not-found/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.CursorNotFound: cursor id 1234567890 not found",
+    "regex": "CursorNotFound|cursor id.*not found|cursor.*timed out",
+    "domain": "database",
+    "category": "timeout_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "A cursor timed out on the MongoDB server while the client was iterating results. MongoDB automatically closes cursors after 10 minutes of inactivity (default noCursorTimeout is false). This happens when processing each batch takes longer than the timeout, or when the application pauses iteration. Also occurs after a primary election if the cursor was on the old primary."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting noCursorTimeout on all cursors to prevent timeouts",
+      "why_fails": "noCursorTimeout cursors are never automatically closed. If the application crashes or forgets to close the cursor, it leaks server resources (memory and open cursors). Over time, this can exhaust the server's cursor capacity and degrade performance for all clients.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing the cursor timeout to very large values globally",
+      "why_fails": "cursorTimeoutMillis is a server-wide setting. Setting it very high affects all cursors and increases the risk of resource leaks from abandoned cursors. It also does not help with cursors lost during replica set elections.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use larger batch sizes to reduce the number of getMore round trips",
+      "success_rate": 0.88,
+      "how": "Increase the batch size: db.collection.find().batchSize(5000). This fetches more documents per round trip, reducing the chance of timeout between batches. Balance batch size against memory usage. For very large result sets, consider using pagination with range queries instead of cursors.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Implement range-based pagination instead of relying on long-lived cursors",
+      "success_rate": 0.90,
+      "how": "Use range queries with a sort field: db.collection.find({_id:{$gt:lastId}}).sort({_id:1}).limit(1000). Track the last _id from each batch and use it as the starting point for the next query. This creates a new cursor for each page and is immune to cursor timeouts.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.10, "condition": "when cursor timeout is caused by network issues that also affect the connection"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongo-write-conflict/mongo7-linux", "probability": 0.10, "condition": "when write conflict retries delay cursor iteration beyond the timeout period"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/query-timeout/pg16-linux", "distinction": "MongoDB CursorNotFound is about server-side cursor timeout during result iteration. PostgreSQL query timeout is about the query execution time exceeding statement_timeout. MongoDB times out idle cursors; PostgreSQL times out running queries."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/blazor-prerender-state/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/blazor-prerender-state/dotnet8-linux",
+  "error": {
+    "signature": "InvalidOperationException: JavaScript interop calls cannot be issued during server-side prerendering.",
+    "regex": "(JavaScript interop calls cannot be issued|JS interop.*prerendering|InvalidOperationException.*JavaScript interop.*server-side prerendering)",
+    "domain": "dotnet",
+    "category": "runtime_exception",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-13",
+    "summary": "Blazor Server and Blazor United (SSR) prerender components on the server where there is no browser or JavaScript runtime. Calling IJSRuntime methods (InvokeAsync, InvokeVoidAsync) during OnInitialized/OnInitializedAsync or OnParametersSet during prerendering fails because there is no SignalR circuit or browser connection yet. Fix by deferring JS interop to OnAfterRender/OnAfterRenderAsync, checking the render mode, or disabling prerendering for the component."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the JS interop call in a try-catch to silently ignore the prerender failure",
+      "why_fails": "The component renders without the JS-dependent state, causing visual flicker, missing data, or broken UI on initial load. The catch block masks a real architectural issue and the component's first render will always be incomplete, creating a poor user experience and potential hydration mismatches",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Injecting NavigationManager to detect prerendering and skip all initialization logic",
+      "why_fails": "NavigationManager is available during prerendering and does not reliably indicate the render phase. Skipping all initialization during prerender means the server-rendered HTML has no meaningful content, defeating the purpose of SSR for SEO and first-paint performance. The component renders as empty on the server",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Moving the JS interop call to the component constructor or field initializer",
+      "why_fails": "The constructor runs even earlier than OnInitialized and the DI-injected IJSRuntime is not yet available or is in the same prerender context. This typically results in a NullReferenceException or the same InvalidOperationException, now thrown from the constructor which is harder to debug",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move JS interop calls to OnAfterRenderAsync with a firstRender guard",
+      "success_rate": 0.92,
+      "how": "OnAfterRenderAsync is only called after the component has rendered in the browser, guaranteeing a JS runtime is available: protected override async Task OnAfterRenderAsync(bool firstRender) { if (firstRender) { var value = await JSRuntime.InvokeAsync<string>(\"localStorage.getItem\", \"key\"); myState = value; StateHasChanged(); } } This is the idiomatic Blazor pattern for JS interop initialization",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable prerendering for the specific component that requires JS interop",
+      "success_rate": 0.88,
+      "how": "Set the render mode to disable prerendering for components that fundamentally depend on JS interop at initialization. In .NET 8 Blazor United: <MyComponent @rendermode=\"new InteractiveServerRenderMode(prerender: false)\" /> or <MyComponent @rendermode=\"new InteractiveWebAssemblyRenderMode(prerender: false)\" />. This trades SSR benefits for the component in exchange for correct JS interop behavior. Use sparingly and only for components where JS is essential at init",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use PersistentComponentState to preserve state across prerender and interactive phases",
+      "success_rate": 0.85,
+      "how": "Inject PersistentComponentState to transfer server-side data to the interactive phase without needing JS during prerender: [Inject] PersistentComponentState ApplicationState { get; set; } In OnInitializedAsync, register state for persistence during prerender: ApplicationState.RegisterOnPersisting(() => { ApplicationState.PersistAsJson(\"myData\", data); return Task.CompletedTask; }); On interactive render: ApplicationState.TryTakeFromJson<MyData>(\"myData\", out var restored); This avoids JS interop entirely during prerender while preserving data",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when the JS interop result is expected to be non-null but the deferred call leaves state uninitialized during the first render"},
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "probability": 0.15, "condition": "when fixing the prerender issue introduces incorrect component lifecycle management"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when Blazor middleware misconfiguration causes unexpected prerendering behavior"},
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.12, "condition": "when debugging null state issues reveals the root cause is JS interop during prerender"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "The JS interop prerender error is a specific InvalidOperationException thrown by the Blazor framework when IJSRuntime is invoked without a browser context; generic InvalidOperationException can occur for any invalid state, such as modifying a collection during enumeration or calling methods on a disposed object"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

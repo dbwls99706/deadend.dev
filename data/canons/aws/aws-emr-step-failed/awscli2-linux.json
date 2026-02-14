@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-emr-step-failed/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-emr-step-failed/awscli2-linux",
+  "error": {
+    "signature": "Step failed with status FAILED",
+    "regex": "(Step .+ failed|EMR step .+ FAILED|CLUSTER_TERMINATED_WITH_ERRORS)",
+    "domain": "aws",
+    "category": "compute_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.75,
+    "confidence": 0.8,
+    "last_updated": "2026-02-12",
+    "summary": "An EMR step (Spark, Hive, etc.) failed due to application errors, resource exhaustion, or configuration issues."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase cluster size without checking the actual error",
+      "why_fails": "Many step failures are due to application bugs or misconfigured scripts, not resource limits",
+      "fail_rate": 0.7,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade EMR version to fix step failures",
+      "why_fails": "Older versions may have different bugs; the step script itself is usually the issue",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the step's stderr log in S3 for the specific error",
+      "success_rate": 0.85,
+      "how": "aws emr describe-step --cluster-id CLUSTER_ID --step-id STEP_ID to get log URI, then check s3://LOG_URI/steps/STEP_ID/stderr.gz",
+      "sources": [
+        "https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-manage-view-web-log-files.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Run the step in debug mode or on a smaller dataset first",
+      "success_rate": 0.78,
+      "how": "Add --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=... for verbose logging, test with subset of data",
+      "sources": [
+        "https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-troubleshoot-failed.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "aws/access-denied-exception/awscli2-linux",
+        "probability": 0.15,
+        "condition": "EMR role lacks S3 or Glue permissions needed by the step"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-glue-job-failed/awscli2-linux",
+        "distinction": "Glue job failures are serverless ETL; EMR step failures are on managed Hadoop/Spark clusters you provision"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

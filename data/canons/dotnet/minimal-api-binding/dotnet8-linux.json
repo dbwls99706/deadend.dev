@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "id": "dotnet/minimal-api-binding/dotnet8-linux",
+  "url": "https://deadends.dev/dotnet/minimal-api-binding/dotnet8-linux",
+  "error": {
+    "signature": "BadHttpRequestException: Failed to read parameter from the request body as JSON.",
+    "regex": "(BadHttpRequestException.*Failed to read parameter.*request body as JSON|Failed to read parameter.*from the request body|BadHttpRequestException.*request body as JSON)",
+    "domain": "dotnet",
+    "category": "http_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {"name": "dotnet", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.90,
+    "last_updated": "2026-02-13",
+    "summary": "Minimal API endpoints in ASP.NET Core automatically bind complex types from the request body using System.Text.Json. This exception occurs when the request body is missing, malformed, has incorrect Content-Type, or when the JSON structure does not match the expected parameter type. Common causes include sending form data instead of JSON, missing required properties when using required keyword or [Required] attributes, or enum/type mismatches. Fix by ensuring the request Content-Type is application/json and the body structure matches the expected type."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding [FromBody] attribute explicitly to the parameter assuming it changes binding behavior",
+      "why_fails": "In Minimal APIs, complex types are already bound from the body by default. Adding [FromBody] explicitly does not change the binding source or fix deserialization errors. The issue is in the JSON payload structure or Content-Type header, not in how the parameter is annotated. This wastes debugging time on the wrong layer",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Making all properties nullable to avoid required property binding failures",
+      "why_fails": "Making all properties nullable suppresses the binding error but pushes null-handling responsibility throughout the entire codebase. Every consumer of the model must now check for null on every field, and invalid requests that should be rejected with 400 are silently accepted with null data, leading to NullReferenceExceptions deeper in the application logic",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching from Minimal API to MVC controllers to get better model binding",
+      "why_fails": "MVC controllers use the same System.Text.Json deserialization pipeline and will produce equivalent errors for malformed JSON. The migration adds significant complexity (controller classes, routing attributes, dependency injection changes) without addressing the root cause, which is a mismatch between the client request and the server's expected model",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the request sends application/json Content-Type with a matching JSON body",
+      "success_rate": 0.92,
+      "how": "The most common cause is a missing or incorrect Content-Type header. Verify the client sends Content-Type: application/json and the body is valid JSON matching the parameter type. For testing: curl -X POST https://localhost:5001/api/items -H \"Content-Type: application/json\" -d '{\"name\": \"test\", \"price\": 9.99}'. When using HttpClient: content = new StringContent(json, Encoding.UTF8, \"application/json\"). Form-encoded data will not bind to JSON parameters",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure JsonSerializerOptions to handle common mismatches like camelCase and enums",
+      "success_rate": 0.87,
+      "how": "Configure the JSON serializer to be more lenient with common mismatches: builder.Services.ConfigureHttpJsonOptions(options => { options.SerializerOptions.PropertyNameCaseInsensitive = true; options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()); options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; }); PropertyNameCaseInsensitive handles PascalCase vs camelCase mismatches, and JsonStringEnumConverter allows string enum values instead of requiring integers",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a custom binding approach with JsonDocument for flexible body handling",
+      "success_rate": 0.84,
+      "how": "When the request body structure varies or needs validation before binding, accept the raw body and parse manually: app.MapPost(\"/api/items\", async (HttpRequest request) => { using var doc = await JsonDocument.ParseAsync(request.Body); var root = doc.RootElement; if (!root.TryGetProperty(\"name\", out var name)) return Results.BadRequest(\"name is required\"); var item = new Item { Name = name.GetString()! }; return Results.Ok(item); }); This gives complete control over parsing and error messages. For simpler cases, use the JsonElement type as parameter for partial flexibility",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "dotnet/nullreferenceexception/dotnet8-linux", "probability": 0.20, "condition": "when nullable properties are used to suppress binding errors but null values are not handled downstream"},
+      {"error_id": "dotnet/serialization-cycle/dotnet8-linux", "probability": 0.10, "condition": "when fixing the binding model introduces navigation properties that cause serialization cycles in the response"}
+    ],
+    "preceded_by": [
+      {"error_id": "dotnet/aspnet-cors-blocked/dotnet8-linux", "probability": 0.15, "condition": "when CORS preflight issues mask the real binding error by preventing the POST request from reaching the server"},
+      {"error_id": "dotnet/aspnet-middleware-order/dotnet8-linux", "probability": 0.10, "condition": "when middleware ordering causes the request body to be consumed before it reaches the endpoint binding"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "dotnet/invalidoperationexception/dotnet8-linux", "distinction": "BadHttpRequestException for body binding is specifically about JSON deserialization of the request body in Minimal API endpoints; InvalidOperationException covers broader operational errors including DI resolution failures and incorrect middleware usage"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

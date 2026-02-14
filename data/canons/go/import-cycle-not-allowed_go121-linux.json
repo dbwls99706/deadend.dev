@@ -78,7 +78,7 @@
     "frequently_confused_with": [
       {
         "error_id": "go/assignment-to-entry-in-nil-map/go1-linux",
-        "distinction": "'import cycle not allowed' indicates a dependency cycle in Terraform resources, while 'panic' indicates writing to an uninitialized (nil) map."
+        "distinction": "'import cycle not allowed' indicates a circular dependency between Go packages, while 'assignment to entry in nil map' is a runtime panic from writing to an uninitialized (nil) map."
       }
     ]
   },

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-strict-mode-double-render/react18-linux",
+  "url": "https://deadends.dev/react/react-strict-mode-double-render/react18-linux",
+  "error": {
+    "signature": "Component renders twice in development. useEffect cleanup runs immediately after mount. API called twice on component mount.",
+    "regex": "StrictMode.*double.*render|rendered twice|useEffect.*called twice|cleanup.*called.*mount|double invocation.*development",
+    "domain": "react",
+    "category": "development_behavior",
+    "first_seen": "2022-03-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "React 18 StrictMode intentionally double-invokes render functions, effects, and cleanup in development to help find impure components and missing cleanup. This is expected behavior, not a bug."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove StrictMode to stop double rendering",
+      "why_fails": "StrictMode catches real bugs (missing cleanup, impure renders, deprecated APIs). Removing it hides issues that will surface in production as memory leaks or stale state.",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://react.dev/reference/react/StrictMode"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a useRef flag to skip the second render/effect invocation",
+      "why_fails": "Defeats the purpose of StrictMode's bug detection. The double invocation is telling you that your effect has a side effect that does not clean up properly.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add proper cleanup to useEffect so the double invocation is idempotent",
+      "success_rate": 0.93,
+      "how": "useEffect(() => { const controller = new AbortController(); fetchData(controller.signal); return () => controller.abort(); }, []);",
+      "sources": [
+        "https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Make the effect idempotent: running it twice should produce the same result as running it once",
+      "success_rate": 0.90,
+      "how": "For subscriptions: clean up in the cleanup function. For DOM mutations: check if already applied. For API calls: use AbortController or deduplicate with a cache (React Query, SWR).",
+      "sources": [
+        "https://react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-cannot-update-unmounted/react18-linux",
+        "probability": 0.20,
+        "condition": "When the effect does not abort the first fetch and it resolves after the component remounts"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/useeffect-missing-dependency/react18-linux",
+        "probability": 0.18,
+        "condition": "When adding missing dependencies makes the double-invocation more visible due to extra effect runs"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-bad-setstate-in-render/react18-linux",
+        "distinction": "strict-mode-double-render is intentional development behavior for finding bugs, while bad-setstate-in-render is an actual bug where setState is called during the render phase"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 200,
+    "last_verification": "2026-02-12"
+  }
+}

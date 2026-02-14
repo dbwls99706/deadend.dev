@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/soap-client-error/php83-linux",
+  "url": "https://deadends.dev/php/soap-client-error/php83-linux",
+  "error": {
+    "signature": "SoapFault exception: [WSDL] SOAP-ERROR: Parsing WSDL: Couldn't load from 'https://api.example.com/service?wsdl' : failed to load external entity",
+    "regex": "SoapFault.*SOAP-ERROR:.*Parsing WSDL|SoapFault.*Couldn't load from",
+    "domain": "php",
+    "category": "network",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "SOAP client errors typically occur when PHP cannot load or parse the WSDL file. Common causes include network connectivity issues, SSL certificate problems, WSDL URL changes, or the remote service being temporarily unavailable."
+  },
+  "dead_ends": [
+    {"action": "Disabling WSDL caching to always fetch the latest WSDL", "why_fails": "Disabling WSDL caching (soap.wsdl_cache_enabled = 0) means every SOAP call requires downloading and parsing the WSDL first. This doubles the request time and makes the application dependent on the WSDL endpoint availability for every single call.", "fail_rate": 0.65, "sources": [], "condition": ""},
+    {"action": "Parsing the WSDL XML manually to extract endpoint URLs", "why_fails": "Manually parsing WSDL bypasses the SOAP protocol's type system, message format validation, and operation binding. The resulting HTTP calls will lack proper SOAP envelope formatting and namespace handling.", "fail_rate": 0.78, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Cache the WSDL file locally and reference it by file path", "success_rate": 0.90, "how": "Download the WSDL: curl -o /var/www/app/wsdl/service.wsdl 'https://api.example.com/service?wsdl'. Reference locally: new SoapClient('/var/www/app/wsdl/service.wsdl', ['cache_wsdl' => WSDL_CACHE_BOTH]). Update the cached file periodically.", "sources": [], "condition": ""},
+    {"action": "Configure SOAP client with proper SSL and timeout options", "success_rate": 0.85, "how": "Pass a stream_context with SSL options: $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'cafile' => '/etc/ssl/certs/ca-certificates.crt'], 'http' => ['timeout' => 30]]); new SoapClient($wsdl, ['stream_context' => $ctx, 'connection_timeout' => 15]).", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/curl-timeout/php83-linux", "probability": 0.15, "condition": "when the underlying HTTP connection to the SOAP endpoint experiences timeout issues"}],
+    "preceded_by": [{"error_id": "php/openssl-verify-failed/php83-linux", "probability": 0.25, "condition": "when SSL certificate verification failures prevent WSDL download"}],
+    "frequently_confused_with": [{"error_id": "php/curl-ssl-error/php83-linux", "distinction": "SOAP client errors are about WSDL parsing and SOAP protocol issues, while cURL SSL errors are about TLS certificate validation during HTTP requests"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

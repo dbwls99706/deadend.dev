@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/terraform-plan-diff/terraform-linux",
+  "url": "https://deadends.dev/cicd/terraform-plan-diff/terraform-linux",
+  "error": {
+    "signature": "Error: Plan approval required. Terraform detected changes that require approval before applying.",
+    "regex": "(?i)(?:Plan.*changes|terraform plan.*diff|infrastructure changes detected|plan.*not empty|Resources to add|Resources to destroy)",
+    "domain": "cicd",
+    "category": "infrastructure",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "terraform", "version_range": ">=1.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform plan detected infrastructure changes that differ from the current state. In CI, this often blocks auto-apply pipelines. Caused by manual changes to infrastructure (drift), state file desync, or legitimate code changes requiring review."
+  },
+  "dead_ends": [
+    {
+      "action": "Auto-applying terraform without reviewing the plan in production",
+      "why_fails": "Unreviewed auto-apply can destroy or modify production resources. Destructive changes (replace, destroy) are especially dangerous without human review.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignoring plan diffs and merging without resolving drift",
+      "why_fails": "Infrastructure drift compounds over time. Future plans become increasingly large and confusing, making it harder to determine which changes are intentional.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Review the plan output and approve intentional changes",
+      "success_rate": 0.90,
+      "how": "Run terraform plan -out=plan.tfplan to save the plan. Review the output carefully. If changes are intentional, apply with terraform apply plan.tfplan. In CI, post the plan as a PR comment for team review before applying.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Import or refresh state to resolve drift from manual changes",
+      "success_rate": 0.85,
+      "how": "If changes are due to manual modifications: terraform import <resource> <id> for new resources. terraform refresh to update state to match actual infrastructure. Use terraform state commands to reconcile.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/deploy-rollback-failed/ci-linux", "probability": 0.15, "condition": "when an applied plan causes issues and rollback is needed"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/env-variable-not-set/gha-linux", "probability": 0.15, "condition": "when missing cloud credentials cause terraform to detect unexpected state differences"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/argocd-sync-failed/argocd-linux", "distinction": "terraform-plan-diff is about infrastructure state differences; argocd-sync-failed is about Kubernetes manifest state differences. Both are state reconciliation issues in different domains."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

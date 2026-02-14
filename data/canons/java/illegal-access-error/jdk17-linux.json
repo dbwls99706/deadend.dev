@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/illegal-access-error/jdk17-linux",
+  "url": "https://deadends.dev/java/illegal-access-error/jdk17-linux",
+  "error": {
+    "signature": "java.lang.IllegalAccessError: class X cannot access class Y",
+    "regex": "java\\.lang\\.IllegalAccessError",
+    "domain": "java",
+    "category": "runtime_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "IllegalAccessError occurs when code tries to access a class, method, or field that is not accessible due to Java module system (JPMS) encapsulation or access modifier restrictions. Very common after migrating to JDK 17+ from JDK 8, where internal APIs were freely accessible."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding --illegal-access=permit to JVM flags on JDK 17+",
+      "why_fails": "The --illegal-access flag was removed in JDK 17. It was only available in JDK 9-16 as a migration aid. On JDK 17+, this flag is not recognized and the JVM will either ignore it or fail to start.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": "on JDK 17+"
+    },
+    {
+      "action": "Downgrading to JDK 8 to avoid module system restrictions",
+      "why_fails": "JDK 8 is past its public support end-of-life. While this removes module restrictions, it gives up 9 years of security patches, performance improvements, and language features. It is not a sustainable solution.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add --add-opens or --add-exports JVM flags to open specific module packages",
+      "success_rate": 0.88,
+      "how": "1. Read the error message to identify which module and package are involved (e.g., 'module java.base does not export sun.misc to unnamed module'). 2. Add --add-opens java.base/sun.misc=ALL-UNNAMED (for reflective access) or --add-exports java.base/sun.misc=ALL-UNNAMED (for compile-time access). 3. Add to JVM startup flags in your run script, Dockerfile, or Maven/Gradle configuration. 4. Document the flags so future maintainers understand why they are needed.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace usage of internal JDK APIs with public, supported alternatives",
+      "success_rate": 0.85,
+      "how": "1. Identify which internal API is being accessed (e.g., sun.misc.Unsafe, com.sun.*, jdk.internal.*). 2. Find the public replacement: Unsafe → VarHandle (JDK 9+), sun.misc.BASE64Encoder → java.util.Base64. 3. If a library is using the internal API, upgrade to a version that supports JDK 17+ module system. 4. This is the preferred long-term fix over --add-opens flags.",
+      "sources": [],
+      "condition": "when you control the code making the access"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/reflection-access-denied/jdk17-linux", "probability": 0.25, "condition": "when fixing compile-time IllegalAccessError reveals runtime reflection access issues in the same module"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/unsupportedclassversionerror/jdk17-linux", "probability": 0.15, "condition": "when upgrading JDK to resolve version errors introduces module system access restrictions"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/reflection-access-denied/jdk17-linux", "distinction": "IllegalAccessError is a linkage error at class loading time; InaccessibleObjectException (reflection access denied) occurs at runtime when reflection tries to access module-internal members"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 75,
+    "last_verification": "2026-02-12"
+  }
+}

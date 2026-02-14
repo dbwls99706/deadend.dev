@@ -99,13 +99,7 @@
         "typical_delay": "immediate"
       }
     ],
-    "preceded_by": [
-      {
-        "error_id": "python/pip-externally-managed-environment/py311-linux",
-        "probability": 0.3,
-        "condition": "User gives up on global install due to PEP 668 but forgets to install in venv"
-      }
-    ],
+    "preceded_by": [],
     "frequently_confused_with": [
       {
         "error_id": "python/importerror-cannot-import-name/py311-linux",

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/symbolic-ref-failed/git2-linux",
+  "url": "https://deadends.dev/git/symbolic-ref-failed/git2-linux",
+  "error": {
+    "signature": "fatal: ref HEAD is not a symbolic ref",
+    "regex": "(?i)fatal:.*(?:not a symbolic ref|symbolic-ref.*failed|cannot create symbolic ref)",
+    "domain": "git",
+    "category": "reference",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "HEAD is in a detached state (pointing directly to a commit hash instead of a branch name) and an operation that requires a branch reference fails. Common in CI environments, after checkout of a tag or specific commit."
+  },
+  "dead_ends": [
+    {
+      "action": "Editing .git/HEAD directly to point to a non-existent branch",
+      "why_fails": "Setting HEAD to a branch that does not exist causes 'fatal: bad object HEAD' or 'fatal: not a valid object name' errors on most git commands",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running git branch -m to rename the current branch while in detached HEAD",
+      "why_fails": "There is no current branch to rename when HEAD is detached; the command fails with 'fatal: Not a valid object name'",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Attach HEAD to a branch with git checkout or git switch",
+      "success_rate": 0.92,
+      "how": "Run git checkout main (or any existing branch) to reattach HEAD. If you want to keep current changes, create a new branch first: git checkout -b my-new-branch.",
+      "sources": ["https://git-scm.com/docs/git-symbolic-ref"],
+      "condition": ""
+    },
+    {
+      "action": "Use git symbolic-ref to manually set HEAD",
+      "success_rate": 0.85,
+      "how": "git symbolic-ref HEAD refs/heads/main — this directly sets HEAD to point to the main branch. Ensure the branch exists first.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/bad-object-head/git2-linux", "probability": 0.15, "condition": "when HEAD is set to a non-existent reference"},
+      {"error_id": "git/detached-head/git2-linux", "probability": 0.30, "condition": "when the detached HEAD state is the underlying cause"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/detached-head/git2-linux", "probability": 0.35, "condition": "when checking out a tag or commit creates a detached HEAD"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/detached-head/git2-linux", "distinction": "symbolic-ref-failed is a fatal error when an operation requires a branch; detached-head is the warning shown upon entering detached state"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

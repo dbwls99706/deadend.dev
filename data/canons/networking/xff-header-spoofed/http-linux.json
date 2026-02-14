@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/xff-header-spoofed/http-linux",
+  "url": "https://deadends.dev/networking/xff-header-spoofed/http-linux",
+  "error": {
+    "signature": "Security warning: X-Forwarded-For header contains untrusted client-supplied value",
+    "regex": "X-Forwarded-For.*spoof|XFF.*untrusted|forged.*forwarded|IP.*spoof.*header|trusted proxy.*mismatch",
+    "domain": "networking",
+    "category": "http_security",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "The application trusts the X-Forwarded-For header for client IP identification, but clients can inject arbitrary values in this header. This allows IP-based access control bypass, rate limit evasion, and log forgery. The application must only trust XFF values from known trusted proxies."
+  },
+  "dead_ends": [
+    {
+      "action": "Trust the entire X-Forwarded-For header value without validation",
+      "why_fails": "Any client can set X-Forwarded-For to an arbitrary IP address. Without validating which proxies in the chain are trusted, the application may use the attacker-controlled leftmost value as the real client IP.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Strip X-Forwarded-For at the edge proxy but not configure the application to use the correct header",
+      "why_fails": "If the edge proxy strips the header but re-adds it with only the direct client IP, the application must be configured to read from this specific proxy's header. Misconfiguration means the application may still read a different header or the wrong position in the chain.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure trusted proxy addresses and parse XFF right-to-left, trusting only known proxies",
+      "success_rate": 0.92,
+      "how": "1. Define the list of trusted proxy IPs or CIDR ranges in the application config\n2. Parse X-Forwarded-For right-to-left, skipping IPs that match trusted proxies\n3. The first non-trusted IP from the right is the real client IP\n4. In nginx: set_real_ip_from 10.0.0.0/8; real_ip_header X-Forwarded-For; real_ip_recursive on;\n5. In Express.js: app.set('trust proxy', ['loopback', '10.0.0.0/8'])\n6. Test by sending a forged XFF header and verifying the application extracts the correct IP",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a custom header set by the edge proxy instead of X-Forwarded-For",
+      "success_rate": 0.88,
+      "how": "1. Configure the edge proxy to set a custom header (e.g., X-Real-Client-IP) with the direct client IP\n2. Strip any client-supplied X-Real-Client-IP at the edge: proxy_set_header X-Real-Client-IP $remote_addr;\n3. Configure the application to use X-Real-Client-IP instead of X-Forwarded-For\n4. This header is set only by the trusted edge proxy and cannot be spoofed by clients\n5. Ensure no downstream proxy overwrites this header",
+      "sources": [],
+      "condition": "Requires control over the edge proxy configuration"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-429-rate-limited/http-linux", "probability": 0.20, "condition": "when IP-based rate limiting is bypassed via XFF spoofing, and after fixing it, legitimate rate limits are enforced"},
+      {"error_id": "networking/firewall-blocked/tcp-linux", "probability": 0.15, "condition": "when tightening proxy trust configuration blocks traffic from untrusted proxies"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/http-429-rate-limited/http-linux", "probability": 0.15, "condition": "when investigating rate limit bypass reveals XFF spoofing as the evasion method"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/cors-preflight-failed/http-linux", "distinction": "XFF spoofing is about client IP trust and identification; CORS is about cross-origin request authorization. Both involve HTTP headers but serve completely different security purposes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

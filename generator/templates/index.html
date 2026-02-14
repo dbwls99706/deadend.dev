@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
   <title>deadends.dev — Structured Failure Knowledge for AI Agents</title>
-  <meta name="description" content="When AI agents fail, they search the web. deadends.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next. {{ total_errors }} errors across {{ domains | length }} domains.">
+  <meta name="description" content="When AI coding agents fail, they search the web. deadends.dev provides structured failure knowledge: what NOT to try, what works, and what error comes next. {{ total_errors }} errors across {{ domains | length }} domains.">
   <meta name="robots" content="index, follow, max-snippet:-1">
   <link rel="icon" href="{{ base_path }}/favicon.svg" type="image/svg+xml">
   {% if google_verification %}<meta name="google-site-verification" content="{{ google_verification }}">{% endif %}
@@ -14,6 +16,7 @@
   <link rel="alternate" type="application/json" href="{{ base_path }}/api/v1/match.json" title="Lightweight Error Matching">
   <link rel="alternate" type="text/plain" href="{{ base_path }}/llms.txt" title="LLM-optimized error listing">
   <link rel="describedby" href="{{ base_path }}/api/v1/openapi.json" type="application/json">
+  <link rel="alternate" type="application/atom+xml" href="{{ base_path }}/feed.xml" title="New Error Patterns">
   <link rel="author" href="{{ base_path }}/CLAUDE.md" type="text/markdown" title="AI Agent Instructions">
 
   <meta property="og:title" content="deadends.dev — Structured Failure Knowledge for AI Agents">
@@ -21,7 +24,12 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ base_url }}">
   <meta property="og:site_name" content="deadends.dev">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="{{ base_url }}/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="{{ base_url }}/og-image.png">
 
   <link rel="canonical" href="{{ base_url }}">
 
@@ -32,7 +40,7 @@
     "@type": "WebSite",
     "name": "deadends.dev",
     "url": "{{ base_url }}",
-    "description": "Structured failure knowledge for AI agents — dead ends, workarounds, error chains. {{ total_errors }} errors across {{ domains | length }} domains.",
+    "description": "Structured failure knowledge for AI coding agents — dead ends, workarounds, error chains. {{ total_errors }} errors across {{ domains | length }} domains.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "{{ base_url }}/search/?q={search_term_string}",
@@ -40,45 +48,47 @@
     }
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "deadends.dev",
+    "url": "{{ base_url }}",
+    "logo": "{{ base_url }}/favicon.svg",
+    "description": "Structured failure knowledge database for AI coding agents. {{ total_errors }} error entries across {{ domains | length }} domains.",
+    "sameAs": ["https://github.com/dbwls99706/deadends.dev"]
+  }
+  </script>
 
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #0d1117; }
-    a { color: #58a6ff; }
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.2rem; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
-    .meta { color: #8b949e; font-size: 0.85rem; }
-    .domain-list { list-style: none; padding: 0; }
-    .domain-list li { padding: 0.5rem 0; border-bottom: 1px solid #161b22; }
-    .domain-list li a { text-decoration: none; font-size: 1.05rem; }
-    .count { color: #8b949e; font-size: 0.9rem; }
-    code { background: #161b22; padding: 0.2rem 0.4rem; border-radius: 3px; }
-    .hero { margin: 2rem 0; }
-    footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #30363d; }
-    .api-section code { font-size: 0.9rem; }
-  </style>
+  <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
-<body>
+<body class="pg-index">
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">SITE=deadends.dev
-PURPOSE=Structured failure knowledge for AI agents — dead ends, workarounds, error chains
+PURPOSE=Structured failure knowledge for AI coding agents — dead ends, workarounds, error chains
 TOTAL_ERRORS={{ total_errors }}
 DOMAINS={{ domains | join(', ') }}
-MATCH_ENDPOINT={{ base_url }}/api/v1/match.json
+{% for ds in domain_stats %}DOMAIN_COUNT:{{ ds.slug }}={{ ds.count }}
+{% endfor %}MATCH_ENDPOINT={{ base_url }}/api/v1/match.json
 API_INDEX={{ base_url }}/api/v1/index.json
 API_PATTERN={{ base_url }}/api/v1/{domain}/{slug}/{env}.json
 OPENAPI_SPEC={{ base_url }}/api/v1/openapi.json
 LLMS_TXT={{ base_url }}/llms.txt
 LLMS_FULL={{ base_url }}/llms-full.txt
-USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[].</pre>
+NDJSON_STREAM={{ base_url }}/api/v1/errors.ndjson
+STATS_API={{ base_url }}/api/v1/stats.json
+FEED={{ base_url }}/feed.xml
+MCP_SERVER=pip install deadends-dev && python -m mcp.server
+USAGE=1. Fetch /api/v1/match.json (350KB) for lightweight regex matching. 2. Match your error against regexes. 3. Fetch the matching error's url for full dead_ends[] and workarounds[]. Or use MCP server (8 tools) for direct access. No auth required.</pre>
   {% endautoescape %}
 
   <header>
     <h1>deadends.dev</h1>
-    <p>Structured failure knowledge for AI agents.</p>
+    <p>Structured failure knowledge for AI coding agents.</p>
   </header>
 
   <div class="hero">
-    <p>When AI agents hit an error, they search the web. But search results are written by humans, for humans — unstructured, environment-unaware, and often wrong for specific conditions.</p>
+    <p>When AI coding agents hit an error, they search the web. But search results are written by humans, for humans — unstructured, environment-unaware, and often wrong for specific conditions.</p>
     <p><strong>deadends.dev</strong> tells you what <em>NOT</em> to try, what actually works (and under which conditions), and what error comes next if you take a particular path.</p>
     <p><strong><a href="{{ base_path }}/search/">Paste your error message here to find matches instantly.</a></strong></p>
     <p class="meta">{{ total_errors }} error entries across {{ domains | length }} domains. All data available as <a href="https://github.com/dbwls99706/deadends.dev">open source JSON</a>.</p>
@@ -89,7 +99,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
     <ul class="domain-list">
       {% for domain in domain_stats %}
       <li>
-        <a href="{{ base_path }}/{{ domain.slug }}/">{{ domain.slug }}</a>
+        <a href="{{ base_path }}/{{ domain.slug }}/">{{ domain.slug | display_name }}</a>
         <span class="count">— {{ domain.count }} error{{ 's' if domain.count != 1 else '' }}</span>
       </li>
       {% endfor %}
@@ -109,6 +119,7 @@ USAGE=1. Fetch /api/v1/match.json for lightweight regex matching. 2. Match your 
       <li><strong>NDJSON</strong> — <code>GET <a href="{{ base_path }}/api/v1/errors.ndjson">/api/v1/errors.ndjson</a></code> — streaming format</li>
       <li><strong>llms.txt</strong> — <code>GET <a href="{{ base_path }}/llms.txt">/llms.txt</a></code> — error listing for LLMs</li>
       <li><strong>Full dump</strong> — <code>GET <a href="{{ base_path }}/llms-full.txt">/llms-full.txt</a></code> — complete database</li>
+      <li><strong>Atom feed</strong> — <code>GET <a href="{{ base_path }}/feed.xml">/feed.xml</a></code> — subscribe to new errors</li>
     </ul>
     <p>URL pattern: <code>{{ base_url }}/{domain}/{error-slug}/{env-hash}</code></p>
   </section>

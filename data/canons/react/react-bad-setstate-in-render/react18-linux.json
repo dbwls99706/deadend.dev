@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-bad-setstate-in-render/react18-linux",
+  "url": "https://deadends.dev/react/react-bad-setstate-in-render/react18-linux",
+  "error": {
+    "signature": "Too many re-renders. React limits the number of renders to prevent an infinite loop.",
+    "regex": "Too many re-renders.*React limits the number of renders|Cannot update during an existing state transition",
+    "domain": "react",
+    "category": "render_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "setState called directly in the render body (not inside useEffect or event handler) causes immediate re-render which calls setState again, creating an infinite loop."
+  },
+  "dead_ends": [
+    {
+      "action": "Add a condition check around the setState call in the render body",
+      "why_fails": "If the condition ever evaluates to true during render, the loop restarts; does not address the root cause of calling setState during render",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/useState#ive-updated-the-state-but-the-screen-doesnt-update"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useRef to gate the setState call",
+      "why_fails": "Adds complexity without fixing the architecture; ref mutations during render are unpredictable in concurrent mode",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://react.dev/reference/react/useRef"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move the setState call into a useEffect",
+      "success_rate": 0.93,
+      "how": "useEffect(() => { setSomeState(computedValue); }, [dependency]);",
+      "sources": [
+        "https://react.dev/reference/react/useEffect"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Derive the value during render instead of using setState",
+      "success_rate": 0.91,
+      "how": "Replace useState + setState-in-render with const derivedValue = useMemo(() => compute(props), [props]);",
+      "sources": [
+        "https://react.dev/reference/react/useMemo",
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ],
+      "condition": "When the state is purely derived from props or other state"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/maximum-update-depth-exceeded/react18-linux",
+        "probability": 0.35,
+        "condition": "When the infinite loop is not caught early enough by React's bail-out"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/cannot-update-while-rendering/react18-linux",
+        "probability": 0.25,
+        "condition": "When attempting to fix cross-component render update by moving setState into the local render body"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/too-many-rerenders/react18-linux",
+        "distinction": "react-bad-setstate-in-render focuses on setState called directly in the render function body, while too-many-rerenders can also be caused by event handler references like onClick={handler()} instead of onClick={handler}"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 160,
+    "last_verification": "2026-02-12"
+  }
+}

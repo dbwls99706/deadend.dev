@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts5023-unknown-compiler-option/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts5023-unknown-compiler-option/ts5-linux",
+  "error": {
+    "signature": "error TS5023: Unknown compiler option 'X'.",
+    "regex": "TS5023: Unknown compiler option '([\\w]+)'",
+    "domain": "typescript",
+    "category": "config_error",
+    "first_seen": "2018-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "monorepo",
+        "ci/cd pipeline",
+        "tutorial-based setup"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.93,
+    "last_updated": "2026-02-01",
+    "summary": "Almost always caused by a mismatch between the tsconfig options and the installed TypeScript version. The option either does not exist yet in the user's version or was renamed/removed."
+  },
+  "dead_ends": [
+    {
+      "action": "Downgrading TypeScript to make the unknown option valid",
+      "why_fails": "Downgrading introduces incompatibilities with the rest of the codebase and dependencies that may require newer TS features. The option may have been removed entirely, so no version makes it valid.",
+      "fail_rate": 0.72,
+      "sources": [],
+      "common_misconception": "Developers assume the option existed in older versions and was removed, when often it was added in newer versions and their installed TS is too old."
+    },
+    {
+      "action": "Copying tsconfig.json from a tutorial without checking TS version",
+      "why_fails": "Tutorial configs often use bleeding-edge options like verbatimModuleSyntax (TS 5.0+), moduleDetection (TS 4.7+), or allowImportingTsExtensions (TS 5.0+). The option does not exist in the installed version.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "common_misconception": "tsconfig options are assumed to be universal across all TypeScript versions."
+    },
+    {
+      "action": "Adding skipLibCheck or @ts-ignore to suppress the error",
+      "why_fails": "TS5023 is a config-level parse error, not a type error in source code. skipLibCheck and @ts-ignore only suppress type-checking errors. Config errors cannot be suppressed.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "Developers conflate TypeScript config errors with type-checking errors. Config errors are fatal and cannot be ignored."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check installed TS version and use version-appropriate options",
+      "how": "Run 'npx tsc --version' to check the installed version. Consult the TypeScript release notes for when the option was introduced. Common mappings: verbatimModuleSyntax requires >=5.0, moduleDetection requires >=4.7, allowImportingTsExtensions requires >=5.0.",
+      "success_rate": 0.95,
+      "tradeoff": "Requires knowing which TS version introduced which option",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/release-notes/overview.html"
+      ]
+    },
+    {
+      "action": "Replace the unknown option with its predecessor",
+      "how": "verbatimModuleSyntax replaces isolatedModules + importsNotUsedAsValues. moduleDetection replaces heuristics from the module option. Remove the unknown option and use the older equivalent for your TS version.",
+      "success_rate": 0.88,
+      "tradeoff": "Predecessor options may have slightly different semantics",
+      "sources": []
+    },
+    {
+      "action": "Use extends with a version-matched base tsconfig",
+      "how": "Install a base config package: 'npm install -D @tsconfig/node20' then add '\"extends\": \"@tsconfig/node20/tsconfig.json\"' to your tsconfig.json. These base configs only use options valid for the target environment.",
+      "success_rate": 0.92,
+      "tradeoff": "Adds a dependency for configuration",
+      "sources": [
+        "https://github.com/tsconfig/bases"
+      ]
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 45,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

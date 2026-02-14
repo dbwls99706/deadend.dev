@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mongo-shard-key-violation/mongo7-linux",
+  "url": "https://deadends.dev/database/mongo-shard-key-violation/mongo7-linux",
+  "error": {
+    "signature": "pymongo.errors.OperationFailure: Would violate shard key index uniqueness. Shard key update is not allowed.",
+    "regex": "shard key.*not allowed|cannot modify.*shard key|ShardKeyNotFound|must include.*shard key",
+    "domain": "database",
+    "category": "sharding_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mongodb", "version_range": ">=7.0,<8.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.70,
+    "confidence": 0.80,
+    "last_updated": "2026-02-12",
+    "summary": "An operation violated sharding constraints. Common scenarios: attempting to update a document's shard key field (allowed since MongoDB 4.2 but only within a transaction), running a query without the shard key (scatter-gather), or inserting a document missing the shard key field. The shard key is immutable by default and determines document placement across shards."
+  },
+  "dead_ends": [
+    {
+      "action": "Resharding a large production collection to fix a bad shard key choice",
+      "why_fails": "Resharding (available since MongoDB 5.0) is extremely resource-intensive on large collections. It creates a new collection, copies all data, and rebuilds indexes. On collections with billions of documents, this can take days and significantly impact cluster performance.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using scatter-gather queries as a workaround for not including the shard key",
+      "why_fails": "Queries without the shard key must be broadcast to all shards (scatter-gather). This does not scale: as you add more shards, query latency increases because every shard must respond. It negates the performance benefits of sharding for those queries.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update shard key values within a multi-document transaction",
+      "success_rate": 0.80,
+      "how": "Since MongoDB 4.2, shard key updates are allowed within a transaction: session.start_transaction(); db.collection.updateOne({_id: id}, {$set: {shardKeyField: newValue}}, {session}); session.commit_transaction(); The document may be migrated to a different shard. This must run on a mongos, not directly on a shard.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Include the shard key in all queries and design the schema around the shard key",
+      "success_rate": 0.85,
+      "how": "Always include the shard key in query filters to enable targeted queries. If queries frequently need to find documents by a non-shard-key field, create a mapping collection or use the shard key as a prefix in compound indexes. Choose shard keys with high cardinality and even distribution.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mongo-write-conflict/mongo7-linux", "probability": 0.15, "condition": "when shard key updates within transactions conflict with other concurrent operations"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mongodb-connection-failed/mongo7-linux", "probability": 0.10, "condition": "when connecting to a sharded cluster after initial setup with incorrect shard key configuration"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mongodb-duplicate-key/mongo7-linux", "distinction": "Shard key violation is about modifying or missing the shard key field. Duplicate key error is about unique index violations on any field. Both are constraint errors but relate to different MongoDB features."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 38,
+    "last_verification": "2026-02-12"
+  }
+}

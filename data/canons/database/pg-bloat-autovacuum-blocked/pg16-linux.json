@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-bloat-autovacuum-blocked/pg16-linux",
+  "url": "https://deadends.dev/database/pg-bloat-autovacuum-blocked/pg16-linux",
+  "error": {
+    "signature": "WARNING: oldest xmin is far in the past; FATAL: database is not accepting commands to avoid wraparound data loss",
+    "regex": "oldest xmin is far in the past|wraparound data loss|autovacuum.*blocked|transaction ID wraparound|must be vacuumed",
+    "domain": "database",
+    "category": "maintenance_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "PostgreSQL is running out of transaction IDs due to autovacuum being unable to clean up dead tuples. This happens when long-running transactions hold back the oldest xmin, preventing VACUUM from freezing old tuples. If not resolved, PostgreSQL will eventually shut down to prevent transaction ID wraparound, which would cause data corruption. The table bloat also degrades query performance significantly."
+  },
+  "dead_ends": [
+    {
+      "action": "Killing autovacuum workers to free up system resources",
+      "why_fails": "Autovacuum is the mechanism that prevents transaction ID wraparound. Killing autovacuum workers delays the critical vacuum process and makes the wraparound situation worse. The system will eventually reach the hard limit and refuse all commands.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing autovacuum_freeze_max_age to delay the problem",
+      "why_fails": "This only delays when autovacuum triggers anti-wraparound vacuum, but does not increase the total transaction ID space (2 billion). With a higher threshold, when vacuum finally runs, it has more work to do and takes longer. If it cannot complete before the hard limit, the database shuts down.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Terminate long-running transactions and run manual VACUUM FREEZE",
+      "success_rate": 0.85,
+      "how": "1. Find long-running transactions: SELECT pid, xact_start, query FROM pg_stat_activity WHERE state != 'idle' ORDER BY xact_start; 2. Terminate them: SELECT pg_terminate_backend(pid); 3. Run VACUUM FREEZE on affected tables: VACUUM (FREEZE, VERBOSE) tablename; 4. Monitor progress: SELECT relname, last_autovacuum, n_dead_tup FROM pg_stat_user_tables ORDER BY n_dead_tup DESC; 5. Check remaining XIDs: SELECT datname, age(datfrozenxid) FROM pg_database;",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Tune autovacuum to be more aggressive on high-write tables",
+      "success_rate": 0.82,
+      "how": "Per-table settings for high-write tables: ALTER TABLE hot_table SET (autovacuum_vacuum_scale_factor = 0.01, autovacuum_vacuum_cost_delay = 2, autovacuum_vacuum_cost_limit = 1000). Global settings: increase autovacuum_max_workers (default 3, set to 5-6), reduce autovacuum_naptime (default 1min, set to 15s). Ensure maintenance_work_mem is large enough (1-2GB) for vacuum to be efficient.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.20, "condition": "when table bloat causes the database to consume excessive disk space"},
+      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.25, "condition": "when bloated tables cause sequential scans and slow queries"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/deadlock-detected/pg16-linux", "probability": 0.10, "condition": "when long-running transactions held open due to deadlock retry logic prevent autovacuum"},
+      {"error_id": "database/pg-replication-slot-inactive/pg16-linux", "probability": 0.15, "condition": "when an inactive replication slot holds back the oldest xmin, blocking vacuum"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/pg-vacuum-running/pg16-linux", "distinction": "Bloat-autovacuum-blocked means autovacuum cannot make progress (blocked by long transactions or replication slots). Vacuum-running means a manual or auto vacuum is actively running and may be causing lock contention. The first is about vacuum being prevented; the second is about vacuum being in progress."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

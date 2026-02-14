@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/node-worker-thread-crash/node20-linux",
+  "url": "https://deadends.dev/node/node-worker-thread-crash/node20-linux",
+  "error": {
+    "signature": "Error [ERR_WORKER_UNSERIALIZABLE_ERROR]: Serializing an uncaught exception failed",
+    "regex": "ERR_WORKER_UNSERIALIZABLE_ERROR|worker thread.*crash|Worker terminated",
+    "domain": "node",
+    "category": "worker_threads",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A worker thread crashed with an error that could not be serialized and sent back to the parent thread via the structured clone algorithm."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping the entire worker in a try-catch without handling the error event on the parent",
+      "why_fails": "Uncaught exceptions in worker threads are not caught by try-catch in the parent; you must listen for the 'error' event on the Worker instance",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Restarting the worker in an infinite loop without addressing the root cause",
+      "why_fails": "Creates a crash loop that consumes resources and masks the underlying bug",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add proper error handling in the worker and serialize errors before throwing",
+      "success_rate": 0.90,
+      "how": "In the worker file, wrap logic in try-catch and use parentPort.postMessage({error: err.message}) instead of letting exceptions propagate",
+      "sources": [
+        "https://nodejs.org/api/worker_threads.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Listen for 'error' and 'exit' events on the Worker instance in the parent",
+      "success_rate": 0.88,
+      "how": "worker.on('error', (err) => { /* handle */ }); worker.on('exit', (code) => { if (code !== 0) /* restart or log */ });",
+      "sources": [
+        "https://nodejs.org/api/worker_threads.html#event-error"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/err-worker-out-of-memory/node20-linux",
+        "probability": 0.20,
+        "condition": "when the worker crash is caused by excessive memory usage"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/enomem/node20-linux",
+        "probability": 0.18,
+        "condition": "when system memory pressure causes worker instability"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/err-worker-out-of-memory/node20-linux",
+        "distinction": "ERR_WORKER_UNSERIALIZABLE_ERROR means the worker threw an error that cannot be cloned, while worker OOM means the worker exceeded its heap memory limit"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

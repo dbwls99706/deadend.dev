@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-eks-node-not-joining/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-eks-node-not-joining/awscli2-linux",
+  "error": {
+    "signature": "Node not joining the EKS cluster: nodes are NotReady",
+    "regex": "(Node .+ NotReady|nodes are not joining|NodeCreationFailure|couldn't join cluster)",
+    "domain": "aws",
+    "category": "cluster_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "EKS worker nodes fail to register with the control plane due to IAM, networking, or aws-auth ConfigMap issues."
+  },
+  "dead_ends": [
+    {
+      "action": "Terminate and re-launch nodes without fixing the root cause",
+      "why_fails": "New nodes will have the same misconfiguration and fail to join identically",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Upgrade the EKS control plane version to fix node joining",
+      "why_fails": "Version upgrades can make things worse if node AMI is incompatible with the new control plane version",
+      "fail_rate": 0.70,
+      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html"],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify aws-auth ConfigMap includes the node IAM role ARN",
+      "success_rate": 0.85,
+      "how": "kubectl get configmap aws-auth -n kube-system -o yaml and ensure the node role ARN is listed under mapRoles",
+      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html"],
+      "condition": ""
+    },
+    {
+      "action": "Check node security group allows communication with the control plane",
+      "success_rate": 0.80,
+      "how": "Ensure node security group allows outbound 443 to the cluster endpoint and inbound from the cluster security group",
+      "sources": ["https://docs.aws.amazon.com/eks/latest/userguide/sec-group-reqs.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.20, "condition": "Node IAM role lacks required EKS permissions"}
+    ],
+    "preceded_by": [
+      {"error_id": "aws/access-denied-exception/awscli2-linux", "probability": 0.15, "condition": "IAM misconfiguration prevents node registration"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "aws/aws-fargate-task-failed/awscli2-linux", "distinction": "Fargate task failures are serverless container issues; EKS node not joining is about EC2-based worker node registration with the cluster"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 90,
+    "last_verification": "2026-02-12"
+  }
+}

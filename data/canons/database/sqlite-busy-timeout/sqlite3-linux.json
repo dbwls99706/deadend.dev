@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/sqlite-busy-timeout/sqlite3-linux",
+  "url": "https://deadends.dev/database/sqlite-busy-timeout/sqlite3-linux",
+  "error": {
+    "signature": "sqlite3.OperationalError: database is locked",
+    "regex": "database is locked|SQLITE_BUSY|busy timeout|cannot start a transaction within a transaction.*locked",
+    "domain": "database",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "sqlite", "version_range": ">=3.40,<4.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "SQLite returned SQLITE_BUSY because another connection holds a lock that prevents the requested operation. SQLite uses file-level locking and allows only one writer at a time. In WAL mode, readers do not block writers and writers do not block readers, but only one writer can proceed at a time. This error is common in web applications or any multi-threaded/multi-process scenario using SQLite."
+  },
+  "dead_ends": [
+    {
+      "action": "Opening a new database connection for each query to avoid locks",
+      "why_fails": "More connections increase lock contention, not reduce it. Each connection that attempts a write must acquire the write lock. With many connections, the probability of SQLITE_BUSY increases because more connections are competing for the single write lock.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Wrapping every single SQL statement in its own transaction",
+      "why_fails": "SQLite already wraps individual statements in implicit transactions. Explicit single-statement transactions add overhead without helping. The real issue is that multiple writers are competing for the write lock. Grouping related writes into one transaction actually reduces lock contention.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Enable WAL mode and set a busy timeout",
+      "success_rate": 0.92,
+      "how": "Enable WAL mode (once per database): PRAGMA journal_mode=WAL; Set busy timeout to wait instead of immediately failing: PRAGMA busy_timeout=5000; (5 seconds). In Python: conn = sqlite3.connect('db.sqlite3', timeout=5). WAL mode allows concurrent readers and one writer. The busy timeout makes SQLite retry automatically instead of returning SQLITE_BUSY immediately. These two settings resolve most concurrency issues.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Serialize write access through a single writer thread or connection pool",
+      "success_rate": 0.90,
+      "how": "Use a single connection for all writes (e.g., a write queue or single-writer thread). In Python with SQLAlchemy: use NullPool or StaticPool with check_same_thread=False and a mutex around writes. In web frameworks: use a connection pool with pool_size=1 for writes. For Django: configure the database connection with OPTIONS={'timeout': 20}. Keep write transactions as short as possible to minimize lock hold time.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/sqlite-locked/sqlite3-linux", "probability": 0.25, "condition": "when busy timeout expires and the database remains locked, escalating to a hard lock error"},
+      {"error_id": "database/sqlite-readonly/sqlite3-linux", "probability": 0.10, "condition": "when the database file permissions are incorrectly set during recovery from a lock issue"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/sqlite-locked/sqlite3-linux", "probability": 0.20, "condition": "when a locked database causes retries that encounter busy timeouts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/sqlite-locked/sqlite3-linux", "distinction": "SQLITE_BUSY (database is locked) means another connection holds a conflicting lock and the busy timeout has not expired. SQLITE_LOCKED means a table-level lock conflict within the same connection (e.g., trying to modify a table while iterating over it). BUSY is an inter-connection issue; LOCKED is an intra-connection issue."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

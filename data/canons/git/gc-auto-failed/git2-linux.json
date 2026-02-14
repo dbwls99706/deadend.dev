@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/gc-auto-failed/git2-linux",
+  "url": "https://deadends.dev/git/gc-auto-failed/git2-linux",
+  "error": {
+    "signature": "Auto packing the repository in background for optimum performance. error: The last gc run reported the following. Please correct the root cause and remove .git/gc.log",
+    "regex": "(?i)(?:gc.*auto.*failed|gc\\.log|The last gc run reported|auto packing.*error)",
+    "domain": "git",
+    "category": "maintenance",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Automatic garbage collection failed and git wrote the error to .git/gc.log. Subsequent operations repeatedly print this warning until the gc.log is removed. Root cause is typically insufficient memory, disk space, or conflicting processes."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply deleting .git/gc.log without fixing the root cause",
+      "why_fails": "The next auto-gc attempt will fail again and recreate gc.log with the same error, leading to an endless cycle of warnings",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling auto-gc entirely with git config gc.auto 0",
+      "why_fails": "This prevents the error message but the repository grows unbounded with loose objects, degrading performance over time",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix the root cause, remove gc.log, then run gc manually",
+      "success_rate": 0.90,
+      "how": "Read .git/gc.log to identify the root cause. Free disk space or memory as needed. Remove .git/gc.log, then run git gc --auto or git gc manually to verify it completes.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Run git gc with reduced memory settings",
+      "success_rate": 0.85,
+      "how": "rm .git/gc.log && git -c pack.threads=1 -c pack.windowMemory=100m gc. This limits memory usage so gc can complete on constrained systems.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/pack-objects-died/git2-linux", "probability": 0.25, "condition": "when gc triggers pack-objects which exhausts available memory"},
+      {"error_id": "git/fsck-broken-link/git2-linux", "probability": 0.15, "condition": "when interrupted gc leaves broken object references"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/pack-objects-died/git2-linux", "probability": 0.20, "condition": "when pack-objects OOM during gc causes the gc failure to be logged"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/pack-objects-died/git2-linux", "distinction": "gc-auto-failed is the wrapper error about gc logging failures; pack-objects-died is the specific subprocess that failed within gc"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

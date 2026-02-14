@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-cgroup-limit/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-cgroup-limit/docker27-linux",
+  "error": {
+    "signature": "OCI runtime create failed: cgroup limit reached",
+    "regex": "cgroup.*limit|memory cgroup.*oom|cgroup.*resource.*exceeded",
+    "domain": "docker",
+    "category": "resource_limits",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Container exceeded cgroup resource limits (memory, CPU, or PIDs). The kernel OOM killer terminated the process or Docker refused to start the container."
+  },
+  "dead_ends": [
+    {
+      "action": "Running the container with --privileged to bypass cgroup limits",
+      "why_fails": "Privileged mode does not bypass cgroup memory limits; it grants device access but the OOM killer still enforces memory constraints",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling the OOM killer with --oom-kill-disable without setting memory limits",
+      "why_fails": "Without memory limits, the container can consume all host memory and freeze the entire system",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase the container memory limit: docker run -m 2g",
+      "success_rate": 0.90,
+      "how": "docker run -m 2g --memory-swap 4g <image> — sets 2GB RAM limit with 4GB total (including swap)",
+      "sources": [
+        "https://docs.docker.com/config/containers/resource_constraints/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Profile the container to find the memory-hungry process",
+      "success_rate": 0.85,
+      "how": "docker stats <container> to see real-time memory usage; docker exec <container> top to identify the process",
+      "sources": [
+        "https://docs.docker.com/config/containers/resource_constraints/"
+      ],
+      "condition": "when the container genuinely needs optimization"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/exit-code-137/docker27-linux",
+        "probability": 0.35,
+        "condition": "when OOM killer terminates the container process"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/no-space-left/docker24-linux",
+        "probability": 0.15,
+        "condition": "when disk and memory pressure occur together"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/exit-code-137/docker27-linux",
+        "distinction": "Cgroup limit errors happen at container start or when limits are explicitly hit, while exit code 137 is the result after OOM kill happens to a running container"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

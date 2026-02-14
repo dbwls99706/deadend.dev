@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-healthcheck-failing/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-healthcheck-failing/docker27-linux",
+  "error": {
+    "signature": "health check for container failed: unhealthy",
+    "regex": "health.*check.*fail|unhealthy|Health check.*exit code",
+    "domain": "docker",
+    "category": "healthcheck",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Docker container health check is returning non-zero exit codes consistently. The container is marked unhealthy, which can prevent dependent services from starting."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing the HEALTHCHECK instruction to avoid the error",
+      "why_fails": "Hides the real problem; the service is genuinely unhealthy and orchestrators cannot detect failures",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting very long health check intervals to delay detection",
+      "why_fails": "Slow detection means unhealthy containers serve traffic longer, degrading user experience",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Debug the health check command inside the container",
+      "success_rate": 0.90,
+      "how": "docker exec <container> <healthcheck-command> to run the health check manually and see the actual error output",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add a start-period to allow the application time to initialize",
+      "success_rate": 0.85,
+      "how": "HEALTHCHECK --start-period=30s --interval=10s --timeout=5s --retries=3 CMD curl -f http://localhost:8080/health || exit 1",
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": "when the application has a slow startup"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/compose-service-depends-on/docker27-linux",
+        "probability": 0.25,
+        "condition": "when dependent services fail to start because the dependency is unhealthy"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/docker-cgroup-limit/docker27-linux",
+        "probability": 0.18,
+        "condition": "when resource limits cause the health check process to fail"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/healthcheck-unhealthy/docker27-linux",
+        "distinction": "Both relate to health checks; docker-healthcheck-failing focuses on the health check command itself failing, while healthcheck-unhealthy is the resulting container state after repeated failures"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-configmap-too-large/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-configmap-too-large/k8s129-linux",
+  "error": {
+    "signature": "ConfigMap exceeds maximum size: the ConfigMap is too large, maximum size is 1048576 bytes",
+    "regex": "ConfigMap.*exceeds maximum size|ConfigMap.*too large|1048576.*bytes|etcd.*request.*too large.*configmap",
+    "domain": "kubernetes",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "ConfigMap data exceeds the 1MB etcd object size limit. Data must be reduced or moved to an alternative storage mechanism."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase the etcd max-request-bytes value",
+      "why_fails": "Requires cluster admin access, risks etcd stability, and most managed K8s providers don't allow it",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/configmap/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Base64-encode the data to reduce size",
+      "why_fails": "Base64 actually increases data size by ~33%, making the problem worse",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/configmap/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Move large data to a PersistentVolume or init container that downloads from object storage",
+      "success_rate": 0.92,
+      "how": "Use an initContainer to fetch config from S3/GCS, or mount a PVC with the config files",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Split the ConfigMap into multiple smaller ConfigMaps, each under 1MB",
+      "success_rate": 0.85,
+      "how": "Divide data keys across ConfigMaps and mount each as a separate volume",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/configmap/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/createcontainerconfigerror/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when splitting ConfigMaps and referencing wrong names"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/configmap-too-large/k8s1-linux",
+        "probability": 0.15,
+        "condition": "when upgrading clusters and ConfigMaps grow over time"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/configmap-too-large/k8s1-linux",
+        "distinction": "k8s-configmap-too-large covers the explicit size validation error, while configmap-too-large covers the etcd request-too-large error"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

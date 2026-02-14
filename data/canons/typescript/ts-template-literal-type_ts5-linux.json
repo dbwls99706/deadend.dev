@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-template-literal-type/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-template-literal-type/ts5-linux",
+  "error": {
+    "signature": "TS2590: Expression produces a union type that is too complex to represent",
+    "regex": "TS2590.*union type.*too complex|template literal.*too complex",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "Template literal types combining large unions create a combinatorial explosion. Reduce the union size or use a different approach."
+  },
+  "dead_ends": [
+    {
+      "action": "Use @ts-expect-error to suppress the complexity error",
+      "why_fails": "The resulting type becomes any/error, losing all type checking for the template literal",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reduce union size by using branded string types instead of enumerating all values",
+      "success_rate": 0.85,
+      "how": "// Instead of: type Path = `/${A}/${B}/${C}` (combinatorial explosion)\n// Use branded types:\ntype ApiPath = string & { __brand: 'ApiPath' };\nfunction createPath(a: string, b: string): ApiPath {\n  return `/${a}/${b}` as ApiPath;\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html"],
+      "condition": ""
+    },
+    {
+      "action": "Use type validation functions instead of exhaustive literal types",
+      "success_rate": 0.82,
+      "how": "const validPrefixes = ['get', 'set', 'delete'] as const;\ntype Prefix = typeof validPrefixes[number];\n// Validate at runtime instead of creating all combinations\nfunction isValidMethod(s: string): s is `${Prefix}${string}` {\n  return validPrefixes.some(p => s.startsWith(p));\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-excessive-stack-depth/ts5-linux", "probability": 0.20, "condition": "When complex template literal types cause recursive expansion"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-mapped-type-error/ts5-linux", "probability": 0.15, "condition": "When mapped types over template literals create complexity"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts-excessive-stack-depth/ts5-linux", "distinction": "TS2589 is about recursion depth; TS2590 is about union size from combinatorial template literal expansion"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

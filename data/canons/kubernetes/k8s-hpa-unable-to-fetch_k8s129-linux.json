@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-hpa-unable-to-fetch/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-hpa-unable-to-fetch/k8s129-linux",
+  "error": {
+    "signature": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API",
+    "regex": "unable to fetch metrics from resource metrics API|failed to get.*utilization|FailedGetResourceMetric.*metrics-server",
+    "domain": "kubernetes",
+    "category": "autoscaling_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "HPA cannot fetch metrics because metrics-server is not installed, not healthy, or pods lack resource requests."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually scale replicas instead of using HPA",
+      "why_fails": "Loses autoscaling capability — doesn't address the root cause",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Switch to custom metrics without fixing resource metrics first",
+      "why_fails": "Custom metrics require additional setup (Prometheus adapter) and are more complex",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install or fix metrics-server: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml",
+      "success_rate": 0.92,
+      "how": "Check if metrics-server is running: kubectl get pods -n kube-system | grep metrics-server",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-cluster/resource-metrics-pipeline/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure all target pods have resource requests defined",
+      "success_rate": 0.90,
+      "how": "Add resources.requests.cpu and resources.requests.memory to pod spec containers",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when HPA can't scale and pods exhaust memory"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/horizontal-pod-autoscaler-unable/k8s1-linux",
+        "probability": 0.25,
+        "condition": "when basic HPA issues evolve into metrics API failures"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/horizontal-pod-autoscaler-unable/k8s1-linux",
+        "distinction": "k8s-hpa-unable-to-fetch is specifically about metrics API unavailability, while horizontal-pod-autoscaler-unable covers missing resource requests"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

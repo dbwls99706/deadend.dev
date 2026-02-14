@@ -82,7 +82,7 @@
       },
       {
         "error_id": "go/import-cycle-not-allowed/go121-linux",
-        "distinction": "'cannot assign to struct field in map' indicates an assignment to a struct field in a map (not addressable), while 'import cycle not allowed' indicates a dependency cycle in Terraform resources."
+        "distinction": "'cannot assign to struct field in map' indicates an assignment to a struct field in a map (not addressable), while 'import cycle not allowed' indicates a circular dependency between Go packages."
       }
     ]
   },

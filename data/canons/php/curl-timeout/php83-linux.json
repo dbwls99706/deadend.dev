@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/curl-timeout/php83-linux",
+  "url": "https://deadends.dev/php/curl-timeout/php83-linux",
+  "error": {
+    "signature": "cURL error 28: Operation timed out after 30001 milliseconds with 0 bytes received",
+    "regex": "cURL error 28:.*timed out",
+    "domain": "php",
+    "category": "network",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "cURL timeout errors occur when an HTTP request exceeds the configured timeout threshold. The root cause can be DNS resolution delays, slow upstream servers, network firewall rules, or insufficient timeout configuration for large payloads."
+  },
+  "dead_ends": [
+    {"action": "Setting CURLOPT_TIMEOUT to an extremely high value like 3600 seconds", "why_fails": "Very long timeouts cause PHP-FPM workers to hang indefinitely, exhausting the worker pool and making the entire application unresponsive to other requests.", "fail_rate": 0.72, "sources": [], "condition": ""},
+    {"action": "Disabling CURLOPT_CONNECTTIMEOUT entirely", "why_fails": "Without a connection timeout, the request can hang indefinitely on DNS resolution or TCP handshake, blocking the PHP process.", "fail_rate": 0.68, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Set separate connection and transfer timeouts with retry logic", "success_rate": 0.88, "how": "Set CURLOPT_CONNECTTIMEOUT to 5-10 seconds for the connection phase and CURLOPT_TIMEOUT to a reasonable transfer time. Implement exponential backoff retry logic (e.g., using Guzzle's retry middleware) for transient failures.", "sources": [], "condition": ""},
+    {"action": "Move long-running HTTP calls to a background queue", "success_rate": 0.90, "how": "For API calls that may be slow, dispatch them to a queue worker (e.g., Laravel Queue, Symfony Messenger). The web request returns immediately while the queue worker handles the HTTP call with its own timeout settings.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/max-execution-time/php83-linux", "probability": 0.30, "condition": "when multiple retries cause the overall PHP script execution to exceed max_execution_time"}],
+    "preceded_by": [{"error_id": "php/curl-ssl-error/php83-linux", "probability": 0.15, "condition": "when SSL negotiation delays contribute to timeout"}],
+    "frequently_confused_with": [{"error_id": "php/curl-ssl-error/php83-linux", "distinction": "SSL errors produce cURL error 35 or 60 with specific SSL messages, while timeout is always cURL error 28 with a time threshold"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

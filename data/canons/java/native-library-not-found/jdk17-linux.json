@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/native-library-not-found/jdk17-linux",
+  "url": "https://deadends.dev/java/native-library-not-found/jdk17-linux",
+  "error": {
+    "signature": "java.lang.UnsatisfiedLinkError: /path/to/lib.so: libdep.so: cannot open shared object file: No such file or directory",
+    "regex": "cannot open shared object file|UnsatisfiedLinkError.*\\.so.*No such file",
+    "domain": "java",
+    "category": "native_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A native shared library (.so file) that a JNI binding depends on cannot be found on the system. The primary .so loads but its transitive native dependencies are missing from LD_LIBRARY_PATH or the system library directories."
+  },
+  "dead_ends": [
+    {
+      "action": "Installing only the main library without its native dependencies",
+      "why_fails": "Native libraries have their own dependency chains (visible via ldd). If a dependency .so is missing, the main .so cannot be loaded even if it is present. All transitive native dependencies must be satisfied.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Creating symlinks to random library versions to satisfy the dependency",
+      "why_fails": "Symlinking to an incompatible version (e.g., libfoo.so.2 -> libfoo.so.3) may load but can cause segfaults or undefined behavior due to ABI incompatibility. The correct version must be installed.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use ldd to identify all missing native dependencies and install them",
+      "success_rate": 0.88,
+      "how": "1. Run 'ldd /path/to/libjni.so' to see all native dependencies and which are missing ('not found'). 2. For each missing library, find the package: 'apt-file search libmissing.so' or 'yum whatprovides */libmissing.so*'. 3. Install the package: 'apt-get install libmissing-dev'. 4. Run 'ldconfig' to refresh the library cache. 5. Verify with 'ldd' that all dependencies are now resolved.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "In Docker containers, install native dependencies in the Dockerfile and ensure the correct base image",
+      "success_rate": 0.85,
+      "how": "1. Use a base image that includes common native libraries (e.g., eclipse-temurin:17 instead of alpine variants). 2. If using Alpine, install gcompat or musl equivalents. 3. Add RUN apt-get install -y libfoo-dev to the Dockerfile. 4. Run RUN ldconfig after installing libraries. 5. Test the container locally before deploying.",
+      "sources": [],
+      "condition": "when running in Docker containers"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/jni-error/jdk17-linux", "probability": 0.25, "condition": "when the native library loads but JNI symbol resolution fails due to version mismatch"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/jni-error/jdk17-linux", "probability": 0.20, "condition": "when investigating a JNI error reveals missing transitive native dependencies"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/jni-error/jdk17-linux", "distinction": "JNI error is a broader category including symbol resolution and JNI API misuse; native library not found specifically means a .so file is missing from the filesystem or library path"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

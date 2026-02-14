@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "id": "terraform/tf-provider-authentication/tf1.7-linux",
+  "url": "https://deadends.dev/terraform/tf-provider-authentication/tf1.7-linux",
+  "error": {
+    "signature": "Error: error configuring provider: no valid credential sources found",
+    "regex": "(no valid credential sources|error configuring .+ provider|AuthFailure|authentication .+ failed|InvalidClientTokenId)",
+    "domain": "terraform",
+    "category": "auth_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "terraform",
+      "version_range": ">=1.5,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-12",
+    "summary": "Terraform provider cannot authenticate with the cloud provider due to missing or invalid credentials."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcode credentials in the provider block",
+      "why_fails": "Credentials in code are a security risk and often get committed to version control",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/providers/configuration"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use root account credentials for Terraform",
+      "why_fails": "Root credentials are a critical security risk and should never be used for programmatic access",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set credentials via environment variables or shared credentials file",
+      "success_rate": 0.9,
+      "how": "export AWS_ACCESS_KEY_ID=xxx AWS_SECRET_ACCESS_KEY=yyy, or use ~/.aws/credentials with a profile",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/language/providers/configuration"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use IAM roles for authentication (instance profile, OIDC, or assume role)",
+      "success_rate": 0.88,
+      "how": "Configure assume_role in provider block or use EC2 instance profile / ECS task role for automatic credential rotation",
+      "sources": [
+        "https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [
+      {
+        "error_id": "terraform/provider-not-present/tf1-linux",
+        "probability": 0.15,
+        "condition": "After installing provider, authentication must be configured"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 110,
+    "last_verification": "2026-02-12"
+  }
+}

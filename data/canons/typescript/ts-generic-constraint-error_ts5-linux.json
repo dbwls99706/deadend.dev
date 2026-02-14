@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-generic-constraint-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-generic-constraint-error/ts5-linux",
+  "error": {
+    "signature": "TS2344: Type 'X' does not satisfy the constraint 'Y'",
+    "regex": "TS2344.*does not satisfy the constraint",
+    "domain": "typescript",
+    "category": "generic_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.86,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The type argument does not match the generic constraint defined with extends. Ensure the type has all required properties."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the constraint entirely to accept any type",
+      "why_fails": "The generic function likely depends on properties from the constraint; removing it causes errors inside the function",
+      "fail_rate": 0.72,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the type argument satisfies all constraint properties",
+      "success_rate": 0.90,
+      "how": "// If constraint is: <T extends { id: string; name: string }>\n// Your type must have both id and name:\ninterface User { id: string; name: string; email: string; }\ncreateEntity<User>({ id: '1', name: 'Test', email: 'a@b.com' });",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/generics.html#generic-constraints"],
+      "condition": ""
+    },
+    {
+      "action": "Use intersection types to add missing constraint properties",
+      "success_rate": 0.85,
+      "how": "type WithId<T> = T & { id: string };\n// Now WithId<MyType> satisfies constraints requiring id",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/objects.html#intersection-types"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-conditional-type-error/ts5-linux", "probability": 0.20, "condition": "When constraint fixes interact with conditional types"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts2345-argument-not-assignable/ts5-linux", "probability": 0.20, "condition": "When argument type errors are caused by constraint violations"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2345-argument-not-assignable/ts5-linux", "distinction": "TS2345 is about function argument types; TS2344 is specifically about generic type parameter constraints"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

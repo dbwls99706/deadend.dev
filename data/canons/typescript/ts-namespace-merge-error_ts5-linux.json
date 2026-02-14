@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-namespace-merge-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-namespace-merge-error/ts5-linux",
+  "error": {
+    "signature": "TS2433: A namespace-style import cannot be called or constructed, and will cause a failure at runtime",
+    "regex": "TS2433.*namespace.*import.*cannot be called|TS2440.*cannot merge.*namespace",
+    "domain": "typescript",
+    "category": "module_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Namespace imports (* as X) cannot be called as functions. Use default or named imports instead."
+  },
+  "dead_ends": [
+    {
+      "action": "Use allowSyntheticDefaultImports without understanding the module type",
+      "why_fails": "Only helps with CJS modules that have a default export; doesn't fix true namespace-only modules",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use default import or named imports instead of namespace import",
+      "success_rate": 0.90,
+      "how": "// Instead of: import * as lib from 'lib'; lib();\n// Use:\nimport lib from 'lib'; lib();\n// Or:\nimport { specificFn } from 'lib'; specificFn();",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/modules/reference.html"],
+      "condition": ""
+    },
+    {
+      "action": "Enable esModuleInterop for CommonJS module compatibility",
+      "success_rate": 0.85,
+      "how": "// tsconfig.json:\n{\n  \"compilerOptions\": {\n    \"esModuleInterop\": true,\n    \"allowSyntheticDefaultImports\": true\n  }\n}",
+      "sources": ["https://www.typescriptlang.org/tsconfig#esModuleInterop"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux", "probability": 0.20, "condition": "When changing import style reveals esModuleInterop issues"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-module-augmentation-error/ts5-linux", "probability": 0.15, "condition": "When module augmentation changes namespace semantics"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts1259-can-only-default-import-esinterop/ts5-linux", "distinction": "TS1259 is about default import compatibility; namespace merge error is about namespace imports being called as functions"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

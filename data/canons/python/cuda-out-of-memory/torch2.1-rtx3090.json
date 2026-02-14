@@ -28,7 +28,7 @@
     "fix_success_rate": 0.28,
     "confidence": 0.75,
     "last_updated": "2025-04-10",
-    "summary": "RTX 3090 has 24GB VRAM \u2014 significantly less than A100-40GB. Models above 7B parameters in FP16 will frequently OOM. batch_size reduction has lower success rate here due to tighter memory margins."
+    "summary": "RTX 3090 has 24GB VRAM — significantly less than A100-40GB. Models above 7B parameters in FP16 will frequently OOM. batch_size reduction has lower success rate here due to tighter memory margins."
   },
   "dead_ends": [
     {
@@ -38,7 +38,7 @@
       "sources": [
         "https://github.com/pytorch/pytorch/issues/16417"
       ],
-      "common_misconception": "empty_cache only returns cached unused blocks \u2014 no effect on active tensors."
+      "common_misconception": "empty_cache only returns cached unused blocks — no effect on active tensors."
     },
     {
       "action": "Reducing batch_size to 1",
@@ -91,21 +91,9 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/bitsandbytes-install-error/linux-rtx3090",
-        "probability": 0.35,
-        "condition": "When attempting 4-bit quantization as workaround",
-        "typical_delay": "immediate"
-      }
-    ],
+    "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/cuda-device-side-assert/torch2.1-rtx3090",
-        "distinction": "OOM is a memory allocation failure; device-side assert is an index/dimension error during computation."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

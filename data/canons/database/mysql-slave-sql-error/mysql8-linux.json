@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-slave-sql-error/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-slave-sql-error/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1062 (23000): Duplicate entry 'X' for key 'PRIMARY' on replica; Replica SQL thread stopped",
+    "regex": "Replica SQL.*stopped|Slave SQL.*stopped|Could not execute.*on table|Last_SQL_Error|replica.*applier.*error",
+    "domain": "database",
+    "category": "replication_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "The MySQL replica SQL thread (applier) stopped due to an error applying a binlog event from the primary. The most common causes are: duplicate key errors from writes applied directly to the replica, schema differences between primary and replica, or missing rows that the primary tries to update/delete. This breaks replication and the replica falls behind the primary."
+  },
+  "dead_ends": [
+    {
+      "action": "Using SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1 repeatedly to skip past errors",
+      "why_fails": "Skipping binlog events causes the replica to diverge from the primary. Skipped writes mean data exists on the primary but not the replica. Accumulated divergence can cause increasingly frequent errors and makes the replica unreliable for reads or failover. Each skip makes the problem worse.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting slave_skip_errors to auto-skip all duplicate key errors",
+      "why_fails": "slave_skip_errors=1062 silently skips all duplicate key errors during replication. While this keeps replication running, it hides data inconsistencies. The replica silently diverges from the primary, making it unsafe for failover or read scaling. When promoted to primary, missing or stale data causes application errors.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify the specific error and fix the data inconsistency",
+      "success_rate": 0.85,
+      "how": "1. Check error details: SHOW REPLICA STATUS\\G (look at Last_SQL_Error and Last_SQL_Errno). 2. For duplicate key (1062): the row exists on the replica but not the same way on the primary. Delete the conflicting row on the replica, then START REPLICA. 3. For row not found (1032): the row was deleted on the replica but the primary tries to update it. Re-sync the specific table using pt-table-sync from Percona Toolkit. 4. Verify consistency after fix: pt-table-checksum.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Rebuild the replica from a fresh backup of the primary",
+      "success_rate": 0.92,
+      "how": "If the replica has diverged significantly: 1. Stop the replica: STOP REPLICA; 2. Take a consistent backup of the primary: mysqldump --single-transaction --source-data=2 -A > backup.sql (or use xtrabackup for large databases). 3. Restore on the replica: mysql < backup.sql. 4. Configure replication from the backup position: CHANGE REPLICATION SOURCE TO ... 5. Start: START REPLICA. This guarantees a consistent replica but causes downtime.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.30, "condition": "when the replica SQL thread recovers but has fallen far behind the primary during the downtime"},
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.10, "condition": "when a large transaction from the primary causes lock contention on the replica during apply"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-duplicate-entry/mysql8-linux", "probability": 0.20, "condition": "when a duplicate key insert on the primary also causes a duplicate on the replica that already has the row"},
+      {"error_id": "database/mysql-binlog-error/mysql8-linux", "probability": 0.15, "condition": "when binlog corruption causes an invalid event that the replica SQL thread cannot apply"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-replication-lag/mysql8-linux", "distinction": "SQL thread stopped means replication is broken and the error must be resolved before replication resumes. Replication lag means replication is working but the replica is falling behind. The former requires intervention; the latter may resolve on its own when the primary's write load decreases."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

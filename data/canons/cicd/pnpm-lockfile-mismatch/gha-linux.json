@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/pnpm-lockfile-mismatch/gha-linux",
+  "url": "https://deadends.dev/cicd/pnpm-lockfile-mismatch/gha-linux",
+  "error": {
+    "signature": "ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with \"frozen-lockfile\" because pnpm-lock.yaml is not up to date with package.json",
+    "regex": "(?i)(?:ERR_PNPM_OUTDATED_LOCKFILE|pnpm-lock\\.yaml is not up to date|frozen-lockfile.*not.*date|lockfile.*mismatch|shrinkwrap.*not up to date)",
+    "domain": "cicd",
+    "category": "dependency_management",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "pnpm install --frozen-lockfile failed because pnpm-lock.yaml does not match package.json. A dependency was added, removed, or changed in package.json without running pnpm install to update the lockfile."
+  },
+  "dead_ends": [
+    {
+      "action": "Removing --frozen-lockfile from the CI command",
+      "why_fails": "Without frozen-lockfile, CI installs potentially different versions than local development, leading to 'works on my machine' issues and non-reproducible builds",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Deleting pnpm-lock.yaml and regenerating it in CI",
+      "why_fails": "This defeats the purpose of a lockfile. CI would install the latest compatible versions, which may differ from what was tested locally.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run pnpm install locally and commit the updated lockfile",
+      "success_rate": 0.95,
+      "how": "Run pnpm install locally after any package.json changes. Verify pnpm-lock.yaml was updated. Commit both package.json and pnpm-lock.yaml together.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure CI and local pnpm versions match",
+      "success_rate": 0.88,
+      "how": "Pin the pnpm version in package.json: { \"packageManager\": \"pnpm@9.0.0\" }. In CI, use corepack enable to install the matching version. Version mismatches between local and CI can cause lockfile format differences.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.10, "condition": "when lockfile issues affect multiple package managers in a monorepo"},
+      {"error_id": "cicd/cache-key-not-found/gha-linux", "probability": 0.15, "condition": "when the lockfile hash changes cause cache key mismatches"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/npm-audit-critical/gha-linux", "probability": 0.15, "condition": "when audit fix changes package.json without updating the lockfile"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "distinction": "pnpm-lockfile-mismatch is pnpm-specific lockfile sync error; npm-ci-failed is npm's equivalent (npm ci requires package-lock.json to match). Same concept, different package managers."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

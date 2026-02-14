@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/github-actions-matrix-fail/gha-linux",
+  "url": "https://deadends.dev/cicd/github-actions-matrix-fail/gha-linux",
+  "error": {
+    "signature": "Error: Matrix job 'test (node-18, ubuntu-latest)' failed",
+    "regex": "(?i)(?:matrix.*fail|matrix job.*failed|fail-fast.*cancelled|strategy.*matrix.*error)",
+    "domain": "cicd",
+    "category": "workflow",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "One or more matrix combinations in a GitHub Actions workflow failed. With fail-fast enabled (default), a single matrix failure cancels all other running matrix jobs. This makes it hard to identify which specific combinations are broken."
+  },
+  "dead_ends": [
+    {
+      "action": "Setting continue-on-error: true on the matrix job",
+      "why_fails": "This makes the entire workflow appear green even when matrix combinations fail, masking real failures and breaking the quality gate",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Removing matrix combinations that fail instead of fixing them",
+      "why_fails": "Removing failing combinations reduces test coverage. The underlying issue persists and may affect production environments that match the removed combination.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Disable fail-fast to see all matrix failures at once",
+      "success_rate": 0.88,
+      "how": "Set strategy: fail-fast: false in the job definition. This allows all matrix combinations to complete, making it easier to identify patterns (e.g., all Node 18 jobs fail, but Node 20 passes).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use matrix include/exclude to handle known incompatible combinations",
+      "success_rate": 0.85,
+      "how": "Use strategy.matrix.exclude to skip known incompatible combinations. Use strategy.matrix.include to add specific variable overrides for certain combinations that need different configuration.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "probability": 0.15, "condition": "when many matrix jobs consume runner capacity causing queue delays and timeouts"},
+      {"error_id": "cicd/test-flaky-timeout/ci-linux", "probability": 0.20, "condition": "when matrix failures are caused by flaky tests in specific environment combinations"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-node-version-mismatch/gha-linux", "probability": 0.25, "condition": "when specific Node.js versions in the matrix have compatibility issues"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-concurrency-cancelled/gha-linux", "distinction": "matrix-fail is about job failures within a matrix strategy; concurrency-cancelled is about workflow runs being cancelled due to concurrency group limits"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

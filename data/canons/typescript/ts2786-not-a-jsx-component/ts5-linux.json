@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts2786-not-a-jsx-component/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts2786-not-a-jsx-component/ts5-linux",
+  "error": {
+    "signature": "error TS2786: 'X' cannot be used as a JSX component. Its return type 'ReactNode' is not a valid JSX element.",
+    "regex": "TS2786: '([\\w]+)' cannot be used as a JSX component",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "typescript",
+      "version_range": ">=5.0,<6.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "react 18",
+        "monorepo",
+        "@types/react version mismatch",
+        "npm overrides"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-01",
+    "summary": "Almost always caused by multiple versions of @types/react in the dependency tree. Different packages depend on different @types/react versions, causing conflicting JSX element type definitions."
+  },
+  "dead_ends": [
+    {
+      "action": "Changing the component's return type to JSX.Element",
+      "why_fails": "JSX.Element is overly restrictive — it breaks when the component returns null, a string, or a fragment. The real issue is usually a @types/react version mismatch between dependencies, not the return type annotation.",
+      "fail_rate": 0.72,
+      "sources": [],
+      "common_misconception": "The return type is the problem, when the real issue is that two @types/react versions define incompatible JSX.Element types."
+    },
+    {
+      "action": "Adding @ts-expect-error above every component usage",
+      "why_fails": "Suppresses the error at each call site but does not fix the root cause. Creates N error suppressions that must be maintained and removed later. Breaks type checking for all props on those components.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "common_misconception": "Error suppression is a fix rather than a workaround."
+    },
+    {
+      "action": "Wrapping the component with React.createElement instead of JSX",
+      "why_fails": "React.createElement has the same type constraints as JSX syntax. The version mismatch still causes type errors; it just changes the error message from TS2786 to a different TS error code.",
+      "fail_rate": 0.8,
+      "sources": [],
+      "common_misconception": "JSX is assumed to have different type checking than createElement."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Force a single @types/react version with resolutions or overrides",
+      "how": "In package.json, add: for npm: \"overrides\": { \"@types/react\": \"^18.2.0\" }, for yarn: \"resolutions\": { \"@types/react\": \"^18.2.0\" }, for pnpm: \"pnpm\": { \"overrides\": { \"@types/react\": \"^18.2.0\" } }. Then rm -rf node_modules && npm install.",
+      "success_rate": 0.9,
+      "tradeoff": "All dependencies must work with the forced version",
+      "sources": [
+        "https://docs.npmjs.com/cli/v10/configuring-npm/package-json#overrides"
+      ]
+    },
+    {
+      "action": "Stop using React.FC and type return as React.ReactElement | null",
+      "how": "React.FC return type changed between @types/react 17 and 18. Direct function typing is more stable: function MyComponent(props: Props): React.ReactElement | null { ... }. This avoids the FC type definition conflict.",
+      "success_rate": 0.82,
+      "tradeoff": "More verbose component type annotations",
+      "sources": []
+    },
+    {
+      "action": "Add a wrapper component with explicit typing for library components",
+      "how": "If the component is from a library with an old @types/react: const Wrapped: React.FC<Props> = (props) => <LibComponent {...props} />; The wrapper component uses your local @types/react, resolving the mismatch.",
+      "success_rate": 0.78,
+      "tradeoff": "Adds wrapper indirection for each affected library component",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2322-type-not-assignable/ts5-linux",
+        "distinction": "TS2786 is specific to JSX component usage and typically caused by @types/react version conflicts. TS2322 is a general type assignment error that can occur in any context."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 65,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

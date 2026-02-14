@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/protobuf-mismatch/go1.22-linux",
+  "url": "https://deadends.dev/go/protobuf-mismatch/go1.22-linux",
+  "error": {
+    "signature": "cannot use type *v1.FooRequest as type *v2.FooRequest in argument to RegisterFooServer",
+    "regex": "cannot use.*as type.*protobuf|proto:.*wrong type|mismatched.*proto|incompatible.*protobuf.*version",
+    "domain": "go",
+    "category": "protobuf_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Generated protobuf Go code is out of sync with the .proto definitions or incompatible protobuf library versions are mixed. Commonly happens when client and server use different generated code versions."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually edit generated .pb.go files to fix type mismatches",
+      "why_fails": "Generated files are overwritten on next protoc run — manual edits are lost and the underlying .proto mismatch remains",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://protobuf.dev/reference/go/go-generated/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Mix google.golang.org/protobuf and github.com/golang/protobuf v1 APIs",
+      "why_fails": "The two protobuf Go API versions generate incompatible types — mixing them causes type assertion failures",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://pkg.go.dev/google.golang.org/protobuf"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Regenerate all protobuf Go code from the same .proto files",
+      "success_rate": 0.92,
+      "how": "protoc --go_out=. --go-grpc_out=. proto/*.proto\nEnsure all services use the same generated package.",
+      "sources": [
+        "https://protobuf.dev/reference/go/go-generated/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Pin protobuf library versions consistently across all modules",
+      "success_rate": 0.88,
+      "how": "go get google.golang.org/protobuf@latest\ngo get google.golang.org/grpc@latest\ngo mod tidy",
+      "sources": [
+        "https://pkg.go.dev/google.golang.org/protobuf"
+      ],
+      "condition": "when using Go modules with multiple services"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/grpc-unavailable/go1.22-linux",
+        "probability": 0.20,
+        "condition": "when server rejects requests due to proto schema mismatch"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/module-checksum-mismatch/go1.22-linux",
+        "probability": 0.15,
+        "condition": "when protobuf library version update causes checksum changes"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/cannot-use-as-type/go1-linux",
+        "distinction": "Protobuf mismatch specifically involves generated .pb.go types from different proto versions, while generic 'cannot use as type' is a general Go type system error."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

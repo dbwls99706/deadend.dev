@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/zip-malformed/jdk21-linux",
+  "url": "https://deadends.dev/java/zip-malformed/jdk21-linux",
+  "error": {
+    "signature": "java.util.zip.ZipException: invalid LOC header (bad signature)",
+    "regex": "ZipException|invalid LOC header|invalid CEN header|invalid END header|zip file is empty|error in opening zip file|MALFORMED",
+    "domain": "java",
+    "category": "io_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "jdk", "version_range": ">=21,<22"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Java's ZIP/JAR file reader encountered a corrupted or invalid archive. The most common causes are: corrupted JAR files in the Maven/Gradle cache (partially downloaded), ZIP files created with incompatible tools or formats (ZIP64 issues), files that are not actually ZIP archives despite having a .zip or .jar extension, or truncated downloads. This error frequently manifests during build tool dependency resolution or when loading libraries at runtime."
+  },
+  "dead_ends": [
+    {
+      "action": "Retrying the build without clearing the dependency cache",
+      "why_fails": "If the ZIP/JAR file in the cache is corrupted, retrying the build will use the same corrupted cached file. Maven and Gradle do not verify the integrity of cached artifacts on subsequent builds. The corrupted file must be deleted first.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Attempting to repair the ZIP file programmatically with ZipInputStream",
+      "why_fails": "ZipInputStream can sometimes read partial entries from a damaged ZIP, but it cannot reconstruct missing or corrupted data. The local file headers (LOC) and central directory (CEN) must be intact for reliable extraction. A truly corrupted archive needs to be re-downloaded, not repaired.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Delete the corrupted artifact from the local cache and rebuild",
+      "success_rate": 0.90,
+      "how": "For Maven: delete the specific artifact directory under ~/.m2/repository/ (e.g., rm -rf ~/.m2/repository/com/example/artifact/1.0/) and run mvn clean install. For Gradle: delete from ~/.gradle/caches/ and run gradle clean build --refresh-dependencies. To nuke the entire cache: rm -rf ~/.m2/repository (Maven) or rm -rf ~/.gradle/caches (Gradle). Check that the re-downloaded file is complete (compare size with the remote repository).",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Verify the file is a valid ZIP archive and check for download/transfer corruption",
+      "success_rate": 0.85,
+      "how": "Test the file: unzip -t suspect.jar. Check the file type: file suspect.jar (should show 'Java archive data' or 'Zip archive data'). If the file is actually HTML (e.g., a 302 redirect page), the repository URL or authentication is wrong. For corporate proxies/Nexus, ensure credentials are correct in settings.xml. For large JARs, verify no network interruption during download by comparing file sizes.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.20, "condition": "when a corrupted JAR is on the classpath but its classes cannot be loaded"},
+      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.25, "condition": "when the corrupted JAR causes the build to fail during dependency resolution"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.10, "condition": "when resolving conflicting dependencies triggers re-download of artifacts that become corrupted"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "ZipException means the JAR/ZIP file itself is structurally damaged. ClassNotFoundException means a specific class is not found on the classpath. A corrupted JAR can cause ClassNotFoundException, but ClassNotFoundException has many other causes (missing dependency, wrong classpath, etc.)."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

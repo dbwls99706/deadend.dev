@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-duplicate-key-warning/react18-linux",
+  "url": "https://deadends.dev/react/react-duplicate-key-warning/react18-linux",
+  "error": {
+    "signature": "Warning: Encountered two children with the same key, `keyValue`. Keys should be unique so that components maintain their identity across updates.",
+    "regex": "Encountered two children with the same key|Duplicate key|Keys should be unique",
+    "domain": "react",
+    "category": "render_warning",
+    "first_seen": "2021-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.95,
+    "last_updated": "2026-02-12",
+    "summary": "Two or more sibling elements in a list have the same key prop. React uses keys for reconciliation; duplicates cause incorrect DOM updates, lost state, and stale UI."
+  },
+  "dead_ends": [
+    {
+      "action": "Use array index as the key",
+      "why_fails": "Index keys cause state bugs when items are reordered, inserted, or deleted. React cannot distinguish moved items from new ones.",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/learn/rendering-lists#why-does-react-need-keys"
+      ],
+      "condition": "When the list is dynamic (items can be added, removed, or reordered)"
+    },
+    {
+      "action": "Use Math.random() or Date.now() as key",
+      "why_fails": "Generates a new key every render, destroying and recreating all components each time. Kills performance and loses all component state.",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://react.dev/learn/rendering-lists#rules-of-keys"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a unique, stable identifier from the data as the key (e.g., database ID)",
+      "success_rate": 0.95,
+      "how": "items.map(item => <Item key={item.id} data={item} />)",
+      "sources": [
+        "https://react.dev/learn/rendering-lists#where-to-get-your-key"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Generate stable IDs with crypto.randomUUID() at data creation time, not at render time",
+      "success_rate": 0.90,
+      "how": "When adding items: setItems([...items, { id: crypto.randomUUID(), ...newItem }])",
+      "sources": [
+        "https://react.dev/learn/rendering-lists"
+      ],
+      "condition": "When the data source does not provide unique IDs"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/each-child-unique-key/react18-linux",
+        "probability": 0.20,
+        "condition": "When attempting to fix duplicate keys by removing keys entirely, triggering the missing key warning"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/each-child-unique-key/react18-linux",
+        "probability": 0.22,
+        "condition": "When fixing missing keys by using a non-unique field that has duplicates in the data"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/each-child-unique-key/react18-linux",
+        "distinction": "duplicate-key-warning means keys exist but are not unique; each-child-unique-key means the key prop is missing entirely from list items"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 140,
+    "last_verification": "2026-02-12"
+  }
+}

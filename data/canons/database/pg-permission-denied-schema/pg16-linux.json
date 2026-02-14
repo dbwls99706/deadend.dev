@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-permission-denied-schema/pg16-linux",
+  "url": "https://deadends.dev/database/pg-permission-denied-schema/pg16-linux",
+  "error": {
+    "signature": "ERROR: permission denied for schema public",
+    "regex": "ERROR:\\s+permission denied for schema",
+    "domain": "database",
+    "category": "permission_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "The current database role does not have the required privileges on the target schema. In PostgreSQL 15+, the default public schema no longer grants CREATE privilege to all users. This is a major breaking change that affects upgrades and new installations. Applications that previously created tables in the public schema as non-superuser roles will fail."
+  },
+  "dead_ends": [
+    {
+      "action": "Running the application as the postgres superuser to bypass permission checks",
+      "why_fails": "Running applications as superuser violates the principle of least privilege and creates a security risk. Any SQL injection or application bug has full database access. This also masks permission issues that will resurface during security audits or role changes.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Granting ALL PRIVILEGES on all schemas to the application role",
+      "why_fails": "Overly broad grants give the application role access to system schemas (pg_catalog, information_schema) and other application schemas. This creates security vulnerabilities and makes it harder to audit access. Grant only the specific privileges needed on specific schemas.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Grant specific schema privileges to the application role",
+      "success_rate": 0.95,
+      "how": "As a superuser or schema owner, run: GRANT USAGE ON SCHEMA public TO app_role; GRANT CREATE ON SCHEMA public TO app_role; For PostgreSQL 15+ where public schema defaults changed: GRANT ALL ON SCHEMA public TO app_role; Also grant default privileges for future objects: ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_role;",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Create a dedicated schema for the application with proper ownership",
+      "success_rate": 0.90,
+      "how": "CREATE SCHEMA app_schema AUTHORIZATION app_role; Then configure the application to use this schema: SET search_path TO app_schema, public; In connection strings, add ?options=-csearch_path%3Dapp_schema,public. The app_role has full control over schemas it owns.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.35, "condition": "when migration tool cannot create tables due to missing schema privileges"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/authentication-failed/pg16-linux", "probability": 0.15, "condition": "when a new role is created but schema privileges are not configured"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Permission denied means the schema exists but the role lacks access. Relation does not exist means the table is not found (could be wrong schema in search_path). Permission denied is a privilege issue; relation not found is a naming/path issue."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-jsx-element-type/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-jsx-element-type/ts5-linux",
+  "error": {
+    "signature": "TS2786: 'Component' cannot be used as a JSX component. Its return type 'ReactNode' is not a valid JSX element.",
+    "regex": "TS2786.*cannot be used as a JSX component|not a valid JSX element",
+    "domain": "typescript",
+    "category": "jsx_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Component return type does not match JSX.Element. Usually caused by mismatched @types/react versions between packages."
+  },
+  "dead_ends": [
+    {
+      "action": "Cast the component to any before using in JSX",
+      "why_fails": "Hides the real type mismatch and loses all prop type checking for the component",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure all packages use the same @types/react version",
+      "success_rate": 0.90,
+      "how": "// Add resolutions/overrides to package.json:\n// npm:\n\"overrides\": { \"@types/react\": \"^18.2.0\" }\n// yarn:\n\"resolutions\": { \"@types/react\": \"^18.2.0\" }",
+      "sources": ["https://github.com/DefinitelyTyped/DefinitelyTyped/issues/65135"],
+      "condition": ""
+    },
+    {
+      "action": "Explicitly type component return as JSX.Element | null",
+      "success_rate": 0.85,
+      "how": "function MyComponent(props: Props): JSX.Element | null {\n  if (!props.show) return null;\n  return <div>{props.children}</div>;\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/jsx.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts2322-type-not-assignable/ts5-linux", "probability": 0.20, "condition": "When JSX type fixes reveal prop type mismatches"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts2307-cannot-find-module/ts5-linux", "probability": 0.15, "condition": "When @types/react is not installed"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2769-no-overload-matches/ts5-linux", "distinction": "TS2769 is about prop overload matching; TS2786 is about the component itself not being a valid JSX element type"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

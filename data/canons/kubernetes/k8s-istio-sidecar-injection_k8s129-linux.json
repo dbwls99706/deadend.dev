@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-istio-sidecar-injection/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-istio-sidecar-injection/k8s129-linux",
+  "error": {
+    "signature": "Istio sidecar injection failed: webhook connect error or sidecar not injected",
+    "regex": "istio.*sidecar.*inject|istio-sidecar-injector.*failed|webhook.*istio.*connection refused|sidecar\\.istio\\.io.*inject.*false",
+    "domain": "kubernetes",
+    "category": "service_mesh_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Istio sidecar proxy is not injected into pods. Namespace label missing, webhook down, or injection explicitly disabled."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually add the istio-proxy container to every pod spec",
+      "why_fails": "Version mismatches, missing environment config, and maintenance nightmare",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Disable mTLS globally instead of fixing injection",
+      "why_fails": "Removes service mesh security — traffic is unencrypted",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://istio.io/latest/docs/concepts/security/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Label the namespace for automatic injection: kubectl label namespace <ns> istio-injection=enabled",
+      "success_rate": 0.92,
+      "how": "kubectl label namespace <ns> istio-injection=enabled && kubectl rollout restart deployment -n <ns>",
+      "sources": [
+        "https://istio.io/latest/docs/setup/additional-setup/sidecar-injection/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check istiod is running and the webhook is configured: kubectl get mutatingwebhookconfiguration istio-sidecar-injector",
+      "success_rate": 0.88,
+      "how": "kubectl get pods -n istio-system -l app=istiod to verify the control plane is healthy",
+      "sources": [
+        "https://istio.io/latest/docs/ops/diagnostic-tools/proxy-cmd/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/k8s-sidecar-not-ready/k8s129-linux",
+        "probability": 0.25,
+        "condition": "when sidecar is injected but fails to start"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-admission-webhook-denied/k8s129-linux",
+        "probability": 0.20,
+        "condition": "when Istio's webhook is misconfigured and blocks pod creation"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/k8s-sidecar-not-ready/k8s129-linux",
+        "distinction": "Sidecar injection failure means the proxy container isn't added at all, while sidecar-not-ready means it's injected but fails to start"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

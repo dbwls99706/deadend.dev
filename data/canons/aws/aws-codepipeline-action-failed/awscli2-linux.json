@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-codepipeline-action-failed/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-codepipeline-action-failed/awscli2-linux",
+  "error": {
+    "signature": "Action execution failed: The action failed because either the action owner or the action provider is not valid",
+    "regex": "(Action execution failed|ActionExecutionException|Pipeline .+ has failed)",
+    "domain": "aws",
+    "category": "pipeline_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "aws", "version_range": ">=2.0,<3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "A CodePipeline action stage failed due to provider misconfiguration, IAM issues, or downstream service errors."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete and recreate the entire pipeline",
+      "why_fails": "The failure is usually in the action configuration, not the pipeline itself; recreation loses history",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retry the pipeline without investigating which action failed",
+      "why_fails": "Configuration errors are deterministic and will fail again on retry",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check the failed action's execution details and error message",
+      "success_rate": 0.88,
+      "how": "aws codepipeline get-pipeline-execution --pipeline-name NAME --pipeline-execution-id ID",
+      "sources": ["https://docs.aws.amazon.com/codepipeline/latest/userguide/troubleshooting.html"],
+      "condition": ""
+    },
+    {
+      "action": "Verify the pipeline service role has permissions for all action providers",
+      "success_rate": 0.82,
+      "how": "Ensure CodePipeline role can access CodeBuild, S3, ECS, Lambda, or whatever action providers are configured",
+      "sources": ["https://docs.aws.amazon.com/codepipeline/latest/userguide/security-iam.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "aws/aws-codebuild-failed/awscli2-linux", "probability": 0.20, "condition": "Pipeline retry triggers another CodeBuild run that also fails"}
+    ],
+    "preceded_by": [
+      {"error_id": "aws/aws-codebuild-failed/awscli2-linux", "probability": 0.35, "condition": "CodeBuild failure causes the pipeline action to fail"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "aws/aws-codebuild-failed/awscli2-linux", "distinction": "CodeBuild failure is the build itself failing; CodePipeline action failure is the orchestration layer reporting a stage failed"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

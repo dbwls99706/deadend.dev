@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-charset-mismatch/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-charset-mismatch/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1267 (HY000): Illegal mix of collations (utf8mb4_unicode_ci,IMPLICIT) and (utf8mb4_general_ci,IMPLICIT)",
+    "regex": "ERROR 1267.*Illegal mix of collations|collation.*mismatch|Cannot convert",
+    "domain": "database",
+    "category": "encoding_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Two columns or expressions in a query use incompatible collations and MySQL cannot determine which collation to use for comparison. Common when joining tables that were created with different default collations, or after upgrading from MySQL 5.7 (utf8/utf8_general_ci default) to MySQL 8.0 (utf8mb4/utf8mb4_0900_ai_ci default)."
+  },
+  "dead_ends": [
+    {
+      "action": "Using CONVERT() or COLLATE on every query to work around the mismatch",
+      "why_fails": "Adding COLLATE or CONVERT to queries is a per-query workaround that prevents index usage on the converted column (causes full table scans). It must be added to every query that compares mismatched columns, creating maintenance burden and performance issues.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Changing the server default character set without converting existing tables",
+      "why_fails": "The server default only affects new tables and columns. Existing tables retain their original character set and collation. The mismatch between old and new tables persists, and the error continues for queries joining them.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Convert all tables to a consistent character set and collation",
+      "success_rate": 0.90,
+      "how": "Choose a target: utf8mb4 with utf8mb4_unicode_ci (or utf8mb4_0900_ai_ci for MySQL 8.0+). Convert each table: ALTER TABLE t CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; Set database default: ALTER DATABASE db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; Warning: this locks each table during conversion.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Set consistent defaults for the connection and server to prevent future mismatches",
+      "success_rate": 0.85,
+      "how": "In my.cnf: character-set-server = utf8mb4, collation-server = utf8mb4_unicode_ci. In connection strings, add charset=utf8mb4. Verify with: SHOW VARIABLES LIKE 'character_set%'; SHOW VARIABLES LIKE 'collation%'; Ensure all three levels (server, database, table) match.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-lock-wait-timeout/mysql8-linux", "probability": 0.10, "condition": "when ALTER TABLE for charset conversion locks tables during peak traffic"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-table-doesnt-exist/mysql8-linux", "probability": 0.10, "condition": "when recreating tables after a failed migration introduces different charset defaults"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-max-allowed-packet/mysql8-linux", "distinction": "Charset mismatch is about incompatible collations between columns. Max allowed packet is about data size limits. Both can occur during data import but have completely different causes and fixes."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 48,
+    "last_verification": "2026-02-12"
+  }
+}

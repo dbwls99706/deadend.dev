@@ -78,7 +78,7 @@
     "frequently_confused_with": [
       {
         "error_id": "go/import-cycle-not-allowed/go121-linux",
-        "distinction": "'declared and not used' indicates an unused variable declaration, while 'import cycle not allowed' indicates a dependency cycle in Terraform resources."
+        "distinction": "'declared and not used' indicates an unused variable declaration (Go compiler enforces this), while 'import cycle not allowed' indicates a circular dependency between Go packages."
       }
     ]
   },

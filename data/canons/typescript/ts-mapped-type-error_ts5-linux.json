@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-mapped-type-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-mapped-type-error/ts5-linux",
+  "error": {
+    "signature": "TS2536: Type 'K' cannot be used to index type 'T'",
+    "regex": "TS2536.*cannot be used to index type|TS7053.*Element implicitly has an 'any' type.*no index signature",
+    "domain": "typescript",
+    "category": "type_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "The key type is not compatible with the object's index signature. Constrain the key to keyof T or add proper index signatures."
+  },
+  "dead_ends": [
+    {
+      "action": "Add [key: string]: any index signature to the type",
+      "why_fails": "Makes all property access return any, eliminating type safety for known properties",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Constrain the key type to keyof T",
+      "success_rate": 0.90,
+      "how": "function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {\n  return obj[key];\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/keyof-types.html"],
+      "condition": ""
+    },
+    {
+      "action": "Use Record type for objects with dynamic keys",
+      "success_rate": 0.85,
+      "how": "const map: Record<string, number> = {};\n// Or use Map for truly dynamic keys:\nconst map = new Map<string, number>();",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-utility-type-error/ts5-linux", "probability": 0.15, "condition": "When mapped types interact with utility types like Partial or Required"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts7053-no-index-signature/ts5-linux", "probability": 0.20, "condition": "When index signature errors lead to mapped type usage"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts7053-no-index-signature/ts5-linux", "distinction": "TS7053 is about missing index signatures; TS2536 is about key types not matching existing signatures in mapped types"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

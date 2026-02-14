@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0.0",
+  "id": "aws/aws-cloudfront-origin-error/awscli2-linux",
+  "url": "https://deadends.dev/aws/aws-cloudfront-origin-error/awscli2-linux",
+  "error": {
+    "signature": "502 ERROR The request could not be satisfied. CloudFront wasn't able to connect to the origin",
+    "regex": "(502 ERROR|CloudFront wasn't able to connect to the origin|OriginUnreachable)",
+    "domain": "aws",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "aws",
+      "version_range": ">=2.0,<3.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "CloudFront cannot reach the configured origin server due to DNS, security group, or SSL/TLS issues."
+  },
+  "dead_ends": [
+    {
+      "action": "Invalidate CloudFront cache to fix origin errors",
+      "why_fails": "Cache invalidation does not fix connectivity issues between CloudFront and the origin",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/troubleshooting-distributions.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Change CloudFront price class to fix the issue",
+      "why_fails": "Price class only affects which edge locations are used, not origin connectivity",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify origin domain name resolves and origin server is accessible",
+      "success_rate": 0.85,
+      "how": "Check DNS resolution, verify security groups allow CloudFront IPs, ensure origin is healthy",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/troubleshooting-distributions.html"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Match SSL/TLS protocol between CloudFront and origin",
+      "success_rate": 0.8,
+      "how": "Set Origin Protocol Policy to HTTPS Only and ensure origin supports TLSv1.2",
+      "sources": [
+        "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-https-cloudfront-to-custom-origin.html"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "aws/aws-route53-health-check/awscli2-linux",
+        "probability": 0.15,
+        "condition": "Origin down triggers Route53 health check failures"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "aws/aws-waf-rule-blocked/awscli2-linux",
+        "distinction": "WAF blocks return 403 Forbidden; origin errors return 502/504 when CloudFront cannot reach the backend"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 95,
+    "last_verification": "2026-02-12"
+  }
+}

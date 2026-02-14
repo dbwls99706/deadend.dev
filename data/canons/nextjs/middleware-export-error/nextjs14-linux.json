@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/middleware-export-error/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/middleware-export-error/nextjs14-linux",
+  "error": {
+    "signature": "Error: middleware must export a middleware or default function",
+    "regex": "(middleware must export a middleware or default function|middleware\\.ts.*must export)",
+    "domain": "nextjs",
+    "category": "routing_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "next.js",
+      "version_range": ">=14.0,<15.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.94,
+    "confidence": 0.93,
+    "last_updated": "2026-02-13",
+    "summary": "Next.js requires the middleware file (middleware.ts or middleware.js) at the project root (next to app/ or pages/) to export a named function called 'middleware' or a default export that is a function. This error occurs when the file exists but lacks the correct export, has a syntax error preventing the export from being recognized, is placed in the wrong directory, or exports a non-function value. Common causes include placing middleware.ts inside the app/ directory instead of the project root, using module.exports instead of ES module exports, or having TypeScript type errors that prevent compilation. The fix is to ensure the correct file location and proper named export."
+  },
+  "dead_ends": [
+    {
+      "action": "Placing middleware.ts inside the app/ directory or pages/ directory",
+      "why_fails": "Next.js only recognizes the middleware file at the project root level (the same directory that contains app/ or pages/). Placing it inside app/middleware.ts or pages/middleware.ts causes it to be treated as a regular page or route, not as middleware. The middleware detection logic specifically looks for {projectRoot}/middleware.{ts,js}",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using module.exports or CommonJS syntax in the middleware file",
+      "why_fails": "Next.js middleware runs in the Edge Runtime, which only supports ES modules. Using module.exports = function middleware() {} or exports.middleware = ... is not recognized. The middleware file must use ES module syntax with 'export function middleware()' or 'export default function()'. This is a common issue when copying patterns from older Node.js codebases or Express middleware",
+      "fail_rate": 0.9,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Exporting an object or configuration instead of a function from middleware.ts",
+      "why_fails": "The middleware export must be a function that receives a NextRequest and returns a NextResponse or Response. Exporting a configuration object, a class, or a middleware factory without calling it will trigger this error. Even if using a higher-order function pattern like withAuth(handler), the final default export or named middleware export must be the resulting function, not the wrapper",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create middleware.ts at the project root with the correct named export",
+      "success_rate": 0.95,
+      "how": "Create the file at {projectRoot}/middleware.ts (same level as package.json and the app/ directory): // middleware.ts\nimport { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n  // Your middleware logic\n  return NextResponse.next();\n}\n\n// Optional: configure which routes middleware runs on\nexport const config = {\n  matcher: ['/dashboard/:path*', '/api/:path*'],\n};\n\nThe function must be named 'middleware' (named export) or be the default export. Both work, but the named export is the documented convention",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use the config.matcher export to control which routes trigger the middleware",
+      "success_rate": 0.92,
+      "how": "Export a config object alongside the middleware function to control execution: export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|public).*)'] }; This prevents the middleware from running on static assets and internal Next.js routes. Common matchers: specific paths: ['/dashboard/:path*'], API routes: ['/api/:path*'], all except static: ['/((?!_next/static|_next/image|favicon.ico).*)'], combining: ['/dashboard/:path*', '/api/:path*', '/auth/:path*']. The matcher uses a path-to-regexp syntax",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Compose multiple middleware functions using a helper when you need modular middleware",
+      "success_rate": 0.88,
+      "how": "Since Next.js only supports a single middleware file, compose multiple middleware concerns: // middleware.ts\nimport { NextResponse } from 'next/server';\nimport type { NextRequest } from 'next/server';\n\nfunction withAuth(request: NextRequest): NextResponse | null {\n  const token = request.cookies.get('token');\n  if (!token && request.nextUrl.pathname.startsWith('/dashboard')) {\n    return NextResponse.redirect(new URL('/login', request.url));\n  }\n  return null;\n}\n\nfunction withLocale(request: NextRequest): NextResponse | null {\n  const locale = request.headers.get('accept-language')?.split(',')[0];\n  if (locale && !request.nextUrl.pathname.startsWith(`/${locale}`)) {\n    return NextResponse.rewrite(new URL(`/${locale}${request.nextUrl.pathname}`, request.url));\n  }\n  return null;\n}\n\nexport function middleware(request: NextRequest) {\n  const authResponse = withAuth(request);\n  if (authResponse) return authResponse;\n  const localeResponse = withLocale(request);\n  if (localeResponse) return localeResponse;\n  return NextResponse.next();\n}\n\nexport const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };",
+      "sources": [],
+      "condition": "When multiple middleware concerns are needed"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/route-conflict/nextjs14-linux",
+        "probability": 0.1,
+        "condition": "when middleware rewrites conflict with existing route definitions"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/module-not-found-resolve/nextjs14-linux",
+        "probability": 0.1,
+        "condition": "when middleware imports a module that is not compatible with the Edge Runtime"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

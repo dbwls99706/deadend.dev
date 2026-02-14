@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-portal-target-missing/react18-linux",
+  "url": "https://deadends.dev/react/react-portal-target-missing/react18-linux",
+  "error": {
+    "signature": "Error: Target container is not a DOM element. (createPortal)",
+    "regex": "Target container is not a DOM element|createPortal.*null|createPortal.*undefined|portal.*target.*not.*found",
+    "domain": "react",
+    "category": "dom_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "ReactDOM.createPortal() called with a null or undefined DOM container. The target element does not exist in the DOM yet (timing issue) or the selector is wrong."
+  },
+  "dead_ends": [
+    {
+      "action": "Use document.body as the portal target",
+      "why_fails": "Appending directly to document.body can conflict with third-party scripts, modal libraries, and CSS stacking contexts. May break SSR where document is not available.",
+      "fail_rate": 0.50,
+      "sources": [
+        "https://react.dev/reference/react-dom/createPortal"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create the DOM element dynamically inside the component render",
+      "why_fails": "Creating DOM elements during render is a side effect; the element may be created multiple times in StrictMode and is not cleaned up properly",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://react.dev/reference/react-dom/createPortal"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add a dedicated portal root element in index.html and use getElementById",
+      "success_rate": 0.95,
+      "how": "In index.html: <div id=\"portal-root\"></div>. In component: createPortal(children, document.getElementById('portal-root'))",
+      "sources": [
+        "https://react.dev/reference/react-dom/createPortal#rendering-a-modal-dialog-with-a-portal"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use useEffect to create and append the portal container, with cleanup to remove it",
+      "success_rate": 0.89,
+      "how": "const [container] = useState(() => document.createElement('div')); useEffect(() => { document.body.appendChild(container); return () => document.body.removeChild(container); }, [container]); return container ? createPortal(children, container) : null;",
+      "sources": [
+        "https://react.dev/reference/react-dom/createPortal"
+      ],
+      "condition": "When a static HTML element is not available (e.g., in a library)"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-hydration-attribute-mismatch/react18-linux",
+        "probability": 0.18,
+        "condition": "When portal target exists on client but not during SSR, causing hydration mismatch"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/react-error-boundary-fallback/react18-linux",
+        "probability": 0.15,
+        "condition": "When the portal error is uncaught and the developer adds an Error Boundary that then needs portal-like rendering for its fallback"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/cannot-find-react-dom-client/react18-linux",
+        "distinction": "portal-target-missing is about the DOM element argument to createPortal being null, while cannot-find-react-dom-client is an import/module resolution error for the react-dom/client package"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

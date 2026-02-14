@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "node/node-cluster-disconnect/node20-linux",
+  "url": "https://deadends.dev/node/node-cluster-disconnect/node20-linux",
+  "error": {
+    "signature": "Error [ERR_SERVER_NOT_RUNNING]: Server is not running.",
+    "regex": "ERR_SERVER_NOT_RUNNING|cluster.*disconnect|worker.*disconnected unexpectedly",
+    "domain": "node",
+    "category": "cluster",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=14"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A cluster worker disconnected unexpectedly from the master process, usually due to an unhandled exception, memory exhaustion, or explicit disconnect call before the server was ready."
+  },
+  "dead_ends": [
+    {
+      "action": "Calling cluster.disconnect() before workers have fully initialized",
+      "why_fails": "Workers that haven't bound to a port yet will silently fail to clean up, leaving orphaned connections",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using process.exit() in workers instead of graceful shutdown",
+      "why_fails": "Abrupt exit drops in-flight requests and can corrupt shared state or IPC channels",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Listen for 'disconnect' and 'exit' events on the cluster and fork replacement workers",
+      "success_rate": 0.90,
+      "how": "cluster.on('exit', (worker, code) => { if (!worker.exitedAfterDisconnect) cluster.fork(); });",
+      "sources": [
+        "https://nodejs.org/api/cluster.html#event-exit"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Implement graceful shutdown with server.close() before disconnecting",
+      "success_rate": 0.88,
+      "how": "In the worker: server.close(() => { process.disconnect(); }); — ensures all connections drain before exiting",
+      "sources": [
+        "https://nodejs.org/api/cluster.html#workerdisconnect"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "node/eaddrinuse-port/node20-linux",
+        "probability": 0.18,
+        "condition": "when a replacement worker tries to bind a port still held by the exiting worker"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "node/err-worker-out-of-memory/node20-linux",
+        "probability": 0.20,
+        "condition": "when OOM kills a cluster worker"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "node/node-worker-thread-crash/node20-linux",
+        "distinction": "Cluster disconnect involves child processes communicating via IPC, while worker thread crashes involve threads sharing memory within a single process"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

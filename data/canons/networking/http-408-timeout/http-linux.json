@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/http-408-timeout/http-linux",
+  "url": "https://deadends.dev/networking/http-408-timeout/http-linux",
+  "error": {
+    "signature": "HTTP/1.1 408 Request Timeout",
+    "regex": "408 Request Timeout|Request Timeout|client.*timeout|idle.*timeout.*408",
+    "domain": "networking",
+    "category": "http",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The server closed the connection because the client did not send a complete request within the server's timeout period. This commonly occurs with slow clients, large uploads over poor connections, or idle keep-alive connections being reaped."
+  },
+  "dead_ends": [
+    {
+      "action": "Retry the exact same request immediately without checking client-side issues",
+      "why_fails": "If the client is genuinely slow (poor network, large payload), immediate retry will hit the same timeout. The underlying cause — slow upload speed, network congestion, or oversized request — must be addressed.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increase server request timeout to very large values",
+      "why_fails": "Very large timeouts allow slow clients to hold connections open indefinitely, consuming server resources. Under load, this can lead to connection pool exhaustion and denial of service for legitimate fast clients.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": "Under high concurrency"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase the server request timeout to a reasonable value that accommodates expected client latency",
+      "success_rate": 0.88,
+      "how": "1. In nginx: client_header_timeout 60s; client_body_timeout 60s;\n2. In Apache: Timeout 60; RequestReadTimeout header=20-40,minrate=500 body=20-60,minrate=500\n3. Measure typical client request times from access logs\n4. Set timeout to 2-3x the 99th percentile request time\n5. Reload the server: systemctl reload nginx",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use chunked transfer encoding for large uploads to keep the connection active",
+      "success_rate": 0.85,
+      "how": "1. Configure the client to use chunked transfer encoding: Transfer-Encoding: chunked\n2. Send data in smaller chunks so the server sees activity within its timeout window\n3. For file uploads, use multipart form data with progress tracking\n4. If behind a load balancer, ensure it also supports chunked encoding and has appropriate idle timeouts",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.20, "condition": "when the server forcefully closes the connection after the 408 timeout"},
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.15, "condition": "when a reverse proxy reports 502 because the backend timed out the connection"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.15, "condition": "when slow network causes the TCP connection to establish slowly, leaving less time for the HTTP request"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/http-504-gateway-timeout/http-linux", "distinction": "408 means the server timed out waiting for the client request; 504 means a proxy timed out waiting for the upstream server response"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

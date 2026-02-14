@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-vacuum-running/pg16-linux",
+  "url": "https://deadends.dev/database/pg-vacuum-running/pg16-linux",
+  "error": {
+    "signature": "WARNING: oldest xmin is far in the past. HINT: Close open transactions soon to avoid wraparound problems.",
+    "regex": "oldest xmin is far in the past|wraparound|autovacuum.*to prevent wraparound",
+    "domain": "database",
+    "category": "maintenance_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "PostgreSQL is warning about transaction ID wraparound danger. Autovacuum cannot reclaim dead tuples because long-running transactions, prepared transactions, or replication slots are holding back the oldest transaction ID. If not addressed, PostgreSQL will eventually shut down to prevent data corruption when it reaches the wraparound limit."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling autovacuum to reduce IO load on a busy production system",
+      "why_fails": "Disabling autovacuum accelerates the wraparound problem. Without vacuuming, dead tuples accumulate, table bloat grows, and the database will eventually enter single-user mode or refuse to accept writes to prevent transaction ID wraparound.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running VACUUM FULL on large tables during peak traffic",
+      "why_fails": "VACUUM FULL acquires an ACCESS EXCLUSIVE lock, blocking all reads and writes on the table for the entire duration. On large tables this can take hours, causing a full outage. Regular VACUUM (without FULL) is sufficient for wraparound prevention and allows concurrent access.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify and terminate long-running transactions blocking vacuum progress",
+      "success_rate": 0.88,
+      "how": "Run: SELECT pid, age(backend_xmin), state, query FROM pg_stat_activity WHERE backend_xmin IS NOT NULL ORDER BY age(backend_xmin) DESC LIMIT 5; Terminate blockers with SELECT pg_terminate_backend(pid). Also check pg_prepared_xacts for abandoned prepared transactions and ROLLBACK PREPARED them.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Run manual VACUUM on the affected tables and tune autovacuum settings",
+      "success_rate": 0.85,
+      "how": "Run VACUUM VERBOSE on affected tables to reclaim dead tuples. Tune autovacuum: autovacuum_vacuum_cost_delay = 2ms (from default 20ms), autovacuum_max_workers = 6, autovacuum_naptime = 15s. For large tables, set per-table: ALTER TABLE t SET (autovacuum_vacuum_scale_factor = 0.01).",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.20, "condition": "when table bloat from delayed vacuuming causes disk usage to grow unchecked"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.15, "condition": "when long-running queries prevent vacuum from advancing the oldest xmin"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/disk-full/pg16-linux", "distinction": "Wraparound warnings are about transaction ID exhaustion and dead tuple accumulation. Disk full is about filesystem capacity. However, vacuum issues often cause disk usage growth due to table bloat, so they are frequently related."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

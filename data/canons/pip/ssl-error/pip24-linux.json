@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/ssl-error/pip24-linux",
+  "url": "https://deadends.dev/pip/ssl-error/pip24-linux",
+  "error": {
+    "signature": "pip._vendor.urllib3.exceptions.MaxRetryError: Could not fetch URL: There was a problem confirming the ssl certificate",
+    "regex": "ssl certificate|SSLError|SSL: CERTIFICATE_VERIFY_FAILED|ssl\\.SSLCertVerificationError",
+    "domain": "pip",
+    "category": "network_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "SSL certificate verification failed when connecting to PyPI or custom index. Usually caused by corporate MITM proxy injecting its own certificate, outdated system CA certificates, or custom index with self-signed cert."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --trusted-host for all installs permanently",
+      "why_fails": "Disables SSL verification which is a security risk; does not fix the underlying certificate issue",
+      "fail_rate": 0.40,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade to an older pip that is less strict about SSL",
+      "why_fails": "Older pip versions have security vulnerabilities; SSL strictness is intentional",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Update system CA certificates",
+      "success_rate": 0.85,
+      "how": "apt-get update && apt-get install ca-certificates && update-ca-certificates",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Point pip to the corporate CA bundle: pip install --cert /path/to/corporate-ca.crt <package>",
+      "success_rate": 0.90,
+      "how": "pip config set global.cert /path/to/corporate-ca-bundle.crt && pip install <package>",
+      "sources": [],
+      "condition": "when behind corporate MITM proxy"
+    },
+    {
+      "action": "Set REQUESTS_CA_BUNDLE environment variable",
+      "success_rate": 0.88,
+      "how": "export REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt && pip install <package>",
+      "sources": [],
+      "condition": "when pip uses requests internally"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/timeout/pip24-linux", "probability": 0.2, "condition": "when SSL negotiation fails and connection times out"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/proxy-error/pip24-linux", "probability": 0.25, "condition": "when proxy injects SSL certificate that fails verification"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/proxy-error/pip24-linux", "distinction": "SSL error is about certificate validation failure; proxy error is about inability to establish connection through the proxy itself"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

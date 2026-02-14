@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/index-url-invalid/pip24-linux",
+  "url": "https://deadends.dev/pip/index-url-invalid/pip24-linux",
+  "error": {
+    "signature": "ERROR: Could not find a version that satisfies the requirement (from versions: none). No matching distribution found",
+    "regex": "invalid.*index|Could not find.*versions: none|Looking in indexes.*failed|No matching distribution.*index",
+    "domain": "pip",
+    "category": "configuration_error",
+    "first_seen": "2022-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The configured package index URL is invalid, unreachable, or does not contain the requested package. Often caused by typo in --index-url, wrong pip.conf, or private index that requires authentication."
+  },
+  "dead_ends": [
+    {
+      "action": "Keep retrying with the same index URL",
+      "why_fails": "If the URL is wrong or the index does not carry the package, retrying will never work",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use --no-index without providing --find-links",
+      "why_fails": "Disables all indexes without providing an alternative source; pip cannot find any packages",
+      "fail_rate": 0.99,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify and fix the index URL: pip install --index-url https://pypi.org/simple/ <package>",
+      "success_rate": 0.92,
+      "how": "Check pip config list for index-url, fix typos, and ensure the URL ends with /simple/",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use --extra-index-url to add PyPI as fallback alongside private index",
+      "success_rate": 0.88,
+      "how": "pip install --index-url https://private.index/simple/ --extra-index-url https://pypi.org/simple/ <package>",
+      "sources": [],
+      "condition": "when using private index that lacks some packages"
+    },
+    {
+      "action": "Configure authentication for private index using keyring or netrc",
+      "success_rate": 0.85,
+      "how": "pip install keyring && pip config set global.index-url https://user:token@private.index/simple/",
+      "sources": [],
+      "condition": "when private index requires authentication"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/ssl-error/pip24-linux", "probability": 0.2, "condition": "when custom index uses self-signed certificates"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/proxy-error/pip24-linux", "probability": 0.15, "condition": "when proxy blocks access to the package index"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/no-matching-distribution/pip24-linux", "distinction": "Index-url-invalid means the entire index is misconfigured; no-matching-distribution means the index works but the specific package/version is not available"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

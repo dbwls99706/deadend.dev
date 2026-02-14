@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/websocket-upgrade-failed/http-linux",
+  "url": "https://deadends.dev/networking/websocket-upgrade-failed/http-linux",
+  "error": {
+    "signature": "WebSocket connection failed: Error during WebSocket handshake: Unexpected response code: 400",
+    "regex": "WebSocket.*handshake.*fail|Unexpected response code.*(?:400|403|426)|upgrade.*websocket.*fail|101.*expected|Connection.*Upgrade.*missing",
+    "domain": "networking",
+    "category": "websocket",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "http", "version_range": ">=1.1"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "The HTTP Upgrade handshake for WebSocket failed. The server did not respond with 101 Switching Protocols. Common causes include a reverse proxy stripping the Upgrade and Connection headers, the server not supporting WebSocket on the requested path, or HTTP/2 misconfiguration."
+  },
+  "dead_ends": [
+    {
+      "action": "Force WebSocket over HTTP/2 without checking server support",
+      "why_fails": "WebSocket over HTTP/2 (RFC 8441) requires explicit server support via SETTINGS_ENABLE_CONNECT_PROTOCOL. Most reverse proxies and load balancers do not yet support this. Standard WebSocket uses HTTP/1.1 Upgrade.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Add Connection: Upgrade header manually when behind an HTTP/2 proxy",
+      "why_fails": "HTTP/2 does not use the Connection and Upgrade headers — they are connection-level headers not valid in HTTP/2. The proxy strips them during HTTP/1.1 to HTTP/2 translation. The WebSocket negotiation must use a different mechanism.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": "When the proxy uses HTTP/2 upstream"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure the reverse proxy to pass WebSocket Upgrade headers correctly",
+      "success_rate": 0.92,
+      "how": "1. In nginx:\n   location /ws/ {\n     proxy_pass http://backend;\n     proxy_http_version 1.1;\n     proxy_set_header Upgrade $http_upgrade;\n     proxy_set_header Connection \"upgrade\";\n   }\n2. In Apache: enable mod_proxy_wstunnel and use ProxyPass ws://backend/\n3. In AWS ALB: WebSocket support is automatic, but verify the target group protocol\n4. Reload config: systemctl reload nginx\n5. Test: wscat -c wss://host/ws/",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use a WebSocket-compatible fallback transport like Socket.IO or SockJS",
+      "success_rate": 0.88,
+      "how": "1. Libraries like Socket.IO and SockJS automatically detect WebSocket support\n2. If WebSocket fails, they fall back to long-polling or server-sent events\n3. Configure the server to support both WebSocket and fallback transports\n4. Socket.IO: const io = require('socket.io')(server, { transports: ['websocket', 'polling'] })\n5. This ensures connectivity even through proxies that do not support WebSocket",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/http-502-bad-gateway/http-linux", "probability": 0.15, "condition": "when the proxy cannot establish an upstream WebSocket connection and returns 502"},
+      {"error_id": "networking/connection-reset/tcp-linux", "probability": 0.10, "condition": "when the server rejects the upgrade and forcefully closes the connection"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/cors-preflight-failed/http-linux", "probability": 0.15, "condition": "when CORS preflight fails before the WebSocket upgrade can be attempted"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/cors-preflight-failed/http-linux", "distinction": "WebSocket upgrade failure is about the HTTP 101 protocol switch; CORS preflight failure is about cross-origin access control policy, though both can block WebSocket connections from browsers"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/os-exec-not-found/go1.22-linux",
+  "url": "https://deadends.dev/go/os-exec-not-found/go1.22-linux",
+  "error": {
+    "signature": "exec: \"ffmpeg\": executable file not found in $PATH",
+    "regex": "exec:.*executable file not found in \\$PATH|exec\\.LookPath.*not found",
+    "domain": "go",
+    "category": "os_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "os/exec.Command or exec.LookPath cannot find the specified binary in the system PATH. The executable is either not installed or not in a directory listed in $PATH."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcode an absolute path to the binary",
+      "why_fails": "Absolute paths break portability across systems where the binary is installed in different locations (e.g., /usr/bin vs /usr/local/bin vs /snap/bin)",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://pkg.go.dev/os/exec#LookPath"
+      ],
+      "condition": "when deploying across different environments"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the missing binary and ensure it is in PATH",
+      "success_rate": 0.92,
+      "how": "apt-get install <package>  # or brew install / yum install\nwhich <binary>  # verify it's in PATH",
+      "sources": [
+        "https://pkg.go.dev/os/exec#LookPath"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use exec.LookPath to check availability before exec.Command",
+      "success_rate": 0.88,
+      "how": "path, err := exec.LookPath(\"ffmpeg\")\nif err != nil {\n    return fmt.Errorf(\"ffmpeg not installed: %w\", err)\n}\ncmd := exec.Command(path, args...)",
+      "sources": [
+        "https://pkg.go.dev/os/exec#LookPath"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/filepath-walk-permission/go1.22-linux",
+        "probability": 0.10,
+        "condition": "when the binary exists but in a directory without execute permission"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/cgo-linker-error/go1.22-linux",
+        "probability": 0.15,
+        "condition": "when missing C compiler triggers exec not found for gcc"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/filepath-walk-permission/go1.22-linux",
+        "distinction": "'executable file not found in $PATH' means the binary does not exist in any PATH directory, while permission denied means the file exists but cannot be accessed."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

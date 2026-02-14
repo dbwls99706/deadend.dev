@@ -42,6 +42,15 @@ def _load_canons() -> list[dict]:
     return canons
 
 
+_STOPWORDS = frozenset({
+    "", "the", "a", "an", "is", "of", "in", "to", "for", "and", "or",
+    "no", "not", "on", "at", "by", "it", "be", "as", "do", "if",
+    "error", "failed", "exception", "cannot", "can", "could",
+    "was", "were", "been", "being", "has", "have", "had",
+    "with", "from", "this", "that", "when", "which", "while",
+})
+
+
 def lookup_all(error_message: str) -> list[dict]:
     """Match an error message against all known patterns.
 
@@ -50,6 +59,9 @@ def lookup_all(error_message: str) -> list[dict]:
     - dead_ends: list of {action, why_fails, fail_rate}
     - workarounds: list of {action, success_rate, how}
     """
+    if not error_message or not error_message.strip():
+        return []
+
     canons = _load_canons()
     matches = []
 
@@ -71,10 +83,10 @@ def lookup_all(error_message: str) -> list[dict]:
         if sig in msg or msg in sig:
             score += 50
 
-        # Word overlap
+        # Word overlap (excluding stopwords)
         sig_words = set(re.split(r"\W+", sig))
         msg_words = set(re.split(r"\W+", msg))
-        overlap = sig_words & msg_words - {"", "the", "a", "an", "is", "of", "in"}
+        overlap = (sig_words & msg_words) - _STOPWORDS
         score += len(overlap) * 5
 
         if score > 0:

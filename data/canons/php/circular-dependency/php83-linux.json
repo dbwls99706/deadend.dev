@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/circular-dependency/php83-linux",
+  "url": "https://deadends.dev/php/circular-dependency/php83-linux",
+  "error": {
+    "signature": "Fatal error: Cannot declare class App\\Service\\ServiceA, because the name is already in use in /var/www/app/src/Service/ServiceA.php on line 5",
+    "regex": "Cannot declare class [\\w\\\\]+, because the name is already in use",
+    "domain": "php",
+    "category": "autoloading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Circular dependency errors occur when two or more classes depend on each other, causing infinite autoload loops or duplicate class declarations. This usually indicates an architectural problem that needs to be resolved with dependency inversion or interfaces."
+  },
+  "dead_ends": [
+    {"action": "Using class_exists() checks to conditionally load classes", "why_fails": "Masks the circular dependency without resolving it. The load order becomes non-deterministic and can produce different behavior depending on which class is loaded first.", "fail_rate": 0.70, "sources": [], "condition": ""},
+    {"action": "Splitting the circular classes into separate Composer packages", "why_fails": "Moving classes to separate packages does not resolve the circular dependency; it just moves the problem to the package level where it becomes harder to debug.", "fail_rate": 0.65, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Introduce an interface to break the circular dependency", "success_rate": 0.90, "how": "Create an interface that one of the classes implements, and have the other class depend on the interface instead of the concrete class. This applies the Dependency Inversion Principle and breaks the cycle.", "sources": [], "condition": ""},
+    {"action": "Use constructor injection with a dependency injection container", "success_rate": 0.87, "how": "Register both services in a DI container (e.g., Symfony's service container or Laravel's IoC container). The container resolves circular dependencies through lazy loading or proxy generation.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/memory-limit-exhausted/php83-linux", "probability": 0.25, "condition": "when the circular dependency causes an infinite autoload loop consuming all memory"}],
+    "preceded_by": [{"error_id": "php/autoload-class-not-found/php83-linux", "probability": 0.15, "condition": "when attempting to resolve autoloading errors by adding cross-references between classes"}],
+    "frequently_confused_with": [{"error_id": "php/spl-autoload-error/php83-linux", "distinction": "SPL autoload errors are about the autoloader function failing, while circular dependency is about the class relationship graph being cyclic"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

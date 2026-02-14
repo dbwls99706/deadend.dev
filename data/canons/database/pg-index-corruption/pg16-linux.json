@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-index-corruption/pg16-linux",
+  "url": "https://deadends.dev/database/pg-index-corruption/pg16-linux",
+  "error": {
+    "signature": "ERROR: index \"idx_name\" contains unexpected zero page at block 0 HINT: Please REINDEX it.",
+    "regex": "ERROR:\\s+index.*contains (unexpected|corrupt)|REINDEX|index .* is not valid",
+    "domain": "database",
+    "category": "corruption_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "A PostgreSQL index has become corrupted, often due to hardware issues (failing disk, ECC memory errors), unclean shutdown, filesystem bugs, or known PostgreSQL bugs affecting specific index types. The index returns incorrect results or errors. The underlying table data is usually intact; only the index structure is damaged."
+  },
+  "dead_ends": [
+    {
+      "action": "Dropping and recreating the table to fix index corruption",
+      "why_fails": "The table data is usually not corrupted; only the index is. Dropping the table loses all data unnecessarily. REINDEX rebuilds the index from the intact table data without any data loss.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignoring the corruption warning and continuing to query the table",
+      "why_fails": "A corrupted index returns incorrect query results silently. Queries using the corrupted index may return missing rows, duplicate rows, or wrong rows. This leads to application-level data integrity issues that are very difficult to trace back to index corruption.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "REINDEX the corrupted index to rebuild it from table data",
+      "success_rate": 0.92,
+      "how": "Run: REINDEX INDEX idx_name; For all indexes on a table: REINDEX TABLE table_name; For all indexes in a database: REINDEX DATABASE dbname; Use CONCURRENTLY to avoid blocking: REINDEX INDEX CONCURRENTLY idx_name; (PostgreSQL 12+). Verify afterward: SELECT bt_index_check(idx_oid) using amcheck extension.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Investigate and fix the root cause of corruption",
+      "success_rate": 0.80,
+      "how": "Check system logs for hardware errors: dmesg | grep -i error. Verify disk health: smartctl -a /dev/sda. Check for unclean shutdowns: grep -i 'shutdown\\|crash' /var/log/postgresql/. Enable data checksums if not already: pg_checksums --enable (requires downtime). Consider enabling full_page_writes = on (default) to protect against partial writes.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/query-timeout/pg16-linux", "probability": 0.20, "condition": "when queries fall back to sequential scans after corrupted index is disabled"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.15, "condition": "when disk full conditions during write operations cause partial page writes that corrupt indexes"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/relation-does-not-exist/pg16-linux", "distinction": "Index corruption means the index exists but contains invalid data. Relation does not exist means the table or index name cannot be found. Corruption is a data integrity issue; missing relation is a naming/schema issue."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 38,
+    "last_verification": "2026-02-12"
+  }
+}

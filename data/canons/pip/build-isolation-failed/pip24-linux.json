@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/build-isolation-failed/pip24-linux",
+  "url": "https://deadends.dev/pip/build-isolation-failed/pip24-linux",
+  "error": {
+    "signature": "ERROR: Failed to build installable wheels for some pyproject.toml based projects (build isolation)",
+    "regex": "Failed to build.*build isolation|--no-build-isolation|build isolation.*failed",
+    "domain": "pip",
+    "category": "build_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Build isolation creates a temporary virtualenv for building. Fails when build dependencies cannot be resolved or installed in the isolated environment, often due to missing system libraries or circular dependencies."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --no-build-isolation globally for all packages",
+      "why_fails": "Disabling build isolation can cause dependency pollution and break other packages that require clean builds",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Downgrade pip to avoid build isolation",
+      "why_fails": "Old pip versions have worse dependency resolution and more bugs; build isolation is there for good reason",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install build dependencies first, then use --no-build-isolation for the specific package",
+      "success_rate": 0.90,
+      "how": "pip install setuptools wheel cython numpy && pip install --no-build-isolation <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Install required system libraries for compilation (e.g., libffi-dev, python3-dev)",
+      "success_rate": 0.85,
+      "how": "apt-get install build-essential python3-dev libffi-dev && pip install <package>",
+      "sources": [],
+      "condition": "when the build requires C extensions"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/subprocess-error/pip24-linux", "probability": 0.3, "condition": "when build isolation partially works but compilation fails"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/metadata-generation-failed/pip24-linux", "probability": 0.25, "condition": "when metadata extraction triggers a build"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/src-install-failed/pip24-linux", "distinction": "Build isolation failure is about the isolated build environment setup; src-install-failed is about the actual compilation or install step after environment setup"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

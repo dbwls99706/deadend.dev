@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-diesel-connection-error/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-diesel-connection-error/rust1.77-linux",
+  "error": {
+    "signature": "ConnectionError: Failed to establish a database connection",
+    "regex": "ConnectionError.*Failed to establish.*database connection",
+    "domain": "rust",
+    "category": "database_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Diesel cannot connect to the database. Usually a DATABASE_URL misconfiguration or missing system library."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcode database credentials in source code",
+      "why_fails": "Security risk and doesn't fix the underlying connectivity issue",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Retry connection in a loop without fixing the URL",
+      "why_fails": "If the URL is wrong or the server is down, infinite retries waste resources",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify DATABASE_URL format and connectivity",
+      "success_rate": 0.90,
+      "how": "# Check .env file has correct format:\n# DATABASE_URL=postgres://user:pass@localhost:5432/dbname\n# Test connectivity: psql $DATABASE_URL",
+      "sources": ["https://diesel.rs/guides/getting-started.html"],
+      "condition": ""
+    },
+    {
+      "action": "Install required system libraries for diesel (libpq-dev, libmysqlclient-dev, or libsqlite3-dev)",
+      "success_rate": 0.85,
+      "how": "# For PostgreSQL:\nsudo apt-get install libpq-dev\n# For MySQL:\nsudo apt-get install libmysqlclient-dev\n# For SQLite:\nsudo apt-get install libsqlite3-dev",
+      "sources": ["https://diesel.rs/guides/getting-started.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/rust-sqlx-migration-error/rust1.77-linux", "probability": 0.20, "condition": "After connection works, migration issues may surface"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/cargo-feature-not-found/rust1-linux", "probability": 0.15, "condition": "When diesel feature flags are misconfigured"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/rust-sqlx-migration-error/rust1.77-linux", "distinction": "Migration errors occur after successful connection; connection errors mean the database is unreachable"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

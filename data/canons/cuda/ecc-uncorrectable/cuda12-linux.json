@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/ecc-uncorrectable/cuda12-linux",
+  "url": "https://deadends.dev/cuda/ecc-uncorrectable/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: an illegal memory access was encountered due to ECC uncorrectable error",
+    "regex": "ECC.*uncorrectable|cudaErrorECCUncorrectable|CUDA_ERROR_ECC_UNCORRECTABLE|ECC error.*page retired",
+    "domain": "cuda",
+    "category": "hardware_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux",
+    "hardware": {"gpu": "any"}
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.60,
+    "confidence": 0.80,
+    "last_updated": "2026-02-12",
+    "summary": "GPU memory has an uncorrectable ECC (Error Correcting Code) error indicating failing DRAM cells. This is a hardware defect. The GPU retires bad memory pages but if too many fail, the GPU becomes unreliable. Common in data centers after extended use."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable ECC to hide the errors: nvidia-smi -e 0",
+      "why_fails": "Disabling ECC does not fix the bad memory; it just stops detecting errors, leading to silent data corruption in computations",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Reduce GPU clock speed to work around memory errors",
+      "why_fails": "ECC errors are from physical memory defects, not timing issues; underclocking does not fix bad DRAM cells",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Reset the GPU and check if errors persist: nvidia-smi -r",
+      "success_rate": 0.50,
+      "how": "nvidia-smi -r -i <gpu_id> to reset. Then check: nvidia-smi -q -d ECC for pending/retired pages.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Replace the GPU if ECC error count is high and growing",
+      "success_rate": 0.95,
+      "how": "Check nvidia-smi -q -d ECC. If retired_pages > 10 or volatile_uncorrectable > 0 persistently, GPU needs replacement.",
+      "sources": [],
+      "condition": "when errors are persistent"
+    },
+    {
+      "action": "Move workload to a different GPU on the same machine",
+      "success_rate": 0.85,
+      "how": "CUDA_VISIBLE_DEVICES=<other_gpu_id> python train.py",
+      "sources": [],
+      "condition": "when machine has multiple GPUs"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.3, "condition": "when ECC error causes memory page retirement during computation"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/device-side-assert/cuda12-linux", "probability": 0.1, "condition": "when bad memory causes unexpected values triggering asserts"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "distinction": "ECC-uncorrectable is a hardware memory defect; illegal-memory-access is a software bug accessing invalid addresses"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

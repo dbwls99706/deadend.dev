@@ -48,7 +48,7 @@
     {
       "action": "Check and fix pg_hba.conf authentication method",
       "success_rate": 0.88,
-      "how": "Inspect pg_hba.conf for the relevant connection type (local/host). Ensure the auth method matches expectations (md5, scram-sha-256, or trust for local dev). Reload with 'SELECT pg_reload_conf();' or 'systemctl reload postgresql'.",
+      "how": "Inspect pg_hba.conf for the relevant connection type (local/host). Ensure the auth method matches expectations (scram-sha-256 for production, or trust for local dev). Note: PostgreSQL 16 defaults to scram-sha-256; md5 is deprecated. Reload with 'SELECT pg_reload_conf();' or 'systemctl reload postgresql'.",
       "sources": [],
       "condition": ""
     }

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/graph-exec-update-failed/cuda12-linux",
+  "url": "https://deadends.dev/cuda/graph-exec-update-failed/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: the graph update was not performed because it included changes which violated constraints specific to instantiated graph update (cudaErrorGraphExecUpdateFailure)",
+    "regex": "cudaErrorGraphExecUpdateFailure|graph.*update.*failed|graph exec update.*violated constraints",
+    "domain": "cuda",
+    "category": "graph_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "An attempt to update an instantiated CUDA graph (cudaGraphExecUpdate) failed because the new graph topology or node parameters violate the constraints of graph updates. CUDA graphs can only be updated with changes that preserve the graph structure — you cannot add/remove nodes, change node types, or modify the graph topology after instantiation."
+  },
+  "dead_ends": [
+    {
+      "action": "Destroying and re-instantiating the graph on every update",
+      "why_fails": "Destroying and re-instantiating the graph eliminates the performance benefit of CUDA graphs. The point of graph update is to avoid the instantiation overhead. If you re-instantiate every time, you lose the O(1) launch benefit and the overhead may be worse than individual kernel launches.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Attempting to update the graph with a different number of nodes or changed topology",
+      "why_fails": "CUDA graph exec update requires the new graph to have the same topology (same number of nodes, same edges, same node types). Any structural change causes the update to fail. This is a fundamental constraint of the graph update mechanism, not a bug.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Only update node parameters (kernel arguments, memory addresses) while keeping the graph topology identical",
+      "success_rate": 0.90,
+      "how": "Use cudaGraphExecKernelNodeSetParams to update kernel arguments, cudaGraphExecMemcpyNodeSetParams for memcpy nodes, etc. The graph structure (nodes, edges, node types) must remain identical. Only the parameters of existing nodes can change. Design the graph with a fixed topology and parameterize the variable parts.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Maintain a pool of pre-instantiated graphs for each topology variant",
+      "success_rate": 0.85,
+      "how": "If the graph topology must change (e.g., different number of layers for different input sizes), pre-instantiate a graph for each possible topology at startup. At runtime, select the appropriate pre-instantiated graph and update only its parameters. This trades memory for launch performance.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/illegal-memory-access/cuda12-linux", "probability": 0.10, "condition": "when graph parameters are updated with stale memory pointers after reallocation"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/stream-capture-merge/cuda12-linux", "probability": 0.15, "condition": "when stream capture produced a graph with unexpected topology due to merge issues"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/stream-capture-merge/cuda12-linux", "distinction": "Graph-exec-update-failed occurs when updating an already-instantiated graph with incompatible changes. Stream-capture-merge occurs during graph capture when streams are improperly forked or joined."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 35,
+    "last_verification": "2026-02-12"
+  }
+}

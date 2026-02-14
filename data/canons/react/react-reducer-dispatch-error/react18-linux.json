@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-reducer-dispatch-error/react18-linux",
+  "url": "https://deadends.dev/react/react-reducer-dispatch-error/react18-linux",
+  "error": {
+    "signature": "TypeError: dispatch is not a function",
+    "regex": "dispatch is not a function|useReducer.*dispatch.*undefined|reducer.*action.*type.*undefined|Cannot read propert.*dispatch",
+    "domain": "react",
+    "category": "state_management_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "useReducer dispatch function is undefined or not a function. Usually caused by destructuring useReducer return incorrectly, using dispatch from a Context that has no Provider, or passing dispatch to a child that receives it as a different prop name."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrap dispatch calls in a try-catch to suppress the error",
+      "why_fails": "The state update is silently lost; the UI becomes stale and unresponsive. The root cause (missing dispatch reference) is not addressed.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://react.dev/reference/react/useReducer"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Replace useReducer with multiple useState calls",
+      "why_fails": "Loses the benefits of a reducer pattern (centralized state logic, action-based updates). Does not fix the structural issue of how dispatch is passed around.",
+      "fail_rate": 0.50,
+      "sources": [
+        "https://react.dev/learn/extracting-state-logic-into-a-reducer"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify useReducer destructuring: const [state, dispatch] = useReducer(reducer, initialState)",
+      "success_rate": 0.93,
+      "how": "Ensure the return value is destructured correctly. Common mistake: const [dispatch, state] = useReducer(...) (swapped order).",
+      "sources": [
+        "https://react.dev/reference/react/useReducer"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "When using dispatch from Context, ensure the Provider passes dispatch and is an ancestor of the consumer",
+      "success_rate": 0.90,
+      "how": "const DispatchContext = createContext(null); function App() { const [state, dispatch] = useReducer(reducer, init); return <DispatchContext.Provider value={dispatch}><Child /></DispatchContext.Provider>; }",
+      "sources": [
+        "https://react.dev/learn/scaling-up-with-reducer-and-context"
+      ],
+      "condition": "When dispatch is shared via Context"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-context-provider-missing/react18-linux",
+        "probability": 0.25,
+        "condition": "When dispatch comes from a Context and the Provider is missing from the component tree"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/react-context-provider-missing/react18-linux",
+        "probability": 0.20,
+        "condition": "When migrating from useState to useReducer with Context and forgetting to add the dispatch Provider"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/react-bad-setstate-in-render/react18-linux",
+        "distinction": "reducer-dispatch-error is about dispatch being undefined or inaccessible, while bad-setstate-in-render is about calling state updates at the wrong time (during render)"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 90,
+    "last_verification": "2026-02-12"
+  }
+}

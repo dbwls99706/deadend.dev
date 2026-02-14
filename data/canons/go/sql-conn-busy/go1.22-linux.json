@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/sql-conn-busy/go1.22-linux",
+  "url": "https://deadends.dev/go/sql-conn-busy/go1.22-linux",
+  "error": {
+    "signature": "database/sql: connection is already closed or busy",
+    "regex": "connection is already closed|sql:.*busy|bad connection|driver:.*busy|connection pool exhausted",
+    "domain": "go",
+    "category": "database_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "The database connection pool is exhausted or a connection was used concurrently. Common causes: unclosed rows, leaked connections from missing defer rows.Close(), or pool size too small for concurrent load."
+  },
+  "dead_ends": [
+    {
+      "action": "Set MaxOpenConns to unlimited (0)",
+      "why_fails": "Database servers have connection limits — unlimited Go connections hit the DB limit and cause 'too many connections' errors instead",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://pkg.go.dev/database/sql#DB.SetMaxOpenConns"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create a new sql.DB for each request",
+      "why_fails": "sql.DB is designed to be a long-lived pool — creating new pools per request exhausts OS resources and DB connections",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/database/sql#Open"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Always defer rows.Close() immediately after Query",
+      "success_rate": 0.92,
+      "how": "rows, err := db.QueryContext(ctx, query)\nif err != nil { return err }\ndefer rows.Close()\nfor rows.Next() { ... }",
+      "sources": [
+        "https://pkg.go.dev/database/sql#Rows.Close"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Configure connection pool limits based on expected concurrency",
+      "success_rate": 0.88,
+      "how": "db.SetMaxOpenConns(25)\ndb.SetMaxIdleConns(10)\ndb.SetConnMaxLifetime(5 * time.Minute)\ndb.SetConnMaxIdleTime(1 * time.Minute)",
+      "sources": [
+        "https://pkg.go.dev/database/sql#DB.SetMaxOpenConns"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/context-deadline-exceeded/go1-linux",
+        "probability": 0.25,
+        "condition": "when waiting for a free connection exceeds the context timeout"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/goroutine-leak/go1.22-linux",
+        "probability": 0.18,
+        "condition": "when leaked goroutines hold database connections"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/connection-refused/go1-linux",
+        "distinction": "'connection busy/closed' means the Go connection pool is exhausted or stale, while 'connection refused' means the database server itself is not reachable."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

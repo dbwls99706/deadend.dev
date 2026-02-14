@@ -76,27 +76,9 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "git/merge-conflict/git2.40-macos",
-        "probability": 0.5,
-        "condition": "Both histories contain files at the same paths (commonly README.md, .gitignore, LICENSE)",
-        "typical_delay": "immediate"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "git/remote-add-origin/git2.40-macos",
-        "probability": 0.55,
-        "condition": "Local repo created with 'git init' or Xcode, then remote added that was independently initialized on GitHub"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "git/divergent-branches/git2.40-macos",
-        "distinction": "'Unrelated histories' means zero common ancestors. 'Divergent branches' (Git 2.27+) means shared history that has forked. The solutions are different: --allow-unrelated-histories vs choosing merge/rebase strategy."
-      }
-    ]
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

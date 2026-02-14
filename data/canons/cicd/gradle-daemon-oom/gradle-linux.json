@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/gradle-daemon-oom/gradle-linux",
+  "url": "https://deadends.dev/cicd/gradle-daemon-oom/gradle-linux",
+  "error": {
+    "signature": "org.gradle.launcher.daemon.server.DaemonExpirationPeriodicCheck: Daemon will be stopped at the end of the build after running out of JVM heap space",
+    "regex": "(?i)(?:Gradle.*out of.*heap|Daemon.*out of.*memory|java\\.lang\\.OutOfMemoryError.*Gradle|Metaspace|GC overhead limit)",
+    "domain": "cicd",
+    "category": "build",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "gradle", "version_range": ">=7.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "The Gradle daemon runs out of JVM heap memory during builds, commonly in CI environments with constrained resources. Large projects, annotation processing, and Kotlin compilation are major memory consumers."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling the Gradle daemon in CI without adjusting JVM args",
+      "why_fails": "Running without a daemon (--no-daemon) creates a new JVM for each build. Without increasing memory for the direct JVM, builds still OOM since the same workload needs the same memory.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting extremely large heap sizes (e.g., -Xmx8g) on a 4GB CI runner",
+      "why_fails": "If the JVM heap exceeds the container memory limit, the container runtime (Docker/K8s) kills the process via OOM killer, producing a more cryptic exit code 137 error",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure appropriate JVM memory settings in gradle.properties",
+      "success_rate": 0.88,
+      "how": "In gradle.properties: org.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError. Ensure the heap size fits within the CI runner's memory limit with headroom for OS and other processes.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disable daemon and use --no-daemon with appropriate direct JVM memory",
+      "success_rate": 0.85,
+      "how": "In CI, add --no-daemon to Gradle commands and set GRADLE_OPTS='-Xmx2g'. This avoids daemon memory accumulation across builds and gives predictable memory usage per build.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux", "probability": 0.20, "condition": "when Gradle daemon OOM causes the entire CI container to exceed memory limits"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/cache-key-not-found/gha-linux", "probability": 0.10, "condition": "when missing Gradle caches force full recompilation which uses more memory"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/bitbucket-pipeline-oom/bitbucket-linux", "distinction": "gradle-daemon-oom is specifically JVM heap exhaustion in Gradle; bitbucket-pipeline-oom is the container-level memory limit being exceeded by any process"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

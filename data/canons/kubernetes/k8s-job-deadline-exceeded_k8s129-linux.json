@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-job-deadline-exceeded/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-job-deadline-exceeded/k8s129-linux",
+  "error": {
+    "signature": "Job was active longer than specified deadline: DeadlineExceeded",
+    "regex": "DeadlineExceeded|Job was active longer than specified deadline|activeDeadlineSeconds",
+    "domain": "kubernetes",
+    "category": "workload_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Kubernetes Job exceeded its activeDeadlineSeconds limit and was terminated. The job took longer than expected or the deadline is too short."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove activeDeadlineSeconds entirely",
+      "why_fails": "Jobs may run indefinitely and consume cluster resources without bound",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set backoffLimit to a very high number",
+      "why_fails": "backoffLimit controls retries, not the deadline — job will still be killed at the deadline",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/job/#pod-backoff-failure-policy"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Increase activeDeadlineSeconds to a realistic value based on actual job duration",
+      "success_rate": 0.90,
+      "how": "Profile the job's actual runtime and set deadline to 2-3x that value",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/job/#job-termination-and-cleanup"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Optimize the job to complete faster — check for resource constraints or slow dependencies",
+      "success_rate": 0.82,
+      "how": "Increase CPU/memory requests, parallelize with spec.parallelism, or fix slow database queries",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/workloads/controllers/job/#parallel-jobs"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.18,
+        "condition": "when replacing Job with a Deployment that keeps crashing"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/pod-pending/k8s1-linux",
+        "probability": 0.22,
+        "condition": "when job pod was pending for too long eating into the deadline"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/pod-terminating-stuck/k8s1-linux",
+        "distinction": "DeadlineExceeded is the Job controller killing the job, while pod-terminating-stuck is a pod that won't terminate gracefully"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

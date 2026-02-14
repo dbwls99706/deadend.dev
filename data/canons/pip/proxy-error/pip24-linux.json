@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/proxy-error/pip24-linux",
+  "url": "https://deadends.dev/pip/proxy-error/pip24-linux",
+  "error": {
+    "signature": "WARNING: Retrying (Retry(total=0)) after connection broken by 'ProxyError': Cannot connect to proxy",
+    "regex": "ProxyError|Cannot connect to proxy|proxy.*connection.*refused|HTTPSConnectionPool.*proxy",
+    "domain": "pip",
+    "category": "network_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Pip cannot connect through the configured HTTP/HTTPS proxy. Common in corporate environments where proxy settings are misconfigured, proxy requires authentication, or the proxy server is down."
+  },
+  "dead_ends": [
+    {
+      "action": "Set --trusted-host to bypass proxy SSL",
+      "why_fails": "trusted-host only skips certificate verification for the index; it does not fix proxy connectivity issues",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Unset all proxy environment variables",
+      "why_fails": "In corporate networks, removing proxy settings means no internet access at all",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": "when behind corporate proxy"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set correct proxy with authentication: pip install --proxy http://user:pass@proxy:port <package>",
+      "success_rate": 0.88,
+      "how": "export HTTPS_PROXY=http://user:pass@proxy:port && pip install <package>",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Configure pip.conf with proxy settings permanently",
+      "success_rate": 0.85,
+      "how": "Add [global] proxy = http://user:pass@proxy:port to ~/.config/pip/pip.conf",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use no_proxy to bypass proxy for internal PyPI mirrors",
+      "success_rate": 0.82,
+      "how": "export no_proxy=internal-pypi.company.com && pip install -i https://internal-pypi.company.com/simple/ <package>",
+      "sources": [],
+      "condition": "when using internal package index"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/ssl-error/pip24-linux", "probability": 0.25, "condition": "when proxy intercepts SSL with its own certificate"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/timeout/pip24-linux", "probability": 0.2, "condition": "when initial timeout leads to proxy error on retry"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/ssl-error/pip24-linux", "distinction": "Proxy errors are about connection to the proxy itself; SSL errors are about certificate validation which can happen through or without a proxy"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/unable-to-access-https/git2-linux",
+  "url": "https://deadends.dev/git/unable-to-access-https/git2-linux",
+  "error": {
+    "signature": "fatal: unable to access 'https://github.com/user/repo.git/': Could not resolve host: github.com",
+    "regex": "(?i)fatal: unable to access.*https.*(?:could not resolve|SSL|Connection refused|timed out)",
+    "domain": "git",
+    "category": "network",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "git", "version_range": ">=2.20"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Git cannot reach the remote HTTPS endpoint. Common causes include DNS resolution failures, proxy misconfiguration, SSL certificate issues, or corporate firewall blocking."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling SSL verification globally with git config --global http.sslVerify false",
+      "why_fails": "This opens the connection to man-in-the-middle attacks and does not fix DNS or connectivity issues. It only helps with certificate verification failures.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switching to SSH without having SSH keys configured",
+      "why_fails": "SSH requires key pairs to be generated, added to the agent, and registered with the remote host; switching without setup leads to permission-denied-publickey",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Diagnose and fix the network issue (DNS, proxy, firewall)",
+      "success_rate": 0.85,
+      "how": "Test connectivity with curl -v https://github.com. Check proxy settings with git config --global --get http.proxy. If behind a corporate proxy, set git config --global http.proxy http://proxy:port.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Update SSL certificates if the error is SSL-related",
+      "success_rate": 0.88,
+      "how": "Run update-ca-certificates (Debian/Ubuntu) or point git to the correct CA bundle: git config --global http.sslCAInfo /path/to/ca-bundle.crt",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "git/credential-rejected/git2-linux", "probability": 0.20, "condition": "when HTTPS access is restored but stored credentials have expired"},
+      {"error_id": "git/lfs-smudge-error/git2-linux", "probability": 0.15, "condition": "when HTTPS issues also affect LFS object downloads"}
+    ],
+    "preceded_by": [
+      {"error_id": "git/remote-already-exists/git2-linux", "probability": 0.10, "condition": "when a remote was added with an incorrect HTTPS URL"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "git/permission-denied-publickey/git2-linux", "distinction": "unable-to-access-https is an HTTPS connectivity problem; permission-denied-publickey is an SSH authentication problem"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

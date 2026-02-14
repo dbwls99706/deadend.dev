@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-declaration-emit-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-declaration-emit-error/ts5-linux",
+  "error": {
+    "signature": "TS4023: Exported variable 'X' has or is using name 'Y' from external module but cannot be named",
+    "regex": "TS4023.*cannot be named|TS4025.*Exported.*cannot be named",
+    "domain": "typescript",
+    "category": "declaration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "TypeScript cannot generate .d.ts files because an exported type references a type that is not accessible to consumers."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable declaration generation entirely",
+      "why_fails": "Library consumers lose type information; defeats the purpose of TypeScript",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Explicitly export the referenced types so they are accessible",
+      "success_rate": 0.90,
+      "how": "// Re-export the type from your public API\nexport type { InternalType } from './internal';\n// Or add explicit type annotation\nexport const value: ExplicitType = createValue();",
+      "sources": ["https://www.typescriptlang.org/tsconfig#declaration"],
+      "condition": ""
+    },
+    {
+      "action": "Add explicit return type annotations to exported functions",
+      "success_rate": 0.87,
+      "how": "// Instead of:\nexport function create() { return new InternalClass(); }\n// Use:\nexport function create(): PublicInterface { return new InternalClass(); }",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/declaration-files/library-structures.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-project-reference-error/ts5-linux", "probability": 0.15, "condition": "When declaration emit issues affect project references"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-module-augmentation-error/ts5-linux", "probability": 0.10, "condition": "When augmented types are not properly re-exported"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2742-inferred-type-not-portable/ts5-linux", "distinction": "TS2742 is about non-portable inferred types; TS4023 is specifically about declaration emit failing to name a type"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

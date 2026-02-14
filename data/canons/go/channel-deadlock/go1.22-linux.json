@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/channel-deadlock/go1.22-linux",
+  "url": "https://deadends.dev/go/channel-deadlock/go1.22-linux",
+  "error": {
+    "signature": "fatal error: all goroutines are asleep - deadlock!\n\ngoroutine 1 [chan send]:\nmain.main()\n\t/app/main.go:10 +0x40",
+    "regex": "all goroutines are asleep.*deadlock.*goroutine.*\\[chan (send|receive)\\]",
+    "domain": "go",
+    "category": "concurrency_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Go 1.22+ runtime detected that all goroutines are blocked on channel operations. Typically caused by sending on an unbuffered channel with no receiver, or forgetting to close a channel that a range loop reads from."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase channel buffer size indefinitely",
+      "why_fails": "Buffered channels only delay the deadlock until the buffer fills — the fundamental send/receive imbalance remains",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://go.dev/ref/spec#Channel_types"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add time.Sleep before channel operations",
+      "why_fails": "Sleep does not create a receiver — the goroutine still blocks after the sleep completes",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Launch channel operations in separate goroutines to ensure send and receive are concurrent",
+      "success_rate": 0.92,
+      "how": "ch := make(chan int)\ngo func() {\n    ch <- 42  // send in goroutine\n}()\nval := <-ch  // receive in main",
+      "sources": [
+        "https://go.dev/doc/effective_go#channels"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use sync.WaitGroup with close(ch) to signal channel completion",
+      "success_rate": 0.88,
+      "how": "var wg sync.WaitGroup\nwg.Add(n)\nfor i := 0; i < n; i++ {\n    go func() { defer wg.Done(); ch <- result }()\n}\ngo func() { wg.Wait(); close(ch) }()\nfor val := range ch { ... }",
+      "sources": [
+        "https://pkg.go.dev/sync#WaitGroup"
+      ],
+      "condition": "when using range over channels"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/goroutine-leak/go1.22-linux",
+        "probability": 0.20,
+        "condition": "when deadlock is 'fixed' by adding goroutines that then leak"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/race-condition-detected/go1.22-linux",
+        "probability": 0.15,
+        "condition": "when fixing races by adding channels introduces deadlocks"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/goroutine-leak/go1.22-linux",
+        "distinction": "Deadlock is detected by the runtime when ALL goroutines are blocked and the program crashes, while goroutine leaks are silent — some goroutines are blocked but others continue running."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

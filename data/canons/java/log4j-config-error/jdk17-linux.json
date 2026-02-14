@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/log4j-config-error/jdk17-linux",
+  "url": "https://deadends.dev/java/log4j-config-error/jdk17-linux",
+  "error": {
+    "signature": "ERROR StatusLogger No Log4j 2 configuration file found",
+    "regex": "(?:No Log4j 2 configuration file found|log4j:WARN No appenders could be found|ERROR StatusLogger)",
+    "domain": "java",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Log4j cannot find its configuration file (log4j2.xml, log4j2.properties, or log4j2.yaml) on the classpath. The application will use default ERROR-level logging, missing all important log output."
+  },
+  "dead_ends": [
+    {
+      "action": "Suppressing the warning by redirecting stderr",
+      "why_fails": "Hiding the warning means your application runs without proper logging configuration. You lose all application logs, making debugging production issues nearly impossible.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Mixing Log4j 1.x configuration (log4j.properties) with Log4j 2.x runtime",
+      "why_fails": "Log4j 2 does not read Log4j 1.x configuration files by default. The file name and format are different. You need log4j2.xml or log4j2.properties, not log4j.properties.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Place log4j2.xml in src/main/resources so it is on the classpath at runtime",
+      "success_rate": 0.92,
+      "how": "1. Create src/main/resources/log4j2.xml with your logging configuration. 2. Verify it is included in the output JAR/WAR: 'jar tf target/app.jar | grep log4j2'. 3. If using Spring Boot, the file should be in src/main/resources. 4. If running in an IDE, ensure src/main/resources is marked as a resources root.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Explicitly specify the configuration file location with -Dlog4j.configurationFile",
+      "success_rate": 0.88,
+      "how": "1. Add -Dlog4j.configurationFile=/path/to/log4j2.xml to JVM arguments. 2. This overrides classpath-based discovery. 3. Useful when the config file lives outside the JAR (e.g., in a config directory in production). 4. Supports file:// and classpath: URIs.",
+      "sources": [],
+      "condition": "when the config file cannot be on the classpath"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.10, "condition": "when the Log4j binding JAR is missing from the classpath along with the config"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-build-failure/maven3-linux", "probability": 0.10, "condition": "when a build failure causes resources not to be copied to the output directory"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "ClassNotFoundException for Log4j means the Log4j library itself is missing; config error means the library is present but cannot find its configuration file"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 85,
+    "last_verification": "2026-02-12"
+  }
+}

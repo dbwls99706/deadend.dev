@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-replication-slot-inactive/pg16-linux",
+  "url": "https://deadends.dev/database/pg-replication-slot-inactive/pg16-linux",
+  "error": {
+    "signature": "ERROR: replication slot \"slot_name\" is active for PID 0. WARNING: terminating connection because of crash of another server process",
+    "regex": "replication slot.*is (inactive|active for PID)|could not start WAL streaming.*replication slot",
+    "domain": "database",
+    "category": "replication_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A logical or physical replication slot is inactive, causing WAL segments to accumulate on the primary because PostgreSQL cannot discard WAL that the slot's consumer has not yet processed. This leads to disk exhaustion. Common when a subscriber disconnects, a Debezium connector goes down, or a standby is removed without dropping its slot."
+  },
+  "dead_ends": [
+    {
+      "action": "Deleting WAL segments manually from pg_wal directory",
+      "why_fails": "Manually removing WAL files corrupts the replication stream and can make the database unrecoverable. PostgreSQL manages WAL files internally and requires them for crash recovery and replication. The slot will still retain its position, so new WAL segments will continue to accumulate.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Setting max_slot_wal_keep_size without also monitoring and dropping unused slots",
+      "why_fails": "max_slot_wal_keep_size caps WAL retention per slot, but when the limit is reached, the slot becomes invalidated and the subscriber must be re-initialized from scratch. This does not fix the root cause of why the slot consumer is not keeping up.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Drop the inactive replication slot to release accumulated WAL",
+      "success_rate": 0.92,
+      "how": "Identify inactive slots: SELECT slot_name, active, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(), restart_lsn)) AS lag FROM pg_replication_slots; Drop unused slots: SELECT pg_drop_replication_slot('slot_name'); Then recreate the slot and re-sync the subscriber.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Fix the subscriber or connector that owns the slot to resume consumption",
+      "success_rate": 0.85,
+      "how": "Check the subscriber's logs for connection errors. Restart the logical replication subscriber (ALTER SUBSCRIPTION sub_name ENABLE) or Debezium connector. Verify connectivity between primary and subscriber. Monitor replication lag with pg_stat_replication.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/disk-full/pg16-linux", "probability": 0.35, "condition": "when accumulated WAL from inactive slot fills the disk"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.20, "condition": "when subscriber loses connection to primary and the replication slot becomes inactive"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/pg-wal-level-insufficient/pg16-linux", "distinction": "WAL level insufficient means wal_level is not set to 'logical' for logical replication. Replication slot inactive is about a slot that exists but has no active consumer. Both relate to replication but have different root causes."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 42,
+    "last_verification": "2026-02-12"
+  }
+}

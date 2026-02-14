@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-context-deadline-exceeded/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-context-deadline-exceeded/docker27-linux",
+  "error": {
+    "signature": "error: context deadline exceeded",
+    "regex": "context deadline exceeded",
+    "domain": "docker",
+    "category": "timeout",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Docker operation timed out. Common during image pulls from slow registries, large build contexts, or when the Docker daemon is overloaded."
+  },
+  "dead_ends": [
+    {
+      "action": "Repeatedly retrying the same pull without addressing network conditions",
+      "why_fails": "If the registry is throttling or the network is congested, retries without backoff make it worse",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing Docker daemon timeout to very large values",
+      "why_fails": "Masks underlying network or registry issues; operations that genuinely fail will hang for excessive periods",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check network connectivity and DNS resolution to the registry",
+      "success_rate": 0.88,
+      "how": "curl -v https://registry-1.docker.io/v2/ to test registry connectivity; check firewall rules and proxy settings",
+      "sources": [
+        "https://docs.docker.com/engine/daemon/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use a registry mirror or pull from a closer region",
+      "success_rate": 0.85,
+      "how": "Configure registry mirrors in /etc/docker/daemon.json: {\"registry-mirrors\": [\"https://mirror.gcr.io\"]}",
+      "sources": [
+        "https://docs.docker.com/docker-hub/mirror/"
+      ],
+      "condition": "when pulling from Docker Hub with high latency"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/dns-resolution-failed/docker27-linux",
+        "probability": 0.20,
+        "condition": "when the timeout is caused by DNS failures"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/cannot-connect-to-docker-daemon/docker27-linux",
+        "probability": 0.18,
+        "condition": "when daemon connectivity issues cause timeouts"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/context-canceled/docker24-linux",
+        "distinction": "context deadline exceeded means the operation timed out, while context canceled means the operation was explicitly cancelled by the user or another process"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

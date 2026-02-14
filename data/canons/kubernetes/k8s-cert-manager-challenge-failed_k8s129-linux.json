@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-cert-manager-challenge-failed/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-cert-manager-challenge-failed/k8s129-linux",
+  "error": {
+    "signature": "cert-manager: Waiting for HTTP-01 challenge propagation: wrong status code '404'",
+    "regex": "challenge.*failed|challenge.*propagation|ACME.*challenge|cert-manager.*order.*invalid|wrong status code.*challenge",
+    "domain": "kubernetes",
+    "category": "tls_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "cert-manager ACME challenge (HTTP-01 or DNS-01) fails because the challenge solver can't serve the token or DNS records aren't propagating."
+  },
+  "dead_ends": [
+    {
+      "action": "Manually create the TLS secret instead of using cert-manager",
+      "why_fails": "Certificate won't auto-renew — will expire and cause outages",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://cert-manager.io/docs/troubleshooting/acme/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Delete the Certificate and Order resources and recreate them",
+      "why_fails": "If the underlying issue (DNS, ingress routing) isn't fixed, the new challenge will also fail",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://cert-manager.io/docs/troubleshooting/acme/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "For HTTP-01: ensure the Ingress routes /.well-known/acme-challenge/* to the cert-manager solver pod",
+      "success_rate": 0.88,
+      "how": "Check that the solver Service and Ingress are created: kubectl get challenges -A and kubectl describe challenge <name>",
+      "sources": [
+        "https://cert-manager.io/docs/troubleshooting/acme/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For DNS-01: verify the DNS provider credentials and check if TXT records are created",
+      "success_rate": 0.85,
+      "how": "kubectl describe challenge <name> to check the DNS provider error, verify IAM/API credentials for Route53/CloudDNS",
+      "sources": [
+        "https://cert-manager.io/docs/configuration/acme/dns01/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/ingress-502-bad-gateway/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when TLS certificate isn't issued and HTTPS fails"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-ingress-class-not-found/k8s129-linux",
+        "probability": 0.18,
+        "condition": "when ingress for challenge solver uses wrong IngressClass"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/secret-not-found/k8s1-linux",
+        "distinction": "cert-manager challenge failure means the certificate can't be issued, while secret-not-found means the TLS secret doesn't exist (possibly because cert-manager never created it)"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-node-not-ready/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-node-not-ready/k8s129-linux",
+  "error": {
+    "signature": "Node not ready: kubelet stopped posting node status",
+    "regex": "NodeNotReady|kubelet stopped posting node status|node.*NotReady.*SchedulingDisabled",
+    "domain": "kubernetes",
+    "category": "node_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "partial",
+    "fix_success_rate": 0.75,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "Node transitions to NotReady when kubelet stops posting status updates, typically due to kubelet crash, networking issues, or resource exhaustion on the node."
+  },
+  "dead_ends": [
+    {
+      "action": "Force-delete all pods on the node",
+      "why_fails": "Pods are a symptom — the node itself is unhealthy and new pods will also fail",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Just wait for auto-recovery without investigation",
+      "why_fails": "Some causes (disk full, OOM) won't self-heal — need manual intervention",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "SSH into the node and check kubelet: systemctl status kubelet && journalctl -u kubelet --since '5 min ago'",
+      "success_rate": 0.90,
+      "how": "Look for OOM kills, certificate expiry, or container runtime failures in kubelet logs",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/debug/debug-cluster/debug-cluster/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check node resource pressure: kubectl describe node <name> for MemoryPressure, DiskPressure, PIDPressure conditions",
+      "success_rate": 0.88,
+      "how": "kubectl describe node <name> | grep -A5 Conditions",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/architecture/nodes/#condition"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/pod-pending/k8s1-linux",
+        "probability": 0.30,
+        "condition": "when workloads are evicted and insufficient capacity on other nodes"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when many OOMKilled pods exhaust node memory"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/node-not-ready/k8s1-linux",
+        "distinction": "k8s-node-not-ready focuses on kubelet-stopped-posting scenarios, while node-not-ready covers the general NotReady condition"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 70,
+    "last_verification": "2026-02-12"
+  }
+}

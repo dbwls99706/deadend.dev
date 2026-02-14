@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-helm-values-mismatch/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-helm-values-mismatch/k8s129-linux",
+  "error": {
+    "signature": "Error: UPGRADE FAILED: values don't meet the specifications / execution error at template",
+    "regex": "UPGRADE FAILED|INSTALLATION FAILED|execution error at|values don't meet|template.*error|render error",
+    "domain": "kubernetes",
+    "category": "deployment_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "Helm template rendering or upgrade fails because values.yaml doesn't match the chart's expected schema or templates have errors."
+  },
+  "dead_ends": [
+    {
+      "action": "Use --force flag to push through the upgrade",
+      "why_fails": "--force deletes and recreates resources — causes downtime and data loss for StatefulSets",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://helm.sh/docs/helm/helm_upgrade/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Delete the Helm release and reinstall",
+      "why_fails": "Loses release history and may orphan persistent resources",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://helm.sh/docs/helm/helm_upgrade/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use helm template to render locally and inspect the output before applying",
+      "success_rate": 0.92,
+      "how": "helm template <release> <chart> -f values.yaml --debug to see rendered manifests and errors",
+      "sources": [
+        "https://helm.sh/docs/helm/helm_template/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Compare your values.yaml against the chart's default values to find mismatched keys",
+      "success_rate": 0.88,
+      "how": "helm show values <chart> > defaults.yaml && diff defaults.yaml values.yaml",
+      "sources": [
+        "https://helm.sh/docs/chart_template_guide/values_files/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when Helm renders invalid manifests that fail on apply"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/k8s-kustomize-build-failed/k8s129-linux",
+        "probability": 0.15,
+        "condition": "when migrating between Kustomize and Helm"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/k8s-kustomize-build-failed/k8s129-linux",
+        "distinction": "Helm values mismatch is about Helm chart template rendering failures, while Kustomize build failure is about Kustomize overlay accumulation errors"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

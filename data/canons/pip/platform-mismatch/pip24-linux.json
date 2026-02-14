@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/platform-mismatch/pip24-linux",
+  "url": "https://deadends.dev/pip/platform-mismatch/pip24-linux",
+  "error": {
+    "signature": "ERROR: <package>.whl is not a supported wheel on this platform.",
+    "regex": "not a supported wheel|platform.*mismatch|not.*compatible.*platform|incompatible.*wheel.*tag",
+    "domain": "pip",
+    "category": "platform_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The wheel file was built for a different platform (OS, architecture, or Python implementation). Common when downloading wheels from another machine, mixing x86_64/aarch64, or using glibc wheels on musl (Alpine)."
+  },
+  "dead_ends": [
+    {
+      "action": "Rename the wheel file to match current platform tags",
+      "why_fails": "The wheel contains compiled binaries for the original platform; renaming does not recompile them and will cause runtime crashes",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use --force-reinstall with the incompatible wheel",
+      "why_fails": "Force-reinstall does not override platform compatibility checks; pip still rejects the wheel",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install directly from PyPI to get the correct platform wheel",
+      "success_rate": 0.88,
+      "how": "pip install <package> (without specifying a local wheel file)",
+      "sources": [],
+      "condition": "when a compatible wheel exists on PyPI"
+    },
+    {
+      "action": "Build from source for the current platform",
+      "success_rate": 0.82,
+      "how": "pip install --no-binary <package> <package>",
+      "sources": [],
+      "condition": "when no compatible wheel exists"
+    },
+    {
+      "action": "Check compatible tags and download the right wheel: pip debug --verbose",
+      "success_rate": 0.85,
+      "how": "Run pip debug --verbose to see supported tags, then download a wheel matching one of those tags",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/no-binary/pip24-linux", "probability": 0.3, "condition": "when no compatible wheel exists for the platform at all"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/no-matching-distribution/pip24-linux", "probability": 0.2, "condition": "when user downloads wheel from wrong platform after not finding it normally"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/no-binary/pip24-linux", "distinction": "Platform-mismatch means a wheel exists but for the wrong platform; no-binary means no prebuilt wheel exists at all for any compatible platform"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

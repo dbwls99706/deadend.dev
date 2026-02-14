@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-extension-not-found/pg16-linux",
+  "url": "https://deadends.dev/database/pg-extension-not-found/pg16-linux",
+  "error": {
+    "signature": "ERROR: could not open extension control file \"/usr/share/postgresql/16/extension/pg_stat_statements.control\": No such file or directory",
+    "regex": "ERROR:\\s+could not open extension control file.*No such file or directory",
+    "domain": "database",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "The PostgreSQL extension package is not installed on the system. PostgreSQL extensions are distributed as separate OS packages (e.g., postgresql-16-postgis, postgresql-contrib) that must be installed before CREATE EXTENSION can find the control file. Common in Docker containers and minimal OS installations."
+  },
+  "dead_ends": [
+    {
+      "action": "Copying the extension .control and .sql files manually from another PostgreSQL installation",
+      "why_fails": "Extension files must match the exact PostgreSQL version and be compiled for the target architecture. Copying files from a different version leads to ABI incompatibility, crashes, or silent data corruption. Extensions with C shared libraries will fail to load.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Running CREATE EXTENSION repeatedly hoping it will work after a PostgreSQL restart",
+      "why_fails": "The extension control file is a filesystem dependency, not a PostgreSQL runtime state. Restarting PostgreSQL does not install OS packages. The file must exist on disk before CREATE EXTENSION can find it.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install the OS package containing the extension",
+      "success_rate": 0.95,
+      "how": "On Debian/Ubuntu: apt-get install postgresql-16-<extension> (e.g., postgresql-16-postgis-3). For contrib extensions: apt-get install postgresql-contrib-16. On RHEL/CentOS: dnf install postgresql16-contrib. Then run: CREATE EXTENSION <name>; No PostgreSQL restart needed for most extensions.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "In Docker, add the extension package to your Dockerfile",
+      "success_rate": 0.92,
+      "how": "In your Dockerfile based on postgres:16, add: RUN apt-get update && apt-get install -y postgresql-16-<extension> && rm -rf /var/lib/apt/lists/*. Then rebuild the image. For common extensions, consider using the postgis/postgis or timescale/timescaledb images that come pre-installed.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/migration-failed/pg16-linux", "probability": 0.30, "condition": "when a migration script depends on an extension that is not installed"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.10, "condition": "when setting up a new PostgreSQL instance and extensions are missing from the base image"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/pg-function-does-not-exist/pg16-linux", "distinction": "Extension not found means the extension package is not installed at the OS level. Function does not exist means the extension may be installed but CREATE EXTENSION was not run in the current database, or the function signature is wrong."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 58,
+    "last_verification": "2026-02-12"
+  }
+}

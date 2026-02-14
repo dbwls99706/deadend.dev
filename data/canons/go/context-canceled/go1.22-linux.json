@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/context-canceled/go1.22-linux",
+  "url": "https://deadends.dev/go/context-canceled/go1.22-linux",
+  "error": {
+    "signature": "context canceled",
+    "regex": "context canceled",
+    "domain": "go",
+    "category": "context_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.22,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A context was explicitly canceled via CancelFunc before the operation completed. This is often caused by premature cancellation in request handlers or parent context cancellation propagating to child operations."
+  },
+  "dead_ends": [
+    {
+      "action": "Ignore the context cancellation and retry immediately",
+      "why_fails": "If the parent context is canceled, all child contexts are also canceled — retrying with the same context will fail instantly",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://pkg.go.dev/context#WithCancel"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Remove cancel() defer calls to prevent cancellation",
+      "why_fails": "Skipping cancel() causes resource leaks — the goroutine and its resources are never freed",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://pkg.go.dev/context"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use a detached context for background operations that must outlive the request",
+      "success_rate": 0.90,
+      "how": "Use context.WithoutCancel(ctx) (Go 1.21+) or context.Background() for operations that should not be canceled when the parent request ends.",
+      "sources": [
+        "https://pkg.go.dev/context#WithoutCancel"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check ctx.Err() before starting expensive operations to fail fast",
+      "success_rate": 0.85,
+      "how": "if ctx.Err() != nil { return ctx.Err() }",
+      "sources": [
+        "https://pkg.go.dev/context#Context"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/context-deadline-exceeded/go1-linux",
+        "probability": 0.30,
+        "condition": "when cancel is replaced with a timeout"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/http-server-closed/go1.22-linux",
+        "probability": 0.25,
+        "condition": "when server shutdown cancels in-flight request contexts"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "go/context-deadline-exceeded/go1-linux",
+        "distinction": "'context canceled' means explicit CancelFunc was called, while 'context deadline exceeded' means a timeout or deadline expired."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

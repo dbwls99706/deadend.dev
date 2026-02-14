@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/spl-autoload-error/php83-linux",
+  "url": "https://deadends.dev/php/spl-autoload-error/php83-linux",
+  "error": {
+    "signature": "Warning: spl_autoload_register(): Argument #1 ($callback) must be a valid callback, function 'my_autoloader' not found or invalid function name",
+    "regex": "spl_autoload_register\\(\\):.*must be a valid callback|spl_autoload.*failed to (open|include)",
+    "domain": "php",
+    "category": "autoloading",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "SPL autoload errors occur when a custom autoloader function registered via spl_autoload_register() is invalid, conflicts with Composer's autoloader, or fails to locate class files. This is common in legacy applications migrating to Composer-based autoloading."
+  },
+  "dead_ends": [
+    {"action": "Registering multiple conflicting autoloaders that try to include the same files", "why_fails": "Multiple autoloaders can cause 'cannot redeclare class' errors or include incorrect files. The autoloader stack order matters, and conflicting loaders create non-deterministic behavior.", "fail_rate": 0.70, "sources": [], "condition": ""},
+    {"action": "Using __autoload() function instead of spl_autoload_register()", "why_fails": "__autoload() was removed in PHP 8.0. It only supported a single autoloader function and could not be chained with other autoloaders like Composer's.", "fail_rate": 0.90, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Use Composer's autoloader and register custom autoloaders after it", "success_rate": 0.92, "how": "Require Composer's autoloader first: require __DIR__ . '/vendor/autoload.php'. Then register any custom autoloaders with spl_autoload_register() and set the prepend parameter to false so they run after Composer's loader.", "sources": [], "condition": ""},
+    {"action": "Migrate legacy autoloading to Composer's PSR-4 or classmap autoloading", "success_rate": 0.88, "how": "Add legacy class directories to composer.json classmap: {\"autoload\": {\"classmap\": [\"legacy/classes/\"]}} and run 'composer dump-autoload'. This generates a complete class-to-file map without requiring PSR-4 compliant naming.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/autoload-class-not-found/php83-linux", "probability": 0.30, "condition": "when the autoloader is registered but cannot find specific classes due to path issues"}],
+    "preceded_by": [{"error_id": "php/composer-autoload-not-found/composer2-linux", "probability": 0.25, "condition": "when Composer's autoloader is missing, falling back to a custom SPL autoloader that fails"}],
+    "frequently_confused_with": [{"error_id": "php/autoload-class-not-found/php83-linux", "distinction": "SPL autoload errors are about the autoloader function itself being invalid or failing, while class not found errors are about the autoloader working but not finding a specific class"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

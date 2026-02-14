@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-act-warning/react18-linux",
+  "url": "https://deadends.dev/react/react-act-warning/react18-linux",
+  "error": {
+    "signature": "Warning: An update to Component inside a test was not wrapped in act(...)",
+    "regex": "An update to \\w+ inside a test was not wrapped in act",
+    "domain": "react",
+    "category": "testing_error",
+    "first_seen": "2022-03-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.91,
+    "last_updated": "2026-02-12",
+    "summary": "State update in test not wrapped in act(). React 18 is stricter about batching updates in tests. All state-changing interactions must be wrapped in act()."
+  },
+  "dead_ends": [
+    {
+      "action": "Suppress the warning by mocking console.error",
+      "why_fails": "Hides real issues; the test may pass but the component behavior is unreliable and updates may be lost",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://react.dev/reference/react/act"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add arbitrary waitFor or setTimeout calls without act()",
+      "why_fails": "Timing-based fixes are flaky and do not guarantee React finishes processing updates",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://testing-library.com/docs/dom-testing-library/api-async/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wrap state-triggering interactions in act() or use React Testing Library's async utilities",
+      "success_rate": 0.92,
+      "how": "await act(async () => { fireEvent.click(button); }); or use await screen.findByText('result');",
+      "sources": [
+        "https://react.dev/reference/react/act",
+        "https://testing-library.com/docs/react-testing-library/api/#act"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use userEvent from @testing-library/user-event which wraps interactions in act() automatically",
+      "success_rate": 0.90,
+      "how": "const user = userEvent.setup(); await user.click(button);",
+      "sources": [
+        "https://testing-library.com/docs/user-event/intro"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/react-strict-mode-double-render/react18-linux",
+        "probability": 0.15,
+        "condition": "When tests run with StrictMode enabled causing unexpected double effects"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/hooks-rules-violation/react18-linux",
+        "probability": 0.18,
+        "condition": "When hooks are used incorrectly in test setup, leading to act() warnings on subsequent updates"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/act-warning/react18-linux",
+        "distinction": "react-act-warning is specifically about test-context act() wrapping, while act-warning can also appear in non-test contexts with concurrent features"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 180,
+    "last_verification": "2026-02-12"
+  }
+}

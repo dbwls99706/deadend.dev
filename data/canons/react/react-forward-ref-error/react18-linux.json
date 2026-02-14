@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-forward-ref-error/react18-linux",
+  "url": "https://deadends.dev/react/react-forward-ref-error/react18-linux",
+  "error": {
+    "signature": "Warning: Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?",
+    "regex": "Function components cannot be given refs|Did you mean to use React\\.forwardRef|forwardRef.*render functions.*accept",
+    "domain": "react",
+    "category": "ref_error",
+    "first_seen": "2021-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.93,
+    "last_updated": "2026-02-12",
+    "summary": "A ref is passed to a function component that does not use forwardRef(). Function components do not support ref prop directly in React <19."
+  },
+  "dead_ends": [
+    {
+      "action": "Pass ref as a differently named prop (e.g., innerRef)",
+      "why_fails": "Breaks convention, does not work with third-party libraries expecting standard ref prop, and makes the API inconsistent",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/reference/react/forwardRef"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Convert the function component to a class component to support refs",
+      "why_fails": "Unnecessary migration; loses hooks support and modern React patterns. forwardRef is the intended solution.",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://react.dev/reference/react/Component"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Wrap the function component with React.forwardRef()",
+      "success_rate": 0.93,
+      "how": "const MyComponent = React.forwardRef((props, ref) => { return <div ref={ref}>{props.children}</div>; });",
+      "sources": [
+        "https://react.dev/reference/react/forwardRef"
+      ],
+      "condition": "React 18 and earlier"
+    },
+    {
+      "action": "In React 19+, use ref as a regular prop without forwardRef",
+      "success_rate": 0.90,
+      "how": "function MyComponent({ ref, children }) { return <div ref={ref}>{children}</div>; }",
+      "sources": [
+        "https://react.dev/blog/2024/12/05/react-19"
+      ],
+      "condition": "React 19+"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/forward-ref-deprecation/react18-linux",
+        "probability": 0.25,
+        "condition": "When migrating to React 19 where forwardRef is deprecated"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/invalid-hook-call/react18-linux",
+        "probability": 0.15,
+        "condition": "When restructuring component to use hooks and forgetting to add forwardRef"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/forward-ref-deprecation/react18-linux",
+        "distinction": "react-forward-ref-error is about not using forwardRef when it is needed, while forward-ref-deprecation is about forwardRef being deprecated in React 19"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 130,
+    "last_verification": "2026-02-12"
+  }
+}

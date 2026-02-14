@@ -34,7 +34,7 @@
     },
     {
       "action": "Setting a default attribute on NoneType",
-      "why_fails": "Cannot modify built-in types; SyntaxError in strict mode",
+      "why_fails": "Cannot modify built-in types — raises TypeError: can't set attributes of built-in/extension type 'NoneType'. NoneType is immutable and does not support attribute assignment.",
       "fail_rate": 0.9,
       "sources": [],
       "condition": ""

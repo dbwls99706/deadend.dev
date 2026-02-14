@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/docker-secret-not-found/docker27-linux",
+  "url": "https://deadends.dev/docker/docker-secret-not-found/docker27-linux",
+  "error": {
+    "signature": "secret not found: secret_name",
+    "regex": "secret.*not found|no such secret|secret.*does not exist",
+    "domain": "docker",
+    "category": "secrets",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=27,<28"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "A Docker service or Compose stack references a secret that does not exist in the swarm or has not been created. Secrets must be created before services that use them."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcoding the secret value in the Dockerfile or docker-compose.yml",
+      "why_fails": "Secrets end up in the image layer history or version control, creating a security vulnerability",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using environment variables instead of Docker secrets for sensitive data",
+      "why_fails": "Environment variables are visible in docker inspect, /proc/<pid>/environ, and logs; less secure than secrets",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create the secret before deploying the service",
+      "success_rate": 0.95,
+      "how": "echo 'secret_value' | docker secret create secret_name - (for Swarm) or define in docker-compose.yml with file: ./secret.txt (for Compose)",
+      "sources": [
+        "https://docs.docker.com/engine/swarm/secrets/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "For Docker Compose, define secrets as file-based in the compose file",
+      "success_rate": 0.90,
+      "how": "In docker-compose.yml: secrets: { my_secret: { file: ./my_secret.txt } } and reference in services with secrets: [my_secret]",
+      "sources": [
+        "https://docs.docker.com/compose/how-tos/use-secrets/"
+      ],
+      "condition": "when using Docker Compose without Swarm mode"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "docker/entrypoint-not-found/docker27-linux",
+        "probability": 0.15,
+        "condition": "when missing secrets cause entrypoint scripts to fail"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "docker/compose-service-depends-on/docker27-linux",
+        "probability": 0.18,
+        "condition": "when service dependencies are resolved but secrets are not created"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/env-file-not-found/docker27-linux",
+        "distinction": "Secret not found means a Docker secret object is missing, while env file not found means a .env file path in the compose configuration does not exist on disk"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

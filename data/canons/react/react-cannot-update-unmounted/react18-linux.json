@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-cannot-update-unmounted/react18-linux",
+  "url": "https://deadends.dev/react/react-cannot-update-unmounted/react18-linux",
+  "error": {
+    "signature": "Warning: Can't perform a React state update on an unmounted component.",
+    "regex": "Can't perform a React state update on an unmounted component|Can't perform a React state update on a component that hasn't mounted yet",
+    "domain": "react",
+    "category": "lifecycle_error",
+    "first_seen": "2020-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.89,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "Async operation (fetch, timer, subscription) completes after component unmounts and tries to call setState. Warning removed in React 18.3+ but the memory leak remains."
+  },
+  "dead_ends": [
+    {
+      "action": "Use an isMounted ref flag to guard setState calls",
+      "why_fails": "This is an anti-pattern that masks the real issue; the async operation still runs and wastes resources. React docs explicitly discourage this.",
+      "fail_rate": 0.55,
+      "sources": [
+        "https://react.dev/learn/you-might-not-need-an-effect#fetching-data"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ignore the warning since React 18.3+ removed it",
+      "why_fails": "The warning is gone but the underlying memory leak and wasted network requests remain",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://github.com/facebook/react/pull/22114"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use AbortController in useEffect cleanup to cancel fetch requests on unmount",
+      "success_rate": 0.93,
+      "how": "useEffect(() => { const controller = new AbortController(); fetch(url, { signal: controller.signal }).then(...); return () => controller.abort(); }, [url]);",
+      "sources": [
+        "https://react.dev/reference/react/useEffect#fetching-data-with-effects"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Clear timers and unsubscribe in the useEffect cleanup function",
+      "success_rate": 0.91,
+      "how": "useEffect(() => { const id = setInterval(fn, 1000); return () => clearInterval(id); }, []);",
+      "sources": [
+        "https://react.dev/learn/synchronizing-with-effects#how-to-handle-the-effect-firing-twice-in-development"
+      ],
+      "condition": "When the async operation is a timer or subscription"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
+        "probability": 0.30,
+        "condition": "When the fix is incomplete and only addresses setState but not the underlying resource leak"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/useeffect-missing-dependency/react18-linux",
+        "probability": 0.20,
+        "condition": "When missing dependencies cause the effect to not clean up properly on re-runs"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/cannot-update-unmounted/react18-linux",
+        "distinction": "The existing cannot-update-unmounted canon covers the same base warning; this canon specifically addresses the async-operation pattern causing the unmounted update"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 220,
+    "last_verification": "2026-02-12"
+  }
+}

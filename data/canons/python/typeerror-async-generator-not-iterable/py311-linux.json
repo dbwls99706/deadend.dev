@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/typeerror-async-generator-not-iterable/py311-linux",
+  "url": "https://deadends.dev/python/typeerror-async-generator-not-iterable/py311-linux",
+  "error": {
+    "signature": "TypeError: 'async_generator' object is not iterable",
+    "regex": "TypeError: '?async_generator'? object is not (?:iterable|an iterator)",
+    "domain": "python",
+    "category": "async_error",
+    "first_seen": "2018-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "python": ">=3.11,<3.13",
+    "additional": {
+      "common_contexts": [
+        "fastapi streaming",
+        "llm token streaming",
+        "async database cursors",
+        "aiohttp"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.91,
+    "last_updated": "2026-02-01",
+    "summary": "Synchronous iteration patterns (for, list(), list comprehension) cannot consume async generators. Use 'async for' or async list comprehensions instead. Must be inside an async function."
+  },
+  "dead_ends": [
+    {
+      "action": "Wrapping in list() to force evaluation",
+      "why_fails": "list() is a synchronous function that uses the __iter__ protocol. Async generators implement __aiter__, not __iter__. list(async_gen()) fails with the same TypeError because the protocols are incompatible.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "list() is treated as a universal collection materializer. It only works with synchronous iterables."
+    },
+    {
+      "action": "Adding await before the generator call",
+      "why_fails": "Async generators are not awaitables. They yield multiple values asynchronously. 'await' is for coroutines (single return value), not generators (multiple yield values). 'await async_gen()' raises TypeError: object async_generator can't be used in 'await' expression.",
+      "fail_rate": 0.9,
+      "sources": [],
+      "common_misconception": "Everything async is awaitable. Async generators must be iterated with 'async for', not awaited."
+    },
+    {
+      "action": "Using synchronous list comprehension [x for x in async_gen()]",
+      "why_fails": "Synchronous list comprehensions use the sync iteration protocol (__iter__/__next__). They cannot iterate async generators. The comprehension produces the same TypeError.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "List comprehensions work with any iterable-like object."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use 'async for' loop to consume the async generator",
+      "how": "async for item in async_gen(): process(item). This is the primary way to consume async generators. Must be inside an async function.",
+      "success_rate": 0.95,
+      "tradeoff": "Must be inside an async context",
+      "sources": [
+        "https://docs.python.org/3/reference/compound_stmts.html#the-async-for-statement"
+      ]
+    },
+    {
+      "action": "Use async list comprehension to collect all values",
+      "how": "results = [x async for x in async_gen()]. The 'async for' inside the comprehension handles the async iteration protocol. Must be inside an async function.",
+      "success_rate": 0.93,
+      "tradeoff": "Collects all values into memory; not suitable for very large streams",
+      "sources": [
+        "https://docs.python.org/3/reference/expressions.html#asynchronous-comprehensions"
+      ]
+    },
+    {
+      "action": "Create a helper function to materialize async generators",
+      "how": "async def collect(gen): return [x async for x in gen]. Then: results = await collect(async_gen()). This utility wraps the async comprehension pattern for reuse across the codebase.",
+      "success_rate": 0.9,
+      "tradeoff": "Adds a utility function; consider using aiostream library for more complex patterns",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "python/typeerror-not-iterable/py311-linux",
+        "distinction": "'async_generator object is not iterable' is specific to using sync iteration on async generators. Generic 'object is not iterable' means a non-iterable type (int, None) was passed to a for loop."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 40,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

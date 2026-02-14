@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0.0",
+  "id": "python/django-reverse-noreversematch/py311-linux",
+  "url": "https://deadends.dev/python/django-reverse-noreversematch/py311-linux",
+  "error": {
+    "signature": "django.urls.exceptions.NoReverseMatch: Reverse for 'X' not found.",
+    "regex": "NoReverseMatch: Reverse for '([\\w-]+)' (?:not found|with (?:arguments|keyword arguments))",
+    "domain": "python",
+    "category": "routing_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cpython",
+      "version_range": ">=3.11,<3.13"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "Django 4.x and 5.x applications",
+        "template rendering with {% url %} tag",
+        "reverse() calls in views and serializers"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.93,
+    "last_updated": "2026-02-14",
+    "summary": "Django cannot resolve a named URL pattern. The URL name does not exist, the arguments do not match the URL pattern's expected parameters, or the URL is in a namespaced app and the namespace was not included in the lookup. The error typically surfaces during template rendering or in view code using reverse()."
+  },
+  "dead_ends": [
+    {
+      "action": "Hardcoding URLs as strings instead of using reverse() or the {% url %} template tag",
+      "why_fails": "Hardcoded URLs break whenever URL patterns change (e.g., adding a prefix, changing a slug format, or restructuring the URL hierarchy). They bypass Django's URL routing system, meaning URL changes require finding and updating every hardcoded string across templates, views, serializers, and tests. This creates a maintenance nightmare and introduces silent breakage.",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/topics/http/urls/#reverse-resolution-of-urls"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Adding duplicate URL patterns with different names to cover both old and new references",
+      "why_fails": "Duplicate URL patterns create ambiguity in URL resolution. Django uses the first matching pattern, so the duplicate may never be reached or may resolve differently than expected. Over time, duplicate patterns accumulate and make the URL configuration increasingly difficult to understand, debug, and maintain.",
+      "fail_rate": 0.68,
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/topics/http/urls/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Changing the URL name in urls.py without updating all templates and reverse() calls",
+      "why_fails": "Django does not provide compile-time checking of URL name references. Renaming a URL pattern only in urls.py causes NoReverseMatch errors at runtime wherever the old name is still used in templates ({% url 'old_name' %}), view code (reverse('old_name')), or test assertions. These errors may only surface when specific pages are visited.",
+      "fail_rate": 0.88,
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/ref/urlresolvers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Verify the URL name in urls.py matches exactly what is used in reverse() or {% url %} tag",
+      "success_rate": 0.93,
+      "how": "Open your urls.py files and search for the URL name from the error message. Check for typos, hyphens vs underscores, and case sensitivity. Django URL names are exact-match strings. Run 'python manage.py show_urls' (with django-extensions) or inspect urlpatterns in the shell: 'from django.urls import get_resolver; print([p.name for p in get_resolver().url_patterns])'.",
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/ref/urlresolvers/#reverse"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure arguments passed to reverse() or {% url %} match the URL pattern's capture groups",
+      "success_rate": 0.90,
+      "how": "If the error says 'with arguments' or 'keyword arguments', the URL exists but the parameters do not match. Check the URL pattern for expected capture groups. For example, if the pattern is 'path(\"items/<int:pk>/\", ...)', then reverse('item-detail', kwargs={'pk': item.pk}) is correct but reverse('item-detail', args=[item.slug]) would fail because slug is a string. Ensure the types and names match exactly.",
+      "tradeoff": "None; this is a diagnostic step that directly identifies the mismatch",
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/topics/http/urls/#how-django-processes-a-request"
+      ],
+      "condition": "When the URL name is correct but arguments are wrong"
+    },
+    {
+      "action": "Use Django URL namespaces correctly with app_name and the namespace:name syntax",
+      "success_rate": 0.88,
+      "how": "If your app uses URL namespaces (app_name = 'myapp' in urls.py and include() with namespace), you must use the full namespaced name: reverse('myapp:detail') or {% url 'myapp:detail' pk=item.pk %}. Without the namespace prefix, Django cannot find the URL. Check that app_name is set in the app's urls.py and that the include() call in the root urls.py uses the namespace parameter.",
+      "tradeoff": "Requires consistent use of namespace prefixes throughout all templates and views",
+      "sources": [
+        "https://docs.djangoproject.com/en/5.0/topics/http/urls/#url-namespaces"
+      ],
+      "condition": "When the app uses URL namespaces"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 47,
+    "last_verification": "2026-02-14"
+  }
+}

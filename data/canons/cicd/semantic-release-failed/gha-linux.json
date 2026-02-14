@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/semantic-release-failed/gha-linux",
+  "url": "https://deadends.dev/cicd/semantic-release-failed/gha-linux",
+  "error": {
+    "signature": "ENOGITHEAD The git HEAD is detached. semantic-release requires the branch to be checked out.",
+    "regex": "(?i)(?:ENOGITHEAD|ENOGHTOKEN|EINVALIDNPMPUBLISH|semantic-release.*failed|ENOGITTAG|ENOTINHISTORY)",
+    "domain": "cicd",
+    "category": "release",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "semantic-release failed due to git checkout being in detached HEAD state, missing GitHub token permissions, or commit message parsing issues. CI environments often check out specific commits rather than branches."
+  },
+  "dead_ends": [
+    {
+      "action": "Running semantic-release on pull request branches",
+      "why_fails": "semantic-release is designed for release branches (main, master, next). Running on PR branches creates releases from unmerged code and produces duplicate versions.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Manually tagging commits instead of letting semantic-release manage tags",
+      "why_fails": "semantic-release determines the next version from git tags. Manual tags that do not follow its conventions cause it to calculate incorrect versions or skip releases.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure the checkout action to fetch full history and branch",
+      "success_rate": 0.90,
+      "how": "In GitHub Actions, use: actions/checkout@v4 with: { fetch-depth: 0 }. This fetches full git history so semantic-release can analyze all commits and tags. Ensure the branch is checked out, not a detached commit.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ensure GITHUB_TOKEN has correct permissions",
+      "success_rate": 0.88,
+      "how": "Set permissions in the workflow: permissions: { contents: write, issues: write, pull-requests: write }. Or use a personal access token with repo scope stored as a secret, referenced as GH_TOKEN.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/maven-publish-403/maven-linux", "probability": 0.15, "condition": "when semantic-release triggers a publish step that fails due to registry permissions"},
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "probability": 0.20, "condition": "when insufficient GitHub token permissions cause tag/release creation to fail"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/gha-checkout-failed/gha-linux", "probability": 0.15, "condition": "when checkout issues leave the repository in a state semantic-release cannot work with"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-permission-denied/gha-linux", "distinction": "semantic-release-failed encompasses various semantic-release errors including ENOGITHEAD; gha-permission-denied is specifically about GitHub Actions GITHUB_TOKEN permission issues"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

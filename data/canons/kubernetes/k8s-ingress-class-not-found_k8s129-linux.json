@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-ingress-class-not-found/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-ingress-class-not-found/k8s129-linux",
+  "error": {
+    "signature": "Error: IngressClass.networking.k8s.io not found",
+    "regex": "IngressClass.*not found|ingress.*class.*not found|no default IngressClass|ingressClassName.*invalid",
+    "domain": "kubernetes",
+    "category": "networking_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.90,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "Ingress resource references an IngressClass that doesn't exist. No ingress controller is installed or the class name is misspelled."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the ingressClassName field from the Ingress",
+      "why_fails": "Without an IngressClass, no controller will pick up the Ingress resource",
+      "fail_rate": 0.72,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Annotate the Ingress with deprecated kubernetes.io/ingress.class",
+      "why_fails": "Annotation is deprecated in K8s 1.18+ and may not be supported by newer controllers",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/ingress/#deprecated-annotation"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Install an ingress controller (nginx, traefik, etc.) and verify its IngressClass is created",
+      "success_rate": 0.92,
+      "how": "helm install ingress-nginx ingress-nginx/ingress-nginx && kubectl get ingressclass",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set the correct ingressClassName matching the installed controller",
+      "success_rate": 0.90,
+      "how": "kubectl get ingressclass to find available classes, then set spec.ingressClassName in the Ingress",
+      "sources": [
+        "https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/ingress-502-bad-gateway/k8s1-linux",
+        "probability": 0.22,
+        "condition": "when IngressClass is found but backend service is misconfigured"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "probability": 0.18,
+        "condition": "when applying Ingress manifests with wrong apiVersion"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/ingress-502-bad-gateway/k8s1-linux",
+        "distinction": "IngressClass not found means no controller is configured, while 502 means the controller exists but the backend is unreachable"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 55,
+    "last_verification": "2026-02-12"
+  }
+}

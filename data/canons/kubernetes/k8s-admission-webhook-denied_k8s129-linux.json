@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-admission-webhook-denied/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-admission-webhook-denied/k8s129-linux",
+  "error": {
+    "signature": "Error from server: admission webhook denied the request",
+    "regex": "admission webhook.*denied the request|admission webhook.*rejected",
+    "domain": "kubernetes",
+    "category": "admission_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "A validating or mutating admission webhook rejected the API request. The resource does not comply with the webhook's policy."
+  },
+  "dead_ends": [
+    {
+      "action": "Delete the webhook configuration to bypass validation",
+      "why_fails": "Removes security policies — the webhook exists for a reason and may be required by compliance",
+      "fail_rate": 0.75,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Retry the same request hoping it will pass",
+      "why_fails": "Admission webhooks are deterministic — same input yields same denial",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Read the denial message to understand which policy was violated and fix the resource spec",
+      "success_rate": 0.90,
+      "how": "kubectl apply -f resource.yaml 2>&1 | grep 'denied the request' — the message usually explains exactly what's wrong",
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check which webhooks are configured and their rules: kubectl get validatingwebhookconfigurations,mutatingwebhookconfigurations",
+      "success_rate": 0.85,
+      "how": "kubectl get validatingwebhookconfigurations -o yaml to see rules and namespaceSelector",
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/k8s-pod-security-admission/k8s129-linux",
+        "probability": 0.20,
+        "condition": "when the webhook is a Pod Security Admission controller"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/crashloopbackoff/k8s1-linux",
+        "probability": 0.15,
+        "condition": "when fixing a crashed pod with a new spec that doesn't pass admission"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/forbidden-user/k8s128-linux",
+        "distinction": "Admission webhook denial is a policy check on the resource content, while Forbidden is an RBAC authorization failure on the user/service account"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

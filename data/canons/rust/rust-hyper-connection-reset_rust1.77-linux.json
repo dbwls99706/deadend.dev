@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/rust-hyper-connection-reset/rust1.77-linux",
+  "url": "https://deadends.dev/rust/rust-hyper-connection-reset/rust1.77-linux",
+  "error": {
+    "signature": "hyper::Error(Io, Kind(ConnectionReset))",
+    "regex": "hyper.*Error.*ConnectionReset|hyper.*connection reset",
+    "domain": "rust",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "rust", "version_range": ">=1.70,<2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.83,
+    "last_updated": "2026-02-12",
+    "summary": "The remote peer reset the TCP connection. Usually caused by timeouts, server restarts, or load balancer disconnects."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase TCP keepalive to very long intervals",
+      "why_fails": "Extremely long keepalives don't prevent resets from server-side timeouts or restarts",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Implement retry logic with exponential backoff",
+      "success_rate": 0.88,
+      "how": "use tokio::time::{sleep, Duration};\nfor attempt in 0..3 {\n    match client.request(req.clone()).await {\n        Ok(resp) => return Ok(resp),\n        Err(e) if is_connection_reset(&e) => {\n            sleep(Duration::from_millis(100 * 2u64.pow(attempt))).await;\n        }\n        Err(e) => return Err(e),\n    }\n}",
+      "sources": ["https://docs.rs/hyper/latest/hyper/"],
+      "condition": ""
+    },
+    {
+      "action": "Use connection pooling with proper idle timeout configuration",
+      "success_rate": 0.85,
+      "how": "use hyper::client::HttpConnector;\nlet client = hyper::Client::builder()\n    .pool_idle_timeout(Duration::from_secs(30))\n    .build::<_, hyper::Body>(HttpConnector::new());",
+      "sources": ["https://docs.rs/hyper/latest/hyper/client/struct.Builder.html"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "rust/rust-tower-service-error/rust1.77-linux", "probability": 0.15, "condition": "When connection resets affect tower service layers"}
+    ],
+    "preceded_by": [
+      {"error_id": "rust/rust-tonic-transport-error/rust1.77-linux", "probability": 0.15, "condition": "When gRPC transport issues manifest as hyper connection resets"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "rust/rust-io-broken-pipe/rust1.77-linux", "distinction": "Broken pipe is local write to closed pipe; connection reset is remote peer terminating TCP connection"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

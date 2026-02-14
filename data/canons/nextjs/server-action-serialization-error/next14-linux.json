@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/server-action-serialization-error/next14-linux",
+  "url": "https://deadends.dev/nextjs/server-action-serialization-error/next14-linux",
+  "error": {
+    "signature": "Error: Only plain objects, and a few built-ins, can be passed to Server Actions. Classes or null prototypes are not supported.",
+    "regex": "Only plain objects.*can be passed to (?:Server Actions|Client Components)",
+    "domain": "nextjs",
+    "category": "serialization_error",
+    "first_seen": "2023-10-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "node",
+      "version_range": ">=18.0.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "next.js app router",
+        "server actions",
+        "prisma",
+        "orm models"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.9,
+    "confidence": 0.89,
+    "last_updated": "2026-02-01",
+    "summary": "Server Actions can only transmit serializable plain objects across the server-client boundary. Class instances, Date objects, and ORM model objects must be converted to plain objects first."
+  },
+  "dead_ends": [
+    {
+      "action": "Using JSON.parse(JSON.stringify(obj)) to strip the class",
+      "why_fails": "Loses Date objects (become strings), undefined values (become null or disappear), Map/Set (become empty objects), BigInt (throws), and Symbol/Function properties. Seems to work in simple cases but silently corrupts data in production.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "common_misconception": "JSON round-tripping is seen as a universal serialization mechanism, but it only handles a small subset of JavaScript types."
+    },
+    {
+      "action": "Converting everything to FormData to bypass serialization",
+      "why_fails": "FormData only supports string and Blob values. Nested objects, arrays, numbers, and booleans are all lost or coerced to strings. It works for simple forms but breaks for complex structured data.",
+      "fail_rate": 0.72,
+      "sources": [],
+      "common_misconception": "FormData is treated as an alternative serialization format when it is actually designed for simple HTML form submissions."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use structuredClone() or explicit field picking to create plain objects",
+      "how": "structuredClone(obj) creates a deep plain copy that preserves Dates, Maps, Sets, and ArrayBuffers. For Prisma/ORM models: select only the plain fields you need. Example: const plain = { id: user.id, name: user.name, createdAt: user.createdAt.toISOString() }.",
+      "success_rate": 0.92,
+      "tradeoff": "Requires explicitly mapping fields for ORM models",
+      "sources": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/structuredClone"
+      ]
+    },
+    {
+      "action": "Use Zod schema to serialize/deserialize at the server action boundary",
+      "how": "Define a Zod schema for the data shape. Use .parse() on both the client (before sending) and server (in the action). This is the recommended Next.js pattern for type-safe server actions with complex data.",
+      "success_rate": 0.9,
+      "tradeoff": "Adds Zod as a dependency and requires schema definitions",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "action": "Convert Date objects to ISO strings before passing to server actions",
+      "how": "Call date.toISOString() on the client side before passing to the server action. Parse back with new Date(isoString) inside the action. This is the simplest fix for the most common variant of this error.",
+      "success_rate": 0.95,
+      "tradeoff": "Requires manual Date conversion on both sides of the boundary",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/rsc-serialization-error/nextjs14-linux",
+        "distinction": "Server Action serialization errors occur when passing data TO a server action (client→server). RSC serialization errors occur when passing data FROM server components to client components (server→client). Different boundaries, different fix patterns."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 55,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

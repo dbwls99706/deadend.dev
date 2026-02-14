@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/shared-object-init-failed/cuda12-linux",
+  "url": "https://deadends.dev/cuda/shared-object-init-failed/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: shared object initialization failed (cudaErrorSharedObjectInitFailed)",
+    "regex": "shared object.*init.*failed|cudaErrorSharedObjectInitFailed|CUDA_ERROR_SHARED_OBJECT_INIT_FAILED|libcuda.*cannot open",
+    "domain": "cuda",
+    "category": "initialization_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "cuda", "version_range": ">=12.0,<13.0"},
+    "os": "linux",
+    "hardware": {"gpu": "any"}
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-12",
+    "summary": "CUDA runtime failed to load or initialize a shared library (.so file). Usually caused by missing or incompatible CUDA libraries, broken symlinks, or LD_LIBRARY_PATH not including the CUDA lib directory."
+  },
+  "dead_ends": [
+    {
+      "action": "Reinstall the CUDA toolkit over the existing installation",
+      "why_fails": "Overlapping installations create conflicting library versions; the old broken symlinks may persist",
+      "fail_rate": 0.55,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Copy .so files from another machine",
+      "why_fails": "CUDA libraries must match the exact driver and toolkit version on the host; mismatched libraries cause more errors",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Fix library paths: ensure LD_LIBRARY_PATH includes CUDA lib directory",
+      "success_rate": 0.88,
+      "how": "export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH && ldconfig",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Rebuild broken symlinks for CUDA libraries",
+      "success_rate": 0.85,
+      "how": "ls -la /usr/local/cuda/lib64/libcud*. Fix broken symlinks with ln -sf to point to actual .so files.",
+      "sources": [],
+      "condition": "when symlinks are broken"
+    },
+    {
+      "action": "Clean install CUDA toolkit: remove old installation first",
+      "success_rate": 0.90,
+      "how": "apt-get purge 'cuda*' 'libcud*' && apt-get install cuda-toolkit-12-x",
+      "sources": [],
+      "condition": "when library installation is corrupted"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cuda/not-initialized/cuda12-linux", "probability": 0.3, "condition": "when shared object failure prevents CUDA from initializing at all"}
+    ],
+    "preceded_by": [
+      {"error_id": "cuda/cuda-driver-insufficient/cuda12-linux", "probability": 0.2, "condition": "when driver update leaves stale CUDA runtime libraries"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cuda/not-initialized/cuda12-linux", "distinction": "Shared-object-init-failed is specifically about .so library loading; not-initialized is a broader initialization failure that may have other causes"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

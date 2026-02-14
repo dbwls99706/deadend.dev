@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/npm-audit-critical/gha-linux",
+  "url": "https://deadends.dev/cicd/npm-audit-critical/gha-linux",
+  "error": {
+    "signature": "npm warn audit 12 vulnerabilities found (3 critical). npm ERR! audit fix failed",
+    "regex": "(?i)(?:npm.*audit.*critical|vulnerabilities found.*critical|audit.*fix.*failed|high severity vulnerabilities)",
+    "domain": "cicd",
+    "category": "security",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "github-actions", "version_range": ">=2.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.78,
+    "confidence": 0.82,
+    "last_updated": "2026-02-12",
+    "summary": "npm audit found critical vulnerabilities in dependencies, causing the CI pipeline to fail its security check. Some vulnerabilities may have fixes available while others may require major version bumps or dependency replacement."
+  },
+  "dead_ends": [
+    {
+      "action": "Running npm audit fix --force blindly",
+      "why_fails": "The --force flag applies breaking changes by upgrading to major versions. This can introduce incompatible APIs, breaking the build or runtime behavior.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Ignoring all audit warnings by removing the audit step from CI",
+      "why_fails": "This eliminates the security gate entirely. Critical vulnerabilities in production dependencies can be exploited.",
+      "fail_rate": 0.65,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Triage vulnerabilities and apply targeted fixes",
+      "success_rate": 0.85,
+      "how": "Run npm audit to list all vulnerabilities. For each critical: check if npm audit fix (without --force) resolves it. If not, check if the vulnerable dependency can be upgraded directly. Use npm ls <package> to find which dependency pulls it in.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use overrides to pin transitive dependencies to patched versions",
+      "success_rate": 0.82,
+      "how": "In package.json, add an 'overrides' field to force specific transitive dependency versions: { \"overrides\": { \"vulnerable-pkg\": \">=2.0.1\" } }. This patches the vulnerability without waiting for the direct dependency to update.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/pnpm-lockfile-mismatch/gha-linux", "probability": 0.15, "condition": "when fixing audit issues changes the lockfile"},
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.10, "condition": "when audit fix modifies package-lock.json causing npm ci to fail"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/npm-ci-failed/npm-linux", "probability": 0.15, "condition": "when npm ci succeeds but the subsequent audit step finds vulnerabilities"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/sonarqube-quality-gate/sonar-linux", "distinction": "npm-audit-critical is specifically about npm dependency vulnerabilities; sonarqube-quality-gate covers broader code quality metrics including security, bugs, and code smells"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

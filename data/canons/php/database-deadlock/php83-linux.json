@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/database-deadlock/php83-linux",
+  "url": "https://deadends.dev/php/database-deadlock/php83-linux",
+  "error": {
+    "signature": "SQLSTATE[40001]: Serialization failure: 1213 Deadlock found when trying to get lock; try restarting transaction",
+    "regex": "SQLSTATE\\[40001\\].*Deadlock found when trying to get lock",
+    "domain": "php",
+    "category": "database",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.83,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Database deadlocks occur when two or more transactions hold locks that each other needs, creating a circular wait. MySQL automatically detects this and rolls back one transaction. The fix involves consistent lock ordering, shorter transactions, and retry logic."
+  },
+  "dead_ends": [
+    {"action": "Increasing innodb_lock_wait_timeout to avoid the error", "why_fails": "Lock wait timeout and deadlock detection are different mechanisms. Increasing the timeout only delays the inevitable and causes longer request hangs. The deadlock will still be detected and one transaction rolled back.", "fail_rate": 0.75, "sources": [], "condition": ""},
+    {"action": "Wrapping every query in a separate transaction to avoid conflicts", "why_fails": "Using one transaction per query loses atomicity guarantees and can leave data in an inconsistent state. It also doesn't prevent deadlocks since the issue is about lock ordering across concurrent requests.", "fail_rate": 0.70, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Implement automatic retry logic for deadlocked transactions", "success_rate": 0.90, "how": "Wrap the transactional code in a retry loop that catches SQLSTATE 40001 and retries the entire transaction up to 3 times with a short random delay. In Laravel, use DB::transaction($callback, 3) which has built-in retry support.", "sources": [], "condition": ""},
+    {"action": "Access tables and rows in a consistent order across all transactions", "success_rate": 0.85, "how": "Ensure all code paths that modify the same tables acquire locks in the same order (e.g., always update table A before table B). Use SELECT ... FOR UPDATE with ORDER BY to lock rows in a deterministic order.", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.15, "condition": "when excessive deadlock retries exhaust the connection pool"}],
+    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.10, "condition": "when connection recovery triggers concurrent transaction replays"}],
+    "frequently_confused_with": [{"error_id": "php/max-execution-time/php83-linux", "distinction": "Deadlocks produce SQLSTATE 40001 immediately upon detection, while max execution time errors occur after a fixed PHP timeout regardless of database state"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}

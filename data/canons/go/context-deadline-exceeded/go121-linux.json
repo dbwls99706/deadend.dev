@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/context-deadline-exceeded/go121-linux",
+  "url": "https://deadends.dev/go/context-deadline-exceeded/go121-linux",
+  "error": {
+    "signature": "context deadline exceeded",
+    "regex": "context deadline exceeded",
+    "domain": "go",
+    "category": "timeout_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-14"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux",
+    "additional": {
+      "common_contexts": [
+        "HTTP client requests",
+        "gRPC calls",
+        "database queries",
+        "Kubernetes API calls"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-14",
+    "summary": "The context's deadline expired before the operation completed. This can indicate a genuinely slow operation, an unreachable service, a too-tight timeout, or a missing/inherited context that carries an unexpectedly short deadline from a parent scope. Fixing requires identifying which specific operation timed out and why."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing the global timeout to a very large value (e.g., 10 minutes) across all operations",
+      "why_fails": "Large global timeouts mask the actual problem. If a downstream service is unreachable, requests pile up holding goroutines, memory, and connections for the full timeout duration. This leads to resource exhaustion, cascading failures, and degraded performance for all users. The timeout exists to fail fast when something is wrong.",
+      "fail_rate": 0.78,
+      "sources": [
+        "https://pkg.go.dev/context#WithTimeout"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Removing the context or replacing it with context.Background() to avoid the timeout entirely",
+      "why_fails": "Removing the context eliminates cancellation propagation. If a parent request is cancelled (client disconnects, server shutdown), the downstream operation continues consuming resources indefinitely. Without context, there is no way to implement graceful shutdown, and leaked goroutines accumulate over time leading to memory leaks and connection pool exhaustion.",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/context#Background"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Silently ignoring the error and retrying in a tight loop",
+      "why_fails": "If the downstream service is overloaded or unreachable, rapid retries amplify the problem by flooding it with additional requests. Without exponential backoff and jitter, retries create thundering herd effects. Ignoring the error also prevents the caller from making informed decisions about fallback behavior or circuit breaking.",
+      "fail_rate": 0.82,
+      "sources": [
+        "https://pkg.go.dev/context"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Trace which specific operation is timing out using structured logging or distributed tracing",
+      "success_rate": 0.88,
+      "how": "Add timing instrumentation around each operation in the call chain. Log the elapsed time before and after each external call (HTTP, gRPC, DB query). Use context.Deadline() to check how much time remains at each stage. In distributed systems, use OpenTelemetry or similar tracing to identify the slow span. Common culprits: DNS resolution, TLS handshake, slow database query, unresponsive microservice.",
+      "sources": [
+        "https://pkg.go.dev/context#Context"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Set per-operation timeouts at the appropriate scope rather than relying on a single parent timeout",
+      "success_rate": 0.85,
+      "how": "Use context.WithTimeout() for each distinct operation with a timeout appropriate for that operation. For example: 5s for HTTP calls, 2s for cache lookups, 30s for database queries. This prevents a slow cache lookup from consuming the entire request timeout budget. Example: 'ctx, cancel := context.WithTimeout(parentCtx, 5*time.Second); defer cancel(); resp, err := client.Do(req.WithContext(ctx))'.",
+      "tradeoff": "Requires careful consideration of total time budget across all sequential operations",
+      "sources": [
+        "https://pkg.go.dev/context#WithTimeout"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Check for inherited context deadlines from parent scopes that may be too short",
+      "success_rate": 0.83,
+      "how": "Use 'deadline, ok := ctx.Deadline()' at the start of the function to inspect the remaining time budget. A common mistake is passing an HTTP request context (with a 30s server timeout) to a background job that needs minutes. For long-running operations, derive a new context: 'newCtx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)' instead of inheriting the parent's short deadline.",
+      "tradeoff": "Detaching from the parent context loses cancellation propagation from the original request",
+      "sources": [
+        "https://pkg.go.dev/context#WithDeadline"
+      ],
+      "condition": "When the timeout comes from an unexpectedly short parent context"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 45,
+    "last_verification": "2026-02-14"
+  }
+}

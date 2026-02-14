@@ -2,15 +2,15 @@
 
 <!-- mcp-name: dev.deadends/deadends-dev -->
 
-[![Errors](https://img.shields.io/badge/errors-501-blue)](https://deadends.dev)
-[![Domains](https://img.shields.io/badge/domains-14-green)](https://deadends.dev)
-[![MCP Tools](https://img.shields.io/badge/MCP_tools-7-purple)](https://smithery.ai/server/deadend/deadends-dev)
+[![Errors](https://img.shields.io/badge/errors-970%2B-blue)](https://deadends.dev)
+[![Domains](https://img.shields.io/badge/domains-20-green)](https://deadends.dev)
+[![MCP Tools](https://img.shields.io/badge/MCP_tools-8-purple)](https://smithery.ai/server/deadend/deadends-dev)
 [![PyPI](https://img.shields.io/pypi/v/deadends-dev)](https://pypi.org/project/deadends-dev/)
 [![License](https://img.shields.io/badge/license-MIT%20%2F%20CC%20BY%204.0-lightgrey)](LICENSE)
 
 **Structured failure knowledge for AI coding agents.**
 
-501 error entries across 14 domains. When AI agents encounter errors, they waste tokens on approaches that are known to fail. deadends.dev tells agents what NOT to try, what actually works, and what error comes next.
+970+ error entries across 20 domains. When AI coding agents encounter errors, they waste tokens on approaches that are known to fail. deadends.dev tells agents what NOT to try, what actually works, and what error comes next.
 
 > **Website:** [deadends.dev](https://deadends.dev) · **MCP Server:** [Smithery](https://smithery.ai/server/deadend/deadends-dev) · **PyPI:** [deadends-dev](https://pypi.org/project/deadends-dev/) · **API:** [/api/v1/index.json](https://deadends.dev/api/v1/index.json)
 
@@ -24,17 +24,18 @@ pip install deadends-dev
 
 ## MCP Server
 
-The MCP server exposes 7 tools for AI coding agents:
+The MCP server exposes 8 tools for AI coding agents:
 
 | Tool | Description |
 |------|-------------|
-| `lookup_error` | Match an error message against 501 known patterns. Returns dead ends, workarounds, and error chains. |
+| `lookup_error` | Match an error message against 970+ known patterns. Returns dead ends, workarounds, and error chains. |
 | `get_error_detail` | Get full details for a specific error by ID (e.g., `python/modulenotfounderror/py311-linux`). |
-| `list_error_domains` | List all 14 error domains and their counts. |
+| `list_error_domains` | List all 20 error domains and their counts. |
 | `search_errors` | Fuzzy keyword search across all domains (e.g., "memory limit", "permission denied"). |
 | `list_errors_by_domain` | List all errors in a specific domain, sorted by fix rate, name, or confidence. |
 | `batch_lookup` | Look up multiple error messages at once (max 10). |
 | `get_domain_stats` | Get quality metrics for a domain: avg fix rate, resolvability, confidence breakdown. |
+| `get_error_chain` | Traverse the error transition graph: what errors follow, precede, or get confused with this one. |
 
 ### Local (Claude Desktop / Cursor)
 
@@ -46,7 +47,7 @@ Add to `~/.claude/claude_desktop_config.json`:
     "deadend": {
       "command": "python",
       "args": ["-m", "mcp.server"],
-      "cwd": "/path/to/deadend.dev"
+      "cwd": "/path/to/deadends.dev"
     }
   }
 }
@@ -123,7 +124,7 @@ deadends --list  # show all known errors
 |----------|-------------|
 | [`/api/v1/match.json`](https://deadends.dev/api/v1/match.json) | Lightweight regex matching (fits in context window) |
 | [`/api/v1/index.json`](https://deadends.dev/api/v1/index.json) | Full error index with all metadata |
-| [`/api/v1/{domain}/{slug}/{env}.json`](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json) | Individual error canon ([example](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json)) |
+| [`/api/v1/{domain}/{slug}/{env}.json`](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json) | Individual ErrorCanon ([example](https://deadends.dev/api/v1/python/modulenotfounderror/py311-linux.json)) |
 | [`/api/v1/openapi.json`](https://deadends.dev/api/v1/openapi.json) | OpenAPI 3.1 spec with response examples |
 | [`/api/v1/stats.json`](https://deadends.dev/api/v1/stats.json) | Dataset quality metrics by domain |
 | [`/api/v1/errors.ndjson`](https://deadends.dev/api/v1/errors.ndjson) | NDJSON streaming (one error per line) |
@@ -134,24 +135,30 @@ deadends --list  # show all known errors
 | [`/.well-known/agent-card.json`](https://deadends.dev/.well-known/agent-card.json) | Google A2A agent card |
 | [`/.well-known/security.txt`](https://deadends.dev/.well-known/security.txt) | Security contact (RFC 9116) |
 
-## Covered Domains (14)
+## Covered Domains (20)
 
 | Domain | Errors | Examples |
 |--------|--------|----------|
-| python | 86 | ModuleNotFoundError, TypeError, KeyError, MemoryError, RecursionError |
-| node | 61 | ERR_MODULE_NOT_FOUND, EACCES, EADDRINUSE, heap OOM, ERR_REQUIRE_ESM |
-| docker | 43 | no space left, exec format error, bind address in use, healthcheck |
-| git | 34 | failed to push, merge conflicts, detached HEAD, stash apply, tags |
-| kubernetes | 34 | CrashLoopBackOff, ImagePullBackOff, OOMKilled, RBAC forbidden, HPA |
-| go | 32 | nil pointer, unused import, interface conversion, slice out of range |
-| nextjs | 30 | hydration failed, dynamic server, searchParams, metadata, Suspense |
-| aws | 29 | AccessDenied, S3 NoSuchBucket, Lambda timeout, SQS, Secrets Manager |
-| react | 28 | invalid hook call, too many re-renders, unique key, context, act() |
-| terraform | 27 | state lock, cycle, provider not found, moved block, backend init |
-| cuda | 25 | OOM, device-side assert, NCCL, cuDNN, nvcc not found, kernel image |
-| typescript | 25 | TS2307, TS2322, TS2345, TS2532, TS7053, TS2769, TS18048 |
-| pip | 24 | build wheel failed, conflicting deps, externally-managed, hash mismatch |
-| rust | 23 | E0382 borrow, E0308 mismatch, E0277 trait, E0106 lifetime, E0507 |
+| Python | 86 | ModuleNotFoundError, TypeError, KeyError, MemoryError, RecursionError |
+| Node | 70 | ERR_MODULE_NOT_FOUND, EACCES, EADDRINUSE, heap OOM, ERR_REQUIRE_ESM |
+| Kubernetes | 55 | CrashLoopBackOff, ImagePullBackOff, OOMKilled, RBAC forbidden, HPA |
+| Docker | 55 | no space left, exec format error, bind address in use, healthcheck |
+| AWS | 50 | AccessDenied, S3 NoSuchBucket, Lambda timeout, CloudFormation rollback |
+| Java | 50 | NullPointerException, ClassNotFound, OutOfMemoryError, connection pool |
+| Go | 50 | nil pointer, unused import, interface conversion, slice out of range |
+| Database | 50 | deadlock, connection pool, slow query, replication lag, constraint violation |
+| Git | 47 | failed to push, merge conflicts, detached HEAD, stash apply, tags |
+| TypeScript | 45 | TS2307, TS2322, TS2345, TS2532, TS7053, TS2769, TS18048 |
+| Terraform | 45 | state lock, cycle, provider not found, moved block, backend init |
+| Rust | 45 | E0382 borrow, E0308 mismatch, E0277 trait, E0106 lifetime, E0507 |
+| React | 45 | invalid hook call, too many re-renders, unique key, context, act() |
+| CUDA | 45 | OOM, device-side assert, NCCL, cuDNN, tensor device mismatch |
+| CI/CD | 44 | GitHub Actions timeout, secret not found, Docker rate limit, cache miss |
+| PHP | 43 | headers already sent, too many connections, autoload, memory exhaustion |
+| pip | 40 | build wheel failed, conflicting deps, externally-managed, hash mismatch |
+| Networking | 40 | connection refused, ECONNRESET, SSL certificate, DNS timeout, EPIPE |
+| Next.js | 35 | hydration failed, dynamic server, server-only import, RSC serialization |
+| .NET | 28 | NullReferenceException, LINQ translation, DI circular, EF concurrency |
 
 ## ErrorCanon Data Format
 
@@ -167,13 +174,13 @@ Each error is a JSON file with:
 }
 ```
 
-## AI Agent Integration — 18 Discovery Formats
+## AI Coding Agent Integration — 18 Discovery Formats
 
 Every page on deadends.dev includes machine-readable data in 18 formats:
 
 | Format | Location | Purpose |
 |--------|----------|---------|
-| JSON API | `/api/v1/{id}.json` | RESTful error data per canon |
+| JSON API | `/api/v1/{id}.json` | RESTful error data per ErrorCanon |
 | match.json | `/api/v1/match.json` | Compact regex-only file (load entire DB into context) |
 | index.json | `/api/v1/index.json` | Master error index with metadata |
 | stats.json | `/api/v1/stats.json` | Dataset quality metrics per domain |

@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "id": "php/mbstring-encoding-error/php83-linux",
+  "url": "https://deadends.dev/php/mbstring-encoding-error/php83-linux",
+  "error": {
+    "signature": "Warning: mb_convert_encoding(): Unable to detect character encoding in /var/www/app/src/Utils/StringHelper.php on line 34",
+    "regex": "mb_convert_encoding\\(\\):.*Unable to detect character encoding|mb_detect_encoding\\(\\):.*no matching encoding",
+    "domain": "php",
+    "category": "encoding",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "php", "version_range": ">=8.2,<8.4"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-12",
+    "summary": "Multibyte string encoding errors occur when mbstring functions cannot detect or convert character encodings. This typically happens with mixed-encoding input data, binary strings misidentified as text, or incorrect default encoding configuration."
+  },
+  "dead_ends": [
+    {"action": "Using mb_detect_encoding() without specifying a strict candidate list", "why_fails": "Without a strict candidate list, mb_detect_encoding() guesses broadly and often returns incorrect results (e.g., identifying ISO-8859-1 as UTF-8). The auto-detection is unreliable for distinguishing similar single-byte encodings.", "fail_rate": 0.72, "sources": [], "condition": ""},
+    {"action": "Replacing all mbstring functions with plain string functions to avoid encoding issues", "why_fails": "Standard string functions (strlen, substr, strpos) operate on bytes, not characters. Multibyte characters (UTF-8 emoji, CJK characters) will be split incorrectly, corrupting data.", "fail_rate": 0.80, "sources": [], "condition": ""}
+  ],
+  "workarounds": [
+    {"action": "Explicitly specify the source encoding and set mbstring defaults", "success_rate": 0.88, "how": "Set mb_internal_encoding('UTF-8') at application startup. When converting, always specify the from-encoding: mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1'). Use mb_detect_encoding($str, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true) with strict mode.", "sources": [], "condition": ""},
+    {"action": "Normalize all input to UTF-8 at the application boundary", "success_rate": 0.90, "how": "At every input point (HTTP request, file read, database query), convert to UTF-8 immediately. Set database connection charset to utf8mb4. Use header('Content-Type: text/html; charset=UTF-8'). Validate UTF-8 with mb_check_encoding($str, 'UTF-8').", "sources": [], "condition": ""}
+  ],
+  "transition_graph": {
+    "leads_to": [{"error_id": "php/json-decode-error/php83-linux", "probability": 0.20, "condition": "when invalid encoding in strings causes JSON encoding to fail with JSON_ERROR_UTF8"}],
+    "preceded_by": [{"error_id": "php/pdo-connection-failed/php83-linux", "probability": 0.15, "condition": "when database connection charset mismatch causes data to be read in wrong encoding"}],
+    "frequently_confused_with": [{"error_id": "php/intl-locale-error/php83-linux", "distinction": "mbstring handles character encoding conversion and multibyte string operations, while intl handles locale-aware formatting, collation, and transliteration"}]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

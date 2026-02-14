@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/server-only-import-client/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/server-only-import-client/nextjs14-linux",
+  "error": {
+    "signature": "Error: This module cannot be imported from a Client Component module. It should only be used from a Server Component.",
+    "regex": "This module cannot be imported from a Client Component module",
+    "domain": "nextjs",
+    "category": "module_boundary",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-13"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.91,
+    "confidence": 0.92,
+    "last_updated": "2026-02-13",
+    "summary": "A module marked with 'server-only' or importing server-only APIs (e.g., database clients, fs, secret keys) is being imported into a 'use client' component. The Server/Client module boundary must be restructured."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove 'use client' from the importing component",
+      "why_fails": "If the component uses hooks like useState or useEffect, removing 'use client' will cause a different error about hooks only being available in Client Components. The real issue is the import chain, not the directive.",
+      "fail_rate": 0.80,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#keeping-server-only-code-out-of-the-client-environment"
+      ],
+      "condition": "Component uses React hooks or browser APIs"
+    },
+    {
+      "action": "Remove the 'server-only' package import from the server module",
+      "why_fails": "Removing the 'server-only' guard suppresses the error but allows server secrets and credentials to leak into the client bundle. The error exists as a security boundary.",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#the-server-only-package"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap the server-only import in a try-catch or dynamic import in the client component",
+      "why_fails": "The module boundary check happens at build time during module graph analysis, not at runtime. Dynamic import from a client component still includes the module in the client bundle graph.",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pass server data as props from a Server Component parent instead of importing the server module directly",
+      "success_rate": 0.93,
+      "how": "// Server Component (page.tsx - no 'use client')\nimport { getSecretData } from '@/lib/server-data';\nimport { ClientDisplay } from './ClientDisplay';\nexport default async function Page() {\n  const data = await getSecretData();\n  return <ClientDisplay data={data} />;\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#moving-client-components-down-the-tree"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create a Server Action to fetch the data and call it from the client component",
+      "success_rate": 0.88,
+      "how": "// actions.ts\n'use server';\nimport { db } from '@/lib/db';\nexport async function fetchData(id: string) {\n  return db.query(id);\n}\n\n// ClientComponent.tsx\n'use client';\nimport { fetchData } from './actions';\n// call fetchData in useEffect or form action",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ],
+      "condition": "Data needs to be fetched on demand from the client"
+    },
+    {
+      "action": "Split the module into server-only and shared parts",
+      "success_rate": 0.90,
+      "how": "// lib/utils-shared.ts (safe for client)\nexport function formatDate(d: Date) { ... }\n\n// lib/utils-server.ts (import 'server-only')\nimport 'server-only';\nimport { formatDate } from './utils-shared';\nexport function getSecret() { ... }",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ],
+      "condition": "Module contains both server-only and shared utility functions"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.30,
+        "condition": "Developer removes 'use client' to fix the import but the component uses hooks"
+      },
+      {
+        "error_id": "nextjs/rsc-serialization-error/nextjs14-linux",
+        "probability": 0.15,
+        "condition": "Passing non-serializable server data as props to client component"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "nextjs/server-component-client-hook/nextjs14-linux",
+        "probability": 0.25,
+        "condition": "Developer adds 'use client' to fix hook error but the file imports server-only modules"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/module-not-found-resolve/nextjs14-linux",
+        "distinction": "Module not found is about missing packages or incorrect paths; server-only-import-client is about crossing the server/client module boundary"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-13",
+    "review_status": "auto_generated",
+    "evidence_count": 80,
+    "last_verification": "2026-02-13"
+  }
+}

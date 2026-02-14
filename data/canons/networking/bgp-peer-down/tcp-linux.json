@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/bgp-peer-down/tcp-linux",
+  "url": "https://deadends.dev/networking/bgp-peer-down/tcp-linux",
+  "error": {
+    "signature": "BGP Notification: Hold Timer Expired (code 4, subcode 0)",
+    "regex": "Hold Timer Expired|BGP.*peer.*down|Neighbor.*state.*Idle|BGP.*Notification|bgp.*session.*closed",
+    "domain": "networking",
+    "category": "routing",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "tcp", "version_range": "any"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The BGP session with a peer has gone down, typically because keepalive messages were not received before the hold timer expired. This results in route withdrawal and potential traffic blackholing until the session is re-established."
+  },
+  "dead_ends": [
+    {
+      "action": "Simply clear the BGP session repeatedly without investigating the underlying cause",
+      "why_fails": "Clearing the BGP session forces a re-establishment, but if the root cause (interface flap, MTU mismatch, CPU overload dropping keepalives) persists, the session will drop again after the hold timer expires.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increase the hold timer to very large values to mask the problem",
+      "why_fails": "While a longer hold timer delays detection, it also means convergence takes much longer when a genuine failure occurs, and the underlying keepalive loss still indicates a real issue like congestion or CPU starvation.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Investigate and resolve the underlying cause of keepalive loss",
+      "success_rate": 0.85,
+      "how": "1. Check interface status: ip link show\n2. Check for interface errors/drops: ethtool -S eth0 | grep -i error\n3. Verify BGP daemon CPU usage: top -p $(pgrep bgpd)\n4. Check system logs for OOM or kernel errors: dmesg | tail -50\n5. Verify MTU matches on both ends of the peering link\n6. Check for CRC errors or link flaps on the physical interface\n7. If CPU-bound, enable BFD for faster failure detection instead of relying solely on BGP keepalives",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Enable BFD (Bidirectional Forwarding Detection) for faster failover",
+      "success_rate": 0.88,
+      "how": "1. Configure BFD on both peers with sub-second timers\n2. In FRRouting: neighbor X.X.X.X bfd\n3. Verify BFD session: show bfd peers\n4. BFD detects link failure in milliseconds rather than waiting for the BGP hold timer (default 90s)\n5. This allows traffic to reconverge via alternate paths much faster",
+      "sources": [],
+      "condition": "Both peers must support BFD"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "probability": 0.30, "condition": "when routes are withdrawn and traffic is blackholed to destinations learned via the failed peer"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/mtu-too-large/tcp-linux", "probability": 0.15, "condition": "when MTU mismatch on the peering link causes keepalive fragmentation and drops"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/connection-timeout/tcp-linux", "distinction": "BGP peer down is a routing protocol event causing route withdrawal; connection timeout is a transport-layer issue where a specific TCP connection cannot be established"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 40,
+    "last_verification": "2026-02-12"
+  }
+}

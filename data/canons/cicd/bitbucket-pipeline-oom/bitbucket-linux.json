@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cicd/bitbucket-pipeline-oom/bitbucket-linux",
+  "url": "https://deadends.dev/cicd/bitbucket-pipeline-oom/bitbucket-linux",
+  "error": {
+    "signature": "Container 'build' exceeded memory limit. The step was run with 4096 MB of memory.",
+    "regex": "(?i)(?:exceeded memory limit|out of memory|OOM|memory limit.*exceeded|killed.*memory)",
+    "domain": "cicd",
+    "category": "resource_limits",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "bitbucket-pipelines", "version_range": ">=1.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "Bitbucket Pipelines step exceeded its memory limit and was killed. Common causes include large build artifacts, memory-hungry test suites, or Docker-in-Docker builds consuming excessive memory."
+  },
+  "dead_ends": [
+    {
+      "action": "Increasing the memory size attribute beyond the plan limit",
+      "why_fails": "Bitbucket Pipelines has hard limits per plan tier (e.g., 4GB or 8GB max). Requesting more than the plan allows results in a pipeline configuration error.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Adding swap space inside the container",
+      "why_fails": "Bitbucket pipeline containers do not support adding swap. The memory limit is enforced by the container runtime cgroup, which counts both memory and swap.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use the size: 2x option to double available memory",
+      "success_rate": 0.85,
+      "how": "In bitbucket-pipelines.yml, add 'size: 2x' to the step definition to double the memory allocation. This uses double the build minutes.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Optimize the build to reduce memory consumption",
+      "success_rate": 0.82,
+      "how": "Limit parallel test workers (e.g., --max-workers=2 for Jest). Use --max-old-space-size for Node.js. Split large builds into multiple steps. Use shallow git clone: clone: depth: 1.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "cicd/gradle-daemon-oom/gradle-linux", "probability": 0.15, "condition": "when the OOM is specifically caused by the Gradle daemon in the pipeline"}
+    ],
+    "preceded_by": [
+      {"error_id": "cicd/docker-build-failed-ci/docker-linux", "probability": 0.20, "condition": "when Docker-in-Docker builds consume excessive memory in the pipeline"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "cicd/gha-runner-timeout/gha-linux", "distinction": "bitbucket-pipeline-oom is a memory exhaustion error; runner-timeout is a time limit exceeded error. Both cause step failure but from different resource constraints."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

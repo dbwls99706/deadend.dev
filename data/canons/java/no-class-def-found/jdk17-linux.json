@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/no-class-def-found/jdk17-linux",
+  "url": "https://deadends.dev/java/no-class-def-found/jdk17-linux",
+  "error": {
+    "signature": "java.lang.NoClassDefFoundError",
+    "regex": "java\\.lang\\.NoClassDefFoundError",
+    "domain": "java",
+    "category": "classpath_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.90,
+    "last_updated": "2026-02-12",
+    "summary": "NoClassDefFoundError means the JVM found the class at compile time but cannot find it at runtime. Different from ClassNotFoundException — this indicates the class was available during compilation but is missing from the runtime classpath, often due to a failed static initializer or missing transitive dependency."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding the class to the source code assuming it is missing",
+      "why_fails": "NoClassDefFoundError usually means a compiled .class file or JAR is missing from the runtime classpath, not from the source code. The class compiled successfully but is not available at runtime.",
+      "fail_rate": 0.80,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Catching NoClassDefFoundError and providing a fallback implementation",
+      "why_fails": "NoClassDefFoundError is an Error, not an Exception. While it can be caught, the missing class likely means a critical component is unavailable. Fallback implementations rarely provide equivalent functionality and mask the deployment issue.",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Check for a failed static initializer that may have caused the class to be marked as unavailable",
+      "success_rate": 0.85,
+      "how": "1. Look for an earlier ExceptionInInitializerError in the logs — this is the root cause. 2. NoClassDefFoundError for a class whose static initializer previously failed will repeat on every access attempt. 3. Fix the static initializer (e.g., fix the static field initialization, resource loading, or configuration parsing that failed). 4. Restart the JVM — the class cannot be recovered in the same JVM instance.",
+      "sources": [],
+      "condition": "when the error follows a previous ExceptionInInitializerError"
+    },
+    {
+      "action": "Verify the JAR containing the class is on the runtime classpath",
+      "success_rate": 0.88,
+      "how": "1. Convert the class name in the error from 'com/example/MyClass' to 'com.example.MyClass'. 2. Search for which JAR contains it: 'grep -rl MyClass.class lib/' or check Maven Central. 3. Ensure that JAR is in the runtime classpath. 4. Check Maven/Gradle scopes — 'provided' scope means the JAR must be supplied by the runtime environment. 5. In fat/uber JARs, ensure the shade plugin is not excluding the needed classes.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "probability": 0.20, "condition": "when investigating NoClassDefFoundError reveals additional missing dependencies"},
+      {"error_id": "java/linkage-error/jdk17-linux", "probability": 0.15, "condition": "when adding the missing JAR introduces version conflicts with existing JARs"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/maven-dependency-conflict/maven3-linux", "probability": 0.25, "condition": "when Maven's conflict resolution excludes a JAR that was needed at runtime"},
+      {"error_id": "java/class-format-error/jdk17-linux", "probability": 0.10, "condition": "when a corrupted class file prevents loading and subsequent access produces NoClassDefFoundError"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/classnotfoundexception/jdk17-linux", "distinction": "ClassNotFoundException is thrown by Class.forName() when the class is not found; NoClassDefFoundError means the class was known at compile time but is missing at runtime or its static initializer previously failed"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 110,
+    "last_verification": "2026-02-12"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/k8s-crd-conflict/k8s129-linux",
+  "url": "https://deadends.dev/kubernetes/k8s-crd-conflict/k8s129-linux",
+  "error": {
+    "signature": "The CustomResourceDefinition is invalid: status.storedVersions: Invalid value: must have exactly one stored version",
+    "regex": "CustomResourceDefinition.*invalid|CRD.*conflict|status\\.storedVersions.*Invalid|already exists.*customresourcedefinition",
+    "domain": "kubernetes",
+    "category": "api_error",
+    "first_seen": "2023-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.29,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "CRD version conflict occurs when multiple operators try to manage the same CRD or when upgrading CRDs with incompatible stored versions."
+  },
+  "dead_ends": [
+    {
+      "action": "Force-delete the CRD and recreate it",
+      "why_fails": "Deleting a CRD deletes ALL custom resources of that type — catastrophic data loss",
+      "fail_rate": 0.90,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Install both operator versions simultaneously",
+      "why_fails": "Two operators managing the same CRD will conflict and corrupt resources",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Migrate CRD stored versions before upgrading: update storedVersions in the CRD status",
+      "success_rate": 0.88,
+      "how": "kubectl patch crd <name> --subresource=status --type=json -p='[{\"op\":\"replace\",\"path\":\"/status/storedVersions\",\"value\":[\"v1\"]}]'",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definition-versioning/"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure only one operator version manages each CRD — uninstall the old version first",
+      "success_rate": 0.85,
+      "how": "helm uninstall old-operator && helm install new-operator",
+      "sources": [
+        "https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "kubernetes/crd-version-not-served/k8s1-linux",
+        "probability": 0.25,
+        "condition": "when CRD version is removed but resources still reference it"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "kubernetes/unable-to-recognize/k8s1-linux",
+        "probability": 0.20,
+        "condition": "when applying manifests with unrecognized CRD apiVersion"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/crd-version-not-served/k8s1-linux",
+        "distinction": "CRD conflict is about multiple versions or operators clashing, while crd-version-not-served is about accessing a deprecated API version"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

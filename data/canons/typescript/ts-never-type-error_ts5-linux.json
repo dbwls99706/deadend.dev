@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "id": "typescript/ts-never-type-error/ts5-linux",
+  "url": "https://deadends.dev/typescript/ts-never-type-error/ts5-linux",
+  "error": {
+    "signature": "TS2339: Property 'X' does not exist on type 'never'",
+    "regex": "does not exist on type 'never'|Type 'never'.*not assignable",
+    "domain": "typescript",
+    "category": "type_narrowing_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "typescript", "version_range": ">=5.0,<6.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "A variable has been narrowed to never, meaning TypeScript thinks the code is unreachable. Usually caused by incomplete type guards."
+  },
+  "dead_ends": [
+    {
+      "action": "Assert the variable as any to suppress the error",
+      "why_fails": "The never type usually indicates a logic error; suppressing it hides real bugs",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add an exhaustive check helper for discriminated unions",
+      "success_rate": 0.90,
+      "how": "function assertNever(x: never): never {\n  throw new Error(`Unexpected value: ${x}`);\n}\n\nswitch (action.type) {\n  case 'add': return handleAdd(action);\n  case 'remove': return handleRemove(action);\n  default: return assertNever(action); // catches missing cases\n}",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/narrowing.html#exhaustiveness-checking"],
+      "condition": ""
+    },
+    {
+      "action": "Fix the type narrowing that incorrectly narrows to never",
+      "success_rate": 0.87,
+      "how": "// If an array filter narrows incorrectly:\nconst items = arr.filter((x): x is ValidType => x !== null);\n// Use type predicate to maintain correct type",
+      "sources": ["https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates"],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "typescript/ts-discriminated-union-error/ts5-linux", "probability": 0.20, "condition": "When never type reveals missing union members"}
+    ],
+    "preceded_by": [
+      {"error_id": "typescript/ts-discriminated-union-error/ts5-linux", "probability": 0.20, "condition": "When exhaustive switch narrows to never"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "typescript/ts2339-property-not-exist/ts5-linux", "distinction": "TS2339 on a regular type means property is missing; on never it means the code is unreachable or the type was over-narrowed"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

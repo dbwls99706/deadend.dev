@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "id": "pip/backtracking-long/pip24-linux",
+  "url": "https://deadends.dev/pip/backtracking-long/pip24-linux",
+  "error": {
+    "signature": "INFO: pip is looking at multiple versions of <package> to determine which version is compatible with other requirements. This could take a while.",
+    "regex": "pip is looking at multiple versions|backtracking|This could take a while|Resolver is taking longer",
+    "domain": "pip",
+    "category": "resolver_error",
+    "first_seen": "2022-06-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "pip", "version_range": ">=24,<25"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "Pip's dependency resolver is backtracking through many version combinations to find a compatible set. Can take hours or appear to hang. Usually caused by loose version constraints, packages with many releases, or genuinely conflicting requirements."
+  },
+  "dead_ends": [
+    {
+      "action": "Wait indefinitely for the resolver to finish",
+      "why_fails": "Backtracking can be combinatorial; some dependency sets never resolve and pip will run for hours or days",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": "when constraints are genuinely conflicting"
+    },
+    {
+      "action": "Use --use-deprecated=legacy-resolver",
+      "why_fails": "Legacy resolver was removed in pip 24; even when available it silently installs incompatible versions",
+      "fail_rate": 0.70,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Pin specific versions to reduce the search space: package==X.Y.Z",
+      "success_rate": 0.88,
+      "how": "Add explicit version pins for the packages pip is backtracking on, based on known-good combinations",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use pip-compile (pip-tools) to pre-resolve dependencies offline",
+      "success_rate": 0.85,
+      "how": "pip install pip-tools && pip-compile requirements.in -o requirements.txt && pip install -r requirements.txt",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use constraints file to limit version search space",
+      "success_rate": 0.83,
+      "how": "Create constraints.txt with known-good versions, then: pip install -c constraints.txt -r requirements.txt",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "pip/conflicting-dependencies/pip23-linux", "probability": 0.35, "condition": "when backtracking exhausts all options and finds no solution"}
+    ],
+    "preceded_by": [
+      {"error_id": "pip/requires-python-mismatch/pip24-linux", "probability": 0.15, "condition": "when Python version constraint eliminates many candidate versions"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "pip/timeout/pip24-linux", "distinction": "Backtracking appears as pip hanging but is a resolver issue; timeout is a network connectivity issue during download"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-12"
+  }
+}

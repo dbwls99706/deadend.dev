@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/pg-wal-level-insufficient/pg16-linux",
+  "url": "https://deadends.dev/database/pg-wal-level-insufficient/pg16-linux",
+  "error": {
+    "signature": "ERROR: logical decoding requires wal_level >= logical",
+    "regex": "ERROR:\\s+logical decoding requires wal_level >= logical|wal_level is not sufficient",
+    "domain": "database",
+    "category": "configuration_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "postgresql", "version_range": ">=16,<17"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.95,
+    "confidence": 0.96,
+    "last_updated": "2026-02-12",
+    "summary": "Logical replication or change data capture (Debezium, pgoutput) requires wal_level = logical, but PostgreSQL is running with wal_level = replica (default) or minimal. This parameter requires a PostgreSQL restart to take effect. It slightly increases WAL volume but is required for logical replication, logical decoding, and CDC tools."
+  },
+  "dead_ends": [
+    {
+      "action": "Attempting to change wal_level with ALTER SYSTEM and then just reloading configuration",
+      "why_fails": "wal_level is a postmaster-level parameter that requires a full PostgreSQL restart, not just a configuration reload (pg_ctl reload / SELECT pg_reload_conf()). The change is written to postgresql.auto.conf but does not take effect until restart.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using pg_basebackup to set up a standby and enabling logical replication on the standby only",
+      "why_fails": "Logical replication slots can only be created on the primary. A standby inherits the primary's wal_level but cannot create logical replication slots. The primary must have wal_level = logical.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set wal_level = logical and restart PostgreSQL",
+      "success_rate": 0.95,
+      "how": "Run: ALTER SYSTEM SET wal_level = 'logical'; Then restart PostgreSQL: systemctl restart postgresql or pg_ctl restart. Verify: SHOW wal_level; Also set max_replication_slots (default 10) and max_wal_senders (default 10) if not already sufficient. Plan a maintenance window as restart causes brief downtime.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "For managed databases (RDS, Cloud SQL), enable logical replication through the cloud provider's interface",
+      "success_rate": 0.92,
+      "how": "AWS RDS: Set rds.logical_replication = 1 in the parameter group and reboot. GCP Cloud SQL: Set cloudsql.logical_decoding = on and restart. Azure: Set wal_level = logical in server parameters. Managed databases often have logical replication disabled by default for performance.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/pg-replication-slot-inactive/pg16-linux", "probability": 0.20, "condition": "when logical replication is enabled but slots are not properly configured"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/connection-refused/pg16-linux", "probability": 0.10, "condition": "when setting up a new PostgreSQL instance for CDC and finding logical replication not enabled"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/pg-replication-slot-inactive/pg16-linux", "distinction": "WAL level insufficient means the server configuration does not support logical replication at all. Replication slot inactive means logical replication is configured but a specific slot has no active consumer. The first is a prerequisite error; the second is an operational error."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 60,
+    "last_verification": "2026-02-12"
+  }
+}

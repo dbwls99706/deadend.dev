@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "java/gc-overhead-limit/jdk17-linux",
+  "url": "https://deadends.dev/java/gc-overhead-limit/jdk17-linux",
+  "error": {
+    "signature": "java.lang.OutOfMemoryError: GC overhead limit exceeded",
+    "regex": "java\\.lang\\.OutOfMemoryError:\\s*GC overhead limit exceeded",
+    "domain": "java",
+    "category": "memory_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "java", "version_range": ">=17,<21"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.80,
+    "confidence": 0.87,
+    "last_updated": "2026-02-12",
+    "summary": "The JVM is spending more than 98% of its time doing garbage collection and recovering less than 2% of the heap. This usually indicates a memory leak or that the application requires more memory than allocated."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling the GC overhead limit check with -XX:-UseGCOverheadLimit",
+      "why_fails": "This just converts the GC overhead error into a regular OutOfMemoryError: Java heap space. The application will still run out of memory, but now without the early warning. Performance will be terrible as the JVM spends nearly all time in GC.",
+      "fail_rate": 0.90,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Increasing heap size without profiling to find the memory issue",
+      "why_fails": "If there is a memory leak, increasing heap size only delays the inevitable. The application will eventually exhaust the larger heap too. Meanwhile, GC pauses become longer with a bigger heap, degrading performance.",
+      "fail_rate": 0.60,
+      "sources": [],
+      "condition": "when a memory leak is the root cause"
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Profile the heap with a heap dump and identify the objects consuming the most memory",
+      "success_rate": 0.88,
+      "how": "1. Add -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof to JVM args. 2. Reproduce the error and analyze the heap dump with Eclipse MAT or VisualVM. 3. Look for the dominator tree — the largest retained objects. 4. Check for common leaks: unbounded caches, static collections that grow indefinitely, listeners not being deregistered, session objects not being cleaned up. 5. Fix the leak and retest.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Switch to a more efficient GC algorithm and right-size the heap after profiling",
+      "success_rate": 0.82,
+      "how": "1. Profile first to confirm the application is not leaking. 2. If memory usage is legitimately high, increase -Xmx to give more headroom. 3. Consider switching to G1GC (-XX:+UseG1GC) or ZGC (-XX:+UseZGC) which handle large heaps more efficiently. 4. Monitor with -Xlog:gc* to verify GC overhead drops to acceptable levels.",
+      "sources": [],
+      "condition": "when the application legitimately needs more memory"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "probability": 0.40, "condition": "when the GC overhead limit is disabled or the condition worsens to full heap exhaustion"}
+    ],
+    "preceded_by": [
+      {"error_id": "java/memory-leak-perm-gen/jdk17-linux", "probability": 0.10, "condition": "when metaspace pressure indirectly causes heap pressure via class loading"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "java/outofmemoryerror-heap/jdk17-linux", "distinction": "Java heap space means the heap is fully exhausted; GC overhead limit means the heap is nearly full and GC is running constantly but reclaiming almost nothing"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 100,
+    "last_verification": "2026-02-12"
+  }
+}

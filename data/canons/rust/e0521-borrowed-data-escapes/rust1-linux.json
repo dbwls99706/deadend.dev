@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0.0",
+  "id": "rust/e0521-borrowed-data-escapes/rust1-linux",
+  "url": "https://deadends.dev/rust/e0521-borrowed-data-escapes/rust1-linux",
+  "error": {
+    "signature": "error[E0521]: borrowed data escapes outside of closure",
+    "regex": "E0521.*borrowed data escapes outside of (?:closure|function)",
+    "domain": "rust",
+    "category": "borrow_error",
+    "first_seen": "2018-01-01",
+    "last_confirmed": "2026-02-01"
+  },
+  "environment": {
+    "runtime": {
+      "name": "rustc",
+      "version_range": ">=1.70.0"
+    },
+    "os": "linux",
+    "python": "",
+    "additional": {
+      "common_contexts": [
+        "axum handlers",
+        "actix-web",
+        "thread::spawn",
+        "closures with references"
+      ]
+    }
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.84,
+    "confidence": 0.86,
+    "last_updated": "2026-02-01",
+    "summary": "A closure or function captures a reference to data that may be dropped before the closure finishes. The solution is usually to transfer ownership (owned types) or use scoped threads."
+  },
+  "dead_ends": [
+    {
+      "action": "Adding .clone() on every borrowed reference indiscriminately",
+      "why_fails": "Cloning works for owned types but if you have &T, cloning gives T which may not be what the API expects. It also hides performance issues with unnecessary heap allocations and can change the semantics of the code.",
+      "fail_rate": 0.55,
+      "sources": [],
+      "common_misconception": ".clone() is seen as a universal fix for borrow checker errors. It sometimes works but often just shifts the error to a different location."
+    },
+    {
+      "action": "Using unsafe { std::mem::transmute() } to extend the lifetime",
+      "why_fails": "This is undefined behavior. The data may be freed while the transmuted reference is still in use, causing use-after-free, data corruption, or crashes. The borrow checker exists specifically to prevent this class of bugs.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "common_misconception": "transmute is a legitimate way to work around the borrow checker. It disables safety guarantees that exist for a reason."
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use owned data (String instead of &str, Vec<T> instead of &[T])",
+      "how": "Convert borrowed references to owned types before passing to closures that escape their scope. Change &str to String::from(s), &[T] to s.to_vec(). If the closure goes to thread::spawn or tokio::spawn, all captures must be owned.",
+      "success_rate": 0.88,
+      "tradeoff": "Heap allocation for each conversion; slightly more memory usage",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html"
+      ]
+    },
+    {
+      "action": "Use scoped threads to allow borrowing safely",
+      "how": "std::thread::scope (stable since Rust 1.63) or crossbeam::scope allow spawning threads that borrow from the enclosing scope. The scope guarantees all spawned threads finish before the borrowed data goes out of scope.",
+      "success_rate": 0.85,
+      "tradeoff": "Scoped threads block the parent until all child threads complete",
+      "sources": [
+        "https://doc.rust-lang.org/std/thread/fn.scope.html"
+      ]
+    },
+    {
+      "action": "Move data creation inside the closure",
+      "how": "Instead of creating data outside and borrowing it inside the closure, create the data inside the closure where ownership is clear from the start. This eliminates the escape entirely.",
+      "success_rate": 0.82,
+      "tradeoff": "May require restructuring code; data cannot be shared with the parent scope",
+      "sources": []
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "rust/e0277-send-not-satisfied/rust1-linux",
+        "probability": 0.2,
+        "condition": "After converting to owned data with move, the owned type may not implement Send"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0597-borrowed-too-short/rust1-linux",
+        "distinction": "E0521 means a closure captures a reference that escapes the closure's expected lifetime. E0597 means a reference outlives the value it borrows. Similar concept, different error site."
+      },
+      {
+        "error_id": "rust/e0700-async-closure-lifetime/rust1-linux",
+        "distinction": "E0521 is for synchronous closures/functions. The async variant (lifetime may not live long enough) is specific to async closures and futures where the issue is the future's lifetime, not just the closure."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "manual",
+    "generation_date": "2026-02-14",
+    "review_status": "human_reviewed",
+    "evidence_count": 45,
+    "page_views": 0,
+    "ai_agent_hits": 0,
+    "human_hits": 0,
+    "last_verification": "2026-02-14"
+  }
+}

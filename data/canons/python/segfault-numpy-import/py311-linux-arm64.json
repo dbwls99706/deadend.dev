@@ -97,27 +97,9 @@
     }
   ],
   "transition_graph": {
-    "leads_to": [
-      {
-        "error_id": "python/numpy-linalg-error/py311-linux-arm64",
-        "probability": 0.12,
-        "condition": "When OPENBLAS_CORETYPE is set incorrectly, numpy imports but linear algebra operations produce wrong results or crash",
-        "typical_delay": "minutes to hours"
-      }
-    ],
-    "preceded_by": [
-      {
-        "error_id": "python/pip-build-wheel-failed-numpy/py311-linux-arm64",
-        "probability": 0.2,
-        "condition": "When building from source fails, user falls back to binary wheel which has the segfault"
-      }
-    ],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/illegal-instruction-numpy/py311-linux-arm64",
-        "distinction": "Segfault occurs when OpenBLAS cannot detect the CPU type. Illegal instruction (SIGILL) occurs when OpenBLAS detects the wrong type and uses unsupported SIMD instructions. Both crash on import but have different signal codes."
-      }
-    ]
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

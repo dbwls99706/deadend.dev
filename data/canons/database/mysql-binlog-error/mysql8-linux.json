@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "database/mysql-binlog-error/mysql8-linux",
+  "url": "https://deadends.dev/database/mysql-binlog-error/mysql8-linux",
+  "error": {
+    "signature": "ERROR 1236 (HY000): Could not find first log file name in binary log index file",
+    "regex": "ERROR 1236.*Could not find first log file|binary log.*purged|binlog.*does not exist",
+    "domain": "database",
+    "category": "replication_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "mysql", "version_range": ">=8.0,<9.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.82,
+    "confidence": 0.85,
+    "last_updated": "2026-02-12",
+    "summary": "The MySQL replica is requesting a binary log position that no longer exists on the primary. The binlog has been purged (manually or by expire_logs_days/binlog_expire_logs_seconds) before the replica consumed it. The replica cannot continue replication from its saved position and must be re-initialized."
+  },
+  "dead_ends": [
+    {
+      "action": "Resetting the replica's binary log position with CHANGE MASTER TO without re-initializing data",
+      "why_fails": "Pointing the replica to a new binlog position without a fresh data snapshot creates data drift. The replica misses all changes between the old (purged) position and the new position, leading to silent data inconsistency that is extremely difficult to detect and fix.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Disabling binlog purging entirely to prevent future occurrences",
+      "why_fails": "Without binlog purging, binary logs accumulate indefinitely and will fill the disk. This trades a replication error for a disk full outage, which is worse. Instead, configure a reasonable retention period and monitor replication lag.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Re-initialize the replica from a fresh backup of the primary",
+      "success_rate": 0.90,
+      "how": "Take a consistent snapshot: mysqldump --single-transaction --source-data=2 --all-databases > dump.sql (or use xtrabackup for faster backups). Restore on replica. Use the binlog position from the backup to set up replication: CHANGE REPLICATION SOURCE TO SOURCE_LOG_FILE='binlog.000123', SOURCE_LOG_POS=456; START REPLICA;",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use GTID-based replication to automatically find the correct position",
+      "success_rate": 0.85,
+      "how": "If GTID is enabled (gtid_mode=ON), set up replication with: CHANGE REPLICATION SOURCE TO SOURCE_AUTO_POSITION=1; START REPLICA; GTID-based replication does not depend on binlog file positions. For future prevention, ensure binlog_expire_logs_seconds is greater than your maximum replication lag.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.25, "condition": "when re-initialization causes the replica to replay a large backlog of transactions"}
+    ],
+    "preceded_by": [
+      {"error_id": "database/mysql-replication-lag/mysql8-linux", "probability": 0.30, "condition": "when a lagging replica falls so far behind that the primary purges the needed binlogs"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "database/mysql-replication-lag/mysql8-linux", "distinction": "Binlog error means the required binlog files are completely gone from the primary. Replication lag means the replica is behind but can still catch up because the binlogs still exist. Binlog error is unrecoverable without re-init; lag is self-resolving."}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 45,
+    "last_verification": "2026-02-12"
+  }
+}

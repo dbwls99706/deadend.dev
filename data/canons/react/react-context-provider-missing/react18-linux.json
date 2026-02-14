@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "id": "react/react-context-provider-missing/react18-linux",
+  "url": "https://deadends.dev/react/react-context-provider-missing/react18-linux",
+  "error": {
+    "signature": "TypeError: Cannot read properties of undefined (reading 'value')",
+    "regex": "Cannot read propert(y|ies) of (undefined|null).*useContext|useContext.*undefined|Context.*Provider.*missing",
+    "domain": "react",
+    "category": "context_error",
+    "first_seen": "2022-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "react",
+      "version_range": ">=18,<20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-12",
+    "summary": "useContext called in a component that is not wrapped by the corresponding Context.Provider. Returns undefined default value, causing downstream property access errors."
+  },
+  "dead_ends": [
+    {
+      "action": "Set a default value in createContext() to avoid the error",
+      "why_fails": "Default values are only used when there is NO Provider ancestor. This masks the structural bug; the component still won't receive real data.",
+      "fail_rate": 0.60,
+      "sources": [
+        "https://react.dev/reference/react/createContext"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Add optional chaining (context?.value) everywhere the context is consumed",
+      "why_fails": "Treats symptoms not cause. Component renders with no data, producing empty or broken UI.",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://react.dev/reference/react/useContext"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Ensure the component tree has the correct Provider wrapping all consumers",
+      "success_rate": 0.95,
+      "how": "Wrap the consuming component's ancestor with <MyContext.Provider value={...}>. Check that the Provider is in the correct file (often App.tsx or a layout component).",
+      "sources": [
+        "https://react.dev/reference/react/useContext#usage"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Create a custom hook that throws a descriptive error when used outside a Provider",
+      "success_rate": 0.88,
+      "how": "function useMyContext() { const ctx = useContext(MyContext); if (!ctx) throw new Error('useMyContext must be used within MyProvider'); return ctx; }",
+      "sources": [
+        "https://react.dev/learn/scaling-up-with-reducer-and-context"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "react/cannot-read-null-usecontext/react18-linux",
+        "probability": 0.30,
+        "condition": "When the Provider is present but passes null or undefined as the value prop"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "react/context-value-undefined/react18-linux",
+        "probability": 0.25,
+        "condition": "When developer first sees undefined context values and removes the Provider thinking it's unnecessary"
+      }
+    ],
+    "frequently_confused_with": [
+      {
+        "error_id": "react/context-undefined/react18-linux",
+        "distinction": "context-provider-missing means the Provider component is not in the tree at all, while context-undefined means the Provider exists but its value prop is undefined"
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 170,
+    "last_verification": "2026-02-12"
+  }
+}

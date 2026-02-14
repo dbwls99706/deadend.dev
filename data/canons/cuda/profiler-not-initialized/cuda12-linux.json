@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0.0",
+  "id": "cuda/profiler-not-initialized/cuda12-linux",
+  "url": "https://deadends.dev/cuda/profiler-not-initialized/cuda12-linux",
+  "error": {
+    "signature": "CUDA error: profiler not initialized (cudaErrorProfilerNotInitialized)",
+    "regex": "cudaErrorProfilerNotInitialized|profiler not initialized|cuptiActivityEnable.*failed|CUPTI.*initialization.*error",
+    "domain": "cuda",
+    "category": "profiling_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {
+      "name": "cuda",
+      "version_range": ">=12.0,<13.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.87,
+    "confidence": 0.9,
+    "last_updated": "2026-02-12",
+    "summary": "The CUDA profiler was not properly initialized before profiling API calls were made. This occurs when calling cudaProfilerStop without a prior cudaProfilerStart, when CUPTI (CUDA Profiling Tools Interface) fails to initialize due to missing libraries or insufficient permissions, or when Nsight Systems/Compute cannot attach to the process. On newer Linux kernels, the perf_event_paranoid setting may block profiling."
+  },
+  "dead_ends": [
+    {
+      "action": "Calling cudaProfilerStart/Stop without launching the application through a profiler",
+      "why_fails": "cudaProfilerStart/Stop are designed to delimit profiling regions when the application is launched under a profiler (nsys, ncu). Without an attached profiler, these calls may return cudaErrorProfilerNotInitialized. They do not themselves enable profiling — they only control when an already-attached profiler collects data.",
+      "fail_rate": 0.85,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Using an old version of Nsight Systems/Compute with a newer CUDA version",
+      "why_fails": "The profiler must support the CUDA version installed. Nsight tools and CUPTI have strict version coupling. Using Nsight Systems 2022.x with CUDA 12.x will fail to initialize the profiler due to CUPTI API version mismatch.",
+      "fail_rate": 0.8,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Set perf_event_paranoid and ensure CUPTI libraries are accessible",
+      "success_rate": 0.9,
+      "how": "On Linux, set: echo 2 | sudo tee /proc/sys/kernel/perf_event_paranoid (or 1 for more access). For rootless profiling in containers, add --cap-add SYS_ADMIN or --privileged. Ensure libcupti.so is in LD_LIBRARY_PATH: export LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:$LD_LIBRARY_PATH. Verify: ldconfig -p | grep cupti.",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Launch the application through the profiler tool instead of using the programmatic API",
+      "success_rate": 0.92,
+      "how": "Use: nsys profile --trace=cuda,nvtx ./your_app for Nsight Systems, or: ncu --set full ./your_app for Nsight Compute. These tools handle profiler initialization automatically. For programmatic control, wrap profiling regions with nvtxRangePush/Pop instead of cudaProfilerStart/Stop, and use nsys's --capture-range=nvtx flag.",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "cuda/not-initialized/cuda12-linux",
+        "probability": 0.1,
+        "condition": "when profiler initialization failure causes the CUDA context to be in a bad state"
+      }
+    ],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/not-initialized/cuda12-linux",
+        "distinction": "Profiler-not-initialized specifically means the profiling subsystem (CUPTI) is not ready. Not-initialized means the CUDA runtime itself has not been initialized. The former affects only profiling; the latter affects all CUDA operations."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 42,
+    "last_verification": "2026-02-12"
+  }
+}

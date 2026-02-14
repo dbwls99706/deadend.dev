@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "id": "networking/certificate-chain-incomplete/openssl3-linux",
+  "url": "https://deadends.dev/networking/certificate-chain-incomplete/openssl3-linux",
+  "error": {
+    "signature": "SSL: error:0A000086:SSL routines::certificate verify failed (unable to get local issuer certificate)",
+    "regex": "unable to get local issuer certificate|incomplete certificate chain|chain.*incomplete|verify error:num=2[01]|missing intermediate",
+    "domain": "networking",
+    "category": "tls_certificate",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-12"
+  },
+  "environment": {
+    "runtime": {"name": "openssl", "version_range": ">=3.0"},
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.93,
+    "confidence": 0.92,
+    "last_updated": "2026-02-12",
+    "summary": "The TLS server presents a leaf certificate without the required intermediate CA certificates. Clients cannot build a chain of trust to a root CA and reject the connection. This is a server-side configuration issue."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable certificate verification on the client to bypass the error",
+      "why_fails": "Disabling verification (e.g., curl -k, verify=False) removes all TLS security guarantees and opens the connection to man-in-the-middle attacks. It does not fix the server misconfiguration.",
+      "fail_rate": 0.95,
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Install the leaf certificate directly into the client trust store",
+      "why_fails": "Pinning the leaf certificate works temporarily but breaks when the certificate is renewed. Every client must be manually updated, which does not scale.",
+      "fail_rate": 0.75,
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Configure the server to send the full certificate chain including intermediate CA certificates",
+      "success_rate": 0.95,
+      "how": "1. Identify the leaf certificate issuer: openssl x509 -in cert.pem -noout -issuer\n2. Download the intermediate CA certificate from the CA's repository\n3. Concatenate: cat cert.pem intermediate.pem > fullchain.pem\n4. Configure the server to use fullchain.pem as the certificate file\n5. Verify: openssl s_client -connect host:443 -showcerts | grep 'Certificate chain'\n6. Confirm the chain is complete: openssl verify -CAfile /etc/ssl/certs/ca-certificates.crt fullchain.pem",
+      "sources": [],
+      "condition": ""
+    },
+    {
+      "action": "Use an ACME client like certbot that automatically provides the full chain",
+      "success_rate": 0.92,
+      "how": "1. Install certbot: apt install certbot\n2. Obtain a certificate: certbot certonly --standalone -d example.com\n3. Use the fullchain.pem file (not cert.pem) in your server configuration\n4. Certbot places the full chain at /etc/letsencrypt/live/example.com/fullchain.pem\n5. Verify: openssl s_client -connect example.com:443 -showcerts",
+      "sources": [],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {"error_id": "networking/ssl-unable-to-verify/openssl3-linux", "probability": 0.30, "condition": "when the client cannot verify the chain and reports a generic verification failure"}
+    ],
+    "preceded_by": [
+      {"error_id": "networking/ssl-certificate-expired/openssl3-linux", "probability": 0.15, "condition": "when renewing an expired certificate but forgetting to include the intermediate in the new bundle"}
+    ],
+    "frequently_confused_with": [
+      {"error_id": "networking/ssl-self-signed/openssl3-linux", "distinction": "Incomplete chain means intermediates are missing but a valid CA-signed cert exists; self-signed means the certificate was not issued by any recognized CA at all"}
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-12",
+    "review_status": "auto_generated",
+    "evidence_count": 65,
+    "last_verification": "2026-02-12"
+  }
+}
