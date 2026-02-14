@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/k8s-priority-class-not-found/k8s129-linux",
+        "distinction": "'Warning FailedScheduling' is a scheduling_error error while 'Error creating' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

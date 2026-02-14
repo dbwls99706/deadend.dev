@@ -40,7 +40,7 @@
     {
       "action": "Deleting the Docker.raw file manually",
       "why_fails": "Deleting the VM disk image destroys all Docker data (images, containers, volumes) without recovery. Docker Desktop will recreate an empty disk on restart, but all data is permanently lost. This is equivalent to wiping the entire Docker installation.",
-      "fail_rate": 0.2,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/"
       ]
@@ -79,7 +79,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/no-space-left-on-device/docker24-linux",
+        "distinction": "'no space left on device' is a storage error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

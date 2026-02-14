@@ -70,7 +70,7 @@
         "https://www.npmjs.com/package/type-fest"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if a simpler type utility exists in a library like type-fest"
     }
   ],
   "transition_graph": {

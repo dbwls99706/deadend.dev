@@ -49,7 +49,7 @@
     {
       "action": "Disabling torch.compile() entirely as a workaround",
       "why_fails": "While this may resolve the symptom if torch.compile() is the cause, it sacrifices significant performance benefits (up to 2x speedup). The proper fix is to ensure gradient-tracked tensors are correctly handled within the compiled function, not to abandon compilation.",
-      "fail_rate": 0.3,
+      "fail_rate": 0.55,
       "condition": "Only when torch.compile() is involved in the issue",
       "sources": [
         "https://pytorch.org/docs/2.0/dynamo/index.html"
@@ -100,7 +100,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/attributeerror-tensor-no-grad/torch2.1-linux",
+        "distinction": "'AttributeError' is a autograd_error error while 'AttributeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "deadend-seed-v1",

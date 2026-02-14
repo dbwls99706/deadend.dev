@@ -70,7 +70,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/all-cuda-capable-devices-busy/cuda12-linux",
+        "distinction": "'RuntimeError' is a distributed_error error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

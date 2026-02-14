@@ -61,13 +61,18 @@
         "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use generateMetadata for metadata and generateStaticParams for static paths"
     }
   ],
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/next-router-app-dir/nextjs14-linux",
+        "distinction": "'Error' is a migration_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

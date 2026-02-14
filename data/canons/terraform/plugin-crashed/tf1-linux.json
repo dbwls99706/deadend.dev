@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/providers"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check system resources (memory) — large state files can OOM the provider"
     }
   ],
   "transition_graph": {

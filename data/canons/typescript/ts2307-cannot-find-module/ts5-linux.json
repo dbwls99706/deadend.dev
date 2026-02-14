@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/tsconfig#moduleResolution"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check tsconfig.json paths and moduleResolution settings"
     }
   ],
   "transition_graph": {

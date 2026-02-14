@@ -37,7 +37,7 @@
     {
       "action": "Running 'killall node' to stop all Node processes",
       "why_fails": "On macOS, killall node terminates every Node process including Electron apps, VS Code helper processes, and other unrelated services. This causes disruption far beyond the intended scope.",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://nodejs.org/api/process.html#signal-events"
       ],

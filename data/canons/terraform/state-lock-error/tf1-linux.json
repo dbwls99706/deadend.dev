@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if another terraform apply is running and wait for it to finish"
     }
   ],
   "transition_graph": {

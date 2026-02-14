@@ -28,7 +28,7 @@
     {
       "action": "Adding FAIL_ON_UNKNOWN_PROPERTIES = false globally to the ObjectMapper",
       "why_fails": "Disabling unknown property checking globally means all JSON deserialization silently ignores unexpected fields. This hides API contract violations, schema drift, and typos. If a required field is renamed in the JSON source, the Java field will silently get a null/default value instead of raising an error, causing subtle bugs.",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.oracle.com/en/java/javase/21/docs/api/"
       ],
@@ -37,7 +37,7 @@
     {
       "action": "Adding @JsonIgnoreProperties(ignoreUnknown = true) to every POJO class without understanding which fields are expected",
       "why_fails": "While less destructive than the global setting, blanket ignoring on every class still masks schema evolution issues. If the JSON API adds a new required field, your application will silently ignore it. Use this annotation judiciously, only on classes where unknown fields are genuinely expected.",
-      "fail_rate": 0.35,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.oracle.com/en/java/javase/21/docs/api/"
       ],

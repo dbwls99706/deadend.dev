@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/aws-apis.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check AWS API docs for the specific operation's required parameters and formats"
     },
     {
       "action": "Check for parameter length/pattern limits (e.g., IAM names must be alphanumeric)",

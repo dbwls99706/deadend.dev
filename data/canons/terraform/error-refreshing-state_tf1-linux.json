@@ -52,7 +52,7 @@
         "https://developer.hashicorp.com/terraform/language/backend/s3"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check S3 bucket permissions and backend configuration in terraform block"
     },
     {
       "action": "If state is corrupted, pull the state file, fix it, and push back",
@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check for concurrent terraform operations that may have corrupted state"
     }
   ],
   "transition_graph": {

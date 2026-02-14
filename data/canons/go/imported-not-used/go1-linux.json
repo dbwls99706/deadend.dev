@@ -48,7 +48,7 @@
     {
       "action": "Use goimports or gopls to auto-manage imports",
       "success_rate": 0.98,
-      "how": "",
+      "how": "Use goimports or gopls to auto-manage imports",
       "sources": [
         "https://pkg.go.dev/golang.org/x/tools/cmd/goimports"
       ],

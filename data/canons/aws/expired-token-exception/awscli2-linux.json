@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sourcing-external.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use credential_process or credential helpers for automatic refresh"
     }
   ],
   "transition_graph": {

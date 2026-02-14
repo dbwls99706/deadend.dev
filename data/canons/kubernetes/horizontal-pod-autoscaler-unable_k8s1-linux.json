@@ -58,7 +58,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/k8s-hpa-unable-to-fetch/k8s129-linux",
+        "distinction": "'HPA unable to fetch metrics' is a autoscaling_error error while 'failed to get cpu utilization' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

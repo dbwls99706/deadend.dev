@@ -61,13 +61,18 @@
         "https://docs.docker.com/reference/cli/docker/compose/up/"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use docker-compose up which handles container lifecycle automatically"
     }
   ],
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/healthcheck-unhealthy/docker27-linux",
+        "distinction": "'Error response from daemon' is a runtime_error error while 'Container health status' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

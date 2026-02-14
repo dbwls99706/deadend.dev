@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/cli/latest/reference/sts/get-session-token.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if using temporary credentials that expired; refresh with aws sts get-session-token"
     },
     {
       "action": "Verify correct AWS_PROFILE is set, check ~/.aws/credentials",

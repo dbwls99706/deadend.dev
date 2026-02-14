@@ -37,7 +37,7 @@
     {
       "action": "Initializing the variable to None at function top",
       "why_fails": "Hides the real bug if the None path is never intended",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://docs.python.org/3/library/exceptions.html"
       ],
@@ -65,7 +65,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/runtimeerror-set-changed-size/py311-linux",
+        "distinction": "'UnboundLocalError' is a scoping error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

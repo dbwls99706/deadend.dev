@@ -70,7 +70,7 @@
         "https://nodejs.org/api/modules.html#file-modules"
       ],
       "condition": "",
-      "how": ""
+      "how": "Verify the file exists at the path relative to the importing file"
     }
   ],
   "transition_graph": {

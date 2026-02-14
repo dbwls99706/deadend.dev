@@ -38,7 +38,7 @@
     {
       "action": "Running 'killall node' to kill all Node processes",
       "why_fails": "This kills every Node process on the system, including unrelated ones such as build watchers, other services, or VS Code extensions. It is a blunt instrument that causes collateral damage and does not address the root cause of why a stale process held the port.",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://nodejs.org/api/process.html#signal-events"
       ]

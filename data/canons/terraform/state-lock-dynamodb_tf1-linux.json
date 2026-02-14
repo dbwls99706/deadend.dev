@@ -70,13 +70,18 @@
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check CI/CD for parallel Terraform runs that need serialization"
     }
   ],
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "terraform/depends-on-module/tf1-linux",
+        "distinction": "'Error acquiring the state lock' is a state_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

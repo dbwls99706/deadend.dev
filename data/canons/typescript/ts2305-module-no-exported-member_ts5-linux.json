@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check if the export was renamed or moved in a package update"
     },
     {
       "action": "Use default import if the module uses export default: import X from 'mod' not { X }",
@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2694-no-exported-member/ts5-linux",
+        "distinction": "'error TS2305' is a import_error error while 'error TS2694' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

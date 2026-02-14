@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": ""
+      "how": "Run terraform init -upgrade to refresh provider cache"
     }
   ],
   "transition_graph": {

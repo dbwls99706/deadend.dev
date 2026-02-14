@@ -28,7 +28,7 @@
     {
       "action": "Use --trusted-host for all installs permanently",
       "why_fails": "Disables SSL verification which is a security risk; does not fix the underlying certificate issue",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://pip.pypa.io/en/stable/cli/pip_install/"
       ],

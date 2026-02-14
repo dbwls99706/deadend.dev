@@ -62,7 +62,7 @@
         "https://docs.python.org/3/reference/expressions.html#yield-expressions"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use separate generator instances for recursive patterns"
     }
   ],
   "transition_graph": {

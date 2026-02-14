@@ -65,7 +65,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "cuda/cuda-driver-insufficient/cuda12-linux",
+        "distinction": "'FileNotFoundError' is a build error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

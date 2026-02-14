@@ -68,7 +68,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "python/assertionerror/py311-linux",
+        "distinction": "'subprocess.CalledProcessError' is a subprocess_error error while 'AssertionError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

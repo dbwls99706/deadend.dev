@@ -70,13 +70,18 @@
         "https://doc.rust-lang.org/std/rc/struct.Rc.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use Rc/Arc for shared ownership when multiple parts need the data"
     }
   ],
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/e0700-async-closure-lifetime/rust1-linux",
+        "distinction": "'error[E0597]' is a lifetime_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

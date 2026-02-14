@@ -52,7 +52,7 @@
         "https://nodejs.org/api/packages.html#exports"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check library changelog for the new import path after the update"
     },
     {
       "action": "Pin to the previous version that exposed this subpath",
@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "node/cannot-find-module-npm/node20-linux",
+        "distinction": "'Error [ERR_PACKAGE_PATH_NOT_EXPORTED]' is a module_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

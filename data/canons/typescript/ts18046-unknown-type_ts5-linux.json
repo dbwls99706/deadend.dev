@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use type predicate or assertion function for custom error types"
     }
   ],
   "transition_graph": {

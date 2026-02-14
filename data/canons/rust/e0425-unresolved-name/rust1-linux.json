@@ -61,13 +61,18 @@
         "https://doc.rust-lang.org/error_codes/E0425.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check for typos in name and verify module visibility (pub)"
     }
   ],
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/cargo-feature-not-found/rust1-linux",
+        "distinction": "'error[E0425]' is a name_error error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

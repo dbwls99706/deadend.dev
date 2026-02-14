@@ -52,7 +52,7 @@
         "https://nodejs.org/api/errors.html#err_invalid_arg_type"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the calling code — trace where wrong type originates"
     },
     {
       "action": "Add TypeScript or JSDoc types to catch at compile time",
@@ -67,7 +67,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "node/typeerror-callback-not-function/node20-linux",
+        "distinction": "'TypeError [ERR_INVALID_ARG_TYPE]' is a type_error error while 'TypeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

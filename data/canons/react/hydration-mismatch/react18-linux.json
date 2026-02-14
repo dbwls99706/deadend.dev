@@ -92,7 +92,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "react/text-content-mismatch/react18-linux",
+        "distinction": "'Hydration failed because the server rendered HTML ' is a hydration_error error while 'Warning' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "manual",

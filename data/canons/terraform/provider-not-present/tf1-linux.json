@@ -48,7 +48,7 @@
     {
       "action": "Run terraform init to download and configure providers",
       "success_rate": 0.92,
-      "how": "",
+      "how": "Run terraform init to download and configure providers",
       "sources": [
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],

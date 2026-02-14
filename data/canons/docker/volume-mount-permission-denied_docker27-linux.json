@@ -70,7 +70,7 @@
         "https://docs.docker.com/engine/storage/volumes/"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use named volumes instead of bind mounts for data that doesn't need host access"
     }
   ],
   "transition_graph": {

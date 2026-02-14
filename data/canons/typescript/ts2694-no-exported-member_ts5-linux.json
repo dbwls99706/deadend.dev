@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Check the library's changelog/migration guide for renamed or removed exports"
     },
     {
       "action": "Use IDE Go to Definition to find the actual export path",
@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use IDE Go to Definition to find the actual export path"
     },
     {
       "action": "Check if import path changed: import { X } from 'lib' vs 'lib/subpath'",
@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "typescript/ts2305-module-no-exported-member/ts5-linux",
+        "distinction": "'error TS2694' is a import_error error while 'error TS2305' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

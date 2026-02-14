@@ -61,7 +61,7 @@
         "https://pkg.go.dev/encoding/json"
       ],
       "condition": "",
-      "how": ""
+      "how": "Use encoding/json for complex struct conversions"
     }
   ],
   "transition_graph": {

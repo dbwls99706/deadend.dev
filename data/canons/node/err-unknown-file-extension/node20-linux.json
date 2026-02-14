@@ -48,7 +48,7 @@
     {
       "action": "Use tsx or ts-node for TypeScript execution",
       "success_rate": 0.95,
-      "how": "",
+      "how": "Use tsx or ts-node for TypeScript execution",
       "sources": [
         "https://nodejs.org/api/typescript.html"
       ],

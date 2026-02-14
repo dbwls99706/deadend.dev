@@ -76,7 +76,12 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": []
+    "frequently_confused_with": [
+      {
+        "error_id": "rust/rust-crossbeam-scope-panic/rust1.77-linux",
+        "distinction": "'error[E0277]' is a concurrency_error error while 'thread '<unnamed>' panicked at 'a]scoped thread pa' has a different failure mode despite similar symptoms. Check error message details to differentiate."
+      }
+    ]
   },
   "metadata": {
     "generated_by": "bulk_generate.py",

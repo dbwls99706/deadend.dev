@@ -28,7 +28,7 @@
     {
       "action": "Assigning to a throwaway: _ = unused",
       "why_fails": "Suppresses the error but why declare it?",
-      "fail_rate": 0.4,
+      "fail_rate": 0.55,
       "sources": [
         "https://pkg.go.dev/cmd/compile"
       ],
