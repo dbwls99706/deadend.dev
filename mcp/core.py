@@ -44,20 +44,17 @@ def _get_canons() -> list[dict]:
     return canons
 
 
-def _get_domain_index() -> dict[str, list[str]]:
-    """Build domain -> [signature] index (cached)."""
+def _get_domain_counts() -> dict[str, int]:
+    """Build domain -> error count index (cached)."""
     global _DOMAIN_INDEX
     if _DOMAIN_INDEX is not None:
         return _DOMAIN_INDEX
 
     canons = _get_canons()
-    index: dict[str, list[str]] = {}
+    index: dict[str, int] = {}
     for c in canons:
         d = c["error"]["domain"]
-        sig = c["error"]["signature"]
-        index.setdefault(d, [])
-        if sig not in index[d]:
-            index[d].append(sig)
+        index[d] = index.get(d, 0) + 1
     _DOMAIN_INDEX = index
     return index
 
@@ -549,7 +546,7 @@ def _tool_lookup_error(args: dict, canons: list[dict]) -> dict:
         text = (
             "No matching errors found in deadends.dev database.\n\n"
             f"Searched {len(canons)} error patterns across "
-            f"{len(_get_domain_index())} domains.\n"
+            f"{len(_get_domain_counts())} domains.\n"
         )
         if suggested != "unknown":
             text += (

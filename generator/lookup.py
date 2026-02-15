@@ -26,6 +26,7 @@ from pathlib import Path
 DATA_DIR = Path(__file__).parent.parent / "data" / "canons"
 
 _CANONS_CACHE: list[dict] | None = None
+_COMPILED_PATTERNS: list[tuple[dict, re.Pattern | None]] | None = None
 
 
 def _load_canons() -> list[dict]:
@@ -40,6 +41,24 @@ def _load_canons() -> list[dict]:
             canons.append(json.load(fh))
     _CANONS_CACHE = canons
     return canons
+
+
+def _get_compiled_patterns() -> list[tuple[dict, re.Pattern | None]]:
+    """Pre-compile all regex patterns (cached after first call)."""
+    global _COMPILED_PATTERNS
+    if _COMPILED_PATTERNS is not None:
+        return _COMPILED_PATTERNS
+
+    canons = _load_canons()
+    patterns = []
+    for canon in canons:
+        try:
+            pattern = re.compile(canon["error"]["regex"], re.IGNORECASE)
+        except re.error:
+            pattern = None
+        patterns.append((canon, pattern))
+    _COMPILED_PATTERNS = patterns
+    return patterns
 
 
 _STOPWORDS = frozenset({
@@ -62,30 +81,25 @@ def lookup_all(error_message: str) -> list[dict]:
     if not error_message or not error_message.strip():
         return []
 
-    canons = _load_canons()
+    compiled = _get_compiled_patterns()
     matches = []
+    msg = error_message.lower()
+    msg_words = set(re.split(r"\W+", msg))
 
-    for canon in canons:
-        try:
-            pattern = re.compile(canon["error"]["regex"], re.IGNORECASE)
-        except re.error:
-            continue
-
+    for canon, pattern in compiled:
         score = 0
 
         # Regex match (highest priority)
-        if pattern.search(error_message):
+        if pattern is not None and pattern.search(error_message):
             score += 100
 
         # Signature substring match
         sig = canon["error"]["signature"].lower()
-        msg = error_message.lower()
         if sig in msg or msg in sig:
             score += 50
 
         # Word overlap (excluding stopwords)
         sig_words = set(re.split(r"\W+", sig))
-        msg_words = set(re.split(r"\W+", msg))
         overlap = (sig_words & msg_words) - _STOPWORDS
         score += len(overlap) * 5
 

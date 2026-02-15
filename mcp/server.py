@@ -33,7 +33,7 @@ Cursor config (MCP settings):
 import json
 import sys
 
-from mcp.core import _get_canons, _get_domain_index, handle_request
+from mcp.core import _get_canons, _get_domain_counts, handle_request
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
     canons = _get_canons()
     sys.stderr.write(
         f"deadends.dev MCP server loaded: {len(canons)} errors "
-        f"across {len(_get_domain_index())} domains\n"
+        f"across {len(_get_domain_counts())} domains\n"
     )
 
     for line in sys.stdin:

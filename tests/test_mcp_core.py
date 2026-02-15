@@ -1,22 +1,6 @@
 """Tests for mcp.core — shared MCP logic."""
 
-import copy
-
-from tests.conftest import VALID_CANON
-
-
-def _make_canons(count=3, domain="python"):
-    """Create a list of test canons."""
-    canons = []
-    for i in range(count):
-        c = copy.deepcopy(VALID_CANON)
-        c["id"] = f"{domain}/test-error-{i}/env1"
-        c["url"] = f"https://deadends.dev/{domain}/test-error-{i}/env1"
-        c["error"]["signature"] = f"TestError{i}: something failed"
-        c["error"]["regex"] = f"TestError{i}.*"
-        c["error"]["domain"] = domain
-        canons.append(c)
-    return canons
+from tests.conftest import make_canons as _make_canons
 
 
 class TestMatchError:

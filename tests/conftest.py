@@ -80,3 +80,17 @@ def make_canon():
         return canon
 
     return _make
+
+
+def make_canons(count=3, domain="python"):
+    """Create a list of test canons with unique IDs."""
+    canons = []
+    for i in range(count):
+        c = copy.deepcopy(VALID_CANON)
+        c["id"] = f"{domain}/test-error-{i}/env1"
+        c["url"] = f"https://deadends.dev/{domain}/test-error-{i}/env1"
+        c["error"]["signature"] = f"TestError{i}: something failed"
+        c["error"]["regex"] = f"TestError{i}.*"
+        c["error"]["domain"] = domain
+        canons.append(c)
+    return canons
