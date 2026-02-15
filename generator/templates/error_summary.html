@@ -48,6 +48,7 @@
   <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
 <body class="pg-summary">
+  <a href="#tldr" class="skip-link">Skip to content</a>
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">ERROR={{ signature }}
 REGEX={{ regex }}
@@ -122,7 +123,7 @@ MATCH_API={{ base_url }}/api/v1/match.json</pre>
     {% for wa in common_workarounds %}
     <div class="workaround">
       <strong>{{ wa.action }}</strong> <span class="success-rate">(Success rate: {{ wa.success_rate }})</span>
-      {% if wa.how %}<p><code>{{ wa.how }}</code></p>{% endif %}
+      {% if wa.how %}<p class="code-block"><code>{{ wa.how }}</code><button class="copy-btn" aria-label="Copy command" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent).then(function(){event.target.textContent='Copied!'});setTimeout(function(){event.target.textContent='Copy'},1500)">Copy</button></p>{% endif %}
     </div>
     {% endfor %}
   </section>

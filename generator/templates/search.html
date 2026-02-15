@@ -37,6 +37,7 @@
   <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
 <body class="pg-search">
+  <a href="#search-input" class="skip-link">Skip to search</a>
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">PAGE: Error Search
 PURPOSE: Match error messages against {{ total_errors }} known patterns across {{ domain_count }} domains
@@ -59,6 +60,7 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
         {% endfor %}
       </select>
       <span id="search-status" class="meta"></span>
+      <span class="meta kbd-hint"><kbd>/</kbd> focus · <kbd>Esc</kbd> clear · <kbd>Enter</kbd> go</span>
     </div>
   </div>
 
@@ -345,6 +347,29 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
 
       input.addEventListener('input', doSearch);
       domainFilter.addEventListener('change', doSearch);
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        // '/' to focus search (when not already in an input)
+        if (e.key === '/' && document.activeElement !== input && document.activeElement.tagName !== 'SELECT') {
+          e.preventDefault();
+          input.focus();
+        }
+        // Escape to clear and blur
+        if (e.key === 'Escape' && document.activeElement === input) {
+          input.value = '';
+          input.blur();
+          search('');
+          updateUrlState('', domainFilter.value);
+        }
+        // Enter to navigate to first result
+        if (e.key === 'Enter' && document.activeElement === input) {
+          var firstLink = resultsDiv.querySelector('.result a');
+          if (firstLink) {
+            window.location.href = firstLink.href;
+          }
+        }
+      });
 
       window.addEventListener('popstate', function() {
         var params = new URLSearchParams(window.location.search);

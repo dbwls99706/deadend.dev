@@ -66,6 +66,7 @@
   <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
 <body class="pg-domain">
+  <a href="#entries" class="skip-link">Skip to errors</a>
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">DOMAIN={{ domain }}
 TOTAL_ERRORS={{ total }}
@@ -86,12 +87,37 @@ MATCH_API={{ base_url }}/api/v1/match.json
     <span class="verdict-false">{{ resolvable_counts.false }} not fixable</span>
   </section>
 
+  <div style="margin:1rem 0;">
+    <input id="domain-filter-input" type="text" placeholder="Filter errors in {{ domain | display_name }}..." style="width:100%;padding:0.5rem;font-size:0.9rem;font-family:monospace;background:#161b22;color:#e0e0e0;border:1px solid #30363d;border-radius:6px;box-sizing:border-box;">
+  </div>
+
+  <div id="entries">
   {% for e in entries %}
-  <div class="entry">
+  <div class="entry" data-sig="{{ e.signature|lower }}">
     <a href="{{ base_path }}/{{ e.slug_key }}/"><code>{{ e.signature }}</code></a>
     <span class="meta">{{ e.env_count }} env{{ 's' if e.env_count != 1 else '' }} · Best fix rate: {{ (e.fix_success_rate * 100)|int }}% · {{ e.dead_end_count }} dead ends · {{ e.workaround_count }} workarounds</span>
   </div>
   {% endfor %}
+  </div>
+  <p id="filter-empty" style="display:none;color:#8b949e;text-align:center;padding:1rem;">No matching errors found.</p>
+
+  <script>
+  (function(){
+    var input = document.getElementById('domain-filter-input');
+    var entries = document.querySelectorAll('#entries .entry');
+    var empty = document.getElementById('filter-empty');
+    input.addEventListener('input', function(){
+      var q = input.value.toLowerCase().trim();
+      var visible = 0;
+      for(var i=0;i<entries.length;i++){
+        var match = !q || entries[i].getAttribute('data-sig').indexOf(q) !== -1;
+        entries[i].style.display = match ? '' : 'none';
+        if(match) visible++;
+      }
+      empty.style.display = visible === 0 ? 'block' : 'none';
+    });
+  })();
+  </script>
 
   <footer class="meta">
     <p><a href="{{ base_path }}/">deadends.dev</a> · <a href="{{ base_path }}/feed-{{ domain }}.xml">Atom feed</a> · <a href="{{ base_path }}/api/v1/match/{{ domain }}.json">Match API</a> · <a href="https://github.com/dbwls99706/deadends.dev">GitHub</a></p>

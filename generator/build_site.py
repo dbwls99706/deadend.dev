@@ -575,7 +575,11 @@ Sitemap: {BASE_URL}/sitemap.xml
 
 
 def build_404_page() -> None:
-    """Generate a custom 404 page with navigation and search."""
+    """Generate a custom 404 page with smart search redirect.
+
+    Extracts keywords from the URL path and offers to search for them,
+    so users landing on deleted/moved pages get directed to relevant results.
+    """
     html = (
         "<!DOCTYPE html>\n"
         '<html lang="en"><head>\n'
@@ -585,24 +589,55 @@ def build_404_page() -> None:
         "<title>404 — Error Not Found | deadends.dev</title>\n"
         '<meta name="robots" content="noindex">\n'
         f'<link rel="icon" href="{BASE_PATH}/favicon.svg" type="image/svg+xml">\n'
-        "<style>\n"
-        "body{font-family:system-ui,-apple-system,sans-serif;max-width:800px;"
-        "margin:2rem auto;padding:0 1rem;color:#e0e0e0;background:#0d1117;}\n"
-        "a{color:#58a6ff;}h1{font-size:1.6rem;}"
-        "nav a{color:#8b949e;text-decoration:none;}nav a:hover{color:#58a6ff;}\n"
-        ".links{margin:2rem 0;}.links a{display:inline-block;margin:0.5rem 1rem 0.5rem 0;}\n"
-        "</style>\n"
+        f'<link rel="stylesheet" href="{BASE_PATH}/style.css">\n'
         "</head><body>\n"
+        f'<a href="#main" class="skip-link">Skip to content</a>\n'
         f'<nav><a href="{BASE_PATH}/">deadends.dev</a></nav>\n'
+        '<main id="main">\n'
         "<h1>404 — Error Not Found</h1>\n"
         "<p>This error page doesn't exist yet. "
         "Ironic for a site that catalogs errors.</p>\n"
-        '<div class="links">\n'
-        f'<a href="{BASE_PATH}/search/">Search errors</a>\n'
-        f'<a href="{BASE_PATH}/">Browse all domains</a>\n'
-        '<a href="https://github.com/dbwls99706/deadends.dev/issues/new">'
+        '<div id="suggestion" style="display:none;background:#161b22;'
+        "border:1px solid #30363d;border-radius:6px;"
+        'padding:1rem;margin:1rem 0;">\n'
+        "<p>Looking for an error? We found a possible match:</p>\n"
+        '<p><a id="search-link" href="">Search for '
+        '<code id="search-term"></code></a></p>\n'
+        "</div>\n"
+        '<div class="links" style="margin:2rem 0;">\n'
+        f'<a href="{BASE_PATH}/search/" '
+        'style="display:inline-block;margin:0.5rem 1rem 0.5rem 0;">'
+        "Search all errors</a>\n"
+        f'<a href="{BASE_PATH}/" '
+        'style="display:inline-block;margin:0.5rem 1rem 0.5rem 0;">'
+        "Browse all domains</a>\n"
+        '<a href="https://github.com/dbwls99706/deadends.dev/issues/new" '
+        'style="display:inline-block;margin:0.5rem 1rem 0.5rem 0;">'
         "Request this error</a>\n"
         "</div>\n"
+        "</main>\n"
+        "<script>\n"
+        "(function(){\n"
+        "  var path = window.location.pathname.replace(/^\\/|\\/$|\\."
+        "html$/g,'');\n"
+        "  var parts = path.split('/').filter(function(p){return p.length>1;});\n"
+        "  if(parts.length>=2){\n"
+        "    var keyword = parts.slice(1).join(' ').replace(/-/g,' ');\n"
+        "    var domain = parts[0];\n"
+        "    document.getElementById('search-term').textContent = keyword;\n"
+        f"    document.getElementById('search-link').href = '{BASE_PATH}"
+        "/search/?q='+encodeURIComponent(keyword)"
+        "+'&domain='+encodeURIComponent(domain);\n"
+        "    document.getElementById('suggestion').style.display = 'block';\n"
+        "  } else if(parts.length===1 && parts[0].length>2){\n"
+        "    var kw = parts[0].replace(/-/g,' ');\n"
+        "    document.getElementById('search-term').textContent = kw;\n"
+        f"    document.getElementById('search-link').href = '{BASE_PATH}"
+        "/search/?q='+encodeURIComponent(kw);\n"
+        "    document.getElementById('suggestion').style.display = 'block';\n"
+        "  }\n"
+        "})();\n"
+        "</script>\n"
         "</body></html>"
     )
     (SITE_DIR / "404.html").write_text(html, encoding="utf-8")
@@ -787,6 +822,36 @@ def build_stylesheet() -> None:
         ".chain-confused { margin-top: 1rem; }",
         ".chain-confused-item { padding: 0.3rem 0;",
         "  border-bottom: 1px solid #161b22; }",
+        "",
+        "/* Skip-to-content (accessibility) */",
+        ".skip-link { position: absolute;",
+        "  top: -100px; left: 0;",
+        "  background: #58a6ff; color: #0d1117;",
+        "  padding: 0.5rem 1rem; z-index: 100;",
+        "  font-weight: bold; text-decoration: none;",
+        "  border-radius: 0 0 6px 0; }",
+        ".skip-link:focus { top: 0; }",
+        "",
+        "/* Copy-to-clipboard button */",
+        ".code-block { position: relative;",
+        "  display: flex; align-items: center;",
+        "  gap: 0.5rem; }",
+        ".copy-btn { background: #21262d;",
+        "  color: #8b949e; border: 1px solid #30363d;",
+        "  border-radius: 4px; padding: 0.2rem 0.5rem;",
+        "  font-size: 0.75rem; cursor: pointer;",
+        "  white-space: nowrap; flex-shrink: 0; }",
+        ".copy-btn:hover { background: #30363d;",
+        "  color: #e0e0e0; }",
+        "",
+        "/* Keyboard hint */",
+        ".kbd-hint { margin-left: auto; }",
+        "kbd { background: #21262d;",
+        "  border: 1px solid #30363d;",
+        "  border-radius: 3px;",
+        "  padding: 0.1rem 0.3rem;",
+        "  font-size: 0.75rem;",
+        "  font-family: monospace; }",
         "",
     ])
     (SITE_DIR / "style.css").write_text(css, encoding="utf-8")

@@ -78,6 +78,7 @@
   <link rel="stylesheet" href="{{ base_path }}/style.css">
 </head>
 <body class="pg-detail">
+  <a href="#tldr" class="skip-link">Skip to content</a>
   <!-- AI-PARSEABLE STRUCTURED SUMMARY — Use /api/v1/{{ id }}.json for full data -->
   {% autoescape false %}
   <pre id="ai-summary" style="display:none;">ERROR_ID={{ id }}
@@ -153,7 +154,7 @@ STATS_API={{ base_url }}/api/v1/stats.json</pre>
     {% for wa in workarounds|default([]) %}
     <div class="workaround">
       <strong>{{ wa.action }}</strong> <span class="success-rate">(Success rate: {{ wa.success_rate }})</span>
-      {% if wa.how %}<p><code>{{ wa.how }}</code></p>{% endif %}
+      {% if wa.how %}<p class="code-block"><code>{{ wa.how }}</code><button class="copy-btn" aria-label="Copy command" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent).then(function(){event.target.textContent='Copied!'});setTimeout(function(){event.target.textContent='Copy'},1500)">Copy</button></p>{% endif %}
       {% if wa.tradeoff %}<p>Tradeoff: {{ wa.tradeoff }}</p>{% endif %}
       {% if wa.condition %}<p class="meta">Condition: {{ wa.condition }}</p>{% endif %}
       {% if wa.sources %}
