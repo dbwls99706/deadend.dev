@@ -70,7 +70,7 @@
         "https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Pass by reference instead of by value:\nfn process(item: &Item) -> String { // borrows, doesn't consume\n    item.name.clone()\n}\n\n// Or if you need the value, take ownership of the parameter:\nfn consume(item: Item) -> String { // takes ownership\n    item.name\n}"
     }
   ],
   "transition_graph": {

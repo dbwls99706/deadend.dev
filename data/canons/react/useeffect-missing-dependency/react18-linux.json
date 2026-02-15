@@ -52,7 +52,7 @@
         "https://react.dev/reference/react/useMemo"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Option 1: Memoize the dep\nconst options = useMemo(() => ({ url, method }), [url, method]);\nuseEffect(() => { fetch(options); }, [options]);\n// Option 2: Move inside useEffect\nuseEffect(() => { const opts = { url, method }; fetch(opts); }, [url, method]);"
     },
     {
       "action": "Extract the function used in useEffect to useCallback if it's a dep",
@@ -61,7 +61,7 @@
         "https://react.dev/reference/react/useCallback"
       ],
       "condition": "",
-      "how": ""
+      "how": "const fetchData = useCallback(async () => {\n  const res = await fetch(`/api/${id}`);\n  setData(await res.json());\n}, [id]);\nuseEffect(() => { fetchData(); }, [fetchData]);"
     }
   ],
   "transition_graph": {
@@ -69,7 +69,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "react/act-warning-test/react18-linux",
+        "error_id": "react/react-act-warning/react18-linux",
         "distinction": "'React Hook useEffect has a missing dependency' is a hook_warning error while 'Warning' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

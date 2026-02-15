@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Break circular type by using interface:\n// Bad (circular type alias):\ntype Tree = { children: Tree[] }; // may cause recursion\n\n// Good (interface handles recursion natively):\ninterface Tree {\n  children: Tree[];\n}"
     },
     {
       "action": "Check if a simpler type utility exists in a library like type-fest",

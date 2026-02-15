@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/tempfile.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "sudo rm -rf /tmp/*\nfind /var/log -name '*.gz' -delete\nfind . -type d -name __pycache__ -exec rm -rf {} +"
     },
     {
       "action": "Set TMPDIR to a volume with more space for temporary files",
@@ -71,7 +71,7 @@
         "https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir"
       ],
       "condition": "",
-      "how": ""
+      "how": "export TMPDIR=/mnt/large-volume/tmp\nmkdir -p $TMPDIR\npython my_script.py"
     }
   ],
   "transition_graph": {

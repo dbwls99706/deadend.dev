@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#staticmethod"
       ],
       "condition": "",
-      "how": ""
+      "how": "# @staticmethod: no self, called via Class.method()\n# @classmethod: cls as first arg, called via Class.method()\n# Regular method: self as first arg, called via instance.method()\nclass Foo:\n    @staticmethod\n    def no_self(): pass\n    def needs_self(self): pass"
     }
   ],
   "transition_graph": {

@@ -93,7 +93,7 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "git/stash-apply-conflict/git2-linux",
+        "error_id": "git/local-changes-overwritten/git2-linux",
         "probability": 0.25,
         "condition": "Branch changes since stashing may conflict on stash apply"
       }

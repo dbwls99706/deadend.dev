@@ -61,7 +61,7 @@
         "https://go.dev/ref/spec#Return_statements"
       ],
       "condition": "",
-      "how": ""
+      "how": "func classify(n int) string {\n    if n > 0 {\n        return \"positive\"\n    } else if n < 0 {\n        return \"negative\"\n    }\n    return \"zero\" // default return covers all paths\n}"
     }
   ],
   "transition_graph": {

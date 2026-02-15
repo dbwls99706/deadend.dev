@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/dockerfile/#understand-how-arg-and-from-interact"
       ],
       "condition": "",
-      "how": ""
+      "how": "# ARG is scoped to the build stage:\nFROM node:20 AS builder\nARG APP_VERSION  # Must declare here\nRUN echo $APP_VERSION\n\nFROM node:20-slim\nARG APP_VERSION  # Must declare AGAIN in this stage\nLABEL version=$APP_VERSION"
     }
   ],
   "transition_graph": {

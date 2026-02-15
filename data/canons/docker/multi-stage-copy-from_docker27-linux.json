@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/building/multi-stage/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Verify the builder stage output:\nFROM node:20 AS builder\nWORKDIR /app\nCOPY . .\nRUN npm ci && npm run build\n# Check: ls -la /app/dist  (this is what COPY --from=builder copies)\n\nFROM node:20-slim\nCOPY --from=builder /app/dist ./dist  # Path must match builder output"
     }
   ],
   "transition_graph": {

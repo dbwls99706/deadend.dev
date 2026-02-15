@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/tasks/configure-pod-container/assign-memory-resource/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Profile the application memory:\n# For Java: -XX:NativeMemoryTracking=summary\n# For Node: --max-old-space-size=512\n# For Python: tracemalloc\n\n# Then set limits based on actual usage + headroom:\nresources:\n  limits:\n    memory: \"1Gi\"  # Set to ~1.5x observed peak"
     }
   ],
   "transition_graph": {

@@ -37,7 +37,7 @@
     {
       "action": "Ignore the warning since React 18.3+ removed it",
       "why_fails": "The warning is gone but the underlying memory leak and wasted network requests remain",
-      "fail_rate": 0.70,
+      "fail_rate": 0.7,
       "sources": [
         "https://github.com/facebook/react/pull/22114"
       ],
@@ -68,20 +68,20 @@
     "leads_to": [
       {
         "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
-        "probability": 0.30,
+        "probability": 0.3,
         "condition": "When the fix is incomplete and only addresses setState but not the underlying resource leak"
       }
     ],
     "preceded_by": [
       {
         "error_id": "react/useeffect-missing-dependency/react18-linux",
-        "probability": 0.20,
+        "probability": 0.2,
         "condition": "When missing dependencies cause the effect to not clean up properly on re-runs"
       }
     ],
     "frequently_confused_with": [
       {
-        "error_id": "react/cannot-update-unmounted/react18-linux",
+        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
         "distinction": "The existing cannot-update-unmounted canon covers the same base warning; this canon specifically addresses the async-operation pattern causing the unmounted update"
       }
     ]

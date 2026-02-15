@@ -70,7 +70,7 @@
         "https://nextjs.org/docs/app/building-your-application/deploying"
       ],
       "condition": "",
-      "how": ""
+      "how": "// In your deployment config, keep old _next/static assets:\n# nginx.conf:\nlocation /_next/static {\n  alias /var/www/builds/current/_next/static;\n  # Also serve previous build's assets:\n  try_files $uri @previous_build;\n}\n\n# Or use a CDN with long cache TTLs for immutable assets"
     }
   ],
   "transition_graph": {

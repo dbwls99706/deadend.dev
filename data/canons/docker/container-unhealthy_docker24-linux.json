@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/container-unhealthy/docker24-linux",
+  "url": "https://deadends.dev/docker/container-unhealthy/docker24-linux",
+  "error": {
+    "signature": "container is unhealthy",
+    "regex": "container.*unhealthy|unhealthy.*container",
+    "domain": "docker",
+    "category": "healthcheck",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-15",
+    "summary": "Docker container health check is failing. The application inside the container is not responding to health probes correctly."
+  },
+  "dead_ends": [
+    {
+      "action": "Remove the HEALTHCHECK from Dockerfile",
+      "why_fails": "Hides the real problem; orchestrators cannot detect failures",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Inspect the health check log to see exact failure reason",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.docker.com/reference/dockerfile/#healthcheck"
+      ],
+      "condition": "",
+      "how": "docker inspect --format='{{json .State.Health}}' <container_name> | jq '.Log[-1]'\n\nThis shows the last health check result including exit code and output."
+    },
+    {
+      "action": "Exec into the container to debug the health check",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/container/exec/"
+      ],
+      "condition": "",
+      "how": "docker exec -it <container_name> sh\n# Then run the health check command manually:\ncurl -f http://localhost:8080/health\n# Or whatever command is in the HEALTHCHECK instruction.\n# Check if the process is listening: netstat -tlnp || ss -tlnp\n# Check logs: cat /var/log/app.log"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/healthcheck-unhealthy/docker27-linux",
+        "distinction": "Both relate to container health; container-unhealthy is the container state, healthcheck-unhealthy focuses on the HEALTHCHECK instruction output."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

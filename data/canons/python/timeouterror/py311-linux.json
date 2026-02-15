@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/urllib.request.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "import tenacity\n\n@tenacity.retry(wait=tenacity.wait_exponential(multiplier=1, max=60), stop=tenacity.stop_after_attempt(5))\ndef fetch_with_retry(url):\n    return urllib.request.urlopen(url, timeout=10).read()"
     },
     {
       "action": "Verify target host is reachable: DNS, firewall, port",

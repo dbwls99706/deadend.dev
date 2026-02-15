@@ -52,7 +52,7 @@
         "https://react.dev/reference/react-dom/components/common"
       ],
       "condition": "",
-      "how": ""
+      "how": "// data-* and aria-* keep their dashes:\n<div data-testid=\"my-id\" aria-label=\"Close\" />\n// All other attrs use camelCase:\n<input autoComplete=\"off\" maxLength={10} />"
     }
   ],
   "transition_graph": {

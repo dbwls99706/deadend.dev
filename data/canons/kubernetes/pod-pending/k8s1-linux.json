@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check what's blocking scheduling:\nkubectl describe pod <pod-name> | grep -A 10 Events\n\n# Scale up nodes:\nkubectl scale nodepool <pool> --num-nodes=5  # GKE\n\n# Or reduce resource requests:\nresources:\n  requests:\n    cpu: \"100m\"    # was 500m\n    memory: \"128Mi\" # was 512Mi"
     }
   ],
   "transition_graph": {

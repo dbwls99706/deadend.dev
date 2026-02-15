@@ -62,7 +62,7 @@
         "https://docs.python.org/3/tutorial/controlflow.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Ensure all branches assign the variable:\nif condition:\n    result = compute()\nelse:\n    result = default_value  # Don't leave this branch without assignment\n# Also check: is the import above this line?"
     }
   ],
   "transition_graph": {

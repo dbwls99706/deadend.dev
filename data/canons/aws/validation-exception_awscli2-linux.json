@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/error-responses.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Add --debug to any AWS CLI command to see the full API response:\naws s3api put-object --bucket my-bucket --key test --debug 2>&1 | grep 'ValidationException'\n\n# The error message typically includes the field name and constraint, e.g.:\n# 'Value for parameter X is invalid. Reason: Must be between 1 and 100.'\n# Fix the indicated parameter value to match the documented constraints."
     },
     {
       "action": "Check AWS API docs for the specific operation's required parameters and formats",

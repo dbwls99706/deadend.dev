@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/inspect.html#inspect.signature"
       ],
       "condition": "",
-      "how": ""
+      "how": "import inspect\nprint(inspect.signature(my_function))  # Shows expected params\n# Then compare with how you're calling it"
     }
   ],
   "transition_graph": {

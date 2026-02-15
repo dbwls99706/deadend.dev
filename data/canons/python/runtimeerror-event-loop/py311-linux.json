@@ -69,7 +69,7 @@
     "leads_to": [],
     "preceded_by": [
       {
-        "error_id": "python/asyncio-no-running-event-loop/py311-linux",
+        "error_id": "python/runtimeerror-no-running-event-loop/py311-linux",
         "probability": 0.14
       }
     ],

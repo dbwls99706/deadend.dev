@@ -55,13 +55,22 @@
       "condition": ""
     },
     {
-      "action": "For local images, import them directly: import img from './image.png'",
-      "success_rate": 0.9,
+      "action": "Use unoptimized prop for external images or configure remotePatterns",
+      "success_rate": 0.90,
+      "how": "// For a single external image that can't be optimized:\n<Image src={url} alt=\"desc\" width={800} height={600} unoptimized />\n\n// Or configure remotePatterns in next.config.js:\nmodule.exports = {\n  images: {\n    remotePatterns: [\n      { protocol: 'https', hostname: '**.amazonaws.com' },\n      { protocol: 'https', hostname: 'cdn.example.com' }\n    ]\n  }\n}",
       "sources": [
-        "https://nextjs.org/docs/app/building-your-application/optimizing/images#local-images"
+        "https://nextjs.org/docs/app/api-reference/components/image#unoptimized"
       ],
-      "condition": "",
-      "how": "import img from './image.png'"
+      "condition": ""
+    },
+    {
+      "action": "Install sharp as a dependency for better image optimization",
+      "success_rate": 0.88,
+      "how": "npm install sharp\n# sharp is auto-detected by Next.js for image optimization\n# Required in production/Docker — Next.js uses squoosh by default in dev\n# For Docker, add to Dockerfile:\n# RUN npm install sharp",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/images#sharp"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

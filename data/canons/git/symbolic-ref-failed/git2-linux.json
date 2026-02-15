@@ -65,7 +65,7 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "git/bad-object-head/git2-linux",
+        "error_id": "git/bad-object/git2-linux",
         "probability": 0.15,
         "condition": "when HEAD is set to a non-existent reference"
       },

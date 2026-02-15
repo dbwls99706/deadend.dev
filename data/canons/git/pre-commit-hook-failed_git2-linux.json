@@ -61,7 +61,7 @@
         "https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---no-verify"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Skip hooks for this one commit only:\ngit commit --no-verify -m 'commit message'\n\n# Only use this if you've verified the hook failure is a false positive\n# and plan to fix the hook issue separately"
     }
   ],
   "transition_graph": {
@@ -69,7 +69,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/bad-object-head/git2-linux",
+        "error_id": "git/bad-object/git2-linux",
         "distinction": "'pre-commit hook failed (add --no-verify to bypass)' is a hook_error error while 'fatal' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

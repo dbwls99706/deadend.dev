@@ -74,7 +74,7 @@
         "https://docs.nvidia.com/cuda/cusolver/index.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check current CUDA version:\nnvcc --version\nnvidia-smi\n\n# Update CUDA toolkit (Ubuntu):\nsudo apt-get update\nsudo apt-get install cuda-toolkit-12-4\n\n# Or update via conda for PyTorch:\nconda install pytorch pytorch-cuda=12.4 -c pytorch -c nvidia\n\n# Verify cuSOLVER works:\npython -c \"import torch; torch.linalg.solve(torch.eye(3, device='cuda'), torch.ones(3, device='cuda'))\""
     }
   ],
   "transition_graph": {

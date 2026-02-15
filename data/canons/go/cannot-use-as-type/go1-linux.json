@@ -61,7 +61,7 @@
         "https://go.dev/doc/effective_go#interfaces"
       ],
       "condition": "",
-      "how": ""
+      "how": "type Writer interface {\n    Write([]byte) (int, error)\n}\n\n// Implement the interface:\ntype MyWriter struct{}\n\nfunc (w *MyWriter) Write(data []byte) (int, error) {\n    // your implementation\n    return len(data), nil\n}\n\n// Now MyWriter satisfies Writer"
     }
   ],
   "transition_graph": {

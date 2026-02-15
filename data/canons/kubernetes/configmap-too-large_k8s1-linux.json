@@ -70,7 +70,7 @@
         "https://kubernetes.io/docs/concepts/configuration/configmap/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Compress data before storing:\ngzip -c config.json | base64 > config.b64\n\n# Or split into multiple ConfigMaps:\nkubectl create configmap app-config-1 --from-file=part1.yaml\nkubectl create configmap app-config-2 --from-file=part2.yaml\n\n# Mount both in the pod:\nvolumes:\n  - name: config-1\n    configMap:\n      name: app-config-1"
     }
   ],
   "transition_graph": {

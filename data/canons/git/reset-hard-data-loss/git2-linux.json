@@ -103,7 +103,7 @@
     "leads_to": [],
     "preceded_by": [
       {
-        "error_id": "git/merge-conflict/git2-linux",
+        "error_id": "git/merge-conflict-markers/git2-linux",
         "probability": 0.3,
         "condition": "Developer uses reset --hard to abandon a failed merge"
       }

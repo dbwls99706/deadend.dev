@@ -61,7 +61,7 @@
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Split:\nfunction Wrapper({ showEditor }) {\n  if (!showEditor) return <Preview />;\n  return <Editor />;  // Editor uses its own hooks internally\n}\nfunction Editor() {\n  const [text, setText] = useState('');  // Hook always called\n}"
     },
     {
       "action": "Check for early returns before hooks — all hooks must run before any return",

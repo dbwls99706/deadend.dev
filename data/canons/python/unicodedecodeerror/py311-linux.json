@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#open"
       ],
       "condition": "",
-      "how": ""
+      "how": "with open('data.csv', encoding='utf-8', errors='replace') as f:\n    content = f.read()  # Replaces undecodable bytes with U+FFFD\n# Or use errors='ignore' to silently drop bad bytes"
     }
   ],
   "transition_graph": {

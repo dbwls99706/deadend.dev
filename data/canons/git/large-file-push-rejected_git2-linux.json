@@ -70,7 +70,7 @@
         "https://git-scm.com/docs/gitignore"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Add patterns to .gitignore BEFORE committing:\necho '*.zip' >> .gitignore\necho '*.tar.gz' >> .gitignore\necho 'data/*.csv' >> .gitignore\n\n# If already committed, remove from tracking:\ngit rm --cached large-file.zip\ngit commit -m 'Remove large file from tracking'"
     }
   ],
   "transition_graph": {

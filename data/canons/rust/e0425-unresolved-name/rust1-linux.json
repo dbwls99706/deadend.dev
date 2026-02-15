@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/error_codes/E0425.html"
       ],
       "condition": "",
-      "how": "Check for typos in name and verify module visibility (pub)"
+      "how": "// Check visibility in the module:\npub fn helper() { }        // visible outside module\npub(crate) fn internal() { } // visible within crate only\n\n// In mod.rs or lib.rs, re-export if needed:\npub mod utils;\npub use utils::helper;"
     }
   ],
   "transition_graph": {

@@ -53,7 +53,7 @@
         "https://docs.python.org/3/reference/lexical_analysis.html#indentation"
       ],
       "condition": "",
-      "how": ""
+      "how": "# VS Code settings.json:\n# \"editor.insertSpaces\": true, \"editor.tabSize\": 4\n# Or add .editorconfig:\n# [*.py]\n# indent_style = space\n# indent_size = 4"
     },
     {
       "action": "Run: python -tt script.py to check for mixed tabs/spaces",

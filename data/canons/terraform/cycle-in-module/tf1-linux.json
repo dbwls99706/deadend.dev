@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/data-sources"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Instead of direct reference creating a cycle:\n# resource \"aws_security_group\" \"a\" { ... references sg_b }\n# resource \"aws_security_group\" \"b\" { ... references sg_a }\n\n# Break one direction with a data source:\nresource \"aws_security_group\" \"a\" {\n  name = \"sg-a\"\n}\ndata \"aws_security_group\" \"a_lookup\" {\n  name = \"sg-a\"\n  depends_on = [aws_security_group.a]\n}\nresource \"aws_security_group\" \"b\" {\n  ingress {\n    security_groups = [data.aws_security_group.a_lookup.id]\n  }\n}"
     }
   ],
   "transition_graph": {

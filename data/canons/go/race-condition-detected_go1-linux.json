@@ -70,7 +70,7 @@
         "https://pkg.go.dev/sync#Map"
       ],
       "condition": "",
-      "how": "Use sync.Map for concurrent map access"
+      "how": "var mu sync.RWMutex\n// Write path:\nmu.Lock()\nshared.count++\nmu.Unlock()\n// Read path (allows concurrent reads):\nmu.RLock()\nval := shared.count\nmu.RUnlock()"
     }
   ],
   "transition_graph": {

@@ -61,7 +61,7 @@
         "https://react.dev/learn/sharing-state-between-components"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Lift state to the common parent:\nfunction Parent() {\n  const [shared, setShared] = useState(init);\n  return <><ChildA value={shared} /><ChildB onChange={setShared} /></>;\n}"
     }
   ],
   "transition_graph": {

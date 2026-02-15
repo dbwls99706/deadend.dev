@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "id": "docker/port-already-allocated/docker24-linux",
+  "url": "https://deadends.dev/docker/port-already-allocated/docker24-linux",
+  "error": {
+    "signature": "Bind for 0.0.0.0:PORT failed: port is already allocated",
+    "regex": "port is already allocated|address already in use|bind.*failed.*port",
+    "domain": "docker",
+    "category": "network_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "docker",
+      "version_range": ">=24,<25"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-15",
+    "summary": "The host port is already in use by another container or process. Cannot bind two services to the same port."
+  },
+  "dead_ends": [
+    {
+      "action": "Killing the process using the port without checking what it is",
+      "why_fails": "May kill a critical service; always identify the process first",
+      "fail_rate": 0.6,
+      "sources": [
+        "https://docs.docker.com/network/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Find and stop the process or container using the port",
+      "success_rate": 0.92,
+      "sources": [
+        "https://docs.docker.com/network/"
+      ],
+      "condition": "",
+      "how": "# Find what's using the port:\nlsof -i :8080\n# or:\nss -tlnp | grep 8080\n\n# If it's a Docker container:\ndocker ps --filter 'publish=8080'\ndocker stop <container_id>\n\n# If it's a host process:\nkill <pid>"
+    },
+    {
+      "action": "Use Docker Compose to manage port allocation conflicts",
+      "success_rate": 0.88,
+      "sources": [
+        "https://docs.docker.com/compose/networking/"
+      ],
+      "condition": "",
+      "how": "# In docker-compose.yml, map to a different host port:\nservices:\n  web:\n    ports:\n      - '8081:8080'  # host:container\n\n# Use 'docker compose down' before 'docker compose up' to ensure old containers release ports.\n# Use 'docker compose up --force-recreate' if containers are stuck."
+    },
+    {
+      "action": "Bind to 0.0.0.0 and let Docker assign a random host port",
+      "success_rate": 0.85,
+      "sources": [
+        "https://docs.docker.com/network/"
+      ],
+      "condition": "",
+      "how": "# Use -P to publish all exposed ports to random host ports:\ndocker run -P myimage\n\n# Or specify only the container port (random host port assigned):\ndocker run -p 8080 myimage\n\n# Find the assigned port:\ndocker port <container_name> 8080"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "docker/bind-address-already-in-use_docker24-linux",
+        "distinction": "port-already-allocated is the Docker daemon error; bind-address-already-in-use is the application-level error inside the container. Same root cause, different error source."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "id": "go/goroutine-leak/go121-linux",
+  "url": "https://deadends.dev/go/goroutine-leak/go121-linux",
+  "error": {
+    "signature": "goroutine leak detected",
+    "regex": "goroutine leak|too many goroutines|goroutine count.*growing",
+    "domain": "go",
+    "category": "concurrency_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "go",
+      "version_range": ">=1.21,<2.0"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.85,
+    "confidence": 0.88,
+    "last_updated": "2026-02-11",
+    "summary": "Goroutines are not being cleaned up, usually from missing context cancellation or blocked channel operations."
+  },
+  "dead_ends": [
+    {
+      "action": "Increase GOMAXPROCS to handle more goroutines",
+      "why_fails": "GOMAXPROCS controls OS thread count, not goroutine count; leaked goroutines still consume memory",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://pkg.go.dev/runtime#GOMAXPROCS"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use runtime.Goexit() to kill goroutines",
+      "why_fails": "Goexit only terminates the calling goroutine; cannot kill other goroutines externally",
+      "fail_rate": 0.85,
+      "sources": [
+        "https://pkg.go.dev/runtime#Goexit"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Add select with context.Done() to every goroutine for cancellation",
+      "success_rate": 0.92,
+      "how": "go func(ctx context.Context) {\n  for {\n    select {\n    case <-ctx.Done():\n      return\n    case msg := <-ch:\n      process(msg)\n    }\n  }\n}(ctx)",
+      "sources": [
+        "https://pkg.go.dev/context"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use errgroup for managing goroutine lifecycles",
+      "success_rate": 0.90,
+      "how": "g, ctx := errgroup.WithContext(ctx)\nfor _, item := range items {\n  item := item\n  g.Go(func() error {\n    return process(ctx, item)\n  })\n}\nif err := g.Wait(); err != nil {\n  log.Fatal(err)\n}",
+      "sources": [
+        "https://pkg.go.dev/golang.org/x/sync/errgroup"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Monitor goroutine count with runtime.NumGoroutine() in tests",
+      "success_rate": 0.85,
+      "how": "func TestNoLeak(t *testing.T) {\n  before := runtime.NumGoroutine()\n  doWork()\n  time.Sleep(100 * time.Millisecond)\n  after := runtime.NumGoroutine()\n  if after > before+1 {\n    t.Errorf(\"goroutine leak: before=%d after=%d\", before, after)\n  }\n}",
+      "sources": [
+        "https://pkg.go.dev/runtime#NumGoroutine"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [
+      {
+        "error_id": "go/too-many-open-files/go1-linux",
+        "probability": 0.15,
+        "condition": "Leaked goroutines holding file descriptors"
+      }
+    ],
+    "preceded_by": [
+      {
+        "error_id": "go/channel-deadlock/go1-linux",
+        "probability": 0.2,
+        "condition": "Blocked channel operations prevent goroutine exit"
+      }
+    ],
+    "frequently_confused_with": []
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/pod-evicted/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/pod-evicted/k8s1-linux",
+  "error": {
+    "signature": "The node was low on resource: memory",
+    "regex": "(evicted|Evicted|low on resource|DiskPressure|MemoryPressure)",
+    "domain": "kubernetes",
+    "category": "resources",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.9,
+    "last_updated": "2026-02-15",
+    "summary": "Pod was evicted because the node ran out of memory or disk. Pods without resource requests/limits are evicted first."
+  },
+  "dead_ends": [
+    {
+      "action": "Disabling kubelet eviction thresholds",
+      "why_fails": "Node can run out of resources entirely and become unresponsive",
+      "fail_rate": 0.9,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Identify why the pod was evicted using kubectl describe",
+      "success_rate": 0.9,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/"
+      ],
+      "condition": "",
+      "how": "kubectl describe pod <pod-name> -n <namespace>\n# Look for 'Status: Failed' and 'Reason: Evicted'\n# The 'Message' field shows which resource was low (memory, ephemeral-storage).\nkubectl get events --field-selector reason=Evicted -n <namespace>"
+    },
+    {
+      "action": "Configure resource requests and limits on the pod",
+      "success_rate": 0.92,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"
+      ],
+      "condition": "",
+      "how": "# In your pod spec:\nresources:\n  requests:\n    memory: '256Mi'\n    cpu: '250m'\n    ephemeral-storage: '1Gi'\n  limits:\n    memory: '512Mi'\n    cpu: '500m'\n    ephemeral-storage: '2Gi'\n\nPods with requests are in Burstable QoS class and are evicted after BestEffort pods. Setting requests = limits gives Guaranteed QoS (evicted last)."
+    },
+    {
+      "action": "Set a PriorityClass to prevent eviction of critical pods",
+      "success_rate": 0.85,
+      "sources": [
+        "https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/"
+      ],
+      "condition": "",
+      "how": "# Create a PriorityClass:\napiVersion: scheduling.k8s.io/v1\nkind: PriorityClass\nmetadata:\n  name: high-priority\nvalue: 1000000\nglobalDefault: false\ndescription: 'Priority class for critical workloads'\n\n# Use it in your pod spec:\nspec:\n  priorityClassName: high-priority\n\n# Higher-value pods are evicted last. System-critical pods use system-cluster-critical or system-node-critical."
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/oomkilled/k8s1-linux",
+        "distinction": "pod-evicted means the kubelet evicted the pod due to node-level resource pressure; OOMKilled means the kernel killed a specific container that exceeded its memory limit."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

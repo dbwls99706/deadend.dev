@@ -53,10 +53,21 @@
       "condition": ""
     },
     {
-      "action": "Refactor to single response point at the end of the handler",
+      "action": "Use response.json() instead of manual write in App Router",
+      "success_rate": 0.90,
+      "how": "// App Router (app/api/route.ts):\nexport async function POST(request: Request) {\n  const body = await request.json();\n  return Response.json({ success: true, data: body });\n}\n// Avoid res.write() / res.end() — use the Response API instead",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Ensure the response body is not written to after the response has ended",
       "success_rate": 0.88,
-      "how": "Collect the response data in a variable and send once at the end",
-      "sources": [],
+      "how": "// Pages Router — add return after each response:\nexport default function handler(req, res) {\n  if (!req.body.name) {\n    return res.status(400).json({ error: 'Name required' });\n    // return prevents further writes\n  }\n  return res.status(200).json({ ok: true });\n}",
+      "sources": [
+        "https://nextjs.org/docs/pages/building-your-application/routing/api-routes"
+      ],
       "condition": ""
     }
   ],

@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/expressions/function-calls"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Use toset() with non-sensitive values as keys:\nlocals {\n  config = {\n    \"web\"   = { secret = sensitive(var.web_key) }\n    \"api\"   = { secret = sensitive(var.api_key) }\n  }\n}\n\nresource \"aws_instance\" \"servers\" {\n  for_each = toset(keys(local.config))  # keys are not sensitive\n  tags     = { Name = each.key }\n}"
     }
   ],
   "transition_graph": {

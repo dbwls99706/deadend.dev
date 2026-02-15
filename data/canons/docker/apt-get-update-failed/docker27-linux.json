@@ -61,7 +61,7 @@
         "https://docs.docker.com/build/building/best-practices/#from"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Use specific version tags:\nFROM ubuntu:22.04  # Not FROM ubuntu:latest\nFROM python:3.12-slim  # Not FROM python:latest\nFROM node:20-alpine  # Not FROM node:latest"
     }
   ],
   "transition_graph": {

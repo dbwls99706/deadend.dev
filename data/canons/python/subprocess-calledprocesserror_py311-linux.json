@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/subprocess.html#subprocess.run"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Run the exact command from Python's error message in your terminal:\n# e.g., if Python ran ['git', 'push'], run: git push\n# This shows the real error output directly"
     }
   ],
   "transition_graph": {

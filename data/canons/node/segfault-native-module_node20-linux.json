@@ -70,7 +70,7 @@
         "https://nodejs.org/api/report.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Include in the bug report:\nnode -v && npm ls <native-module>\nnode --report-on-fatalerror app.js\n# Attach the generated .report.json file to the issue"
     }
   ],
   "transition_graph": {

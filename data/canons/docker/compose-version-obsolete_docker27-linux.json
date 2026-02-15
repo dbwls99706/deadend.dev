@@ -61,7 +61,7 @@
         "https://docs.docker.com/reference/compose-file/version-and-name/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Simply remove the 'version' key from docker-compose.yml:\n# Before:\n# version: '3.8'\nservices:\n  app:\n    image: myapp\n# Docker Compose V2 ignores the version field entirely"
     }
   ],
   "transition_graph": {

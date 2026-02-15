@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Add JSDoc types:\n/** @param {string} filePath */\nfunction readFile(filePath) { ... }\n// Or use TypeScript: npx tsc --init && npx tsc --noEmit"
     }
   ],
   "transition_graph": {

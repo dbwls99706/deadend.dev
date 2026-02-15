@@ -43,7 +43,7 @@
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic"
       ],
       "condition": "",
-      "how": ""
+      "how": "// app/page.tsx:\nexport const dynamic = 'force-dynamic';\n\n// This tells Next.js this page can't be statically rendered\n// and must be rendered on each request (SSR)\n\nimport { cookies } from 'next/headers';\nexport default function Page() {\n  const cookieStore = cookies();\n  // Now works without error\n}"
     },
     {
       "action": "Move cookie/header access to middleware or API routes if possible",
@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/building-your-application/routing/middleware"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Move cookie/header logic to middleware:\n// middleware.ts:\nimport { NextRequest, NextResponse } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n  const token = request.cookies.get('auth-token');\n  if (!token) return NextResponse.redirect(new URL('/login', request.url));\n  return NextResponse.next();\n}"
     }
   ],
   "transition_graph": {

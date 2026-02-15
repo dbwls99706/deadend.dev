@@ -70,7 +70,7 @@
     ],
     "preceded_by": [
       {
-        "error_id": "java/memory-leak-perm-gen/jdk17-linux",
+        "error_id": "java/outofmemoryerror-metaspace/jdk17-linux",
         "probability": 0.1,
         "condition": "when metaspace pressure indirectly causes heap pressure via class loading"
       }

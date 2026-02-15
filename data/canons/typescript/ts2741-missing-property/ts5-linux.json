@@ -52,14 +52,14 @@
         "https://www.typescriptlang.org/docs/handbook/2/objects.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Add the missing property directly:\nconst config: AppConfig = {\n  host: 'localhost',\n  port: 3000,\n  debug: false  // <-- was missing\n};"
     },
     {
-      "action": "If intentionally optional, mark with ? in the type definition",
+      "action": "Use Partial<T> if all properties should be optional",
       "success_rate": 0.88,
-      "how": "interface Props { required: string; optional?: number }",
+      "how": "// When building objects incrementally:\nfunction createConfig(overrides: Partial<AppConfig>): AppConfig {\n  return { ...defaults, ...overrides };\n}\n// Or for component props:\ntype Props = Partial<FullProps> & { id: string };",
       "sources": [
-        "https://www.typescriptlang.org/docs/handbook/2/objects.html#optional-properties"
+        "https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype"
       ],
       "condition": ""
     }

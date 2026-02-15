@@ -61,7 +61,7 @@
         "https://docs.docker.com/engine/containers/resource_constraints/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check memory usage of running container:\ndocker stats <container>\n\n# Profile inside container:\napt-get install -y procps && top\n\n# For Node.js, reduce heap:\nNODE_OPTIONS=--max-old-space-size=512 node app.js\n\n# For Python, use tracemalloc or memory_profiler"
     },
     {
       "action": "For build-time OOM, increase Docker Desktop memory in Settings > Resources",
@@ -70,7 +70,7 @@
         "https://docs.docker.com/desktop/settings-and-maintenance/settings/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Docker Desktop > Settings > Resources\n# Increase Memory to at least 4GB (default is 2GB)\n# Increase Swap to 2GB\n# Click 'Apply & Restart'\n\n# For colima:\ncolima start --memory 4 --cpu 4"
     }
   ],
   "transition_graph": {

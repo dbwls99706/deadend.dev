@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Create ECR pull secret:\nkubectl create secret docker-registry ecr-secret \\\n  --docker-server=ACCOUNT.dkr.ecr.REGION.amazonaws.com \\\n  --docker-username=AWS \\\n  --docker-password=$(aws ecr get-login-password)\n\n# Or for EKS with IRSA (recommended), annotate the service account:\nkubectl annotate serviceaccount default eks.amazonaws.com/role-arn=arn:aws:iam::ACCOUNT:role/ecr-pull-role\n\n# Reference in pod spec: imagePullSecrets: [{name: ecr-secret}]"
     },
     {
       "action": "Add ECR login to CI/CD pipeline — token expires every 12 hours",
@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# GitHub Actions example:\n- name: Login to Amazon ECR\n  uses: aws-actions/amazon-ecr-login@v2\n\n# GitLab CI example:\nbefore_script:\n  - aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_REGISTRY\n\n# The token is valid for 12 hours, so always login at the start of each pipeline run."
     }
   ],
   "transition_graph": {

@@ -71,7 +71,7 @@
         "https://docs.python.org/3/using/windows.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Download from https://aka.ms/vs/17/release/vc_redist.x64.exe\n# Or install via winget:\nwinget install Microsoft.VCRedist.2015+.x64"
     }
   ],
   "transition_graph": {

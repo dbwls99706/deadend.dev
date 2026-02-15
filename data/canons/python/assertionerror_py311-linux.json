@@ -53,7 +53,7 @@
         "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
       ],
       "condition": "",
-      "how": ""
+      "how": "# The assert message tells you what failed:\nassert len(items) > 0, f'Expected non-empty list, got {items}'\n# Read the message, trace back to where items is populated"
     },
     {
       "action": "Replace assert with proper if/raise ValueError for production validation",
@@ -62,7 +62,7 @@
         "https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Before (stripped by python -O):\nassert age >= 0\n# After (always runs):\nif age < 0:\n    raise ValueError(f'Age must be non-negative, got {age}')"
     }
   ],
   "transition_graph": {

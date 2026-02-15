@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Split into Server + Client components:\n\n// app/page.tsx (Server Component):\nimport InteractiveButton from './InteractiveButton';\nexport default function Page() {\n  return <div><h1>Title</h1><InteractiveButton /></div>;\n}\n\n// app/InteractiveButton.tsx (Client Component):\n'use client';\nimport { useState } from 'react';\nexport default function InteractiveButton() {\n  const [count, setCount] = useState(0);\n  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;\n}"
     }
   ],
   "transition_graph": {

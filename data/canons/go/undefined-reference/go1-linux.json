@@ -57,7 +57,7 @@
     {
       "action": "Ensure the file is in the correct package and directory",
       "success_rate": 0.88,
-      "how": "",
+      "how": "// Ensure the file starts with the correct package:\npackage mypackage\n\n// And is in the matching directory:\n// src/mypackage/helper.go -> package mypackage\n\n// For tests, use the same package or _test suffix:\npackage mypackage_test",
       "sources": [
         "https://go.dev/ref/spec#Packages"
       ],

@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/error_codes/E0599.html"
       ],
       "condition": "",
-      "how": "Check the type — you may have the wrong type; use compiler suggestions"
+      "how": "// If method is on a trait, import it:\nuse std::io::Read;    // now .read() works on File\nuse std::fmt::Write;  // now .write_fmt() works\n\n// Check if you need a different type:\nlet s: &str = \"hello\";\n// s.push('!');  // error: no method push on &str\nlet mut s = s.to_string();  // convert to String\ns.push('!');  // works"
     }
   ],
   "transition_graph": {

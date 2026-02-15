@@ -61,7 +61,7 @@
         "https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-build-isolation"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Skip build isolation (uses current environment's build tools):\npip install -e . --no-build-isolation\n\n# You may need to install build deps first:\npip install setuptools wheel\npip install -e . --no-build-isolation"
     }
   ],
   "transition_graph": {

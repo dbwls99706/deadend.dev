@@ -62,6 +62,15 @@
       ],
       "condition": "",
       "how": "Check tsconfig.json paths and moduleResolution settings"
+    },
+    {
+      "action": "Create a declaration file with: declare module 'package-name'",
+      "success_rate": 0.82,
+      "how": "// Create src/types/untyped-modules.d.ts:\ndeclare module 'some-untyped-package' {\n  export function doSomething(input: string): void;\n  export default function main(): void;\n}\n// Or for wildcard (e.g., CSS modules):\ndeclare module '*.css' {\n  const classes: { [key: string]: string };\n  export default classes;\n}",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/modules/reference.html#ambient-modules"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

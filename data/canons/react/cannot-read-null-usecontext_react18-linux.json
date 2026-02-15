@@ -61,7 +61,7 @@
         "https://react.dev/warnings/invalid-hook-call-warning"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Hooks only work inside components or custom hooks:\nfunction MyComponent() { // Component (uppercase)\n  const ctx = useContext(MyCtx); // OK\n}\n// NOT: function helper() { useContext(MyCtx); } // Will fail"
     },
     {
       "action": "If using linked packages, ensure they resolve to the same React instance",
@@ -70,7 +70,7 @@
         "https://react.dev/warnings/invalid-hook-call-warning#duplicate-react"
       ],
       "condition": "",
-      "how": ""
+      "how": "// In webpack.config.js:\nresolve: { alias: { react: path.resolve('./node_modules/react') } }\n// Or in package.json (Yarn):\n\"resolutions\": { \"react\": \"18.2.0\" }"
     }
   ],
   "transition_graph": {

@@ -52,7 +52,7 @@
         "https://pkg.go.dev/encoding/json#Unmarshal"
       ],
       "condition": "",
-      "how": ""
+      "how": "type Response struct {\n    Count string `json:\"count\"` // API sends \"42\" as string\n    // Not: Count int `json:\"count\"` which would fail on \"42\"\n}\n\n// Or use json.Number for flexible numeric handling:\ntype Response struct {\n    Count json.Number `json:\"count\"`\n}\n// Then: count, _ := resp.Count.Int64()"
     },
     {
       "action": "Use string tag for numeric fields that come as strings: `json:\"id,string\"`",

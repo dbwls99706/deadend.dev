@@ -95,12 +95,7 @@
   "transition_graph": {
     "leads_to": [],
     "preceded_by": [],
-    "frequently_confused_with": [
-      {
-        "error_id": "python/asyncio-no-running-event-loop/py311-linux",
-        "distinction": "'RuntimeError' is a async_error error while 'RuntimeError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
-      }
-    ]
+    "frequently_confused_with": []
   },
   "metadata": {
     "generated_by": "manual",

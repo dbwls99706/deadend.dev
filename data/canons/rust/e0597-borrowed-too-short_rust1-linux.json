@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/std/clone/trait.Clone.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "let owned_data = borrowed_data.to_owned(); // or .clone()\n// owned_data lives as long as you need\n\n// For strings:\nlet s: String = some_str_ref.to_string();\n// s is owned and won't be dropped when the source goes out of scope"
     },
     {
       "action": "Use Rc/Arc for shared ownership when multiple parts need the data",

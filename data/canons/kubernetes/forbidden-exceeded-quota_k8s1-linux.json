@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/policy/resource-quotas/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check current quota usage:\nkubectl describe resourcequota -n <namespace>\n\n# Request increase (edit the ResourceQuota):\nkubectl edit resourcequota <quota-name> -n <namespace>\n# Or ask cluster admin to update:\n# spec.hard.requests.cpu: \"20\"\n# spec.hard.requests.memory: \"40Gi\""
     },
     {
       "action": "Clean up unused resources (completed jobs, old deployments)",

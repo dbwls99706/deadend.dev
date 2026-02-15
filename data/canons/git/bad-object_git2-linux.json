@@ -48,7 +48,7 @@
     {
       "action": "Try git fsck to identify corrupted objects",
       "success_rate": 0.9,
-      "how": "",
+      "how": "# Run filesystem check:\ngit fsck --full\n\n# This will report:\n# broken link, missing blob/tree/commit, dangling objects\n# Fix missing objects by fetching from remote:\ngit fetch origin",
       "sources": [
         "https://git-scm.com/docs/git-fsck"
       ],
@@ -70,7 +70,7 @@
         "https://git-scm.com/book/en/v2/Git-Internals-Maintenance-and-Data-Recovery"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Backup current work:\ncp -r .git .git.bak\ngit stash  # if possible\n\n# Re-clone and restore branches:\ngit clone <remote-url> fresh-clone\ncd fresh-clone\n# Copy any local-only branches from backup if needed"
     }
   ],
   "transition_graph": {

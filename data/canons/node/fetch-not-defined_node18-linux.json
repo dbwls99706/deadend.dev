@@ -61,7 +61,7 @@
         "https://nodejs.org/api/globals.html#fetch"
       ],
       "condition": "",
-      "how": ""
+      "how": "nvm install 22 && nvm use 22\n# Or for Node 18: node --experimental-fetch app.js"
     },
     {
       "action": "Use undici (Node's built-in HTTP client): const { fetch } = require('undici')",

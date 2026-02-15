@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Check for mismatched JSX braces:\nreturn (\n  <div>\n    {items.map(item => (\n      <span key={item.id}>{item.name}</span>\n    ))}\n  </div>\n)\n// Use editor bracket matching (Ctrl+Shift+\\) to find unmatched pairs"
     },
     {
       "action": "Check tsconfig.json target — some syntax requires ES2020+",

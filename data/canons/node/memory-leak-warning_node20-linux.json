@@ -78,7 +78,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/abort-error/node20-linux",
+        "error_id": "node/node-fetch-abort/node20-linux",
         "distinction": "'MaxListenersExceededWarning' is a memory_warning error while 'AbortError' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

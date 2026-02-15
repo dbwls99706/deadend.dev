@@ -70,7 +70,7 @@
         "https://kubernetes.io/docs/concepts/storage/volumes/#hostpath"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Install local-path provisioner (for development):\nkubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml\n\n# Or use hostPath (single-node only):\nkind: PersistentVolume\nspec:\n  hostPath:\n    path: /tmp/data\n  storageClassName: manual"
     }
   ],
   "transition_graph": {

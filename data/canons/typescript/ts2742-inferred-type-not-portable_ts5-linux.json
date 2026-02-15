@@ -70,7 +70,7 @@
         "https://www.typescriptlang.org/docs/handbook/project-references.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// tsconfig.json for monorepo packages:\n{\n  \"compilerOptions\": {\n    \"composite\": true,\n    \"declaration\": true,\n    \"declarationMap\": true\n  },\n  \"references\": [\n    { \"path\": \"../shared\" }\n  ]\n}\n\n// Run: tsc --build to compile in dependency order"
     }
   ],
   "transition_graph": {

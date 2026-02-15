@@ -94,7 +94,7 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "git/merge-conflict/git2-linux",
+        "error_id": "git/merge-conflict-markers/git2-linux",
         "probability": 0.2,
         "condition": "After unshallowing, a rebase or merge may surface conflicts that were invisible with truncated history"
       }

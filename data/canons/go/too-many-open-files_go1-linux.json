@@ -61,7 +61,7 @@
         "https://go.dev/blog/defer-panic-and-recover"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Always close with defer:\nf, err := os.Open(\"file.txt\")\nif err != nil {\n    return err\n}\ndefer f.Close()\n\n// Same for DB connections:\nrows, err := db.Query(query)\nif err != nil {\n    return err\n}\ndefer rows.Close()"
     },
     {
       "action": "Increase ulimit as a temporary measure: ulimit -n 65536",

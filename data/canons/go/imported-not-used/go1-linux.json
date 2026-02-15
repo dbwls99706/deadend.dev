@@ -61,7 +61,7 @@
         "https://go.dev/doc/effective_go#blank_import"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Simply delete the unused import line.\n// Or use goimports to auto-manage imports:\n// go install golang.org/x/tools/cmd/goimports@latest\n// goimports -w .\n\n// For side-effect imports, use blank identifier:\nimport _ \"image/png\""
     }
   ],
   "transition_graph": {

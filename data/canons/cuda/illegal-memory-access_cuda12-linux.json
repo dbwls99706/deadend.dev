@@ -48,7 +48,7 @@
     {
       "action": "Set CUDA_LAUNCH_BLOCKING=1 to get accurate error location",
       "success_rate": 0.93,
-      "how": "Synchronous execution pinpoints which kernel caused the error",
+      "how": "# Run with compute-sanitizer for precise memory error location:\ncompute-sanitizer --tool memcheck python train.py\n# Or for C/C++ CUDA code:\ncompute-sanitizer ./my_cuda_app\n# Shows exact line, thread, and address of the illegal access",
       "sources": [
         "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#error-handling"
       ],

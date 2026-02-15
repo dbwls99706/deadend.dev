@@ -70,7 +70,7 @@
         "https://developer.hashicorp.com/terraform/cli/commands/init"
       ],
       "condition": "",
-      "how": ""
+      "how": "# In CI/CD pipeline (e.g., GitHub Actions):\nsteps:\n  - run: terraform init\n  - run: terraform plan -out=tfplan\n  - run: terraform apply tfplan\n\n# Always run 'init' before 'plan' or 'apply'\n# Cache .terraform directory for faster CI runs"
     }
   ],
   "transition_graph": {

@@ -57,7 +57,7 @@
     {
       "action": "Use pipx for CLI tools: pipx install <tool>",
       "success_rate": 0.93,
-      "how": "pipx installs each tool in its own isolated environment",
+      "how": "# Install pipx:\npython -m pip install --user pipx\npython -m pipx ensurepath\n\n# Install CLI tools with pipx (each gets its own venv):\npipx install black\npipx install ruff\npipx install httpie",
       "sources": [],
       "condition": ""
     }

@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Create a minimal policy for the denied action:\naws iam put-user-policy --user-name myuser --policy-name AllowSpecificAction --policy-document '{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [{\n    \"Effect\": \"Allow\",\n    \"Action\": \"s3:GetObject\",\n    \"Resource\": \"arn:aws:s3:::my-bucket/*\"\n  }]\n}'\n\n# Replace the Action and Resource with the specific operation from the error message. Use IAM Access Analyzer to generate least-privilege policies."
     }
   ],
   "transition_graph": {

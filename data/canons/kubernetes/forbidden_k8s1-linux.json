@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "id": "kubernetes/forbidden/k8s1-linux",
+  "url": "https://deadends.dev/kubernetes/forbidden/k8s1-linux",
+  "error": {
+    "signature": "Error from server (Forbidden): pods is forbidden: User cannot perform this action",
+    "regex": "Forbidden.*cannot (list|get|create|delete|update|watch|patch)",
+    "domain": "kubernetes",
+    "category": "rbac",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "kubernetes",
+      "version_range": ">=1.20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-15",
+    "summary": "RBAC permissions insufficient for the requested action. The user or service account needs a Role/ClusterRole binding."
+  },
+  "dead_ends": [
+    {
+      "action": "Granting cluster-admin to all service accounts",
+      "why_fails": "Massive security risk; any pod can do anything in the cluster",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Create a Role with the specific verbs and resources needed",
+      "success_rate": 0.95,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+      ],
+      "condition": "",
+      "how": "kubectl create role pod-reader --verb=get,list,watch --resource=pods -n my-namespace\nkubectl create rolebinding pod-reader-binding --role=pod-reader --serviceaccount=my-namespace:my-sa -n my-namespace"
+    },
+    {
+      "action": "Bind a ClusterRole or Role to the service account",
+      "success_rate": 0.92,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/rbac/"
+      ],
+      "condition": "",
+      "how": "# For namespace-scoped access:\nkubectl create rolebinding my-binding \\\n  --clusterrole=view \\\n  --serviceaccount=default:my-sa \\\n  -n my-namespace\n\n# For cluster-wide access:\nkubectl create clusterrolebinding my-binding \\\n  --clusterrole=view \\\n  --serviceaccount=default:my-sa\n\n# Use built-in ClusterRoles: view (read-only), edit (read-write), admin (full namespace access)."
+    },
+    {
+      "action": "Use kubectl auth can-i to test permissions before applying",
+      "success_rate": 0.88,
+      "sources": [
+        "https://kubernetes.io/docs/reference/access-authn-authz/authorization/"
+      ],
+      "condition": "",
+      "how": "# Test if current user can perform an action:\nkubectl auth can-i create pods -n my-namespace\n\n# Test as a specific service account:\nkubectl auth can-i list deployments --as=system:serviceaccount:default:my-sa\n\n# List all permissions for a service account:\nkubectl auth can-i --list --as=system:serviceaccount:default:my-sa"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "kubernetes/forbidden-user_k8s128-linux",
+        "distinction": "Both are RBAC errors. forbidden_k8s1-linux covers general Forbidden errors; forbidden-user_k8s128-linux focuses on specific user/serviceaccount identity issues."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

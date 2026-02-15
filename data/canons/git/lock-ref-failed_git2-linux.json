@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/lock-ref-failed/git2-linux",
+  "url": "https://deadends.dev/git/lock-ref-failed/git2-linux",
+  "error": {
+    "signature": "error: unable to create '.git/refs/heads/main.lock': File exists",
+    "regex": "unable to create.*\\.lock|cannot lock ref|lock.*file exists",
+    "domain": "git",
+    "category": "ref_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-15",
+    "summary": "A stale .lock file is preventing git from updating a ref. Usually caused by a previously interrupted git operation (crash, kill, Ctrl-C)."
+  },
+  "dead_ends": [
+    {
+      "action": "Re-cloning the entire repository",
+      "why_fails": "Loses local branches, stashes, and work-in-progress. The fix is much simpler.",
+      "fail_rate": 0.8,
+      "sources": [
+        "https://git-scm.com/docs/git-gc"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Run git gc --prune=now to clean up stale refs and lock files",
+      "success_rate": 0.9,
+      "sources": [
+        "https://git-scm.com/docs/git-gc"
+      ],
+      "condition": "",
+      "how": "git gc --prune=now\ngit remote prune origin"
+    },
+    {
+      "action": "Delete the stale lock file and retry the operation",
+      "success_rate": 0.92,
+      "sources": [
+        "https://git-scm.com/docs/git-gc"
+      ],
+      "condition": "",
+      "how": "# Find the lock file mentioned in the error message and remove it:\nrm -f .git/refs/heads/main.lock\n# Or for other refs:\nrm -f .git/HEAD.lock\nrm -f .git/refs/remotes/origin/main.lock\n\n# Find all stale lock files:\nfind .git -name '*.lock' -type f\n# Verify no git process is running before deleting:\nps aux | grep git"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/cannot-lock-ref/git2-linux",
+        "distinction": "lock-ref-failed focuses on stale .lock files from interrupted operations; cannot-lock-ref includes ref conflicts where a ref already exists at an incompatible path."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

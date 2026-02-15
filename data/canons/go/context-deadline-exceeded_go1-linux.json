@@ -70,7 +70,7 @@
         "https://pkg.go.dev/context"
       ],
       "condition": "",
-      "how": ""
+      "how": "for attempt := 0; attempt < 3; attempt++ {\n  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n  err := doWork(ctx)\n  cancel()\n  if err == nil { break }\n  time.Sleep(time.Duration(attempt+1) * 100 * time.Millisecond)\n}"
     }
   ],
   "transition_graph": {

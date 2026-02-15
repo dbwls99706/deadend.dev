@@ -61,7 +61,7 @@
         "https://nodejs.org/api/stream.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "const { createReadStream } = require('fs');\nconst stream = createReadStream('large-file.json');\nstream.on('data', chunk => processChunk(chunk));"
     },
     {
       "action": "Check for common leaks: growing arrays, unclosed connections, event listener accumulation",
@@ -78,7 +78,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "node/enospc-watchers/node20-linux",
+        "error_id": "node/enospc-system-limit-watchers/node20-linux",
         "distinction": "'Error' is a system_error error while 'Error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

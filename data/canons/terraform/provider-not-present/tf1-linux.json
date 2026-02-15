@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/providers/requirements"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Add required_providers block:\nterraform {\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 5.0\"\n    }\n  }\n}\n\n# Then reinitialize:\nterraform init"
     }
   ],
   "transition_graph": {

@@ -52,7 +52,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cant_access_property"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Add console.log before the failing line:\nconsole.log('obj is:', typeof obj, obj);\n// Common causes: forgot await, wrong destructuring key, API returned null"
     },
     {
       "action": "Use nullish coalescing (??) with explicit defaults at the source, not at every usage",

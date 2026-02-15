@@ -68,7 +68,7 @@
         "condition": "when corrupted objects cause broken references in the object graph"
       },
       {
-        "error_id": "git/bad-object-head/git2-linux",
+        "error_id": "git/bad-object/git2-linux",
         "probability": 0.2,
         "condition": "when the corrupted object is in the HEAD commit chain"
       }

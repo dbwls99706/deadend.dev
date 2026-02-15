@@ -70,7 +70,7 @@
         "https://nodejs.org/api/deprecations.html#DEP0040"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Safe to ignore for now. Suppress in scripts if needed:\n// NODE_OPTIONS='--no-warnings' node app.js\n// But do plan to update the offending dependency"
     }
   ],
   "transition_graph": {

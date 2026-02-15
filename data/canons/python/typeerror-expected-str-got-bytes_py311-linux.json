@@ -71,7 +71,7 @@
         "https://docs.python.org/3/library/functions.html#open"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Text mode for text files:\nwith open('file.txt', 'r', encoding='utf-8') as f: ...\n# Binary mode for images/archives:\nwith open('file.bin', 'rb') as f: ..."
     }
   ],
   "transition_graph": {

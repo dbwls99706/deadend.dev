@@ -61,7 +61,7 @@
         "https://www.typescriptlang.org/docs/handbook/type-inference.html"
       ],
       "condition": "",
-      "how": "let TypeScript infer from usage"
+      "how": "// Add explicit types to function parameters:\nfunction handleEvent(event: React.ChangeEvent<HTMLInputElement>) {\n  console.log(event.target.value);\n}\n// For callbacks:\nconst items = data.map((item: ItemType) => item.name);\n// For event handlers:\nelement.addEventListener('click', (e: MouseEvent) => { });"
     }
   ],
   "transition_graph": {

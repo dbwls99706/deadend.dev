@@ -61,7 +61,7 @@
         "https://react.dev/learn/rendering-lists#rules-of-keys"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Generate IDs when creating data, not at render time:\nconst newItem = { id: crypto.randomUUID(), text: input };\nsetItems(prev => [...prev, newItem]);\n// Then: items.map(item => <Li key={item.id}>{item.text}</Li>)"
     }
   ],
   "transition_graph": {

@@ -70,7 +70,7 @@
         "https://jestjs.io/docs/configuration#transform-objectstring-pathtotransformer--pathtotransformer-object"
       ],
       "condition": "",
-      "how": ""
+      "how": "// jest.config.js:\nmodule.exports = {\n  transform: { '^.+\\\\.m?js$': 'babel-jest' },\n  transformIgnorePatterns: ['/node_modules/(?!esm-only-pkg)']\n};"
     }
   ],
   "transition_graph": {

@@ -52,7 +52,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "import boto3\nfrom botocore.config import Config\n\nconfig = Config(\n    retries={'max_attempts': 10, 'mode': 'adaptive'}\n)\nclient = boto3.client('s3', config=config)\n\n# For custom retry logic, use full jitter: sleep = random(0, min(cap, base * 2^attempt))\n# AWS SDK adaptive mode handles this automatically."
     },
     {
       "action": "Check AWS Health Dashboard for ongoing service incidents",
@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/rande.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Switch to a different region temporarily:\naws s3 ls --region us-west-2\n\n# Or set in code:\nclient = boto3.client('s3', region_name='us-west-2')\n\n# Check which regions the service supports:\naws ec2 describe-regions --query 'Regions[].RegionName'\n\nNote: data residency and latency may change. Only use as temporary failover."
     }
   ],
   "transition_graph": {

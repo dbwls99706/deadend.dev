@@ -61,7 +61,7 @@
         "https://docs.npmjs.com/cli/v10/commands/npm-install"
       ],
       "condition": "",
-      "how": ""
+      "how": "npm install library@previous-version\n# Or in package.json: \"library\": \"2.x\" (pin to major version)"
     },
     {
       "action": "Use the library's public API instead of deep imports",

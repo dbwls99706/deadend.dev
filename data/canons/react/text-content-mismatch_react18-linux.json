@@ -70,7 +70,7 @@
         "https://react.dev/reference/react-dom/server"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Serialize SSR data into the HTML for client hydration:\n// Server: <script>window.__DATA__ = ${JSON.stringify(data)}</script>\n// Client: hydrateRoot(el, <App data={window.__DATA__} />)"
     }
   ],
   "transition_graph": {

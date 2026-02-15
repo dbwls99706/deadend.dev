@@ -62,6 +62,15 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": ""
+    },
+    {
+      "action": "Use type assertion (as Type) as a last resort after verifying correctness",
+      "success_rate": 0.80,
+      "how": "// Only use when you know more than the compiler:\nconst event = e as MouseEvent;\n\n// Prefer double assertion for incompatible types (rare):\nconst value = input as unknown as TargetType;\n\n// Better: use a type guard instead:\nfunction isMouseEvent(e: Event): e is MouseEvent {\n  return 'clientX' in e;\n}",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

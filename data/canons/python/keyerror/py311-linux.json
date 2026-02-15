@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/stdtypes.html#dict"
       ],
       "condition": "",
-      "how": ""
+      "how": "from pydantic import BaseModel\n\nclass Config(BaseModel):\n    host: str\n    port: int\n\nconfig = Config(**raw_dict)  # Validates all required keys upfront"
     }
   ],
   "transition_graph": {

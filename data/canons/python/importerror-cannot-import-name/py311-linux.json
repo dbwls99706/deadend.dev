@@ -62,7 +62,7 @@
         "https://docs.python.org/3/faq/programming.html#what-are-the-best-practices-for-using-import-in-a-module"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Move shared definitions into a separate module:\n# common.py: shared classes/functions\n# a.py: from common import X\n# b.py: from common import X\n# This breaks the A->B->A circular chain"
     }
   ],
   "transition_graph": {

@@ -65,7 +65,7 @@
         "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Add to ~/.bashrc or ~/.zshrc:\necho 'export CUDA_MODULE_LOADING=LAZY' >> ~/.bashrc\nsource ~/.bashrc\n\n# Or in a .env file for your project:\nCUDA_MODULE_LOADING=LAZY\n\n# For Docker containers, add to Dockerfile:\nENV CUDA_MODULE_LOADING=LAZY"
     }
   ],
   "transition_graph": {

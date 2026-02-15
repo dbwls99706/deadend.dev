@@ -70,7 +70,7 @@
         "https://docs.docker.com/engine/daemon/networking/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# In Docker daemon config (/etc/docker/daemon.json):\n{\n  \"dns\": [\"10.0.0.2\", \"8.8.8.8\"]\n}\n# Replace 10.0.0.2 with your VPN/corporate DNS\nsudo systemctl restart docker"
     }
   ],
   "transition_graph": {

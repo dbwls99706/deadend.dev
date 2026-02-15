@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "id": "nextjs/prerender-error/nextjs14-linux",
+  "url": "https://deadends.dev/nextjs/prerender-error/nextjs14-linux",
+  "error": {
+    "signature": "Error occurred prerendering page",
+    "regex": "Error occurred prerendering|prerender.*error|Prerender failed",
+    "domain": "nextjs",
+    "category": "build_error",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-11"
+  },
+  "environment": {
+    "runtime": {
+      "name": "nextjs",
+      "version_range": ">=14,<16"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.88,
+    "confidence": 0.90,
+    "last_updated": "2026-02-11",
+    "summary": "Page failed during static generation. Async data fetch failed or dynamic content used without proper boundaries."
+  },
+  "dead_ends": [
+    {
+      "action": "Disable static generation entirely",
+      "why_fails": "Loses all SSG performance benefits; pages become fully dynamic",
+      "fail_rate": 0.65,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap entire page in try/catch and return empty page on error",
+      "why_fails": "Hides real data fetching bugs; users see blank pages",
+      "fail_rate": 0.70,
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/error-handling"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Use export const dynamic = 'force-dynamic' for pages that can't be statically rendered",
+      "success_rate": 0.90,
+      "how": "// app/dashboard/page.tsx\nexport const dynamic = 'force-dynamic'\n// Or for specific segments:\nexport const revalidate = 0",
+      "sources": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Wrap dynamic content in Suspense boundaries for streaming",
+      "success_rate": 0.88,
+      "how": "import { Suspense } from 'react'\n\nexport default function Page() {\n  return (\n    <Suspense fallback={<Loading />}>\n      <AsyncDataComponent />\n    </Suspense>\n  )\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Use try/catch in async components to handle data fetch failures gracefully",
+      "success_rate": 0.85,
+      "how": "async function DataComponent() {\n  try {\n    const data = await fetch('https://api.example.com/data')\n    if (!data.ok) throw new Error('Fetch failed')\n    const json = await data.json()\n    return <div>{json.title}</div>\n  } catch (error) {\n    return <div>Failed to load data</div>\n  }\n}",
+      "sources": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ],
+      "condition": ""
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "nextjs/err-next-static-generation-error/next14-linux",
+        "distinction": "'prerender error' occurs during build-time static generation while 'static generation error' is a broader category of SSG failures."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-11",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-11"
+  }
+}

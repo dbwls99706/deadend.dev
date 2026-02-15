@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/logging.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "import logging\nlogging.debug('Raw response: %r', resp.text[:500])\n# Check: is it HTML error page? Empty string? BOM prefix?"
     }
   ],
   "transition_graph": {

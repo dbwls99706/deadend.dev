@@ -43,7 +43,7 @@
         "https://pip.pypa.io/en/stable/topics/dependency-resolution/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Pin specific versions to reduce resolver search space:\n# requirements.txt:\nnumpy==1.26.4\npandas==2.2.0\nscikit-learn==1.4.0\n\n# Generate pinned file from loose requirements:\npip-compile requirements.in --resolver=backtracking"
     },
     {
       "action": "Use pip-compile (pip-tools) to pre-resolve and lock versions",

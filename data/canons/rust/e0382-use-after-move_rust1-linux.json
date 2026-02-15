@@ -66,13 +66,13 @@
     "leads_to": [],
     "preceded_by": [
       {
-        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
+        "error_id": "rust/e0507-move-out-of-borrow/rust1-linux",
         "probability": 0.15
       }
     ],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
+        "error_id": "rust/e0507-move-out-of-borrow/rust1-linux",
         "distinction": "'[E0382]' indicates use of a moved value (ownership violation), while '[E0507]' indicates moving out of borrowed content."
       }
     ]

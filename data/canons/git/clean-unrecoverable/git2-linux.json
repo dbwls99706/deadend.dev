@@ -101,7 +101,7 @@
     "leads_to": [],
     "preceded_by": [
       {
-        "error_id": "git/merge-conflict/git2-linux",
+        "error_id": "git/merge-conflict-markers/git2-linux",
         "probability": 0.2,
         "condition": "Developer runs git clean to reset workspace after messy merge"
       }

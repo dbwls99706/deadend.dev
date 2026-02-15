@@ -48,7 +48,7 @@
     {
       "action": "Set CUDA_LAUNCH_BLOCKING=1 to get the exact line that triggered the assert",
       "success_rate": 0.93,
-      "how": "Forces synchronous kernel launches so the traceback points to the offending kernel",
+      "how": "CUDA_LAUNCH_BLOCKING=1 python train.py\n# This makes CUDA operations synchronous so the Python traceback\n# shows exactly which operation triggered the assert.\n# Look for the line number in the traceback — that's the offending op.",
       "sources": [
         "https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#assertion"
       ],
@@ -57,7 +57,7 @@
     {
       "action": "Check loss function inputs: labels must be in [0, num_classes) range",
       "success_rate": 0.9,
-      "how": "Most common cause is label index >= num_classes in CrossEntropyLoss",
+      "how": "# Check label bounds before loss computation:\nassert labels.min() >= 0, f\"Negative label: {labels.min()}\"\nassert labels.max() < num_classes, f\"Label {labels.max()} >= num_classes {num_classes}\"\n\n# Check embedding indices:\nassert indices.max() < vocab_size, f\"Index {indices.max()} >= vocab_size {vocab_size}\"",
       "sources": [],
       "condition": ""
     }

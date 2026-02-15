@@ -67,7 +67,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/bad-object-head/git2-linux",
+        "error_id": "git/bad-object/git2-linux",
         "distinction": "'fatal' is a tags error while 'fatal' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

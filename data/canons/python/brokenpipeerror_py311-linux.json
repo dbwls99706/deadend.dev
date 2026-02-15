@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/exceptions.html#BrokenPipeError"
       ],
       "condition": "",
-      "how": ""
+      "how": "try:\n    send_response(data)\nexcept BrokenPipeError:\n    logging.info('Client disconnected before response completed')"
     }
   ],
   "transition_graph": {

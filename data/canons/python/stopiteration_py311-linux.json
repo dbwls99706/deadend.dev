@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#list"
       ],
       "condition": "",
-      "how": ""
+      "how": "items = list(my_iterator)  # Materialize once\n# Now you can iterate multiple times:\nfor item in items: pass\nfor item in items: pass"
     }
   ],
   "transition_graph": {

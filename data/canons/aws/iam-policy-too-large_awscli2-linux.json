@@ -70,7 +70,7 @@
         "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "Merge multiple statements that share the same Effect and Action into one statement with a Resource array:\n{\n  \"Effect\": \"Allow\",\n  \"Action\": [\"s3:GetObject\", \"s3:PutObject\"],\n  \"Resource\": [\"arn:aws:s3:::bucket-a/*\", \"arn:aws:s3:::bucket-b/*\"]\n}\n\nUse resource wildcards where safe: arn:aws:s3:::my-app-*/* instead of listing each bucket. Remove duplicate or overlapping conditions."
     }
   ],
   "transition_graph": {

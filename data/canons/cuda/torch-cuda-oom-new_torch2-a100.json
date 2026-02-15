@@ -56,7 +56,7 @@
         "https://pytorch.org/docs/stable/notes/cuda.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Halve the batch size:\nbatch_size = 16  # was 32\n\n# Or use gradient accumulation to maintain effective batch size:\naccumulation_steps = 2\nfor i, batch in enumerate(dataloader):\n    loss = model(batch) / accumulation_steps\n    loss.backward()\n    if (i + 1) % accumulation_steps == 0:\n        optimizer.step()\n        optimizer.zero_grad()"
     },
     {
       "action": "Use gradient checkpointing to trade compute for memory",

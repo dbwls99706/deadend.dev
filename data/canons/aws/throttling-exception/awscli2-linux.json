@@ -61,7 +61,7 @@
         "https://docs.aws.amazon.com/general/latest/gr/api-retries.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Instead of individual calls, use batch APIs where available:\n# S3: aws s3api delete-objects (up to 1000 keys per call)\n# DynamoDB: batch_write_item (up to 25 items per call)\n# SQS: send_message_batch (up to 10 messages per call)\n\n# Spread requests with a token bucket or rate limiter:\nimport time\nfor batch in chunks(items, 25):\n    client.batch_write_item(RequestItems=batch)\n    time.sleep(0.1)  # spread across time window"
     }
   ],
   "transition_graph": {

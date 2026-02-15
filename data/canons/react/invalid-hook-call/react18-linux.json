@@ -52,7 +52,7 @@
         "https://react.dev/reference/rules/rules-of-hooks"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Hooks must be at the top level, not inside conditions:\nfunction MyComponent() {\n  const [val, setVal] = useState(0); // Always called\n  const data = useMemo(() => compute(val), [val]); // Always called\n  if (condition) return <Fallback />; // Conditional return AFTER hooks\n}"
     },
     {
       "action": "Check for duplicate React versions in node_modules",

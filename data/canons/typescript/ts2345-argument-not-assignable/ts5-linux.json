@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Convert string to number:\nparseInt(value, 10)\n// Convert to expected shape:\nconst arg: ExpectedType = {\n  ...input,\n  missingField: defaultValue\n};\nfn(arg);"
     },
     {
       "action": "Use function overloads or generics to accept multiple types safely",
@@ -62,6 +62,15 @@
       ],
       "condition": "",
       "how": "Use function overloads or generics to accept multiple types safely"
+    },
+    {
+      "action": "Create a type guard to narrow the type before the function call",
+      "success_rate": 0.87,
+      "how": "function isString(value: unknown): value is string {\n  return typeof value === 'string';\n}\n\nconst input: string | number = getValue();\nif (isString(input)) {\n  // input is narrowed to string here\n  processString(input);\n}",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

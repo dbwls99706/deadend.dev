@@ -70,7 +70,7 @@
         "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Create a server-side API route to proxy the external request:\n// /api/proxy.js:\nconst resp = await fetch('https://external-api.com/data');\nconst data = await resp.json();\nres.json(data);"
     }
   ],
   "transition_graph": {

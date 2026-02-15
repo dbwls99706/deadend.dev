@@ -43,7 +43,7 @@
         "https://developer.hashicorp.com/terraform/language/values/outputs"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check what resources exist:\nterraform state list\n\n# Update the output to reference an existing resource:\noutput \"instance_ip\" {\n  value = aws_instance.web.public_ip  # must exist in state\n}\n\n# Or remove the output if the resource was deleted:\n# Delete the output block from .tf files"
     },
     {
       "action": "If the output is consumed by other modules, coordinate the removal",
@@ -52,7 +52,7 @@
         "https://developer.hashicorp.com/terraform/language/values/outputs"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check which modules consume this output:\ngrep -r 'module.<module_name>.output_name' *.tf\n\n# Update consumers before removing the output:\n# 1. In the child module: keep the output temporarily\n# 2. In parent modules: update references to new source\n# 3. Run terraform plan to verify no breakage\n# 4. Then safely remove the output"
     }
   ],
   "transition_graph": {

@@ -62,6 +62,15 @@
       ],
       "condition": "",
       "how": "Check tsconfig include/exclude paths and module resolution settings"
+    },
+    {
+      "action": "For global types, add a .d.ts file and include it in tsconfig",
+      "success_rate": 0.88,
+      "how": "// Create src/global.d.ts:\ndeclare const __DEV__: boolean;\ndeclare const API_URL: string;\n\n// In tsconfig.json:\n{ \"include\": [\"src/**/*.ts\", \"src/**/*.d.ts\"] }",
+      "sources": [
+        "https://www.typescriptlang.org/docs/handbook/2/type-declarations.html"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

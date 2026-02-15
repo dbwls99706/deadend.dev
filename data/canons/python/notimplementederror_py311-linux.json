@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/abc.html#abc.abstractmethod"
       ],
       "condition": "",
-      "how": ""
+      "how": "class MySubclass(BaseClass):\n    def required_method(self, arg):  # Match parent's signature exactly\n        return self.process(arg)"
     },
     {
       "action": "If you don't need this method, provide a no-op: def method(self): pass",

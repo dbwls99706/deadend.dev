@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/functions.html#print"
       ],
       "condition": "",
-      "how": ""
+      "how": "for line in data:\n    parts = line.split(',')\n    print(f'Expected 3 fields, got {len(parts)}: {parts}')\n    # Now fix unpacking count to match actual data shape"
     }
   ],
   "transition_graph": {

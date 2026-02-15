@@ -70,7 +70,7 @@
         "https://doc.rust-lang.org/book/ch16-04-extensible-concurrency-sync-and-send.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Rc is not Send. Use Arc instead:\nuse std::sync::Arc;\nlet shared = Arc::new(data);\n\n// RefCell is not Send. Use Mutex instead:\nuse std::sync::Mutex;\nlet shared = Arc::new(Mutex::new(data));\n\n// Ensure no non-Send types are held across .await:\nlet result = {\n    let guard = mutex.lock().unwrap();\n    guard.clone() // clone before .await\n};\nsome_async_fn().await;"
     }
   ],
   "transition_graph": {

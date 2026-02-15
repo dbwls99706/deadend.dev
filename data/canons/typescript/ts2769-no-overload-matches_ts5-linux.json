@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Read the error carefully — it lists each overload:\n// Overload 1 of 3: (a: string, b: number) => void\n// Overload 2 of 3: (a: number) => void\n// Overload 3 of 3: (a: Config) => void\n\n// Match your arguments to one of them:\nmyFunction('hello', 42);  // matches overload 1\nmyFunction(42);            // matches overload 2"
     },
     {
       "action": "Check for subtle type differences: string vs String, number vs bigint",

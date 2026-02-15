@@ -52,7 +52,7 @@
         "https://nodejs.org/api/errors.html#common-system-errors"
       ],
       "condition": "",
-      "how": ""
+      "how": "const axios = require('axios');\nconst axiosRetry = require('axios-retry');\n\naxiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });\nawait axios.get('https://api.example.com/data');"
     },
     {
       "action": "Check server-side logs — the server is closing the connection",
@@ -70,7 +70,7 @@
         "https://nodejs.org/api/http.html#httpagent"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check nginx proxy timeout settings:\n# In nginx.conf: proxy_read_timeout 120s; proxy_connect_timeout 60s;\n# For AWS ALB: check idle timeout in target group settings (default 60s)\n# For HAProxy: timeout server 120s"
     }
   ],
   "transition_graph": {

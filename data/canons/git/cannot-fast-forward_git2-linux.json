@@ -67,7 +67,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "git/stash-apply-conflict/git2-linux",
+        "error_id": "git/local-changes-overwritten/git2-linux",
         "distinction": "'fatal' is a merge error while 'error' has a different failure mode despite similar symptoms. Check error message details to differentiate."
       }
     ]

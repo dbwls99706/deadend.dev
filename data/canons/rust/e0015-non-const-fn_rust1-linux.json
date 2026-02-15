@@ -61,7 +61,7 @@
         "https://doc.rust-lang.org/reference/const_eval.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "use std::sync::OnceLock;\n\nstatic CONFIG: OnceLock<Config> = OnceLock::new();\n\nfn get_config() -> &'static Config {\n    CONFIG.get_or_init(|| {\n        Config::load() // non-const initialization at first access\n    })\n}"
     }
   ],
   "transition_graph": {

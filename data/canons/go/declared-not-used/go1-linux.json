@@ -61,7 +61,7 @@
         "https://go.dev/ref/spec#Blank_identifier"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Temporarily suppress with blank identifier:\n_ = unusedVar\n\n// Or remove the variable entirely if not needed.\n// Go enforces this at compile time — no unused variables allowed."
     }
   ],
   "transition_graph": {

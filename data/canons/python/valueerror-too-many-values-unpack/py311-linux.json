@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/csv.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "parts = line.split(',')\nif len(parts) != 3:\n    raise ValueError(f'Expected 3 columns, got {len(parts)}: {line!r}')\nname, age, email = parts"
     }
   ],
   "transition_graph": {

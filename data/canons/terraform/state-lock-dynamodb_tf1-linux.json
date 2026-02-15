@@ -52,7 +52,7 @@
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
       "condition": "",
-      "how": ""
+      "how": "# The error shows Lock Info with:\n# ID, Who, Operation, Created\n# Check if that user/CI job is still running\n# Wait for it to complete, or contact the person\n\n# If the process crashed, use force-unlock:\nterraform force-unlock <LOCK_ID>"
     },
     {
       "action": "If the lock is stale (crashed process), force-unlock: terraform force-unlock <LOCK_ID>",

@@ -61,7 +61,7 @@
         "https://react.dev/learn/start-a-new-react-project"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Run the dev server instead of production build:\nnpm run dev  # or: NODE_ENV=development npm start\n# React dev mode includes full error messages and component stack traces"
     }
   ],
   "transition_graph": {

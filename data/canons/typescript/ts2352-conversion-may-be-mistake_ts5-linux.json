@@ -70,7 +70,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Instead of forcing a cast:\n// const x = value as unknown as TargetType; // bad\n\n// Fix the actual type:\nfunction process(input: string): number {\n  return parseInt(input, 10); // proper conversion\n}\n\n// Or use a type guard:\nif (typeof value === 'string') {\n  // TypeScript knows value is string here\n}"
     }
   ],
   "transition_graph": {

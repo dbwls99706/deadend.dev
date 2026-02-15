@@ -70,7 +70,7 @@
         "https://pkg.go.dev/net#Dial"
       ],
       "condition": "",
-      "how": ""
+      "how": "import \"time\"\n\nfunc connectWithRetry(addr string, maxRetries int) (net.Conn, error) {\n    var conn net.Conn\n    var err error\n    for i := 0; i < maxRetries; i++ {\n        conn, err = net.DialTimeout(\"tcp\", addr, 5*time.Second)\n        if err == nil {\n            return conn, nil\n        }\n        time.Sleep(time.Duration(1<<uint(i)) * time.Second)\n    }\n    return nil, err\n}"
     }
   ],
   "transition_graph": {

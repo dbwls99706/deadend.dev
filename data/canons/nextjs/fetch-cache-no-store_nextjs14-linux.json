@@ -61,7 +61,7 @@
         "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config#dynamic"
       ],
       "condition": "",
-      "how": ""
+      "how": "// At the top of the page file:\nexport const dynamic = 'force-dynamic';\n\n// This opts the entire page into dynamic rendering\n// All fetch() calls in this page will be uncached by default"
     },
     {
       "action": "Understand the trade-off: static = fast/cached, dynamic = fresh/slower",

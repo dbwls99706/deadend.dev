@@ -44,7 +44,7 @@
         "https://docs.celeryq.dev/en/stable/userguide/workers.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "celery -A myapp worker --loglevel=info\n# Or with auto-reload in dev:\ncelery -A myapp worker --loglevel=info --autoreload"
     },
     {
       "action": "Ensure autodiscover_tasks finds the task: check include/imports config",

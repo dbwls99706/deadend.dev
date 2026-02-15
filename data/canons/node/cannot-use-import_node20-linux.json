@@ -61,7 +61,7 @@
         "https://nodejs.org/api/esm.html#enabling"
       ],
       "condition": "",
-      "how": ""
+      "how": "mv index.js index.mjs\nnode index.mjs"
     },
     {
       "action": "Use dynamic import(): const mod = await import('module')",

@@ -52,7 +52,7 @@
         "https://nextjs.org/docs/app/building-your-application/routing/parallel-routes"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Create a default.tsx for each parallel route slot:\n// app/@sidebar/default.tsx:\nexport default function Default() {\n  return null; // or a fallback UI\n}\n\n// This is rendered when no other route in the slot matches\n// Every parallel route (@slot) needs a default.tsx"
     }
   ],
   "transition_graph": {

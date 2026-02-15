@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/docs/handbook/2/narrowing.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Ensure all branches assign the variable:\nlet result: string;\nif (condition) {\n  result = 'yes';\n} else {\n  result = 'no'; // must assign in every branch\n}\nconsole.log(result); // now guaranteed to be assigned\n\n// Or initialize with a default:\nlet result: string = 'default';"
     }
   ],
   "transition_graph": {

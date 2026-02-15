@@ -74,7 +74,7 @@
     ],
     "preceded_by": [
       {
-        "error_id": "rust/e0502-borrow-conflict/rust1-linux",
+        "error_id": "rust/e0502-mutable-immutable-borrow/rust1-linux",
         "probability": 0.2,
         "condition": "When refactoring borrow conflict code"
       }

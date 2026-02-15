@@ -52,7 +52,7 @@
         "https://www.typescriptlang.org/tsconfig/#noUnusedLocals"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Remove the unused variable/import:\n// import { unused } from './module';  // delete this line\n\n// Or prefix with _ if intentionally unused:\nconst _intentionallyUnused = getValue();\n\n// In tsconfig.json, this is controlled by:\n// \"noUnusedLocals\": true,\n// \"noUnusedParameters\": true"
     },
     {
       "action": "Prefix with underscore if intentionally unused: _unusedParam",

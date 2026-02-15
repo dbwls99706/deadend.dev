@@ -61,7 +61,7 @@
         "https://react.dev/reference/react/useMemo"
       ],
       "condition": "",
-      "how": ""
+      "how": "// Instead of useEffect + setState:\nconst derived = useMemo(() => compute(props), [props]);\n// No setState needed, no render loop possible"
     },
     {
       "action": "Check onClick handlers: onClick={handleClick} not onClick={handleClick()}",

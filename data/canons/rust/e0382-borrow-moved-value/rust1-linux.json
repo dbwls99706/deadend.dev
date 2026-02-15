@@ -55,13 +55,22 @@
       "condition": ""
     },
     {
-      "action": "Clone only when genuinely needed and restructure to minimize moves",
+      "action": "Use .clone() if the type implements Clone and you need multiple owners",
       "success_rate": 0.85,
       "sources": [
         "https://doc.rust-lang.org/error_codes/E0382.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "let data = vec![1, 2, 3];\nlet data_copy = data.clone();  // explicit clone\nprocess(data);      // moves data\nanalyze(data_copy); // uses the clone"
+    },
+    {
+      "action": "Use references (&T or &mut T) instead of moving ownership",
+      "success_rate": 0.90,
+      "how": "// Instead of taking ownership:\nfn process(data: &[i32]) {  // borrow with &\n    println!(\"{:?}\", data);\n}\nlet data = vec![1, 2, 3];\nprocess(&data);  // borrow, don't move\nprintln!(\"{:?}\", data);  // data still usable",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

@@ -70,7 +70,7 @@
         "https://pip.pypa.io/en/stable/topics/secure-installs/"
       ],
       "condition": "",
-      "how": "Check if the package was yanked/replaced on PyPI — this could be a security issue"
+      "how": "# Regenerate fresh hashes with pip-compile:\npip-compile --generate-hashes requirements.in -o requirements.txt\n\n# Or manually get the hash for a specific package:\npip download package-name==1.2.3 --no-deps -d /tmp/pkg\npip hash /tmp/pkg/package_name-1.2.3-*.whl\n# Add the output sha256 hash to your requirements.txt"
     }
   ],
   "transition_graph": {

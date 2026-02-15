@@ -61,7 +61,7 @@
         "https://kubernetes.io/docs/concepts/cluster-administration/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check current node capacity:\nkubectl describe nodes | grep -A 5 'Allocated resources'\n\n# Scale up node pool (EKS example):\naws eks update-nodegroup-config --cluster-name my-cluster --nodegroup-name my-nodes --scaling-config minSize=2,maxSize=10,desiredSize=5\n\n# Or enable cluster autoscaler"
     },
     {
       "action": "Check for node affinity/taints preventing scheduling on available nodes",

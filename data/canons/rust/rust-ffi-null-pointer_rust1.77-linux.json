@@ -72,7 +72,7 @@
     ],
     "frequently_confused_with": [
       {
-        "error_id": "rust/e0507-cannot-move-out-of-borrowed/rust1-linux",
+        "error_id": "rust/e0507-move-out-of-borrow/rust1-linux",
         "distinction": "E0507 is a compile-time borrow error; null pointer FFI is a runtime segfault from unchecked C pointers"
       }
     ]

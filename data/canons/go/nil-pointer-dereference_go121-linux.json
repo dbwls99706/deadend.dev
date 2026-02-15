@@ -48,17 +48,28 @@
     {
       "action": "Add nil checks before dereferencing: if ptr != nil { ... }",
       "success_rate": 0.96,
-      "how": "Check for nil at every point where a pointer might be nil",
+      "how": "if user != nil {\n  fmt.Println(user.Name)\n}\n// For nested pointers:\nif resp != nil && resp.Body != nil {\n  defer resp.Body.Close()\n}",
       "sources": [
         "https://go.dev/doc/effective_go#errors"
       ],
       "condition": ""
     },
     {
-      "action": "Always check error returns: val, err := fn(); if err != nil { return }",
-      "success_rate": 0.97,
-      "how": "Most nil pointer issues come from ignoring error returns",
-      "sources": [],
+      "action": "Use the comma-ok idiom for map lookups and type assertions",
+      "success_rate": 0.94,
+      "how": "// Map lookup:\nval, ok := myMap[key]\nif !ok { return fmt.Errorf(\"key %q not found\", key) }\n// Type assertion:\nstr, ok := iface.(string)\nif !ok { return fmt.Errorf(\"expected string, got %T\", iface) }",
+      "sources": [
+        "https://go.dev/doc/effective_go#interface_conversions"
+      ],
+      "condition": ""
+    },
+    {
+      "action": "Return concrete types with zero values instead of nil pointers",
+      "success_rate": 0.90,
+      "how": "// Instead of returning *Config (can be nil):\nfunc NewConfig() Config {\n  return Config{Timeout: 30 * time.Second, Retries: 3}\n}\n// Use value receivers on the zero value:\nvar c Config  // safe to use immediately",
+      "sources": [
+        "https://go.dev/doc/effective_go#pointers_vs_values"
+      ],
       "condition": ""
     }
   ],

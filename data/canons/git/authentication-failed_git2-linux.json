@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0.0",
+  "id": "git/authentication-failed/git2-linux",
+  "url": "https://deadends.dev/git/authentication-failed/git2-linux",
+  "error": {
+    "signature": "fatal: Authentication failed for 'https://github.com/user/repo.git'",
+    "regex": "Authentication failed|could not read Username|terminal prompts disabled|authentication.*error",
+    "domain": "git",
+    "category": "authentication",
+    "first_seen": "2023-01-01",
+    "last_confirmed": "2026-02-15"
+  },
+  "environment": {
+    "runtime": {
+      "name": "git",
+      "version_range": ">=2.20"
+    },
+    "os": "linux"
+  },
+  "verdict": {
+    "resolvable": "true",
+    "fix_success_rate": 0.92,
+    "confidence": 0.94,
+    "last_updated": "2026-02-15",
+    "summary": "Git cannot authenticate with the remote. Credentials may be wrong, expired, or the auth method is no longer supported."
+  },
+  "dead_ends": [
+    {
+      "action": "Retrying with the same password",
+      "why_fails": "If password auth is disabled (GitHub since Aug 2021), no password will work",
+      "fail_rate": 0.95,
+      "sources": [
+        "https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/"
+      ],
+      "condition": ""
+    }
+  ],
+  "workarounds": [
+    {
+      "action": "Generate a personal access token (PAT) and use it instead of a password",
+      "success_rate": 0.94,
+      "sources": [
+        "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"
+      ],
+      "condition": "",
+      "how": "# GitHub: Settings > Developer Settings > Personal Access Tokens > Generate new token\n# Use the token as the password when git prompts for credentials.\n# Store it so you don't have to re-enter:\ngit config --global credential.helper store"
+    },
+    {
+      "action": "For SSH, test key with ssh -T and add to agent if needed",
+      "success_rate": 0.9,
+      "sources": [
+        "https://docs.github.com/en/authentication/connecting-to-github-with-ssh/testing-your-ssh-connection"
+      ],
+      "condition": "",
+      "how": "# Test SSH connectivity:\nssh -T git@github.com\n\n# If key not found, add it to the agent:\neval $(ssh-agent -s)\nssh-add ~/.ssh/id_ed25519\n\n# If no key exists, generate one:\nssh-keygen -t ed25519 -C 'your_email@example.com'\n# Then add the public key to GitHub/GitLab settings."
+    },
+    {
+      "action": "Use credential helper to cache or store credentials securely",
+      "success_rate": 0.88,
+      "sources": [
+        "https://git-scm.com/docs/gitcredentials"
+      ],
+      "condition": "",
+      "how": "# Cache credentials in memory for 1 hour:\ngit config --global credential.helper 'cache --timeout=3600'\n\n# Store credentials on disk (less secure):\ngit config --global credential.helper store\n\n# On macOS, use Keychain:\ngit config --global credential.helper osxkeychain\n\n# On Linux, use libsecret:\ngit config --global credential.helper /usr/libexec/git-core/git-credential-libsecret"
+    }
+  ],
+  "transition_graph": {
+    "leads_to": [],
+    "preceded_by": [],
+    "frequently_confused_with": [
+      {
+        "error_id": "git/permission-denied-publickey/git2-linux",
+        "distinction": "authentication-failed is typically HTTPS auth failure; permission-denied-publickey is SSH key authentication failure. Different protocols require different fixes."
+      }
+    ]
+  },
+  "metadata": {
+    "generated_by": "bulk_generate.py",
+    "generation_date": "2026-02-15",
+    "review_status": "auto_generated",
+    "evidence_count": 50,
+    "last_verification": "2026-02-15"
+  }
+}

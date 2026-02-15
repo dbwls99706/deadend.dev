@@ -68,7 +68,7 @@
         "condition": "when broken links indicate deeper object corruption"
       },
       {
-        "error_id": "git/bad-object-head/git2-linux",
+        "error_id": "git/bad-object/git2-linux",
         "probability": 0.15,
         "condition": "when the broken link is in the commit chain leading to HEAD"
       }

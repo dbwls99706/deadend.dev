@@ -53,7 +53,7 @@
         "https://docs.python.org/3/library/functions.html#breakpoint"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Add a breakpoint before the failing line:\nbreakpoint()  # or: import pdb; pdb.set_trace()\nprint(type(obj), repr(obj))  # See what the object actually is"
     },
     {
       "action": "Add type hints and use mypy/pyright to catch statically",
@@ -62,7 +62,7 @@
         "https://docs.python.org/3/library/typing.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "from typing import Optional\n\ndef get_user(id: int) -> Optional[User]:\n    ...\n# Then run: mypy --strict mymodule.py\n# mypy will flag obj.method() where obj could be None"
     }
   ],
   "transition_graph": {

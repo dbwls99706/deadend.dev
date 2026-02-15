@@ -61,7 +61,16 @@
         "https://developer.hashicorp.com/terraform/cli/commands/providers"
       ],
       "condition": "",
-      "how": "Check system resources (memory) — large state files can OOM the provider"
+      "how": "# Enable debug logging to find crash reason:\nexport TF_LOG=DEBUG\nexport TF_LOG_PATH=./terraform-debug.log\nterraform plan\n# Check the log for panic/crash stack traces:\ngrep -A 20 'panic\\|SIGILL\\|SIGSEGV' terraform-debug.log"
+    },
+    {
+      "action": "Clear the provider cache and reinitialize with upgraded provider",
+      "success_rate": 0.80,
+      "how": "rm -rf .terraform/providers\nrm .terraform.lock.hcl\nterraform init -upgrade\n# This downloads fresh provider binaries and updates the lock file",
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/init"
+      ],
+      "condition": ""
     }
   ],
   "transition_graph": {

@@ -82,7 +82,7 @@
     ],
     "frequently_confused_with": [
       {
-        "error_id": "python/runtimeerror-event-loop-running/py311-linux",
+        "error_id": "python/runtimeerror-event-loop/py311-linux",
         "distinction": "'Event loop is closed' means the loop was shut down and can't be reused. 'Event loop is already running' means the loop is active and you're trying to start it again (e.g., nested asyncio.run())."
       }
     ]

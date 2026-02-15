@@ -72,7 +72,7 @@
   "transition_graph": {
     "leads_to": [
       {
-        "error_id": "react/cannot-update-unmounted/react18-linux",
+        "error_id": "react/useeffect-cleanup-memory-leak/react18-linux",
         "probability": 0.35,
         "condition": "If async function completes after component unmounts without AbortController cleanup"
       }

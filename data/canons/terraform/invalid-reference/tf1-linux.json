@@ -61,7 +61,7 @@
         "https://developer.hashicorp.com/terraform/language/modules"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Use terraform console to test expressions:\nterraform console\n> aws_instance.web.id\n> module.vpc.subnet_ids\n\n# Verify the reference format:\n# resource: aws_instance.web.id\n# module output: module.name.output_name\n# variable: var.name\n# local: local.name\n# data source: data.aws_ami.latest.id"
     }
   ],
   "transition_graph": {

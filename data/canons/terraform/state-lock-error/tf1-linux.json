@@ -55,13 +55,22 @@
       "condition": ""
     },
     {
-      "action": "Check if another terraform apply is running and wait for it to finish",
+      "action": "If the lock is stale, use terraform force-unlock with the lock ID",
       "success_rate": 0.85,
+      "sources": [
+        "https://developer.hashicorp.com/terraform/cli/commands/force-unlock"
+      ],
+      "condition": "",
+      "how": "# The error message contains the Lock ID:\n# Lock Info: ID: a1b2c3d4-e5f6-...\nterraform force-unlock a1b2c3d4-e5f6-...\n# For S3/DynamoDB backend, verify no active process first:\naws dynamodb scan --table-name terraform-locks"
+    },
+    {
+      "action": "Use terraform plan and check state access before running in CI",
+      "success_rate": 0.82,
+      "how": "# In CI/CD pipeline, add retry logic and lock timeout:\nterraform plan -lock-timeout=5m\nterraform apply -lock-timeout=5m -auto-approve\n# Or serialize runs in CI to avoid concurrent state access:\n# Use a CI job queue or concurrency group",
       "sources": [
         "https://developer.hashicorp.com/terraform/language/state/locking"
       ],
-      "condition": "",
-      "how": "Check if another terraform apply is running and wait for it to finish"
+      "condition": ""
     }
   ],
   "transition_graph": {

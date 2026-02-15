@@ -55,7 +55,7 @@
         "https://docs.nvidia.com/deeplearning/nccl/install-guide/index.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check current versions:\nnvidia-smi  # Driver version\nnvcc --version  # CUDA version\npython -c \"import torch; print(torch.cuda.nccl.version())\"\n\n# Update driver:\nsudo apt-get install nvidia-driver-545\n# Update NCCL:\nconda install -c nvidia nccl"
     },
     {
       "action": "Try NCCL_P2P_DISABLE=1 if peer-to-peer GPU communication fails",
@@ -64,7 +64,7 @@
         "https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/env.html"
       ],
       "condition": "",
-      "how": ""
+      "how": "export NCCL_P2P_DISABLE=1\n# Also try disabling IB if on InfiniBand:\nexport NCCL_IB_DISABLE=1\n# Then rerun training:\ntorchrun --nproc_per_node=4 train.py"
     }
   ],
   "transition_graph": {

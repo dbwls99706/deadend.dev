@@ -65,14 +65,14 @@
     ],
     "preceded_by": [
       {
-        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
+        "error_id": "typescript/ts2339-index-signature/ts5-linux",
         "probability": 0.2,
         "condition": "When index signature errors lead to mapped type usage"
       }
     ],
     "frequently_confused_with": [
       {
-        "error_id": "typescript/ts7053-no-index-signature/ts5-linux",
+        "error_id": "typescript/ts2339-index-signature/ts5-linux",
         "distinction": "TS7053 is about missing index signatures; TS2536 is about key types not matching existing signatures in mapped types"
       }
     ]

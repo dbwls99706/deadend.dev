@@ -61,7 +61,7 @@
         "https://www.python.org/downloads/"
       ],
       "condition": "",
-      "how": ""
+      "how": "# Check current Python version:\npython --version\n\n# Install the required version:\n# Ubuntu/Debian:\nsudo apt install python3.12\n\n# Or use pyenv:\npyenv install 3.12.0\npyenv local 3.12.0\npython -m venv .venv && source .venv/bin/activate"
     },
     {
       "action": "Use pyenv to manage multiple Python versions",
