@@ -29,14 +29,18 @@
       "action": "Adding --cache-from with the latest image tag without BuildKit",
       "why_fails": "Legacy Docker builder's --cache-from only works if the image layers exactly match. Any change in a parent layer invalidates all subsequent layers. Without BuildKit's cache mount feature, dependency installation layers are rebuilt whenever any source file changes.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions"
+      ],
       "condition": "Using legacy Docker builder without BuildKit"
     },
     {
       "action": "Caching the entire /var/lib/docker directory in CI",
       "why_fails": "Docker's storage driver (overlay2) creates many small files that are slow to save/restore from CI cache. The cache upload time often exceeds the time saved. GitHub Actions has a 10GB cache limit that fills quickly.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions"
+      ],
       "condition": ""
     }
   ],

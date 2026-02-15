@@ -29,14 +29,18 @@
       "action": "Simply retrying the same request immediately",
       "why_fails": "If the server or load balancer is actively resetting HTTP/2 streams due to configuration limits, retrying hits the same limit. Need to address the root cause first.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/stream.html"
+      ],
       "condition": "Systematic stream resets"
     },
     {
       "action": "Downgrading to HTTP/1.1 globally",
       "why_fails": "Loses multiplexing, header compression, and server push benefits. May not be possible if the server only supports HTTP/2 (e.g., gRPC requires HTTP/2).",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://nodejs.org/api/stream.html"
+      ],
       "condition": "gRPC or HTTP/2-only services"
     }
   ],

@@ -29,14 +29,18 @@
       "action": "Increasing PHP cURL timeout values (CURLOPT_CONNECTTIMEOUT)",
       "why_fails": "Connection refused (ECONNREFUSED) is an immediate TCP RST response, not a timeout issue. The port is unreachable and no amount of waiting will change that unless the target service starts.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://www.php.net/manual/en/"
+      ],
       "condition": ""
     },
     {
       "action": "Switching from cURL to file_get_contents or stream contexts",
       "why_fails": "The connection refusal is at the TCP level, not specific to cURL. All PHP HTTP methods will fail identically because the underlying socket connection is refused by the OS.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://www.php.net/manual/en/"
+      ],
       "condition": ""
     }
   ],

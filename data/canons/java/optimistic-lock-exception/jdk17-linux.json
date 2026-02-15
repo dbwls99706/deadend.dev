@@ -38,7 +38,9 @@
       "action": "Catching the exception and blindly retrying the same update",
       "why_fails": "Retrying with the same stale data will hit the same version conflict. The entity must be re-fetched before retrying.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/javaee/7/api/javax/persistence/OptimisticLockException.html"
+      ],
       "condition": ""
     }
   ],

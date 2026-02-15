@@ -29,14 +29,18 @@
       "action": "Checking if the attribute actually exists on the return type",
       "why_fails": "The attribute exists on the actual return value, not on the coroutine wrapper. The issue is the missing 'await', not a missing attribute.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/tutorial/classes.html"
+      ],
       "condition": ""
     },
     {
       "action": "Adding the missing attribute to the returned object's class",
       "why_fails": "The returned object is a coroutine, not the intended type. Adding attributes to the class won't help because the code never reaches the actual return value.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/tutorial/classes.html"
+      ],
       "condition": ""
     }
   ],

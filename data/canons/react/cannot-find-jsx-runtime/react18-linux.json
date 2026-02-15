@@ -29,14 +29,18 @@
       "action": "Adding /** @jsxRuntime classic */ pragma to every file",
       "why_fails": "This falls back to the old React.createElement transform per-file, which defeats the purpose of the new JSX transform (smaller bundles, no React import needed). It doesn't fix the underlying configuration issue and creates tech debt.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react"
+      ],
       "condition": ""
     },
     {
       "action": "Downgrading to React 16 to avoid the new JSX transform",
       "why_fails": "React 16 lacks key features (concurrent rendering, automatic batching, useId). The jsx-runtime issue is a configuration problem, not a React version problem. React 17+ is needed for the new transform.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react"
+      ],
       "condition": ""
     }
   ],

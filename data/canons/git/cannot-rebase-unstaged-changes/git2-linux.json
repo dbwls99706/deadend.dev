@@ -29,7 +29,9 @@
       "action": "Using git checkout . to discard all changes before rebase",
       "why_fails": "This permanently deletes all uncommitted work. If the changes were important, they are lost forever with no way to recover.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": "Changes are needed"
     },
     {

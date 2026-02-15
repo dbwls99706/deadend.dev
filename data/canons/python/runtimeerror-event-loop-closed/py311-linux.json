@@ -38,7 +38,9 @@
       "action": "Wrapping everything in try/except to suppress the error",
       "why_fails": "Suppressing the error masks resource leaks. Connections, file handles, and background tasks won't be cleaned up properly, causing data corruption or resource exhaustion.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.python.org/3/library/asyncio.html"
+      ],
       "condition": ""
     }
   ],

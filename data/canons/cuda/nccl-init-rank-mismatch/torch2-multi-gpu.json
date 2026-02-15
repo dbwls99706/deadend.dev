@@ -42,7 +42,9 @@
       "action": "Upgrading NCCL version to fix the 'invalid argument' error",
       "why_fails": "ncclInvalidArgument is a parameter validation error, not a bug. The communicator creation rejects the configuration because rank >= world_size or world_size doesn't match across processes.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/"
+      ],
       "condition": ""
     }
   ],

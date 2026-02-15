@@ -38,7 +38,9 @@
       "action": "Splitting code into multiple Lambda functions",
       "why_fails": "If the large dependencies are shared across all functions, each function still needs the same large package. Splitting code doesn't reduce dependency size.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/"
+      ],
       "condition": "Large shared dependencies"
     }
   ],

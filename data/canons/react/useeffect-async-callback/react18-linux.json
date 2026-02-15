@@ -29,14 +29,18 @@
       "action": "Using .then() chains instead of async/await to avoid the async callback",
       "why_fails": "While .then() technically avoids the async return issue, it makes error handling harder and leads to deeply nested promise chains. The IIFE pattern is simpler and more maintainable.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react"
+      ],
       "condition": ""
     },
     {
       "action": "Suppressing the warning with eslint-disable without fixing the code",
       "why_fails": "The warning exists because the async callback returns a Promise as the cleanup function. React will try to call the Promise as a function during cleanup, causing silent failures and potential memory leaks from unclean subscriptions.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://react.dev/reference/react"
+      ],
       "condition": ""
     }
   ],

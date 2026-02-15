@@ -29,14 +29,18 @@
       "action": "Installing Docker Engine natively inside WSL2 alongside Docker Desktop",
       "why_fails": "Running two Docker daemons (Docker Desktop + native) causes socket conflicts and confusing behavior. Images/containers are split between the two daemons.",
       "fail_rate": 0.75,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/"
+      ],
       "condition": "Docker Desktop is installed"
     },
     {
       "action": "Running dockerd manually with sudo inside WSL2",
       "why_fails": "If Docker Desktop is managing the daemon, running a second dockerd creates conflicts. If Docker Desktop is not installed, systemd may not be available in older WSL2 distros.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/"
+      ],
       "condition": ""
     }
   ],

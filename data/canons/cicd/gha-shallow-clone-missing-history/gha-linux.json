@@ -29,14 +29,18 @@
       "action": "Running git fetch --unshallow in a step after checkout",
       "why_fails": "While this works in some cases, it re-fetches the entire history which is slow for large repos. It also fails if the repo was already fully cloned (error: --unshallow on a complete repository). Use fetch-depth: 0 in checkout instead.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions"
+      ],
       "condition": ""
     },
     {
       "action": "Setting fetch-depth to a large fixed number like 100 or 500",
       "why_fails": "A fixed depth is a guess that may still be insufficient. If the needed commit (merge base, tag, or blame target) is beyond that depth, the operation still fails. Only fetch-depth: 0 guarantees all history is available.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.github.com/en/actions"
+      ],
       "condition": "When the required history depth varies"
     }
   ],

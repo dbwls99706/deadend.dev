@@ -29,14 +29,18 @@
       "action": "Deleting and recreating the pod to force a fresh start",
       "why_fails": "The new pod will hit the same volume mount issue. The problem is in the storage configuration, not the pod itself.",
       "fail_rate": 0.85,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     },
     {
       "action": "Increasing pod resource limits thinking it's a resource issue",
       "why_fails": "ContainerCreating is a pre-start state. The container hasn't started yet, so CPU/memory limits are irrelevant. The issue is volume mounting.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

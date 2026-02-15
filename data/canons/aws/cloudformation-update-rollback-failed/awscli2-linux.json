@@ -38,7 +38,9 @@
       "action": "Retrying the same update that caused the failure",
       "why_fails": "The stack is in a failed state and won't accept updates until the rollback is completed. The same update will fail for the same reason.",
       "fail_rate": 0.95,
-      "sources": [],
+      "sources": [
+        "https://docs.aws.amazon.com/general/latest/gr/"
+      ],
       "condition": ""
     }
   ],

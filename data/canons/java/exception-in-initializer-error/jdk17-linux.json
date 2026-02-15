@@ -38,7 +38,9 @@
       "action": "Adding more memory thinking it's a resource issue",
       "why_fails": "The error is caused by an exception in static code, not by resource limits. The root cause is a bug in the static initializer.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ExceptionInInitializerError.html"
+      ],
       "condition": ""
     }
   ],

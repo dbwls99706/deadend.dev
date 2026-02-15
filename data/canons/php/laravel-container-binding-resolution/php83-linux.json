@@ -39,7 +39,9 @@
       "action": "Running composer dump-autoload repeatedly without checking the actual class path",
       "why_fails": "dump-autoload regenerates the autoloader map, but if the class file doesn't exist or the namespace doesn't match the directory structure (PSR-4), re-dumping won't help.",
       "fail_rate": 0.7,
-      "sources": [],
+      "sources": [
+        "https://www.php.net/manual/en/"
+      ],
       "condition": ""
     }
   ],

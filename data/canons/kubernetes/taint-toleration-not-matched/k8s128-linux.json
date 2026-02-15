@@ -38,7 +38,9 @@
       "action": "Setting nodeSelector without tolerations",
       "why_fails": "nodeSelector selects nodes by label but doesn't bypass taints. The pod will target the right nodes but still be rejected by their taints.",
       "fail_rate": 0.9,
-      "sources": [],
+      "sources": [
+        "https://kubernetes.io/docs/reference/"
+      ],
       "condition": ""
     }
   ],

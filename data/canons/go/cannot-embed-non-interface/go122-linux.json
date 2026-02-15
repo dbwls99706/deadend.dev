@@ -38,7 +38,9 @@
       "action": "Creating a wrapper interface just to embed the type",
       "why_fails": "If you need the concrete type's fields (not just methods), an interface won't help since interfaces only carry method sets.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/std"
+      ],
       "condition": "Need access to concrete fields"
     }
   ],

@@ -38,7 +38,9 @@
       "action": "Ignoring the message and continuing to work without pulling",
       "why_fails": "Each new local commit increases divergence. Eventually git push will be rejected, requiring a more complex merge or rebase.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://git-scm.com/docs"
+      ],
       "condition": ""
     }
   ],

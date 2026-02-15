@@ -33,14 +33,18 @@
       "action": "Reinstalling PyTorch without checking cuDNN version compatibility",
       "why_fails": "PyTorch bundles its own cuDNN, but if CUDA driver version is too old for the bundled cuDNN, or if LD_LIBRARY_PATH points to a system cuDNN that conflicts, reinstalling PyTorch alone doesn't resolve the mismatch.",
       "fail_rate": 0.65,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/"
+      ],
       "condition": ""
     },
     {
       "action": "Reducing batch size as a general fix",
       "why_fails": "CUDNN_STATUS_EXECUTION_FAILED is not an OOM error. Reducing batch size changes input dimensions, which may cause cuDNN to select a different algorithm that happens to work, but this masks the real issue and breaks reproducibility.",
       "fail_rate": 0.6,
-      "sources": [],
+      "sources": [
+        "https://docs.nvidia.com/cuda/"
+      ],
       "condition": ""
     }
   ],

@@ -29,7 +29,9 @@
       "action": "Deleting go.sum and regenerating from scratch",
       "why_fails": "While this works in isolation, it changes checksums for all dependencies, making the diff noisy and potentially introducing different versions than intended.",
       "fail_rate": 0.55,
-      "sources": [],
+      "sources": [
+        "https://pkg.go.dev/std"
+      ],
       "condition": ""
     },
     {

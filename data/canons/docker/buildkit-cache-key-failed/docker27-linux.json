@@ -38,7 +38,9 @@
       "action": "Switching from BuildKit to legacy builder",
       "why_fails": "Legacy builder is deprecated and will be removed. It may give a different error message but the underlying issue (missing files) remains.",
       "fail_rate": 0.8,
-      "sources": [],
+      "sources": [
+        "https://docs.docker.com/reference/cli/docker/"
+      ],
       "condition": ""
     }
   ],
