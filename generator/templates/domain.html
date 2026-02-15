@@ -87,9 +87,8 @@ MATCH_API={{ base_url }}/api/v1/match.json
 
   {% for e in entries %}
   <div class="entry">
-    <a href="{{ base_path }}/{{ e.id }}"><code>{{ e.signature }}</code></a>
-    <span class="verdict-{{ e.resolvable }}">[{{ e.resolvable }}]</span>
-    <span class="meta">{{ e.env_summary }} · Fix rate: {{ (e.fix_success_rate * 100)|int }}% · {{ e.dead_end_count }} dead ends · {{ e.workaround_count }} workarounds</span>
+    <a href="{{ base_path }}/{{ e.slug_key }}/"><code>{{ e.signature }}</code></a>
+    <span class="meta">{{ e.env_count }} env{{ 's' if e.env_count != 1 else '' }} · Best fix rate: {{ (e.fix_success_rate * 100)|int }}% · {{ e.dead_end_count }} dead ends · {{ e.workaround_count }} workarounds</span>
   </div>
   {% endfor %}
 

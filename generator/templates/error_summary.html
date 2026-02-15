@@ -76,6 +76,13 @@ MATCH_API={{ base_url }}/api/v1/match.json</pre>
     {% if common_workarounds %}Top workaround: <em>{{ common_workarounds[0].action }}</em> ({{ (common_workarounds[0].success_rate * 100)|int }}% success).{% endif %}
   </section>
 
+  {% if verdict_summary|default('') %}
+  <section id="summary">
+    <h2>Summary</h2>
+    <p>{{ verdict_summary }}</p>
+  </section>
+  {% endif %}
+
   {% if common_variations|default([]) %}
   <section id="common-variations">
     <h2>Common Variations</h2>
@@ -172,6 +179,18 @@ MATCH_API={{ base_url }}/api/v1/match.json</pre>
       {% endfor %}
     </ul>
     {% endif %}
+  </section>
+  {% endif %}
+
+  {% if domain_errors|default([]) %}
+  <section id="other-errors">
+    <h2>Other {{ domain | display_name }} Errors</h2>
+    <ul>
+      {% for e in domain_errors %}
+      <li><a href="{{ base_path }}/{{ e.slug_key }}/">{{ e.signature }}</a></li>
+      {% endfor %}
+    </ul>
+    <p class="meta"><a href="{{ base_path }}/{{ domain }}/">View all {{ domain | display_name }} errors</a></p>
   </section>
   {% endif %}
 

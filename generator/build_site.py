@@ -102,6 +102,21 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
     template = jinja_env.get_template("page.html")
     known_ids = {c["id"] for c in canons}
 
+    # Build per-domain summary links for internal linking
+    # Key: domain, Value: list of {slug_key, signature}  (deduplicated)
+    domain_summaries: dict[str, list[dict]] = {}
+    for c in canons:
+        domain = c["error"]["domain"]
+        slug_key = c["id"].rsplit("/", 1)[0]
+        if domain not in domain_summaries:
+            domain_summaries[domain] = []
+        seen = {e["slug_key"] for e in domain_summaries[domain]}
+        if slug_key not in seen:
+            domain_summaries[domain].append({
+                "slug_key": slug_key,
+                "signature": c["error"]["signature"],
+            })
+
     for canon in canons:
         error_id = canon["id"]
         env_summary = build_env_summary(canon)
@@ -187,6 +202,15 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
                 howto_data, indent=2, ensure_ascii=False
             )
 
+        # Same-domain errors for internal linking (exclude self)
+        current_slug = error_id.rsplit("/", 1)[0]
+        same_domain = [
+            e for e in domain_summaries.get(
+                canon["error"]["domain"], []
+            )
+            if e["slug_key"] != current_slug
+        ][:10]
+
         html = template.render(
             env_summary=env_summary,
             all_sources=all_sources,
@@ -194,6 +218,7 @@ def build_error_pages(canons: list[dict], jinja_env: Environment) -> None:
             faq_json_ld=faq_json_ld,
             howto_json_ld=howto_json_ld,
             known_ids=known_ids,
+            domain_errors=same_domain,
             **canon,
         )
 
@@ -224,18 +249,29 @@ def build_domain_pages(canons: list[dict], jinja_env: Environment) -> None:
         by_domain.setdefault(domain, []).append(canon)
 
     for domain, domain_canons in by_domain.items():
-        entries = [
-            {
-                "id": c["id"],
-                "signature": c["error"]["signature"],
-                "env_summary": build_env_summary(c),
-                "resolvable": c["verdict"]["resolvable"],
-                "fix_success_rate": c["verdict"]["fix_success_rate"],
-                "dead_end_count": len(c["dead_ends"]),
-                "workaround_count": len(c.get("workarounds", [])),
-            }
-            for c in sorted(domain_canons, key=lambda c: c["id"])
-        ]
+        # Group by slug for summary-level entries
+        by_slug: dict[str, list[dict]] = {}
+        for c in sorted(domain_canons, key=lambda c: c["id"]):
+            slug_key = c["id"].rsplit("/", 1)[0]
+            by_slug.setdefault(slug_key, []).append(c)
+
+        entries = []
+        for slug_key, slug_canons in sorted(by_slug.items()):
+            slug_rates = [
+                c["verdict"]["fix_success_rate"] for c in slug_canons
+            ]
+            slug_de = sum(len(c["dead_ends"]) for c in slug_canons)
+            slug_wa = sum(
+                len(c.get("workarounds", [])) for c in slug_canons
+            )
+            entries.append({
+                "slug_key": slug_key,
+                "signature": slug_canons[0]["error"]["signature"],
+                "env_count": len(slug_canons),
+                "fix_success_rate": max(slug_rates),
+                "dead_end_count": slug_de,
+                "workaround_count": slug_wa,
+            })
 
         # Domain-level stats
         rates = [c["verdict"]["fix_success_rate"] for c in domain_canons]
@@ -308,72 +344,93 @@ def build_index_page(canons: list[dict], jinja_env: Environment) -> None:
     print("  Generated: index.html")
 
 
+def _write_urlset(urlset: Element, path: Path) -> None:
+    """Write a urlset element to an XML file."""
+    xml_declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_body = tostring(urlset, encoding="unicode")
+    path.write_text(xml_declaration + xml_body, encoding="utf-8")
+
+
 def build_sitemap(
     canons: list[dict],
     summary_urls: list[dict] | None = None,
 ) -> None:
-    """Generate sitemap.xml with all page types."""
-    urlset = Element("urlset")
-    urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
+    """Generate sitemap index with per-domain sub-sitemaps.
 
+    Environment-specific pages are excluded from sitemaps because their
+    canonical URL points to the summary page. Including them would waste
+    crawl budget on pages Google will consolidate anyway.
+    """
+    ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    # Index page
-    url_elem = SubElement(urlset, "url")
+    # --- Main sitemap: index, search, domain pages ---
+    main_urlset = Element("urlset", xmlns=ns)
+
+    url_elem = SubElement(main_urlset, "url")
     SubElement(url_elem, "loc").text = BASE_URL
     SubElement(url_elem, "lastmod").text = now
     SubElement(url_elem, "changefreq").text = "weekly"
     SubElement(url_elem, "priority").text = "1.0"
 
-    # Search page
-    url_elem = SubElement(urlset, "url")
+    url_elem = SubElement(main_urlset, "url")
     SubElement(url_elem, "loc").text = f"{BASE_URL}/search/"
     SubElement(url_elem, "lastmod").text = now
     SubElement(url_elem, "changefreq").text = "weekly"
     SubElement(url_elem, "priority").text = "0.9"
 
-    # Domain pages
     domains_seen = set()
     for canon in canons:
         domain = canon["error"]["domain"]
         if domain not in domains_seen:
             domains_seen.add(domain)
-            url_elem = SubElement(urlset, "url")
+            url_elem = SubElement(main_urlset, "url")
             SubElement(url_elem, "loc").text = f"{BASE_URL}/{domain}/"
             SubElement(url_elem, "lastmod").text = now
             SubElement(url_elem, "changefreq").text = "weekly"
             SubElement(url_elem, "priority").text = "0.9"
 
-    # Error summary pages (environment-agnostic)
+    _write_urlset(main_urlset, SITE_DIR / "sitemap-main.xml")
+    print("  Generated: sitemap-main.xml")
+
+    # --- Per-domain sitemaps: summary pages only ---
+    summaries_by_domain: dict[str, list[dict]] = {}
     for summary in summary_urls or []:
-        url_elem = SubElement(urlset, "url")
-        SubElement(url_elem, "loc").text = summary["url"]
-        SubElement(url_elem, "lastmod").text = now
-        SubElement(url_elem, "changefreq").text = "weekly"
-        SubElement(url_elem, "priority").text = "0.85"
+        domain = summary["slug_key"].split("/", 1)[0]
+        summaries_by_domain.setdefault(domain, []).append(summary)
 
-    # Error pages (environment-specific)
-    for canon in canons:
-        url_elem = SubElement(urlset, "url")
-        # Ensure trailing slash (pages are served as /path/index.html)
-        error_url = canon["url"]
-        if not error_url.endswith("/"):
-            error_url += "/"
-        SubElement(url_elem, "loc").text = error_url
-        last_updated = canon["verdict"].get("last_updated", now)
-        SubElement(url_elem, "lastmod").text = last_updated
-        SubElement(url_elem, "changefreq").text = "monthly"
-        SubElement(url_elem, "priority").text = "0.8"
+    domain_sitemap_files = ["sitemap-main.xml"]
+    for domain in sorted(summaries_by_domain.keys()):
+        domain_urlset = Element("urlset", xmlns=ns)
+        for s in summaries_by_domain[domain]:
+            url_elem = SubElement(domain_urlset, "url")
+            SubElement(url_elem, "loc").text = s["url"]
+            SubElement(url_elem, "lastmod").text = now
+            SubElement(url_elem, "changefreq").text = "weekly"
+            SubElement(url_elem, "priority").text = "0.8"
 
-    # Note: Non-HTML resources (JSON API, llms.txt) are excluded from sitemap
-    # to avoid diluting crawl budget. Google won't index JSON/TXT as web pages.
+        fname = f"sitemap-{domain}.xml"
+        _write_urlset(domain_urlset, SITE_DIR / fname)
+        domain_sitemap_files.append(fname)
+        print(f"  Generated: {fname}")
+
+    # --- Sitemap index ---
+    idx_ns = "http://www.sitemaps.org/schemas/sitemap/0.9"
+    sitemap_index = Element("sitemapindex", xmlns=idx_ns)
+    for fname in domain_sitemap_files:
+        sm = SubElement(sitemap_index, "sitemap")
+        SubElement(sm, "loc").text = f"{BASE_URL}/{fname}"
+        SubElement(sm, "lastmod").text = now
 
     xml_declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'
-    xml_body = tostring(urlset, encoding="unicode")
+    xml_body = tostring(sitemap_index, encoding="unicode")
     (SITE_DIR / "sitemap.xml").write_text(
         xml_declaration + xml_body, encoding="utf-8"
     )
-    print("  Generated: sitemap.xml")
+    total = sum(
+        len(v) for v in summaries_by_domain.values()
+    ) + 2 + len(domains_seen)
+    print(f"  Generated: sitemap.xml (index, {total} URLs)")
 
 
 def build_robots_txt() -> None:
@@ -806,6 +863,11 @@ def build_error_summary_pages(
             continue
         by_slug.setdefault(slug_key, []).append(canon)
 
+    # Build per-domain summary list for cross-linking
+    slug_signatures: dict[str, str] = {}
+    for sk, sc in by_slug.items():
+        slug_signatures[sk] = sc[0]["error"]["signature"]
+
     summaries = []
     for slug_key, slug_canons in by_slug.items():
         domain, slug = slug_key.split("/", 1)
@@ -816,6 +878,7 @@ def build_error_summary_pages(
         environments = []
         all_dead_ends = []
         all_workarounds = []
+        verdict_summary = first["verdict"]["summary"]
 
         for c in sorted(slug_canons, key=lambda x: x["id"]):
             environments.append({
@@ -942,6 +1005,13 @@ def build_error_summary_pages(
             ensure_ascii=False,
         )
 
+        # Same-domain errors for cross-linking (exclude self)
+        same_domain = [
+            {"slug_key": sk, "signature": sig}
+            for sk, sig in slug_signatures.items()
+            if sk.startswith(f"{domain}/") and sk != slug_key
+        ][:10]
+
         html = template.render(
             signature=signature,
             regex=regex,
@@ -958,6 +1028,8 @@ def build_error_summary_pages(
             summary_json_ld=summary_json_ld,
             transition_graph=aggregated_graph,
             known_ids=known_ids,
+            domain_errors=same_domain,
+            verdict_summary=verdict_summary,
         )
 
         # Write to /{domain}/{slug}/index.html

@@ -106,13 +106,22 @@ class TestSiteBuildIntegration:
         assert (built_site["site_dir"] / "index.html").exists()
 
     def test_sitemap_created(self, built_site):
-        """Sitemap should exist and contain all canon URLs."""
+        """Sitemap index should exist and reference sub-sitemaps."""
         sitemap_path = built_site["site_dir"] / "sitemap.xml"
         assert sitemap_path.exists()
 
         content = sitemap_path.read_text(encoding="utf-8")
-        for canon in built_site["canons"]:
-            assert canon["url"] in content, f"Missing URL in sitemap: {canon['url']}"
+        assert "sitemapindex" in content
+        assert "sitemap-main.xml" in content
+
+        # Summary pages should appear in domain sub-sitemaps
+        all_sub_content = ""
+        for f in built_site["site_dir"].glob("sitemap-*.xml"):
+            all_sub_content += f.read_text(encoding="utf-8")
+        for summary in built_site["summary_urls"]:
+            assert summary["url"] in all_sub_content, (
+                f"Missing URL in sub-sitemap: {summary['url']}"
+            )
 
     def test_html_pages_have_json_ld(self, built_site):
         """Every error page should contain valid JSON-LD."""
@@ -178,12 +187,16 @@ class TestSiteBuildIntegration:
         assert "regex" in content
 
     def test_sitemap_includes_search_and_summaries(self, built_site):
-        """Sitemap should include search page and summary pages."""
-        sitemap_path = built_site["site_dir"] / "sitemap.xml"
-        content = sitemap_path.read_text(encoding="utf-8")
-        assert "/search/" in content
+        """Sub-sitemaps should include search page and summary pages."""
+        main_path = built_site["site_dir"] / "sitemap-main.xml"
+        main_content = main_path.read_text(encoding="utf-8")
+        assert "/search/" in main_content
+
+        all_sub_content = ""
+        for f in built_site["site_dir"].glob("sitemap-*.xml"):
+            all_sub_content += f.read_text(encoding="utf-8")
         for summary in built_site["summary_urls"]:
-            assert summary["url"] in content
+            assert summary["url"] in all_sub_content
 
 
 class TestDataValidation:
