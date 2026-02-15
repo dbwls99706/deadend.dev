@@ -235,11 +235,26 @@ def validate_all(
         if not canon_files:
             print("WARNING: No canon JSON files found")
         else:
+            seen_ids: dict[str, Path] = {}
             for canon_file in canon_files:
                 try:
                     with open(canon_file, encoding="utf-8") as f:
                         data = json.load(f)
                     all_canons.append(data)
+
+                    # Check for duplicate IDs across files
+                    canon_id = data.get("id", "")
+                    if canon_id in seen_ids:
+                        all_errors.append(
+                            f"{canon_file}: Duplicate ID '{canon_id}' "
+                            f"(also in {seen_ids[canon_id]})"
+                        )
+                        print(
+                            f"  FAIL: {canon_file}: Duplicate ID '{canon_id}' "
+                            f"(also in {seen_ids[canon_id]})"
+                        )
+                    else:
+                        seen_ids[canon_id] = canon_file
 
                     if not skip_data_validation:
                         errors, warnings = validate_canon_json(data)

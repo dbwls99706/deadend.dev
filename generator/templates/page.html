@@ -23,13 +23,13 @@
 
   <!-- Schema.org + ErrorCanon JSON-LD -->
   <script type="application/ld+json">
-{{ json_ld | safe }}
+{{ json_ld | safe_json_ld }}
   </script>
 
   <!-- FAQPage schema for dead ends (Google rich snippets) -->
   {% if faq_json_ld %}
   <script type="application/ld+json">
-{{ faq_json_ld | safe }}
+{{ faq_json_ld | safe_json_ld }}
   </script>
   {% endif %}
 
@@ -71,7 +71,7 @@
   <!-- HowTo schema for workarounds (Google rich results) -->
   {% if howto_json_ld %}
   <script type="application/ld+json">
-{{ howto_json_ld | safe }}
+{{ howto_json_ld | safe_json_ld }}
   </script>
   {% endif %}
 

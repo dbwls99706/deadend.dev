@@ -41,7 +41,7 @@
   <!-- TechArticle JSON-LD for error summary -->
   {% if summary_json_ld %}
   <script type="application/ld+json">
-{{ summary_json_ld | safe }}
+{{ summary_json_ld | safe_json_ld }}
   </script>
   {% endif %}
 

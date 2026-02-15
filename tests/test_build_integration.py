@@ -54,7 +54,11 @@ def built_site(tmp_path_factory):
             escaped = escaped.replace("</", r"<\/")
             return Markup(escaped)
 
+        def _safe_json_ld(s: str) -> Markup:
+            return Markup(s.replace("</", r"<\/"))
+
         jinja_env.filters["json_escape"] = _json_escape
+        jinja_env.filters["safe_json_ld"] = _safe_json_ld
 
         build_error_pages(canons, jinja_env)
         build_domain_pages(canons, jinja_env)

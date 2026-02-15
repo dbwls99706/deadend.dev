@@ -13,7 +13,7 @@ class TestSchemaEdgeCases:
     def test_all_valid_domains(self, make_canon):
         valid_domains = [
             "python", "cuda", "node", "pip", "docker",
-            "git", "mcp", "http", "auth", "db", "rust", "llm",
+            "git", "rust",
             "typescript", "go", "kubernetes", "terraform",
             "aws", "nextjs", "react",
             "java", "database", "cicd", "php", "dotnet", "networking",

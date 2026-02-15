@@ -78,7 +78,7 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
 
   <script>
     (function() {
-      var errors = {{ search_data | safe }};
+      var errors = {{ search_data | safe_json_ld }};
       var input = document.getElementById('search-input');
       var resultsDiv = document.getElementById('results');
       var noResults = document.getElementById('no-results');
@@ -162,11 +162,30 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
         return d.innerHTML;
       }
 
+      function updateUrlState(query) {
+        var url = new URL(window.location);
+        if (query) {
+          url.searchParams.set('q', query);
+        } else {
+          url.searchParams.delete('q');
+        }
+        history.replaceState(null, '', url);
+      }
+
       input.addEventListener('input', function() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(function() {
-          search(input.value.trim());
+          var q = input.value.trim();
+          search(q);
+          updateUrlState(q);
         }, 150);
+      });
+
+      window.addEventListener('popstate', function() {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('q') || '';
+        input.value = q;
+        search(q);
       });
 
       // Support ?q= URL parameter for programmatic deep-linking

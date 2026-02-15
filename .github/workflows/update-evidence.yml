@@ -18,16 +18,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev,pipeline]"
 
       - name: Validate current data
         run: python -m generator.validate --data-only
 
-      # Future: Add evidence re-collection steps here
-      # - name: Re-collect evidence
-      #   run: python -m generator.collect_evidence
+      - name: Re-collect evidence and update canons
+        run: python -m generator.bulk_generate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        continue-on-error: true
 
       - name: Build site
         run: python -m generator.build_site

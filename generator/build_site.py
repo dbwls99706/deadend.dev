@@ -2109,6 +2109,7 @@ def main():
     jinja_env.globals["base_path"] = BASE_PATH
     jinja_env.globals["base_url"] = BASE_URL
     jinja_env.filters["display_name"] = domain_display_name
+
     def _json_escape(s: str) -> Markup:
         """JSON-safe string for use inside JSON-LD <script> blocks.
         Returns Markup to bypass Jinja2 autoescape (the value is already
@@ -2117,7 +2118,12 @@ def main():
         escaped = escaped.replace("</", r"<\/")  # prevent </script> breakout
         return Markup(escaped)
 
+    def _safe_json_ld(s: str) -> Markup:
+        """Mark pre-serialized JSON-LD as safe, with </script> protection."""
+        return Markup(s.replace("</", r"<\/"))
+
     jinja_env.filters["json_escape"] = _json_escape
+    jinja_env.filters["safe_json_ld"] = _safe_json_ld
 
     # Build pages
     print("Generating error pages...")
