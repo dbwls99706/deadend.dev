@@ -69,7 +69,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/manifest-unknown_docker24-linux",
+        "error_id": "docker/docker-network-endpoint-exists/docker27-linux",
         "distinction": "image-not-found means the repository or tag doesn't exist; manifest-unknown typically means the specific tag is missing from an existing repository."
       }
     ]

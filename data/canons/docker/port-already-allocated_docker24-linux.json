@@ -69,7 +69,7 @@
     "preceded_by": [],
     "frequently_confused_with": [
       {
-        "error_id": "docker/bind-address-already-in-use_docker24-linux",
+        "error_id": "docker/docker-network-endpoint-exists/docker27-linux",
         "distinction": "port-already-allocated is the Docker daemon error; bind-address-already-in-use is the application-level error inside the container. Same root cause, different error source."
       }
     ]
