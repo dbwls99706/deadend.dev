@@ -69,8 +69,14 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
     <p>No matching errors found. Try pasting more of the error message, or <a href="https://github.com/dbwls99706/deadends.dev/issues/new">request this error</a>.</p>
   </div>
 
+  <section id="recent-errors" style="display:none;">
+    <h2>Recently Viewed</h2>
+    <div id="recent-list"></div>
+  </section>
+
   <section id="all-errors">
-    <h2>All Known Errors ({{ total_errors }})</h2>
+    <details>
+      <summary><h2 style="display:inline;">All Known Errors ({{ total_errors }})</h2></summary>
     {% for domain in domain_errors %}
     <h3>{{ domain.name | display_name }} ({{ domain.errors|length }})</h3>
     {% for err in domain.errors %}
@@ -81,6 +87,7 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
     </div>
     {% endfor %}
     {% endfor %}
+    </details>
   </section>
 
   <footer class="meta">
@@ -348,28 +355,75 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
       input.addEventListener('input', doSearch);
       domainFilter.addEventListener('change', doSearch);
 
+      // Arrow key navigation for search results
+      var activeResultIdx = -1;
+
+      function highlightResult(idx) {
+        var results = resultsDiv.querySelectorAll('.result');
+        for (var i = 0; i < results.length; i++) {
+          results[i].classList.remove('result-active');
+        }
+        if (idx >= 0 && idx < results.length) {
+          results[idx].classList.add('result-active');
+          results[idx].scrollIntoView({ block: 'nearest' });
+        }
+      }
+
       // Keyboard shortcuts
       document.addEventListener('keydown', function(e) {
+        var results = resultsDiv.querySelectorAll('.result');
+
         // '/' to focus search (when not already in an input)
         if (e.key === '/' && document.activeElement !== input && document.activeElement.tagName !== 'SELECT') {
           e.preventDefault();
           input.focus();
         }
         // Escape to clear and blur
-        if (e.key === 'Escape' && document.activeElement === input) {
-          input.value = '';
-          input.blur();
-          search('');
-          updateUrlState('', domainFilter.value);
+        if (e.key === 'Escape') {
+          if (activeResultIdx >= 0) {
+            activeResultIdx = -1;
+            highlightResult(-1);
+            input.focus();
+          } else if (document.activeElement === input) {
+            input.value = '';
+            input.blur();
+            search('');
+            updateUrlState('', domainFilter.value);
+          }
         }
-        // Enter to navigate to first result
-        if (e.key === 'Enter' && document.activeElement === input) {
-          var firstLink = resultsDiv.querySelector('.result a');
-          if (firstLink) {
-            window.location.href = firstLink.href;
+        // Arrow down to navigate results
+        if (e.key === 'ArrowDown' && results.length > 0) {
+          e.preventDefault();
+          activeResultIdx = Math.min(activeResultIdx + 1, results.length - 1);
+          highlightResult(activeResultIdx);
+        }
+        // Arrow up
+        if (e.key === 'ArrowUp' && results.length > 0) {
+          e.preventDefault();
+          activeResultIdx = Math.max(activeResultIdx - 1, -1);
+          highlightResult(activeResultIdx);
+          if (activeResultIdx === -1) input.focus();
+        }
+        // Enter to navigate to active or first result
+        if (e.key === 'Enter') {
+          var targetResult;
+          if (activeResultIdx >= 0 && results[activeResultIdx]) {
+            targetResult = results[activeResultIdx].querySelector('a');
+          } else if (document.activeElement === input) {
+            targetResult = resultsDiv.querySelector('.result a');
+          }
+          if (targetResult) {
+            window.location.href = targetResult.href;
           }
         }
       });
+
+      // Reset active index when search changes
+      var origSearch = search;
+      search = function(q) {
+        activeResultIdx = -1;
+        origSearch(q);
+      };
 
       window.addEventListener('popstate', function() {
         var params = new URLSearchParams(window.location.search);
@@ -392,6 +446,24 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
       } else if (d) {
         search('');
       }
+      // Recently viewed errors (localStorage)
+      var recentSection = document.getElementById('recent-errors');
+      var recentList = document.getElementById('recent-list');
+      try {
+        var recent = JSON.parse(localStorage.getItem('deadends_recent') || '[]');
+        if (recent.length > 0 && !q) {
+          var rHtml = '';
+          for (var ri = 0; ri < Math.min(recent.length, 10); ri++) {
+            var r = recent[ri];
+            rHtml += '<div class="error-entry">'
+              + '<a href="' + escapeHtml(r.url) + '"><code>' + escapeHtml(r.sig) + '</code></a>'
+              + ' <span class="meta">' + escapeHtml(r.domain) + '</span>'
+              + '</div>';
+          }
+          recentList.innerHTML = rHtml;
+          recentSection.style.display = 'block';
+        }
+      } catch(e) {}
     })();
   </script>
 </body>
