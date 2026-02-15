@@ -88,7 +88,7 @@ class TestSiteBuildIntegration:
             assert api_path.exists(), f"Missing API file for {canon['id']}"
 
             # Verify the API JSON is valid and matches the canon
-            with open(api_path) as f:
+            with open(api_path, encoding="utf-8") as f:
                 api_data = json.load(f)
             assert api_data["id"] == canon["id"]
             assert api_data["verdict"]["resolvable"] == canon["verdict"]["resolvable"]
@@ -110,7 +110,7 @@ class TestSiteBuildIntegration:
         sitemap_path = built_site["site_dir"] / "sitemap.xml"
         assert sitemap_path.exists()
 
-        content = sitemap_path.read_text()
+        content = sitemap_path.read_text(encoding="utf-8")
         for canon in built_site["canons"]:
             assert canon["url"] in content, f"Missing URL in sitemap: {canon['url']}"
 
@@ -119,7 +119,7 @@ class TestSiteBuildIntegration:
         site_dir = built_site["site_dir"]
         for canon in built_site["canons"]:
             page_path = site_dir / canon["id"] / "index.html"
-            content = page_path.read_text()
+            content = page_path.read_text(encoding="utf-8")
 
             assert 'application/ld+json' in content, (
                 f"Missing JSON-LD in {canon['id']}"
@@ -142,7 +142,7 @@ class TestSiteBuildIntegration:
         site_dir = built_site["site_dir"]
         for canon in built_site["canons"]:
             page_path = site_dir / canon["id"] / "index.html"
-            content = page_path.read_text()
+            content = page_path.read_text(encoding="utf-8")
             assert 'id="ai-summary"' in content, (
                 f"Missing ai-summary in {canon['id']}"
             )
@@ -152,7 +152,7 @@ class TestSiteBuildIntegration:
         site_dir = built_site["site_dir"]
         for canon in built_site["canons"]:
             page_path = site_dir / canon["id"] / "index.html"
-            content = page_path.read_text()
+            content = page_path.read_text(encoding="utf-8")
             assert "FAQPage" in content, (
                 f"Missing FAQPage schema in {canon['id']}"
             )
@@ -173,14 +173,14 @@ class TestSiteBuildIntegration:
         """The search page should exist and contain search data."""
         search_path = built_site["site_dir"] / "search" / "index.html"
         assert search_path.exists()
-        content = search_path.read_text()
+        content = search_path.read_text(encoding="utf-8")
         assert "search-input" in content
         assert "regex" in content
 
     def test_sitemap_includes_search_and_summaries(self, built_site):
         """Sitemap should include search page and summary pages."""
         sitemap_path = built_site["site_dir"] / "sitemap.xml"
-        content = sitemap_path.read_text()
+        content = sitemap_path.read_text(encoding="utf-8")
         assert "/search/" in content
         for summary in built_site["summary_urls"]:
             assert summary["url"] in content
