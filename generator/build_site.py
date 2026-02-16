@@ -46,12 +46,30 @@ INDEXNOW_KEY = "deadend-dev-indexnow-key"
 
 
 def load_canons(data_dir: Path) -> list[dict]:
-    """Load all ErrorCanon JSON files from the data directory."""
+    """Load all ErrorCanon JSON files from the data directory.
+
+    Reports all malformed files before failing, so authors can fix
+    multiple issues in a single iteration.
+    """
     canons = []
+    errors: list[str] = []
     for json_file in sorted(data_dir.rglob("*.json")):
-        with open(json_file, encoding="utf-8") as f:
-            canon = json.load(f)
+        try:
+            with open(json_file, encoding="utf-8") as f:
+                canon = json.load(f)
+        except json.JSONDecodeError as e:
+            errors.append(f"  {json_file}: {e}")
+            continue
+        except OSError as e:
+            errors.append(f"  {json_file}: {e}")
+            continue
+        if "id" not in canon:
+            errors.append(f"  {json_file}: missing required field 'id'")
+            continue
         canons.append(canon)
+    if errors:
+        msg = "Failed to load canon files:\n" + "\n".join(errors)
+        raise ValueError(msg)
     return canons
 
 
@@ -822,6 +840,18 @@ def build_stylesheet() -> None:
         ".chain-confused { margin-top: 1rem; }",
         ".chain-confused-item { padding: 0.3rem 0;",
         "  border-bottom: 1px solid #161b22; }",
+        "",
+        "/* Screen-reader only (accessibility) */",
+        ".sr-only { position: absolute; width: 1px; height: 1px;",
+        "  padding: 0; margin: -1px; overflow: hidden;",
+        "  clip: rect(0,0,0,0); white-space: nowrap;",
+        "  border: 0; }",
+        "",
+        "/* All-errors collapsible toggle */",
+        ".all-errors-toggle { font-size: 1.3rem;",
+        "  font-weight: bold; cursor: pointer;",
+        "  padding: 0.5rem 0; color: #e0e0e0; }",
+        ".all-errors-toggle:hover { color: #58a6ff; }",
         "",
         "/* Skip-to-content (accessibility) */",
         ".skip-link { position: absolute;",

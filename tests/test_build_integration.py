@@ -203,6 +203,180 @@ class TestSiteBuildIntegration:
             assert summary["url"] in all_sub_content
 
 
+class TestHTMLQuality:
+    """Verify generated HTML structure, accessibility, and security."""
+
+    def test_no_h2_inside_summary(self, built_site):
+        """summary elements must not contain heading elements (HTML spec)."""
+        site_dir = built_site["site_dir"]
+        search_path = site_dir / "search" / "index.html"
+        if search_path.exists():
+            content = search_path.read_text(encoding="utf-8")
+            assert "<summary><h" not in content, (
+                "Found heading inside <summary> — invalid HTML"
+            )
+
+    def test_form_labels_present(self, built_site):
+        """All form inputs should have associated labels or aria-label."""
+        search_path = built_site["site_dir"] / "search" / "index.html"
+        content = search_path.read_text(encoding="utf-8")
+        # textarea should have a label with matching for=
+        assert 'for="search-input"' in content, (
+            "Missing <label for='search-input'>"
+        )
+        assert 'for="domain-filter"' in content, (
+            "Missing <label for='domain-filter'>"
+        )
+
+    def test_skip_links_present(self, built_site):
+        """All page types should have skip-to-content links."""
+        site_dir = built_site["site_dir"]
+        # Index page
+        idx = (site_dir / "index.html").read_text(encoding="utf-8")
+        assert "skip-link" in idx, "Missing skip-link on index page"
+
+        # Search page
+        search = (site_dir / "search" / "index.html").read_text(encoding="utf-8")
+        assert "skip-link" in search, "Missing skip-link on search page"
+
+        # At least one domain page
+        domains = {c["error"]["domain"] for c in built_site["canons"]}
+        domain = next(iter(domains))
+        dom_html = (site_dir / domain / "index.html").read_text(encoding="utf-8")
+        assert "skip-link" in dom_html, f"Missing skip-link on {domain} page"
+
+        # At least one error page
+        canon = built_site["canons"][0]
+        err_html = (site_dir / canon["id"] / "index.html").read_text(encoding="utf-8")
+        assert "skip-link" in err_html, f"Missing skip-link on {canon['id']} page"
+
+    def test_no_inline_event_handlers(self, built_site):
+        """Pages should not use inline onclick/onload handlers."""
+        site_dir = built_site["site_dir"]
+        canon = built_site["canons"][0]
+        page = (site_dir / canon["id"] / "index.html").read_text(encoding="utf-8")
+        assert "onclick=" not in page, (
+            "Found inline onclick handler — use event listeners"
+        )
+
+    def test_copy_buttons_present_on_workaround_pages(self, built_site):
+        """Error pages with workaround 'how' should have copy buttons."""
+        site_dir = built_site["site_dir"]
+        for canon in built_site["canons"][:5]:
+            has_how = any(
+                wa.get("how") for wa in canon.get("workarounds", [])
+            )
+            if not has_how:
+                continue
+            page = (site_dir / canon["id"] / "index.html").read_text(
+                encoding="utf-8"
+            )
+            assert "copy-btn" in page, (
+                f"Missing copy button on {canon['id']}"
+            )
+
+    def test_json_ld_no_script_injection(self, built_site):
+        """JSON-LD blocks must escape </script> to prevent injection."""
+        site_dir = built_site["site_dir"]
+        for canon in built_site["canons"][:10]:
+            page = (site_dir / canon["id"] / "index.html").read_text(
+                encoding="utf-8"
+            )
+            # Find all JSON-LD blocks and verify no raw </script> inside
+            blocks = re.findall(
+                r'<script type="application/ld\+json">(.*?)</script>',
+                page,
+                re.DOTALL,
+            )
+            for block in blocks:
+                assert "</script" not in block.lower(), (
+                    f"Unescaped </script> in JSON-LD of {canon['id']}"
+                )
+
+    def test_search_page_keyboard_shortcuts(self, built_site):
+        """Search page should have keyboard shortcut support."""
+        search = (
+            built_site["site_dir"] / "search" / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "ArrowDown" in search, "Missing ArrowDown keyboard support"
+        assert "ArrowUp" in search, "Missing ArrowUp keyboard support"
+        assert "Escape" in search, "Missing Escape keyboard support"
+
+    def test_search_page_has_escape_html(self, built_site):
+        """Search page must define escapeHtml for XSS prevention."""
+        search = (
+            built_site["site_dir"] / "search" / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "function escapeHtml" in search or "escapeHtml" in search, (
+            "Missing escapeHtml function in search page"
+        )
+
+    def test_search_page_domain_filter(self, built_site):
+        """Search page should support domain filtering."""
+        search = (
+            built_site["site_dir"] / "search" / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "domain-filter" in search, "Missing domain filter"
+        # All domains should be listed as options
+        domains = {c["error"]["domain"] for c in built_site["canons"]}
+        for domain in domains:
+            assert domain in search, f"Domain {domain} not in filter options"
+
+    def test_error_pages_have_report_link(self, built_site):
+        """Error pages should have a 'report incorrect data' link."""
+        canon = built_site["canons"][0]
+        page = (
+            built_site["site_dir"] / canon["id"] / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "Report incorrect data" in page, (
+            f"Missing report link on {canon['id']}"
+        )
+
+    def test_error_pages_have_breadcrumbs(self, built_site):
+        """Error pages should have BreadcrumbList JSON-LD."""
+        canon = built_site["canons"][0]
+        page = (
+            built_site["site_dir"] / canon["id"] / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "BreadcrumbList" in page, (
+            f"Missing BreadcrumbList on {canon['id']}"
+        )
+
+    def test_domain_pages_have_filter(self, built_site):
+        """Domain pages should have an inline filter input."""
+        domains = {c["error"]["domain"] for c in built_site["canons"]}
+        domain = next(iter(domains))
+        page = (
+            built_site["site_dir"] / domain / "index.html"
+        ).read_text(encoding="utf-8")
+        assert "domain-filter-input" in page, (
+            f"Missing filter input on {domain} page"
+        )
+
+
+class TestLoadCanonsErrorHandling:
+    """Verify load_canons reports errors gracefully."""
+
+    def test_malformed_json_reports_error(self, tmp_path):
+        """Malformed JSON should be reported, not crash silently."""
+        bad_file = tmp_path / "bad.json"
+        bad_file.write_text("{ invalid json", encoding="utf-8")
+        with pytest.raises(ValueError, match="Failed to load"):
+            load_canons(tmp_path)
+
+    def test_missing_id_reports_error(self, tmp_path):
+        """Canon without 'id' field should be reported."""
+        no_id = tmp_path / "no_id.json"
+        no_id.write_text('{"error": {}}', encoding="utf-8")
+        with pytest.raises(ValueError, match="missing required field"):
+            load_canons(tmp_path)
+
+    def test_empty_directory_returns_empty(self, tmp_path):
+        """Empty directory should return empty list without error."""
+        result = load_canons(tmp_path)
+        assert result == []
+
+
 class TestDataValidation:
     def test_all_canons_pass_validation(self):
         """All canon JSON files should pass validation."""

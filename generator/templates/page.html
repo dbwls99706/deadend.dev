@@ -154,7 +154,7 @@ STATS_API={{ base_url }}/api/v1/stats.json</pre>
     {% for wa in workarounds|default([]) %}
     <div class="workaround">
       <strong>{{ wa.action }}</strong> <span class="success-rate">(Success rate: {{ wa.success_rate }})</span>
-      {% if wa.how %}<p class="code-block"><code>{{ wa.how }}</code><button class="copy-btn" aria-label="Copy command" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent).then(function(){event.target.textContent='Copied!'});setTimeout(function(){event.target.textContent='Copy'},1500)">Copy</button></p>{% endif %}
+      {% if wa.how %}<p class="code-block"><code>{{ wa.how }}</code><button class="copy-btn" aria-label="Copy command">Copy</button></p>{% endif %}
       {% if wa.tradeoff %}<p>Tradeoff: {{ wa.tradeoff }}</p>{% endif %}
       {% if wa.condition %}<p class="meta">Condition: {{ wa.condition }}</p>{% endif %}
       {% if wa.sources %}
@@ -263,6 +263,18 @@ STATS_API={{ base_url }}/api/v1/stats.json</pre>
 
   <script>
   (function(){
+    // Copy-to-clipboard via event delegation
+    document.addEventListener('click', function(e) {
+      if (!e.target.classList.contains('copy-btn')) return;
+      var code = e.target.previousElementSibling;
+      if (!code) return;
+      var btn = e.target;
+      navigator.clipboard.writeText(code.textContent).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function(){ btn.textContent = 'Copy'; }, 1500);
+      });
+    });
+    // Track recently viewed errors
     try {
       var recent = JSON.parse(localStorage.getItem('deadends_recent') || '[]');
       var entry = { sig: {{ error.signature | tojson }}, url: window.location.pathname, domain: {{ error.domain | tojson }}, ts: Date.now() };

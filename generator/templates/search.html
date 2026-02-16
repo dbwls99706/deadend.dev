@@ -51,9 +51,11 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
   <p>Paste your error message below. We'll match it against {{ total_errors }} known error patterns.</p>
 
   <div class="search-controls">
+    <label for="search-input" class="sr-only">Error message</label>
     <textarea id="search-input" rows="3" placeholder="Paste your error message here, e.g. ModuleNotFoundError: No module named 'torch'"></textarea>
     <div class="search-filters">
-      <select id="domain-filter" aria-label="Filter by domain">
+      <label for="domain-filter" class="sr-only">Filter by domain</label>
+      <select id="domain-filter">
         <option value="">All domains ({{ domain_count }})</option>
         {% for domain in domain_errors %}
         <option value="{{ domain.name }}">{{ domain.name | display_name }} ({{ domain.errors|length }})</option>
@@ -76,7 +78,7 @@ API_INDEX: {{ base_url }}/api/v1/index.json</pre>
 
   <section id="all-errors">
     <details>
-      <summary><h2 style="display:inline;">All Known Errors ({{ total_errors }})</h2></summary>
+      <summary class="all-errors-toggle">All Known Errors ({{ total_errors }})</summary>
     {% for domain in domain_errors %}
     <h3>{{ domain.name | display_name }} ({{ domain.errors|length }})</h3>
     {% for err in domain.errors %}
